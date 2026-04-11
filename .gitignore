@@ -1,0 +1,21 @@
+# Built HTML archives (regenerated from .twee source)
+output/*.html
+
+# Base64 data URI text files (too large for git, regenerated from source PDFs)
+*.datauri.txt
+sectional_*_uri.txt
+
+# Source PDFs (too large for git — store originals locally or in cloud storage)
+*.pdf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (if we add a build pipeline later)
+node_modules/
+
+# Temp files
+*.tmp
+*.bak
+*~
