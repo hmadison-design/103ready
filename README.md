@@ -11,14 +11,18 @@ Interactive, branching decision-making scenarios built with [Twine 2](https://tw
 ```
 103ready/
 ├── scenarios/
-│   └── cylinder-three/          # First scenario — partial engine roughness
-│       ├── Cylinder_Three.twee  # Twee source (master file)
+│   ├── cylinder-three/          # Scenario 1 — partial engine roughness
+│   │   ├── Cylinder_Three.twee  # Twee source (master file)
+│   │   ├── audio/               # Sound effects (mp3)
+│   │   └── images/              # Sectional chart clips, etc.
+│   └── the-wall/                # Scenario 2 — mountain weather decision-making
+│       ├── The_Wall.twee        # Twee source (master file)
 │       ├── audio/               # Sound effects (mp3)
 │       └── images/              # Sectional chart clips, etc.
 ├── tools/
 │   └── convert_twee.py          # Twee → Twine 2 HTML archive converter
 ├── output/                      # Built HTML archives (gitignored)
-└── docs/                        # Shopping lists, design notes, etc.
+└── docs/                        # Reference guides, design notes, etc.
 ```
 
 ## Scenarios
@@ -26,6 +30,7 @@ Interactive, branching decision-making scenarios built with [Twine 2](https://tw
 | Scenario | Status | Description |
 |----------|--------|-------------|
 | Cylinder Three | In development | Engine roughness over western Oklahoma — divert, troubleshoot, or press on? |
+| The Wall | In development | Mountain weather over the Continental Divide — KBJC to KASE in a Cessna 182T with building CBs |
 
 ## Building
 
