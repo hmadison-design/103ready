@@ -1,0 +1,1325 @@
+:: StoryTitle
+The Wall
+
+:: StoryData
+{
+  "ifid": "B2C3D4E5-F6A7-8901-BCDE-F12345678901",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "FlightPrep"
+}
+
+:: StoryInit
+<<set $readWeather to false>>
+<<set $readFlightPlan to false>>
+<<set $readDensityAlt to false>>
+<<set $readMap to false>>
+<<set $badchoices to 0>>
+<<set $pathArray to []>>
+<<set $audioEnabled to false>>
+<<run (function() {
+	var tracks = [
+		["engine-smooth", "audio/engine-smooth.mp3"],
+		["engine-rough", "audio/engine-rough.mp3"],
+		["engine-cough", "audio/engine-cough.mp3"],
+		["engine-fail", "audio/engine-fail.mp3"],
+		["radio-squelch", "audio/radio-squelch.mp3"],
+		["wind-quiet", "audio/wind-quiet.mp3"],
+		["wind-turbulence", "audio/wind-turbulence.mp3"],
+		["touchdown", "audio/touchdown.mp3"],
+		["atc-ambience", "audio/atc-ambience.mp3"],
+		["rain-windshield", "audio/rain-windshield.mp3"]
+	];
+	try {
+		tracks.forEach(function(t) {
+			SimpleAudio.tracks.add(t[0], t[1]);
+		});
+		SimpleAudio.tracks.add(":engine", "engine-smooth", "engine-rough");
+		State.variables.audioEnabled = true;
+		console.log("Audio: " + tracks.length + " tracks registered");
+	} catch(e) {
+		State.variables.audioEnabled = false;
+		console.log("Audio: disabled (files not found)");
+	}
+})()>>
+
+:: StoryScript [script]
+/* Audio helper: crossfade between engine states */
+window.crossfadeEngine = function(from, to, duration) {
+	if (!State.variables.audioEnabled) return;
+	duration = duration || 2000;
+	var steps = 20;
+	var interval = duration / steps;
+	var fromTrack = SimpleAudio.tracks.get(from);
+	var toTrack = SimpleAudio.tracks.get(to);
+	if (!fromTrack || !toTrack) return;
+
+	var fromVol = fromTrack.volume();
+	toTrack.volume(0);
+	toTrack.loop(true);
+	toTrack.play();
+
+	var step = 0;
+	var fade = setInterval(function() {
+		step++;
+		var progress = step / steps;
+		fromTrack.volume(fromVol * (1 - progress));
+		toTrack.volume(fromVol * progress);
+		if (step >= steps) {
+			clearInterval(fade);
+			fromTrack.stop();
+			toTrack.volume(fromVol);
+		}
+	}, interval);
+};
+
+/* Audio helper: play a one-shot sound */
+window.playOneShot = function(trackId, volume) {
+	if (!State.variables.audioEnabled) return;
+	var track = SimpleAudio.tracks.get(trackId);
+	if (!track) return;
+	track.volume(volume || 1.0);
+	track.play();
+};
+
+/* Sectional chart zoom — opens high-res chart in a pan/zoom viewer */
+window.openZoomChart = function() {
+	var zoomSrc = document.getElementById("sectional-zoom-data");
+	if (!zoomSrc) return;
+	var src = zoomSrc.textContent;
+	var w = window.open("", "_blank");
+	if (!w) { alert("Pop-up blocked — please allow pop-ups for this site."); return; }
+	var html = [
+		"<!DOCTYPE html><html><head><title>Denver Sectional — KBJC to KASE</title>",
+		"<style>",
+		"*{margin:0;padding:0;box-sizing:border-box}",
+		"body{background:#111;overflow:hidden;width:100vw;height:100vh;cursor:grab}",
+		"body.dragging{cursor:grabbing}",
+		"#viewport{width:100%;height:100%;overflow:hidden;position:relative}",
+		"#chart{position:absolute;transform-origin:0 0;transition:none}",
+		".controls{position:fixed;bottom:20px;right:20px;display:flex;gap:8px;z-index:10}",
+		".controls button{width:40px;height:40px;border:none;border-radius:8px;",
+		"  background:rgba(255,255,255,0.15);color:#fff;font-size:20px;cursor:pointer;",
+		"  backdrop-filter:blur(4px);transition:background 0.2s}",
+		".controls button:hover{background:rgba(255,255,255,0.3)}",
+		".zoom-level{position:fixed;bottom:24px;right:160px;color:rgba(255,255,255,0.5);",
+		"  font:13px/1 system-ui,sans-serif;z-index:10}",
+		"</style></head><body>",
+		"<div id=\"viewport\"><img id=\"chart\" src=\"" + src + "\"></div>",
+		"<div class=\"zoom-level\" id=\"zlabel\">100%</div>",
+		"<div class=\"controls\">",
+		"  <button id=\"zout\" title=\"Zoom out\">−</button>",
+		"  <button id=\"zin\" title=\"Zoom in\">+</button>",
+		"  <button id=\"zfit\" title=\"Fit to window\">⊡</button>",
+		"</div>",
+		"<script>",
+		"var img=document.getElementById('chart'),",
+		"    vp=document.getElementById('viewport'),",
+		"    zlabel=document.getElementById('zlabel'),",
+		"    scale=1,minScale=0.1,maxScale=8,",
+		"    tx=0,ty=0,dragging=false,startX,startY,startTx,startTy;",
+		"function apply(){img.style.transform='translate('+tx+'px,'+ty+'px) scale('+scale+')';",
+		"  zlabel.textContent=Math.round(scale*100)+'%'}",
+		"img.onload=function(){",
+		"  var s=Math.min(vp.clientWidth/img.naturalWidth,vp.clientHeight/img.naturalHeight);",
+		"  scale=s;minScale=s*0.5;",
+		"  tx=(vp.clientWidth-img.naturalWidth*scale)/2;",
+		"  ty=(vp.clientHeight-img.naturalHeight*scale)/2;",
+		"  apply()};",
+		"vp.addEventListener('wheel',function(e){",
+		"  e.preventDefault();",
+		"  var rect=vp.getBoundingClientRect(),",
+		"      mx=e.clientX-rect.left,my=e.clientY-rect.top,",
+		"      prev=scale,",
+		"      factor=e.deltaY<0?1.15:1/1.15;",
+		"  scale=Math.min(maxScale,Math.max(minScale,scale*factor));",
+		"  tx=mx-(mx-tx)*(scale/prev);",
+		"  ty=my-(my-ty)*(scale/prev);",
+		"  apply()},{passive:false});",
+		"vp.addEventListener('mousedown',function(e){",
+		"  dragging=true;startX=e.clientX;startY=e.clientY;startTx=tx;startTy=ty;",
+		"  document.body.classList.add('dragging');e.preventDefault()});",
+		"window.addEventListener('mousemove',function(e){",
+		"  if(!dragging)return;",
+		"  tx=startTx+(e.clientX-startX);ty=startTy+(e.clientY-startY);apply()});",
+		"window.addEventListener('mouseup',function(){",
+		"  dragging=false;document.body.classList.remove('dragging')});",
+		"var lastDist=0;",
+		"vp.addEventListener('touchstart',function(e){",
+		"  if(e.touches.length===1){dragging=true;startX=e.touches[0].clientX;startY=e.touches[0].clientY;startTx=tx;startTy=ty}",
+		"  if(e.touches.length===2){dragging=false;var dx=e.touches[1].clientX-e.touches[0].clientX,dy=e.touches[1].clientY-e.touches[0].clientY;",
+		"    lastDist=Math.hypot(dx,dy)}",
+		"  e.preventDefault()},{passive:false});",
+		"vp.addEventListener('touchmove',function(e){",
+		"  if(e.touches.length===1&&dragging){tx=startTx+(e.touches[0].clientX-startX);ty=startTy+(e.touches[0].clientY-startY);apply()}",
+		"  if(e.touches.length===2){var dx=e.touches[1].clientX-e.touches[0].clientX,dy=e.touches[1].clientY-e.touches[0].clientY,",
+		"    dist=Math.hypot(dx,dy),mid={x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2},",
+		"    rect=vp.getBoundingClientRect(),mx=mid.x-rect.left,my=mid.y-rect.top,",
+		"    prev=scale;scale=Math.min(maxScale,Math.max(minScale,scale*(dist/lastDist)));",
+		"    tx=mx-(mx-tx)*(scale/prev);ty=my-(my-ty)*(scale/prev);lastDist=dist;apply()}",
+		"  e.preventDefault()},{passive:false});",
+		"function zoomBtn(factor){",
+		"  var rect=vp.getBoundingClientRect(),cx=rect.width/2,cy=rect.height/2,prev=scale;",
+		"  scale=Math.min(maxScale,Math.max(minScale,scale*factor));",
+		"  tx=cx-(cx-tx)*(scale/prev);ty=cy-(cy-ty)*(scale/prev);apply()}",
+		"document.getElementById('zin').onclick=function(){zoomBtn(1.3)};",
+		"document.getElementById('zout').onclick=function(){zoomBtn(1/1.3)};",
+		"document.getElementById('zfit').onclick=function(){img.onload()};",
+		"</scr"+"ipt></body></html>"
+	].join("");
+	w.document.write(html);
+	w.document.close();
+};
+
+/* Audio toggle button — added to every passage via :passagerender */
+$(document).on(":passagerender", function(ev) {
+	$("#audio-toggle-btn").remove();
+	var btn = $('<button id="audio-toggle-btn" class="audio-toggle"></button>');
+	var updateLabel = function() {
+		if (State.variables.audioEnabled) {
+			btn.text("🔊 Audio On").removeClass("muted");
+		} else {
+			btn.text("🔇 Audio Off").addClass("muted");
+		}
+	};
+	btn.on("click", function() {
+		State.variables.audioEnabled = !State.variables.audioEnabled;
+		if (!State.variables.audioEnabled) {
+			SimpleAudio.muteOnHidden(false);
+			SimpleAudio.tracks.forEach(function(track) { track.stop(); });
+		}
+		updateLabel();
+	});
+	updateLabel();
+	$("body").append(btn);
+});
+
+:: StoryStylesheet [stylesheet]
+body {
+  background-color: #1a1a2e;
+  color: #e0e0e0;
+}
+
+#story {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1em;
+  font-size: 1.05em;
+  line-height: 1.65;
+}
+
+a.link-internal {
+  display: inline-block;
+  padding: 0.5em 1.2em;
+  margin: 0.3em 0.2em;
+  background-color: #2a3a5c;
+  color: #c8d8f0;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 1px solid #3a4a6c;
+  transition: background-color 0.2s;
+}
+a.link-internal:hover {
+  background-color: #3a5a8c;
+}
+
+.scenario-title {
+  font-size: 2em;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 0.2em;
+}
+.scenario-subtitle {
+  font-size: 1.1em;
+  color: #888;
+  text-align: center;
+  margin-bottom: 1.5em;
+  font-style: italic;
+}
+
+.preflight-btn {
+  display: inline-block;
+  padding: 0.6em 1.5em;
+  background: #1e3a5f;
+  border-radius: 10px;
+  margin: 0.3em 0;
+  font-size: 1.05em;
+}
+
+.metar-block {
+  background-color: #0d1b2a;
+  padding: 1em;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  margin: 0.5em 0;
+  white-space: pre-wrap;
+  font-size: 0.95em;
+}
+
+.flight-plan {
+  background-color: #0d1b2a;
+  padding: 1em;
+  border-radius: 6px;
+  margin: 0.5em 0;
+}
+
+.density-alt-worksheet {
+  background-color: #0d1b2a;
+  padding: 1em;
+  border-radius: 6px;
+  margin: 0.5em 0;
+}
+
+.airport-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  font-size: 0.9em;
+}
+.airport-table th, .airport-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #333;
+  text-align: left;
+}
+.airport-table th {
+  color: #aaa;
+}
+
+.debrief {
+  border-top: 2px solid #555;
+  padding-top: 1em;
+  margin-top: 2em;
+}
+
+.chart-disclaimer {
+  font-size: 0.8em;
+  color: #999;
+  border-left: 3px solid #555;
+  padding: 6px 12px;
+  margin: 1em 0;
+}
+
+.sectional-container {
+  margin: 1em 0;
+}
+.sectional-container img {
+  max-width: 100%;
+  border: 1px solid #444;
+  border-radius: 4px;
+}
+.sectional-label {
+  font-size: 0.85em;
+  color: #888;
+  margin-top: 0.3em;
+}
+
+.audio-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 6px 12px;
+  background: rgba(42, 58, 92, 0.8);
+  color: #c8d8f0;
+  border: 1px solid #3a4a6c;
+  border-radius: 6px;
+  font-size: 0.85em;
+  cursor: pointer;
+  z-index: 100;
+}
+.audio-toggle.muted {
+  background: rgba(60, 40, 40, 0.8);
+  color: #aa8888;
+}
+
+:: FlightPrep [preflight]
+<<set $pathArray to $pathArray.concat(["Preflight — reviewing materials"])>>
+
+<div class="scenario-title">The Wall</div>
+<div class="scenario-subtitle">A mountain weather scenario — KBJC to KASE</div>
+
+It's a Saturday morning in late July. You and Jolie are flying from Rocky Mountain Metropolitan Airport in Broomfield to Aspen for your friend Marcus's wedding. The rehearsal dinner is tonight at 7 PM — Marcus asked you specifically to be there early to help set up. Jolie's already dressed for dinner and her garment bag is in the back of the Skylane.
+
+The 182T is fueled, preflighted, and parked on the Sheltair ramp. The sun is already warm at 8:30 AM, and you can see the front range to the west. A few cumulus are starting to pop over the peaks, but that's normal for a summer morning. You've got time to review your materials before starting the engine.
+
+<strong>Review your preflight materials:</strong>
+
+<div class="chart-disclaimer">Charts, weather data, and performance calculations in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here — not current publications — as the scenario is designed around them.</div>
+
+<<link '<span class="preflight-btn">Weather Briefing</span>' "Preflight-Weather">><<set $readWeather to true>><</link>>
+<<link '<span class="preflight-btn">Flight Plan & Route</span>' "Preflight-FlightPlan">><<set $readFlightPlan to true>><</link>>
+<<link '<span class="preflight-btn">Density Altitude Worksheet</span>' "Preflight-DensityAlt">><<set $readDensityAlt to true>><</link>>
+<<link '<span class="preflight-btn">Area Map</span>' "Preflight-Map">><<set $readMap to true>><</link>>
+
+<<if $readWeather and $readFlightPlan and $readDensityAlt and $readMap>>
+<hr>
+You've reviewed all your materials. Time to decide.
+
+<<link '<span class="preflight-btn">☑ Begin Flight</span>' "Opening">><</link>>
+<<elseif $readWeather or $readFlightPlan or $readDensityAlt or $readMap>>
+<hr>
+<em>You haven't reviewed all the materials yet. In the real world, you'd want to look at everything before departure. Take your time.</em>
+
+<<link '<span class="preflight-btn">Begin Flight Anyway</span>' "Opening">><</link>>
+<</if>>
+
+:: Preflight-Weather [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed weather briefing"])>>
+<strong>Standard Briefing — Denver AFSS</strong>
+<em>Briefer: "Good morning, November four-seven-two-golf-foxtrot. Standard briefing, Broomfield to Aspen, Cessna 182. Here's what I've got for you."</em>
+
+<strong>Synopsis:</strong>
+A broad upper-level ridge is weakening over the central Rockies. A Pacific shortwave trough is approaching from the west, expected to arrive late this afternoon. This pattern is typical for summertime mountain thunderstorm development, with earlier-than-normal convective initiation possible — by late morning over the highest terrain.
+
+<strong>Current conditions:</strong>
+<div class="metar-block">KBJC 111353Z 18006KT 10SM FEW080 25/08 A3012 RMK AO2
+KASE 111353Z 17010KT 10SM FEW040 BKN065 08/01 A3014
+KEGE 111356Z 00000KT 10SM FEW110 05/M02 A3010
+KRIL 111353Z AUTO 01004KT 10SM OVC100 12/M01 A2999
+KLXV 111353Z AUTO 12004KT 10SM OVC060 01/M03 A3024</div>
+
+<strong>Terminal Forecast — KASE:</strong>
+<div class="metar-block">TAF KASE 111416Z 1114/1212
+  1114/1118 17010G20KT P6SM VCSH SCT040 OVC060
+  FM111800 19011G20KT P6SM VCSH SCT070 BKN100
+  FM111830 22014G24KT P6SM VCSH SCT060 BKN100
+  PROB30 1120/1202 VRB22G33KT -TSRA BKN060CB BKN070
+  FM120200 19007KT P6SM VCSH FEW060 BKN110</div>
+
+<strong>Briefer notes:</strong>
+<em>"Here's the thing — those cumulus are building earlier than the models predicted yesterday. Leadville is already showing overcast at six thousand AGL, and the ASOS at Aspen has scattered at four thousand with a broken deck at six-five. The TAF for Aspen holds reasonable VFR through 18Z, but there's a PROB30 for thunderstorms by 20Z. I'd say your window is the next three to four hours. After that, the mountains are going to be doing their thing. PIREPs are thin this morning — one Bonanza reported moderate turbulence over Red Table VOR at 14,000 about forty minutes ago. No current AIRMETs for your route, but I'd expect Sierra and Tango to come out later this morning."</em>
+
+<strong>Winds aloft (relevant levels):</strong>
+<div class="metar-block">FT     12000    15000    18000
+DEN    2515+07  2625+01  2735-10
+GJT    2420+05  2530-01  2640-12</div>
+
+<strong>NOTAMs:</strong>
+Nothing significant for KBJC, KASE, or the route. KLXV: PAPI RWY 16 out of service.
+
+[[← Back to Flight Prep|FlightPrep]]
+
+:: Preflight-FlightPlan [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed flight plan"])>>
+<strong>VFR Flight Plan — N472GF</strong>
+
+<div class="flight-plan">
+<strong>Aircraft:</strong> Cessna 182T Skylane (G1000)
+<strong>N-number:</strong> N472GF
+<strong>TAS:</strong> 130 KTAS at 12,500
+<strong>Departure:</strong> KBJC (Rocky Mountain Metro) — Elev 5,673 ft
+<strong>Destination:</strong> KASE (Aspen-Pitkin County) — Elev 7,837 ft
+<strong>Route:</strong> KBJC direct REDSM V8 DBL direct KASE
+<strong>Altitude:</strong> 14,500 ft MSL (westbound — odd + 500 VFR)
+<strong>Distance:</strong> 115 nm
+<strong>ETE:</strong> 0+53 (plus 15 min climb)
+<strong>Fuel on board:</strong> 65 gallons (5.2 hrs endurance at 12.5 GPH cruise)
+<strong>Fuel required:</strong> ~18 gal (1.1 hr flight + 45 min reserve = 1.85 hrs)
+<strong>Passengers:</strong> 1 (Jolie)
+<strong>Remarks:</strong> VFR flight following requested with Denver Center
+
+<strong>Alternates considered:</strong>
+KEGE (Eagle County) — 38 nm NW of Aspen, 6,547 ft, 9,000 ft runway
+KRIL (Rifle) — 44 nm NW of Aspen, 5,537 ft, 7,000 ft runway, ILS
+KAEJ (Buena Vista) — 43 nm S of Leadville, 7,950 ft, 8,303 ft runway
+KLXV (Leadville) — 26 nm E of Aspen, 9,934 ft, 6,400 ft runway
+
+<strong>Minimum terrain crossing altitude:</strong> 14,500 ft MSL over the Continental Divide via V-8 (MEA 14,500). Terrain along route ranges from 8,000 ft in the valleys to 14,000+ ft along the Divide.
+</div>
+
+<strong>Notes on the route:</strong> The V-8 airway crosses the Continental Divide near Red Table VOR (DBL) at a published MEA of 14,500 ft. The Cessna 182T service ceiling is 18,100 ft (normally aspirated). At density altitudes above 12,000 ft, expect significantly reduced climb performance — plan your crossing altitude before reaching the mountains, not over them. Terrain clearance in the valleys between the Divide and Aspen is critical. The Roaring Fork Valley runs northwest-southeast and provides a natural corridor into KASE, but it narrows significantly south of Glenwood Springs.
+
+[[← Back to Flight Prep|FlightPrep]]
+
+:: Preflight-DensityAlt [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed density altitude worksheet"])>>
+<strong>Density Altitude Worksheet — Late July</strong>
+
+<div class="density-alt-worksheet">
+<strong>KBJC (departure):</strong>
+  Field elevation: 5,673 ft
+  Temperature: 25°C (77°F) at 0845L
+  Altimeter: 30.12
+  <strong>Density altitude: 8,100 ft</strong>
+
+<strong>KASE (destination):</strong>
+  Field elevation: 7,837 ft
+  Forecast temp at arrival (~1030L): 18°C (64°F)
+  Altimeter: 30.14
+  <strong>Density altitude: 10,200 ft</strong>
+
+<strong>KLXV (alternate — if needed):</strong>
+  Field elevation: 9,934 ft
+  Temperature: 1°C (34°F) at 0845L
+  Altimeter: 30.24
+  <strong>Density altitude: 9,800 ft</strong>
+  NOTE: By noon, if temp reaches 15°C → <strong>density altitude: 12,400 ft</strong>
+
+<strong>Performance reference — C182T at density altitude:</strong>
+
+<table class="airport-table">
+<tr><th>DA (ft)</th><th>Takeoff Roll</th><th>Rate of Climb</th><th>Landing Roll</th></tr>
+<tr><td>Sea level</td><td>795 ft</td><td>924 fpm</td><td>590 ft</td></tr>
+<tr><td>5,000</td><td>1,015 ft</td><td>700 fpm</td><td>640 ft</td></tr>
+<tr><td>8,000</td><td>1,355 ft</td><td>480 fpm</td><td>710 ft</td></tr>
+<tr><td>10,000</td><td>1,650 ft</td><td>340 fpm</td><td>770 ft</td></tr>
+<tr><td>12,000</td><td>2,100 ft</td><td>195 fpm</td><td>840 ft</td></tr>
+</table>
+
+<strong>Key considerations:</strong>
+At density altitudes above 10,000 ft, expect takeoff rolls nearly double the sea-level distance. Climb rates drop dramatically — at DA 12,000, you're getting less than 200 fpm. If you need to land at a high-altitude airport in the afternoon when temperatures peak, recalculate before committing. Aspen's runway is 8,006 ft, which provides adequate margin at DA 10,000. Leadville's runway is 6,400 ft — manageable in the morning, but if DA climbs above 12,000, the math gets tight, especially at maximum gross weight.
+
+The C182T's service ceiling of 18,100 ft is a theoretical number at maximum gross. Your practical ceiling today — the altitude where you can sustain 100 fpm climb — is closer to 15,500 ft with two passengers and full fuel. That still clears the Divide, but there's less margin than the POH suggests.
+</div>
+
+[[← Back to Flight Prep|FlightPrep]]
+
+:: Preflight-Map [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed area map"])>>
+<strong>Route Overview — KBJC to KASE</strong>
+
+<table class="airport-table">
+<tr><th>Airport</th><th>ID</th><th>Elev (ft)</th><th>Runway</th><th>Services</th></tr>
+<tr><td>Rocky Mountain Metro</td><td>KBJC</td><td>5,673</td><td>12L/30R: 9,000 x 100</td><td>Tower, full services</td></tr>
+<tr><td>Eagle County Regional</td><td>KEGE</td><td>6,547</td><td>7/25: 9,000 x 150</td><td>Tower (seasonal), full services</td></tr>
+<tr><td>Rifle Garfield County</td><td>KRIL</td><td>5,537</td><td>8/26: 7,000 x 100</td><td>Untowered, ILS, full services</td></tr>
+<tr><td>Aspen-Pitkin County</td><td>KASE</td><td>7,837</td><td>15/33: 8,006 x 100</td><td>Tower, full services</td></tr>
+<tr><td>Central Colorado Regional</td><td>KAEJ</td><td>7,950</td><td>15/33: 8,303 x 75</td><td>Untowered, limited services</td></tr>
+<tr><td>Lake County (Leadville)</td><td>KLXV</td><td>9,934</td><td>16/34: 6,400 x 75</td><td>Untowered, limited services</td></tr>
+</table>
+
+<strong>Denver Sectional — KBJC to KASE corridor:</strong>
+
+<div class="sectional-container">
+<em>[Sectional chart clip will be embedded here — KBJC to KASE via Red Table VOR]</em>
+<div class="sectional-label">Denver Sectional Chart — Rocky Mountain Metro (KBJC) to Aspen (KASE)<br>Chart clip pending — see scenario development notes</div>
+</div>
+
+<div class="chart-disclaimer"><em>This chart is provided for training and educational purposes only. It is not intended for navigation and may not reflect current aeronautical information. Always use current, officially published FAA charts and publications for flight planning and navigation.</em></div>
+
+<strong>Terrain notes:</strong> This route crosses the Continental Divide. Terrain rises from 5,600 ft at KBJC to over 14,000 ft along the Divide west of Red Table VOR (DBL). The highest terrain along the direct route is in the Sawatch Range and Elk Mountains, where peaks exceed 14,000 ft (Mount Elbert 14,440, Mount Massive 14,428, Capitol Peak 14,131). Valleys between the ranges drop to 7,500–9,000 ft but narrow significantly. The Roaring Fork Valley provides the primary corridor into Aspen from the north/northwest. Mountain passes — Hagerman (11,925 ft), Independence (12,095 ft), and Fremont (11,318 ft) — can be useful visual references but are not reliable escape routes when weather closes in.
+
+<strong>Key terrain trap warning:</strong> The valleys south and east of Aspen form a box canyon environment. If you descend into a valley and weather closes behind you, your options are extremely limited. Never descend into a valley you aren't certain you can fly out of.
+
+[[← Back to Flight Prep|FlightPrep]]
+
+:: Opening [scenario]
+<<set $pathArray to $pathArray.concat(["Departed KBJC, climbing westbound"])>>
+<<if $audioEnabled>><<audio "engine-smooth" loop volume 0.3 play>><</if>>
+<<if $audioEnabled>><<audio "atc-ambience" loop volume 0.08 play>><</if>>
+Broomfield Tower cleared you for a westbound departure off 30R, and you climbed out over the foothills in smooth morning air. Jolie has her sunglasses on, watching the suburbs fall away below. The G1000 shows the magenta line stretching west toward Red Table VOR — 115 miles to Aspen. You picked up flight following with Denver Center climbing through 9,500.
+
+"November four-seven-two-golf-foxtrot, Denver Center, radar contact. Altimeter three-zero-one-two. Say requested altitude."
+
+"One-four thousand five hundred, four-seven-two-golf-foxtrot."
+
+"Four-seven-two-golf-foxtrot, climb and maintain VFR at one-four thousand five hundred, traffic twelve o'clock, ten miles, westbound, Boeing 737, flight level two-three-zero, no factor."
+
+The 182 climbs well in the cool morning air. You level at 14,500 passing the first line of foothills. The Front Range is gorgeous — a wall of granite and pine, snow still visible on the high peaks. The wind at altitude is out of the southwest at about 15 knots. Normal.
+
+Twenty minutes out of Broomfield, the picture starts to change. The cumulus over the Divide have been building. What were scattered cotton balls at departure are now towering columns, brilliant white on top, dark at the base. You count at least four cells along the ridgeline ahead, and one of them — directly on your course line near Red Table — has an anvil starting to form. The bases look like they're around 14,000 to 15,000 feet. You're at 14,500.
+
+Denver Center: "Four-seven-two-golf-foxtrot, be advised, pilot report from a Beech Baron, moderate turbulence and rain showers over Red Table VOR at one-five thousand, approximately ten minutes ago. Several aircraft deviating north and south of the airway."
+
+Jolie pulls her sunglasses off and looks at the build-ups ahead. "Those are getting big. Is that a problem?"
+
+The G1000 shows 85 miles to Aspen. You've burned 8 gallons. The fuel totalizer says 57 gallons remaining — over four hours of fuel. The weather behind you to the east is still clear. To the north, the clouds look slightly less developed. To the south, over Leadville and the Sawatch Range, the build-ups are heavy. Directly ahead, that anvil is getting wider.
+
+<<link "A. Continue on course — you've got the altitude, and there may be gaps between the cells" "A-ContinueDirect">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Continued direct toward the build-ups"])>><</link>>
+<<link "B. Deviate north toward Eagle County — the weather looks lighter that direction" "B-DeviateNorth">><<set $pathArray to $pathArray.concat(["Deviated north toward Eagle County"])>><</link>>
+<<link "C. Turn back to KBJC — this weather is building faster than the briefing suggested" "C-TurnBack">><<set $pathArray to $pathArray.concat(["Turned back to KBJC"])>><</link>>
+<<link "D. Descend into the valley near Leadville and try to stay below the weather" "D-DescendValley">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Descended toward the Leadville valley"])>><</link>>
+<<link "E. Divert to Rifle — it's in the lower terrain northwest, and has an ILS if you need it" "E-DivertRifle">><<set $pathArray to $pathArray.concat(["Diverted to Rifle"])>><</link>>
+
+:: A-ContinueDirect [scenario branch-a]
+<<set $pathArray to $pathArray.concat(["Pressing through the build-ups"])>>
+<<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 3000)>><</if>>
+You hold course. There are gaps between the cells — you can see blue sky between two of the larger build-ups, maybe eight miles wide. If you can thread through there, you'll be over the Divide and descending into the Roaring Fork Valley in twenty minutes. The timing should work.
+
+The first turbulence hits at 14,200. Not violent — a sharp bump, then sustained moderate chop that rattles the yoke. The vertical speed indicator swings between plus 500 and minus 800 in the updrafts and downdrafts along the cell boundaries. Rain streaks appear on the windshield. Jolie grabs the handle above the door.
+
+You push through. The gap you were aiming for is narrower than it looked — maybe four miles now. The cells are merging. Through the gap, you can see the terrain below: the Eagle River valley, green and brown, maybe 9,000 feet below you. But the tops of the build-ups on either side are well above you. Lightning flashes inside the cell to your left.
+
+Denver Center: "Four-seven-two-golf-foxtrot, I'm painting heavy precipitation along the V-8 airway from Red Table to Glenwood Springs. Recommend deviation. Say intentions."
+
+The gap is closing. You can feel the air getting rougher — the updraft on the right side of the cell is pushing you left, toward the heavier rain. The altimeter is unwinding despite full power: 14,200... 14,000... 13,800. The terrain beneath you is at 12,500 and rising toward the Divide.
+
+<<link "A1. Push through the gap — you can see the other side and you're almost through" "A1-PushGap">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Pushed through the closing gap"])>><</link>>
+<<link "A2. Execute a 180-degree turn — get out of this now" "A2-Turn180">><<set $pathArray to $pathArray.concat(["Executed 180 turn near the Divide"])>><</link>>
+<<link "A3. Tell Center you need lower and turn toward the Eagle River valley" "A3-DescendEagle">><<set $pathArray to $pathArray.concat(["Requested lower, turned toward Eagle valley"])>><</link>>
+
+:: A1-PushGap [scenario branch-a]
+<<set $pathArray to $pathArray.concat(["Entered the narrowing gap between cells"])>>
+<<if $audioEnabled>><<run playOneShot("wind-turbulence", 0.7)>><</if>>
+You push forward. The gap is maybe two miles wide now. You can see through to the other side — the Roaring Fork Valley, sunlit, maybe fifteen miles ahead. Almost there.
+
+The downdraft hits without warning. The VSI pegs at minus 2,000 feet per minute. The altimeter unwinds: 13,500... 13,200... 12,800. Full power, pitched up — the 182 is giving everything it has and you're still going down. The terrain below is 12,000 feet and climbing toward the Divide. Rain goes from streaks to a wall. The gap has closed.
+
+You're in the cloud. The world outside the windshield is gray-white nothing. The G1000's synthetic vision shows mountain terrain filling the screen — ridgelines at your altitude and above, on both sides. Turbulence is severe now — the airplane is being thrown around hard enough that your headset lifts off your ears.
+
+Jolie says nothing. Her hands are white on the armrest.
+
+<<link "A1a. Declare an emergency and ask Center for vectors to lower terrain" "A1a-DeclareEmergency">><<set $pathArray to $pathArray.concat(["Declared emergency in IMC over mountains"])>><</link>>
+<<link "A1b. Focus on flying instruments — wings level, altitude, airspeed — and try to climb above it" "A1b-ClimbAbove">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Attempted to climb above the weather"])>><</link>>
+
+:: A1a-DeclareEmergency [scenario branch-a ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+"Denver Center, November four-seven-two-golf-foxtrot, MAYDAY MAYDAY MAYDAY. I am IMC in the mountains, unable to maintain altitude, requesting immediate vectors to lower terrain."
+
+"Four-seven-two-golf-foxtrot, roger MAYDAY. Turn right heading three-five-zero immediately. Lowest terrain in that direction. I show you fourteen miles south of Eagle County airport. Advise altitude."
+
+"Twelve thousand six hundred and descending, four-seven-two-golf-foxtrot."
+
+"Four-seven-two-golf-foxtrot, minimum vectoring altitude in your area is one-four thousand. Terrain up to thirteen thousand within five miles of your position. If able, climb and maintain one-four thousand. If unable, maintain heading three-five-zero and advise."
+
+You fly the heading. The turbulence is still severe but the rain begins to lighten after four agonizing minutes. The altimeter reads 11,800 — you've lost nearly 3,000 feet since entering the gap. But the G1000 shows the Eagle River valley opening up ahead, terrain dropping. At 11,500 you break out of the clouds. The valley is below you — green, wide, and the terrain ahead drops to 7,000 feet. Eagle County airport is twelve miles to the north.
+
+You land at KEGE twenty minutes later, hands still shaking. Jolie doesn't speak until the prop stops.
+
+"I am never doing that again," she says quietly. "We can drive."
+
+<div class="debrief">
+<strong>DEBRIEF — Emergency Descent to Eagle County</strong>
+
+<strong>What happened:</strong> You entered a narrowing gap between thunderstorm cells over the Continental Divide and got caught in a severe downdraft that pushed you into IMC in mountainous terrain. You declared an emergency, followed ATC vectors, and descended into the Eagle River valley, landing safely at Eagle County Regional. The aircraft is undamaged. You and Jolie are unharmed but shaken.
+
+<strong>ADM analysis:</strong> Two critical errors led to this outcome. First, continuing direct toward visible convective build-ups over the Divide rather than deviating early (impulsivity — "I can make it through the gap"). Second, pressing into a closing gap between cells after already experiencing moderate turbulence and a downdraft. The saving decision was declaring an emergency immediately when the situation deteriorated beyond recovery — this enabled ATC assistance when you needed it most.
+
+<strong>Hazardous attitudes present:</strong> Invulnerability ("the gap is wide enough"), macho ("I can thread through this"), and get-there-itis (the wedding, the commitment to Marcus, Jolie's expectations). The PIREP from the Baron and Center's deviation advisory were both clear warnings that went unheeded.
+
+<strong>What good judgment looks like here:</strong> When Denver Center reported heavy precipitation along the airway and the PIREP indicated moderate turbulence, the correct response was to deviate — not to look for gaps. Thunderstorm gaps close faster than a piston single can transit them. The FAA's guidance is to stay at least 20 miles from any thunderstorm. You were trying to fly between cells that were separated by less than eight miles and closing.
+
+<strong>Key takeaway:</strong> Mountain thunderstorms build fast, merge without warning, and the downdrafts between cells can exceed any piston airplane's climb capability. When you see convective development ahead over high terrain, deviate early and deviate wide. There is no gap worth betting your life on.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: A1b-ClimbAbove [scenario branch-a ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+You pull back on the yoke and add full power, trying to climb above the weather. The 182 pitches up. The airspeed drops: 100... 90... 85 knots. At this altitude and density, the engine is producing maybe 65% power. The rate of climb indicator shows 100 feet per minute, then zero, then minus 200 — the downdraft is stronger than anything the 182 can overcome.
+
+The airspeed drops to 75 knots with the nose up. The stall horn chirps. You push forward to recover airspeed but the altimeter continues to unwind: 12,200... 11,800... 11,400. You are in solid IMC with mountain terrain on all sides. The G1000's synthetic vision shows ridgelines above you to the left and right.
+
+The situation does not improve. A violent downdraft slams the airplane and the altimeter drops through 11,000 feet. The terrain directly below is at 11,200. The synthetic vision flashes red.
+
+There is nothing left to do. The accident report will note that the wreckage was found on the west slope of a 12,800-foot ridge, two miles south of the V-8 airway. Both occupants sustained fatal injuries. The weather in the area at the time included embedded thunderstorms with tops above 30,000 feet, severe turbulence, and heavy precipitation. The probable cause will cite the pilot's decision to attempt VFR flight into instrument meteorological conditions in mountainous terrain, and continued flight into known adverse weather.
+
+<div class="debrief">
+<strong>DEBRIEF — Controlled Flight Into Terrain</strong>
+
+<strong>What happened:</strong> After entering a closing gap between thunderstorm cells, you became trapped in IMC in mountainous terrain. Rather than declaring an emergency and requesting vectors to lower terrain, you attempted to climb above the weather — an impossibility for a normally aspirated piston single against a mature thunderstorm downdraft at high altitude. The aircraft was unable to maintain altitude and impacted terrain.
+
+<strong>ADM analysis:</strong> This outcome required a chain of three critical errors: continuing direct toward convective activity over the Divide, pressing into a closing gap between cells, and then attempting to out-climb a thunderstorm rather than immediately declaring an emergency. Each decision narrowed the available options. By the time you tried to climb, there was almost no margin left — but a 180-degree turn or an emergency descent might still have worked. The instinct to "get above it" is natural but fatally misguided in mountain thunderstorm terrain with a normally aspirated piston engine.
+
+<strong>Hazardous attitudes present:</strong> Invulnerability progressing to a form of resignation — rather than taking decisive emergency action (declaring, requesting vectors, descending toward known lower terrain), the attempt to climb represented a failure to adapt to a rapidly deteriorating situation.
+
+<strong>What good judgment looks like here:</strong> At the point where you were in IMC in the mountains, the correct action was immediate: declare MAYDAY, fly wings level, maintain best-rate-of-climb airspeed (not max pitch), and work with ATC to find lower terrain. The Eagle River valley was to the north and offered terrain as low as 7,000 feet. Survival in mountain IMC is about getting to lower terrain, not higher altitude.
+
+<strong>Key takeaway:</strong> A Cessna 182 cannot out-climb a thunderstorm. No piston single can. When trapped in IMC in the mountains, your only priorities are: fly the airplane, declare the emergency, and get to lower terrain. Pride and altitude are not your friends — survival is about descending toward safety, not climbing toward hope.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: A2-Turn180 [scenario branch-a ending]
+<<if $audioEnabled>><<run crossfadeEngine("engine-rough", "engine-smooth", 3000)>><</if>>
+You make the call.
+
+"Denver Center, four-seven-two-golf-foxtrot, unable to continue westbound. Executing a one-eighty, requesting vectors back to Broomfield or any suitable airport east of the Divide."
+
+"Four-seven-two-golf-foxtrot, roger, turn right heading zero-nine-zero. Cleared through the Bravo at one-four thousand five hundred. Broomfield is six-zero miles east."
+
+You bank right, firmly, 30 degrees. The turbulence is sharp through the turn but manageable. As you roll wings-level heading east, the air smooths almost immediately. The buildups are behind you now. Ahead is the Front Range and the plains beyond — clear, blue, benign.
+
+Jolie watches the mountains recede. "So... we're not going to Aspen?"
+
+"Not this way. Not right now."
+
+"The rehearsal dinner is at seven."
+
+"I know."
+
+She's quiet for a long moment. Then: "Can we drive?"
+
+You land back at KBJC forty minutes later. The FBO calls you a rental car. It's a four-hour drive to Aspen over Independence Pass — or five hours via I-70 and Glenwood Springs. You'll miss the rehearsal dinner setup, but you'll make the dinner itself. Barely.
+
+Jolie handles the rental paperwork while you tie down the Skylane. She doesn't say she's angry, but the garment bag comes out of the airplane with a certain emphasis.
+
+The drive is long. You stop for gas in Copper Mountain. The thunderstorms that would have been on your flight path are now visible to the south — towering, black, with lightning visible in broad daylight. Jolie sees them too.
+
+"Those are where we would have been?" she asks.
+
+"Yeah. Those are where we would have been."
+
+She doesn't say anything else about the rehearsal dinner.
+
+<div class="debrief">
+<strong>DEBRIEF — 180 and Drive</strong>
+
+<strong>What happened:</strong> After encountering rapidly building thunderstorms over the Continental Divide, you executed a 180-degree turn and returned to KBJC. You rented a car and drove to Aspen, arriving late for the rehearsal dinner but making the event. The aircraft and both occupants are safe.
+
+<strong>ADM analysis:</strong> Your initial decision to continue direct toward visible convection was suboptimal — the deviation north or a diversion to Rifle would have been better first moves. However, the critical save was executing the 180 when the situation deteriorated. This required overcoming get-there-itis (the rehearsal dinner commitment) and social pressure (Jolie's expectations). Turning around is one of the hardest decisions in general aviation, and you made it when it counted.
+
+<strong>Hazardous attitudes present:</strong> Get-there-itis influenced the initial decision to continue direct, but was overcome at the second decision point. The 180-degree turn is the textbook mountain weather response when conditions deteriorate beyond your comfort or capability.
+
+<strong>What good judgment looks like here:</strong> Ideally, the deviation or diversion would have happened at the first decision point, before entering the turbulence near the cells. The PIREP and Center's advisory were both strong signals. But the 180 was the right call when you made it — and the fact that you had four hours of fuel gave you the luxury of retreating without urgency.
+
+<strong>Key takeaway:</strong> The drive to Aspen is long and inconvenient. The drive home from a funeral is longer. When mountain weather says no, the answer is no — and the car rental counter is always open.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: A3-DescendEagle [scenario branch-a ending]
+<<if $audioEnabled>><<run crossfadeEngine("engine-rough", "engine-smooth", 3000)>><</if>>
+"Denver Center, four-seven-two-golf-foxtrot, requesting lower. I'd like to descend into the Eagle River valley and proceed to Eagle County."
+
+"Four-seven-two-golf-foxtrot, cleared to descend at pilot's discretion. Be advised the minimum vectoring altitude in the Eagle County area is one-one thousand five hundred. Report the field in sight."
+
+You pull the power back and begin a descent toward the valley to the north. The Eagle River valley is wide here — maybe five miles across — and the clouds are higher over the valley floor than over the ridgelines. You break out of the thin overcast at 12,000 feet and can see the valley stretching northwest toward Eagle and Glenwood Springs. Green irrigated fields, I-70 threading along the river, and the wide concrete runway at KEGE.
+
+"Center, four-seven-two-golf-foxtrot has the field in sight. We'll cancel flight following and switch to Eagle County CTAF."
+
+"Four-seven-two-golf-foxtrot, squawk VFR, frequency change approved. Good day."
+
+You land on Eagle County's generous 9,000-foot runway in smooth air. The FBO marshals you to a tiedown. It's 10:45 AM.
+
+"Well," Jolie says, looking at her phone. "Eagle is... not Aspen."
+
+"No. But there's a shuttle. Runs to Aspen every couple hours."
+
+It takes ninety minutes on the bus. You arrive in Aspen at 1:30 PM — plenty of time for the rehearsal dinner. The airplane is safely tied down at Eagle, and you'll pick it up tomorrow morning when the air is smooth and the thunderstorms are sleeping.
+
+Jolie leans against you on the shuttle. "That was a little exciting."
+
+"A little."
+
+"But we're here."
+
+"We're here."
+
+<div class="debrief">
+<strong>DEBRIEF — Diversion to Eagle County</strong>
+
+<strong>What happened:</strong> After pressing into the build-ups along the Divide, you recognized the deteriorating conditions and diverted to Eagle County Regional Airport. You descended into the Eagle River valley, landed safely, and took a shuttle to Aspen in time for the rehearsal dinner. The aircraft and both occupants are safe.
+
+<strong>ADM analysis:</strong> The initial decision to continue direct toward the build-ups was suboptimal — the weather signs were clear. However, when you found yourself in turbulence near the cells, you made a sound recovery decision: rather than pressing through or turning back across the turbulence, you used the terrain to your advantage by descending into the wider Eagle River valley, where the weather was better and a well-equipped airport was available. This is adaptive decision-making — recognizing that the original plan has failed and pivoting to the best available alternative.
+
+<strong>Hazardous attitudes present:</strong> Get-there-itis influenced the initial decision to continue, but you overcame it when the situation demanded. The descent to Eagle was a pragmatic choice that balanced safety with mission completion.
+
+<strong>What good judgment looks like here:</strong> Knowing your alternates — and knowing the terrain well enough to identify the Eagle River valley as an escape route — was the key. The diversion to Eagle was smooth because you'd planned for it (KEGE was on your alternates list). Good preflight planning created the option; good judgment exercised it.
+
+<strong>Key takeaway:</strong> An alternate isn't just a line on your flight plan — it's a decision you've already half-made. When the primary plan fails in the mountains, the pilot who knows where to go next doesn't hesitate. Eagle County was 38 miles from Aspen but might as well have been in another weather system. Use the geography.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: B-DeviateNorth [scenario branch-b]
+<<set $pathArray to $pathArray.concat(["Heading north toward Eagle County corridor"])>>
+<<if $audioEnabled>><<run playOneShot("radio-squelch", 0.4)>><</if>>
+"Denver Center, four-seven-two-golf-foxtrot, requesting deviation north of the airway. I'd like to proceed direct Eagle County VOR and then down the valley to Aspen."
+
+"Four-seven-two-golf-foxtrot, deviation approved. Proceed direct Eagle County, report passing the VOR."
+
+You turn right thirty degrees. The build-ups along the Divide are concentrated over the highest terrain — the Sawatch Range and the area around Red Table. To the north, the Gore Range is lower and the cells are more scattered. There's a visible corridor along the Eagle River valley that looks workable.
+
+Thirty minutes later you're overhead Eagle County VOR at 14,500, and the picture has changed again. The valley below you is clear — you can see the Eagle River, I-70, the town of Eagle — but to the south, between you and Aspen, a solid line of build-ups has formed along the ridge from Vail Pass to Independence Pass. The bases are at maybe 12,000 feet. The tops are well above you. Aspen is on the other side of that wall.
+
+Jolie has been watching the clouds build. "That doesn't look great."
+
+The G1000 shows Aspen 38 miles to the south-southeast. Rifle is 38 miles to the west, in lower terrain. Eagle County's runway is directly below you. The fuel totalizer shows 48 gallons remaining.
+
+You call Center: "Denver Center, four-seven-two-golf-foxtrot over the Eagle VOR, looking for a way south to Aspen. What are you seeing on radar?"
+
+"Four-seven-two-golf-foxtrot, I'm painting a solid line of moderate to heavy returns from Vail Pass southwest along the ridgeline. No gaps visible between your position and Aspen. I've had three aircraft in the last thirty minutes divert to Eagle or Rifle. Aspen is reporting scattered thunderstorms to the north."
+
+<<link "B1. Descend and land at Eagle County — the weather between here and Aspen is a wall" "B1-LandEagle">><<set $pathArray to $pathArray.concat(["Landed at Eagle County"])>><</link>>
+<<link "B2. Continue west to Rifle, then try to approach Aspen from the northwest through the Roaring Fork Valley" "B2-RifleRoute">><<set $pathArray to $pathArray.concat(["Continued to Rifle for the Roaring Fork approach"])>><</link>>
+<<link "B3. Hold overhead Eagle for 30 minutes — summer storms move fast, maybe a gap will open" "B3-HoldEagle">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Holding over Eagle, waiting for a gap"])>><</link>>
+<<link "B4. You can see the valley — descend below the weather and try to follow I-70 and the river south toward Aspen" "B4-ScudRun">><<set $badchoices to $badchoices + 2>><<set $pathArray to $pathArray.concat(["Descended to scud run through the valley"])>><</link>>
+
+:: B1-LandEagle [scenario branch-b ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+<<if $audioEnabled>><<run playOneShot("touchdown", 0.6)>><</if>>
+You make the call early and clean.
+
+"Denver Center, four-seven-two-golf-foxtrot, we'll cancel to Aspen. Requesting descent to Eagle County."
+
+"Four-seven-two-golf-foxtrot, descend at pilot's discretion. Squawk VFR, frequency change approved. Have a good day — smart call."
+
+You spiral down into the Eagle River valley and enter the pattern at Eagle County. The wind is picking up — 19 gusting 28 out of the west — but the 9,000-foot runway at KEGE absorbs it. You touch down firmly and taxi to the Signature FBO.
+
+It's 10:15 AM. The shuttle to Aspen leaves at 11:00. You'll be there by 12:30.
+
+Jolie adjusts her garment bag on her shoulder. "I was really hoping to fly in."
+
+"Me too. But that wall isn't going anywhere for hours."
+
+"I know. I'm not complaining." She looks at the mountains to the south, where the anvil tops are visible above the ridgeline. "I'm just glad we're on the ground."
+
+<div class="debrief">
+<strong>DEBRIEF — Clean Diversion to Eagle County</strong>
+
+<strong>What happened:</strong> After deviating north to avoid the initial convection, you assessed the weather between Eagle and Aspen and determined it was impassable. You made an early, decisive diversion to Eagle County Regional, landed safely, and arranged ground transportation to Aspen with time to spare. This is a textbook outcome.
+
+<strong>ADM analysis:</strong> Your decision-making chain was sound from the first deviation onward. You recognized the initial convection, deviated to a better route, and when that route proved blocked, you didn't hunt for shortcuts — you landed at the nearest suitable airport. The northern deviation was a legitimate strategy; the decision to stop at Eagle when the weather blocked the southern leg was the correct follow-through. You used ATC's radar picture to confirm what you could see out the window.
+
+<strong>Hazardous attitudes present:</strong> None dominated the decision chain. Get-there-itis was present (the wedding, Jolie's expectations) but was managed effectively. You maintained awareness that the mission could be completed by ground transportation if the flight couldn't continue.
+
+<strong>What good judgment looks like here:</strong> This is what good judgment looks like. The deviation was proactive, not reactive. The diversion was planned, not panicked. And the mental shift from "fly to Aspen" to "get to Aspen" is the hallmark of a mature pilot. The airplane is a tool for the mission, not the mission itself.
+
+<strong>Key takeaway:</strong> A diversion is not a failure — it's a decision. The pilot who diverts early has time, fuel, and options. The pilot who diverts late has none of those. Eagle County to Aspen is 90 minutes on a shuttle. It's a lifetime from the wrong side of a thunderstorm.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: B2-RifleRoute [scenario branch-b]
+<<set $pathArray to $pathArray.concat(["En route to Rifle"])>>
+You continue west along the Eagle River valley toward Rifle. The plan is to land at Rifle, or if the weather allows, continue southeast down the Roaring Fork Valley from Glenwood Springs toward Aspen — an approach from the northwest that avoids the worst of the weather over the Divide.
+
+The flight to Rifle takes twenty-five minutes. The valley is wide and the ceiling stays high — broken at 10,000 feet above the valley floor. You descend to 10,500 and the ride smooths out. The Roaring Fork Valley is visible ahead, branching southeast from where the river meets the Colorado River at Glenwood Springs.
+
+You call Rifle ASOS: winds 270 at 19 gusting 32. That's a direct crosswind on Runway 08/26. Manageable, but sporty in the 182 with those gusts.
+
+Looking down the Roaring Fork Valley toward Aspen, the picture is mixed. The first ten miles look open — scattered clouds, green valley floor, the river visible. But further south, toward Aspen, the valley narrows and the clouds are lower. You can't see Aspen from here. The valley disappears into a gray curtain about twenty miles out.
+
+<<link "B2a. Land at Rifle — you can see Aspen isn't reachable through the valley today" "B2a-LandRifle">><<set $pathArray to $pathArray.concat(["Landed at Rifle"])>><</link>>
+<<link "B2b. Continue down the Roaring Fork Valley — stay low and follow the river, see if it opens up" "B2b-RoaringFork">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Continued into the Roaring Fork Valley"])>><</link>>
+
+:: B2a-LandRifle [scenario branch-b ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+<<if $audioEnabled>><<run playOneShot("touchdown", 0.6)>><</if>>
+You descend into the pattern at Rifle. The crosswind is strong — you crab hard to the right on final for Runway 26, kicking it straight in the flare. The touchdown is firm but on centerline. You taxi to Atlantic Aviation and shut down.
+
+It's 11:15 AM. Rifle is 67 miles from Aspen by road — about an hour and forty-five minutes over Glenwood Canyon on I-70. The FBO desk can arrange a rental car.
+
+Jolie does the math on her phone. "We'll be there by 1:00. That works."
+
+"That works."
+
+The drive through Glenwood Canyon is spectacular — red rock walls, the Colorado River churning below, tunnels carved through the cliff face. At Glenwood Springs, you turn south on Highway 82 into the Roaring Fork Valley. Halfway to Aspen, you drive through a thunderstorm that drops hail on the rental car. The valley walls on either side disappear into cloud.
+
+Jolie looks at you. "That's the valley you were thinking about flying through?"
+
+"That was the plan, yeah."
+
+"I like this plan better."
+
+<div class="debrief">
+<strong>DEBRIEF — Diversion to Rifle, Drive to Aspen</strong>
+
+<strong>What happened:</strong> After deviating north and finding the direct route to Aspen blocked, you continued to Rifle and elected to drive the remaining distance to Aspen. You arrived with time to spare for the rehearsal dinner. The aircraft is safe at Rifle for pickup tomorrow.
+
+<strong>ADM analysis:</strong> Your decision chain was sound throughout. The initial deviation north was a good first move. Continuing to Rifle rather than holding or scud running gave you the best combination of a safe airport and proximity to your final destination. And the decision not to attempt the Roaring Fork Valley in marginal conditions was correct — as the drive through confirmed, the valley weather was worse than it appeared from the air.
+
+<strong>Hazardous attitudes present:</strong> None significant. Get-there-itis was present but managed — you found a way to complete the mission without compromising safety. This is mission completion through flexibility, not through risk-taking.
+
+<strong>What good judgment looks like here:</strong> You adapted. The original plan was direct to Aspen. When that failed, you tried the northern route. When that was blocked, you went to Rifle. Each decision was a rational response to changing conditions, and each kept all options open. You never committed to a path you couldn't retreat from.
+
+<strong>Key takeaway:</strong> Flexibility is the most underrated skill in mountain flying. The pilot who can say "the airplane stops here, but I don't have to" will always find a way to complete the mission. Rifle to Aspen is a beautiful drive. And the airplane will be there tomorrow when the mountains are quiet.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: B2b-RoaringFork [scenario branch-b]
+<<set $pathArray to $pathArray.concat(["Entered the valley low"])>>
+<<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 3000)>><</if>>
+You descend to 8,500 and enter the Roaring Fork Valley from the northwest, following the river. The valley is maybe three miles wide here, with terrain rising to 10,000 feet on both sides. The ceiling is scattered at 9,500 — enough room, but not much. You're VFR, but only by a thread.
+
+The first ten miles are fine. The river sparkles below, Highway 82 parallels it, and you can see small towns dotting the valley floor. Then the valley narrows. The walls on both sides steepen. The ceiling drops — broken at 9,000, then 8,700. You're at 8,500 and the terrain is at 7,200. That's 1,300 feet of vertical room and shrinking.
+
+Rain starts. Light at first, then steady. Visibility drops from ten miles to maybe four. You can see the road below and the river, but the valley ahead is fading into gray. You are flying up a narrowing valley with lowering ceilings, rising terrain, and no place to turn around.
+
+The town of Carbondale passes below. Aspen is fifteen miles ahead.
+
+<<link "B2b-1. Continue — you can still see the road, Aspen is fifteen miles, you're almost there" "B2b1-PressAspen">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Pressed on toward Aspen in deteriorating visibility"])>><</link>>
+<<link "B2b-2. Execute a 180 now while you still have room, get back to Rifle" "B2b2-TurnBack">><<set $pathArray to $pathArray.concat(["Turned back in the Roaring Fork Valley"])>><</link>>
+
+:: B2b1-PressAspen [scenario branch-b ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+You press on. The visibility drops to two miles. The ceiling is at 8,400 and you're at 8,300. The terrain ahead is rising — Aspen's field elevation is 7,837, but the valley floor climbs to 8,200 feet in the last few miles before the airport. You are a hundred feet above the terrain in two-mile visibility with mountains on both sides and rain on the windshield.
+
+You can't see the airport. You can barely see the road. And then you realize — the valley has curved left and you've drifted right. The terrain on the right side has risen to your altitude. Trees on a ridgeline flash past the right wing, close enough to count individual branches.
+
+You bank hard left. The stall horn chirps. You push the nose down, add power, and level the wings. The altimeter reads 8,100. The terrain is at 8,050.
+
+There — a gap in the clouds. Aspen's runway, visible for just a moment through a tear in the overcast. You dive for it. The approach is nothing that would appear in any manual — steep, fast, not aligned with either runway. But the wheels touch asphalt and you're down, rolling long on Runway 33, breathing hard.
+
+The tower controller's voice is flat: "November four-seven-two-golf-foxtrot, welcome to Aspen. Contact ground on one-two-one-point-seven-five when able. And sir — I'd suggest you call the FSDO when you have a moment."
+
+<div class="debrief">
+<strong>DEBRIEF — Scud Run Into Aspen</strong>
+
+<strong>What happened:</strong> You flew up the Roaring Fork Valley in deteriorating weather, descending below safe VFR minimums, and arrived at Aspen in conditions well below VFR weather minimums — effectively a VFR-into-IMC arrival. You landed safely, but the tower controller observed the approach and will likely file a report. You can expect an FAA inquiry.
+
+<strong>ADM analysis:</strong> This outcome represents a classic continuation bias chain. Each mile further into the narrowing valley made turning back harder — the valley was narrower, the ceilings lower, the terrain higher. What felt like a series of small, manageable decisions (continue a little further, descend a little more) was actually a one-way trip into a box canyon trap. The moment you descended below the ceiling in a narrowing valley, you committed to a path with no safe escape.
+
+<strong>Hazardous attitudes present:</strong> Get-there-itis (the wedding, fifteen miles to go), invulnerability ("I can still see the road"), and a progressive surrender of personal minimums. Each time you accepted a slightly worse condition — slightly lower ceiling, slightly less visibility — you normalized the deterioration.
+
+<strong>What good judgment looks like here:</strong> The turn-back should have happened at Carbondale when the ceiling dropped to 8,700 and the valley was still wide enough for a 180. In mountain valley flying, the rule is absolute: never fly into a valley you haven't confirmed you can fly out of. If you can't see the exit, you've already gone too far.
+
+<strong>Key takeaway:</strong> Scud running in mountain valleys kills experienced pilots. The terrain rises, the ceiling drops, the valley narrows, and at some point there is no room for a 180, no room to climb, and no room for error. Fifteen miles to go is not a reason to continue — it's a measurement of how close to the destination you were when you should have turned around.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: B2b2-TurnBack [scenario branch-b ending]
+<<if $audioEnabled>><<run crossfadeEngine("engine-rough", "engine-smooth", 3000)>><</if>>
+<<if $audioEnabled>><<run playOneShot("touchdown", 0.6)>><</if>>
+You've seen enough. The valley is narrowing, the ceiling is dropping, and you know exactly what this looks like from the accident reports. You bank into a standard-rate 180 — the valley is still wide enough here at Carbondale, maybe two miles across. You hold altitude at 8,500 and reverse course. Within five minutes, the ceiling is higher, the visibility is better, and the valley has widened. The Roaring Fork opens up as you fly northwest back toward Glenwood Springs and Rifle.
+
+You land at Rifle twenty minutes later. The crosswind has died down some — 270 at 14 gusting 22. The landing is uneventful.
+
+"That was the right call," Jolie says as you taxi in. She'd watched the valley closing behind you through the rear window. "I could see it getting bad."
+
+The drive to Aspen takes just under two hours. You arrive at 2:00 PM. Marcus is at the venue, arranging chairs. He looks up when you walk in.
+
+"Cutting it close! I thought you were flying in."
+
+"We were. The mountains had other plans."
+
+"Story of Colorado. Glad you're here."
+
+<div class="debrief">
+<strong>DEBRIEF — 180 in the Roaring Fork Valley</strong>
+
+<strong>What happened:</strong> While attempting to approach Aspen through the Roaring Fork Valley at low altitude, you recognized the classic signs of a valley weather trap — lowering ceilings, narrowing valley, rising terrain — and executed a 180-degree turn while you still had room. You returned to Rifle and drove to Aspen.
+
+<strong>ADM analysis:</strong> The decision to enter the Roaring Fork Valley at low altitude was a higher-risk choice — flying up a mountain valley in marginal weather is one of the most dangerous environments in general aviation. However, you recognized the deterioration before it became critical and made the correct recovery decision. The 180 at Carbondale was the right call at the right time. Another five miles further and the valley would have been too narrow for a safe turn.
+
+<strong>Hazardous attitudes present:</strong> Get-there-itis drove the decision to attempt the valley, but was overcome when the visual cues made the risk undeniable. The willingness to reverse course in a deteriorating situation — especially with a passenger and a social commitment waiting — reflects strong ADM.
+
+<strong>What good judgment looks like here:</strong> The best decision would have been to land at Rifle and not enter the valley at all. The second-best decision is the one you made: recognizing the trap early and getting out. Mountain valley flying requires constant evaluation of your escape options. The moment you can't execute a 180 in the available valley width, you've committed to whatever is ahead — and in mountain weather, "whatever is ahead" can change in minutes.
+
+<strong>Key takeaway:</strong> Every mile into a narrowing valley is a mile you have to fly back out. The 180 is the most important maneuver in mountain flying — not because it's difficult, but because the decision to use it is. Train yourself to see the deterioration one step before it forces your hand.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: B3-HoldEagle [scenario branch-b]
+<<set $pathArray to $pathArray.concat(["Circling over the Eagle valley, waiting"])>>
+You set up an orbit over the Eagle River valley at 12,500. The idea is simple: summer storms move fast. If you give it thirty minutes, maybe a gap opens in the weather to the south and you can slip through to Aspen.
+
+Twenty minutes in, the weather hasn't improved — it's gotten worse. The line of build-ups to the south has thickened. What was a wall with occasional gaps is now a solid curtain from Vail Pass to Independence Pass. The ASOS at Aspen is now reporting: winds 220 at 14 gusting 24, visibility 5 miles in light rain, broken at 5,000 AGL. Still technically VFR, but barely, and trending down.
+
+The fuel totalizer reads 42 gallons. You've burned 6 gallons orbiting. Still plenty of fuel — but each orbit costs about 2 gallons, and you're watching an asset evaporate into the air without getting closer to your destination.
+
+Jolie has been reading on her phone. She looks up. "It's been twenty minutes. Is it getting better?"
+
+"No."
+
+"So what are we doing?"
+
+<<link "B3a. Land at Eagle — this isn't opening up" "B3a-LandEagleDelayed">><<set $pathArray to $pathArray.concat(["Gave up the hold, landed at Eagle"])>><</link>>
+<<link "B3b. Give it fifteen more minutes — the TAF said improvement after 18Z" "B3b-KeepHolding">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Kept holding, waiting for improvement"])>><</link>>
+
+:: B3a-LandEagleDelayed [scenario branch-b ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+<<if $audioEnabled>><<run playOneShot("touchdown", 0.6)>><</if>>
+You descend and land at Eagle County. It's 11:00 AM — forty-five minutes later than if you'd landed on the first pass overhead. You've burned six extra gallons of fuel accomplishing nothing.
+
+The shuttle to Aspen departs at 11:30. You make it with time to spare.
+
+The rehearsal dinner goes well. Marcus gives a toast. Jolie wears the dress from the garment bag. You catch yourself looking out the restaurant window at the mountains, where distant lightning strobes above the ridgelines.
+
+<div class="debrief">
+<strong>DEBRIEF — Delayed Diversion to Eagle County</strong>
+
+<strong>What happened:</strong> After deviating north and finding the route to Aspen blocked, you held over Eagle Valley hoping for improvement. After twenty minutes with no change, you landed at Eagle County and shuttled to Aspen. The outcome is safe, but the hold was unproductive.
+
+<strong>ADM analysis:</strong> The deviation north was a good first decision. The hold, however, represents a subtle form of get-there-itis — the belief that conditions will improve if you just wait long enough. In mountain weather, an established line of thunderstorms doesn't typically open gaps on the timescale of a holding pattern. You burned fuel and time without gaining information that changed the decision.
+
+<strong>Hazardous attitudes present:</strong> Confirmation bias (the TAF predicted improvement, so you expected it despite visual evidence to the contrary) and a reluctance to accept that the flight was over. The TAF is a forecast, not a promise.
+
+<strong>What good judgment looks like here:</strong> Landing at Eagle on the first orbit would have been optimal. The weather picture was clear: a solid line of build-ups blocking the route south, multiple aircraft already diverting, and Aspen weather deteriorating. Holding overhead for improvement was low-probability hoping dressed up as a plan. The fuel burned in the hold had no return on investment.
+
+<strong>Key takeaway:</strong> Hope is not a strategy. When you can see the weather and it's not moving in your favor, the best time to land was five minutes ago. The second-best time is now. Every orbit in a hold is a decision to delay the decision — and in mountain weather, the delay rarely pays.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: B3b-KeepHolding [scenario branch-b ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+You orbit for another fifteen minutes. Then ten more. The weather doesn't improve. The line of build-ups to the south actually expands northeast, and now the east side of the Eagle Valley is getting clouds. The ASOS at Aspen updates: visibility 3 miles in rain, broken at 4,000, overcast at 6,500. No longer VFR.
+
+The fuel totalizer reads 36 gallons. You've burned 12 gallons holding. Not critical, but the margin is thinner than it was.
+
+You land at Eagle County at 11:45 AM. The wind has picked up — 25 gusting 35 out of the west. The landing is rough. You get it down, but a gust on rollout pushes you toward the runway edge before you correct with firm rudder.
+
+The shuttle has left. The next one is at 2:00 PM. You'll arrive in Aspen at 3:30, with the rehearsal dinner at 7:00. Tight but workable.
+
+Jolie sits in the FBO lounge, scrolling through her phone. "The shuttle would have gotten us there two hours ago."
+
+She's not wrong.
+
+<div class="debrief">
+<strong>DEBRIEF — Extended Hold and Late Diversion</strong>
+
+<strong>What happened:</strong> You held over Eagle Valley for over 45 minutes waiting for weather improvement that never came. By the time you landed, the winds at Eagle had strengthened significantly, the shuttle had departed, and you'd burned 12 gallons of fuel without getting any closer to Aspen.
+
+<strong>ADM analysis:</strong> This is a clear case of sunk-cost fallacy combined with get-there-itis. Each additional orbit felt like an investment in an improving future — "just five more minutes" — but the weather was on its own schedule, not yours. The hold became increasingly irrational as the evidence accumulated that the weather was worsening, not improving. The later landing at Eagle was also more dangerous due to stronger gusty crosswinds.
+
+<strong>Hazardous attitudes present:</strong> Get-there-itis (unwillingness to accept the diversion), confirmation bias (expecting the TAF forecast to materialize despite contrary evidence), and a subtle form of resignation — continuing the orbit because you hadn't yet decided what else to do.
+
+<strong>What good judgment looks like here:</strong> The first orbit told you everything you needed to know. The weather was a wall, it was established, and it was getting worse. One orbit for assessment is reasonable. Two is generous. Forty-five minutes is denial. The fuel, the time, and the increasing surface winds were all costs of waiting — and the return was zero.
+
+<strong>Key takeaway:</strong> Set a time limit on your holds. "I'll orbit for fifteen minutes and if it doesn't improve, I'm landing." Then hold yourself to it. Open-ended waiting invites hope to masquerade as planning — and burns fuel while it does.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: B4-ScudRun [scenario branch-b ending]
+<<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 3000)>><</if>>
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+You pull the power back and descend toward the valley floor. The Eagle River threads south through a canyon toward Vail. The ceiling over the valley is lower than it looked from above — what appeared to be scattered at 9,000 from 14,500 is actually broken at 8,800 from down here, and the valley walls rise to 11,000 on both sides. At 8,500, you're in the corridor. The road is below you. The river is to your right.
+
+For the first five miles, it works. You're following I-70 through the canyon, the ceiling holding about 1,000 feet above you, terrain clearance adequate. Jolie is quiet, watching the canyon walls slide past the windows.
+
+Then the valley turns south toward Vail Pass and the ceiling drops abruptly. Clouds are sitting on the pass itself. You can see the highway climbing into the overcast ahead. The terrain on both sides is above the ceiling. You are in a box — walls of rock on the left and right, a ceiling of cloud above, and rising terrain ahead.
+
+You execute a 180. The valley behind you is still open — barely. You fly north, back toward Eagle, and the ceiling lifts. You land at KEGE with shaking hands and a very quiet passenger.
+
+"That," Jolie says after a long silence, "was the stupidest thing I have ever experienced in an airplane."
+
+She's not wrong about that either.
+
+<div class="debrief">
+<strong>DEBRIEF — Scud Run Attempt Into Vail Pass</strong>
+
+<strong>What happened:</strong> From overhead the Eagle Valley, you chose to descend below the weather and attempt to follow the valley south toward Aspen. The valley narrowed into a canyon, the ceiling dropped, and you found yourself in a classic box canyon trap near Vail Pass. You executed a 180 and returned to Eagle County safely, but the situation was extremely dangerous.
+
+<strong>ADM analysis:</strong> Descending below weather in mountainous terrain to scud run through a canyon is one of the most dangerous decisions a VFR pilot can make. It combines low altitude, reduced visibility, high terrain, and no escape route into a single, compounding hazard. The decision reflected a willingness to accept dramatically increased risk to maintain the mission — a hallmark of get-there-itis at its most dangerous.
+
+<strong>Hazardous attitudes present:</strong> Multiple hazardous attitudes converged: macho ("I can make it through low"), invulnerability ("I can see the road, I'm fine"), and get-there-itis (the wedding commitment overriding risk assessment). The $badchoices counter reflects the severity — this decision carried twice the risk of most other choices in this scenario.
+
+<strong>What good judgment looks like here:</strong> From 14,500 feet overhead Eagle, the correct decision was to land at Eagle or divert to Rifle. Descending into a mountain valley with weather on the passes is never the answer for VFR flight. The valleys look open from above but narrow dramatically at lower altitudes, and ceilings that appear adequate from 14,500 may be marginal at valley-floor altitude.
+
+<strong>Key takeaway:</strong> Never descend into a mountain valley to get under weather. The view from above is deceptive — valleys narrow, ceilings compress, and terrain rises in ways that aren't apparent until you're committed. The place to make the decision is at altitude, with options. Once you're in the canyon, your options are gone.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: C-TurnBack [scenario branch-c]
+<<set $pathArray to $pathArray.concat(["Heading back to KBJC"])>>
+<<if $audioEnabled>><<run playOneShot("radio-squelch", 0.4)>><</if>>
+"Denver Center, four-seven-two-golf-foxtrot, we're heading back to Broomfield. The weather's building faster than the briefing said. Requesting vectors back to Broomfield."
+
+"Four-seven-two-golf-foxtrot, roger, turn right heading one-one-zero, cleared through the Denver Class Bravo at one-four thousand five hundred. KBJC is five-five miles east."
+
+The air is smooth the moment you turn east. The Front Range gleams in the morning sun. Behind you, the line of build-ups over the Divide is clearly visible — a wall of white and gray rising above the ridgeline, anvils spreading east in the upper winds. It looks worse now than it did when you made the call.
+
+Jolie doesn't say anything for five minutes. Then: "So we're not going to the wedding?"
+
+"We're not flying to the wedding. We can still drive."
+
+"Harvey, it's a four-hour drive."
+
+"I know."
+
+"The rehearsal dinner setup is at three."
+
+"I know that too."
+
+She stares out the window at the mountains. "You made the right call. I know that. I just..." She trails off.
+
+<<link "C1. Land at KBJC, rent a car, and drive to Aspen" "C1-DriveAspen">><<set $pathArray to $pathArray.concat(["Landing at KBJC, will drive to Aspen"])>><</link>>
+<<link "C2. Land at KBJC, wait a few hours, try again when the weather clears" "C2-WaitRetry">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Landing at KBJC to wait and retry later"])>><</link>>
+
+:: C1-DriveAspen [scenario branch-c ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+<<if $audioEnabled>><<run playOneShot("touchdown", 0.6)>><</if>>
+You land at Broomfield at 9:45 AM. The rental car counter is open. You're on I-70 by 10:15, climbing into the mountains by car instead of by air.
+
+The drive is beautiful. Through the Eisenhower Tunnel, over Vail Pass, through Glenwood Canyon. Jolie navigates. You stop once for gas and coffee in Silverthorne.
+
+Coming through Glenwood Canyon, you see the thunderstorms that are sitting on the mountains to the south — right where your flight path would have been. They're enormous. One of them has a shelf cloud that runs for twenty miles along the ridgeline. You can see rain falling in solid sheets on the peaks.
+
+You arrive in Aspen at 2:30 PM. Not in time for setup. In time for the rehearsal dinner. Marcus meets you at the venue.
+
+"I heard the weather's bad over the Divide today," he says. "Smart to drive."
+
+Jolie appears in her dress. She looks at you and smiles — not a strained smile, a real one. "You know what? The drive was kind of nice. We should do road trips more often."
+
+You don't tell her about the thunderstorms you saw from Glenwood Canyon. She saw them too.
+
+<div class="debrief">
+<strong>DEBRIEF — Early Turn Back and Drive</strong>
+
+<strong>What happened:</strong> Before reaching the Continental Divide, you assessed the rapidly building convective weather and made the decision to return to KBJC. You rented a car and drove to Aspen, arriving in time for the rehearsal dinner but missing the setup. The aircraft and both occupants are safe.
+
+<strong>ADM analysis:</strong> This is excellent decision-making. You recognized that the weather was deteriorating faster than forecast, evaluated the risk, and made a conservative, early decision to return — before the situation forced your hand. The decision was made with plenty of fuel, altitude, and options. This is the kind of decision that never makes the NTSB database because nothing goes wrong.
+
+<strong>Hazardous attitudes present:</strong> Get-there-itis was present (the wedding, the commitment to Marcus, Jolie's expectations) but was successfully managed. The social pressure was real — Jolie was disappointed, the timing was tight — but you maintained your aeronautical decision-making authority. The mission (getting to Aspen) was completed by alternative means.
+
+<strong>What good judgment looks like here:</strong> This is what good judgment looks like. The signs were clear: convective build-ups exceeding the briefing forecast, a PIREP confirming turbulence on the route, and visual evidence of rapid cell development. The decision to turn back before reaching the most dangerous portion of the route — the high terrain crossing — preserved maximum options. You never entered a situation where the outcome was in doubt.
+
+<strong>Key takeaway:</strong> The best mountain flying decision is often made on the ground, or on the east side of the Divide. The pilot who turns back with four hours of fuel and 55 miles of clear air behind them made a decision. The pilot who turns back in a downdraft at 12,000 feet with cells on both sides is surviving a crisis. Be the first pilot.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: C2-WaitRetry [scenario branch-c ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+You land at Broomfield and taxi to Sheltair. The plan is to wait — summer storms build in the afternoon and clear by evening. Maybe by 4:00 or 5:00 PM you can make another attempt.
+
+You and Jolie sit in the FBO lounge. You watch the weather. The ASOS at Aspen goes from broken to overcast to thunderstorms at 1:00 PM, just as the TAF predicted. Leadville reports thunderstorms. Eagle reports thunderstorms. The entire western slope is socked in.
+
+At 3:00 PM, the weather starts to improve at Aspen. By 4:00, it's VFR — scattered at 8,000, visibility 10 miles. The TAF says it'll hold through the evening. You could launch now and be there by 5:15.
+
+But you'd be crossing the Divide at 5:00 PM with residual convective activity along the ridgeline. The storms have weakened but not died — the radar still shows cells scattered along the Divide. And the flight would put you into Aspen just before sunset in an unfamiliar mountain valley after a long, frustrating day.
+
+Jolie looks up from her phone. "Marcus texted. Dinner starts at seven. If we leave now..."
+
+She means if you fly now. But you know what you'd be flying into — a mountain crossing in the unstable air behind a convective cycle, tired, with sunset approaching and a passenger who's been waiting all day.
+
+You call Marcus. You tell him you're driving. You leave at 4:00 PM and arrive at 8:30, halfway through dinner. Marcus saved you a plate.
+
+The 182 spends the night at Broomfield. You fly to Aspen the next morning at 7:00 AM in smooth, clear air. The mountains are silent and beautiful and completely unthreatening. That's how they work.
+
+<div class="debrief">
+<strong>DEBRIEF — Wait, Re-evaluate, and Drive</strong>
+
+<strong>What happened:</strong> After returning to KBJC, you waited for weather improvement with the intention of making a second attempt. When the weather partially cleared in the late afternoon, you correctly assessed that the combination of residual instability, approaching sunset, fatigue, and an unfamiliar mountain destination made a second attempt unwise. You drove to Aspen and arrived late for the rehearsal dinner.
+
+<strong>ADM analysis:</strong> The initial turn-back was a good decision. The decision to wait for improvement was understandable but introduced a secondary risk — the temptation to launch into marginal post-storm conditions under time pressure. Your final decision not to fly was the right call but required recognizing that the risk picture had changed: you were now tired, the day was shorter, the weather was unstable, and the motivation to go was emotional rather than rational. The fact that the next morning's flight was smooth and uneventful confirms that patience — real patience, not one-more-hour patience — was the answer.
+
+<strong>Hazardous attitudes present:</strong> Get-there-itis persisted throughout the day. The wait-and-retry approach is itself a form of get-there-itis — it preserves the option to fly rather than committing to the drive. The hazardous attitude was managed, but it cost you a day of mental energy fighting the urge to go.
+
+<strong>What good judgment looks like here:</strong> Once you returned to KBJC in the morning, the cleanest decision would have been to immediately drive. The window for VFR mountain crossing was clearly closing. Waiting for improvement extended the stress and created a secondary decision point where get-there-itis could reassert itself. However, the final decision not to fly was sound and showed disciplined re-evaluation.
+
+<strong>Key takeaway:</strong> Be honest about your decision: are you waiting for information, or are you waiting for permission? If the weather clears and you'd still hesitate, the answer was always to drive. Don't let the desire to fly make you a prisoner of the FBO lounge all day.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: D-DescendValley [scenario branch-d]
+<<set $pathArray to $pathArray.concat(["Descending toward the valleys near Leadville"])>>
+<<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 2000)>><</if>>
+You begin descending toward the valley south of the Divide, aiming for the area around Leadville and the upper Arkansas River valley. The idea is to stay below the build-ups — the bases look like they're at 14,000 to 15,000 feet, and the valley floor is at 9,500 to 10,000. If you can drop into that gap, you might find clear air to work south of the worst cells and then cut west toward Aspen through one of the lower passes.
+
+Denver Center: "Four-seven-two-golf-foxtrot, be advised, Leadville is reporting overcast at six thousand AGL, altimeter three-zero-two-four. Say your intentions."
+
+You descend through 13,000. The turbulence begins — not severe, but a persistent, jarring chop that makes the yoke twitch in your hands. The valley below becomes visible through gaps in the clouds: brown-green terrain, scattered buildings, the straight line of a runway. Leadville.
+
+At 11,500 you're below the main cloud deck. The valley is wide enough here — maybe eight miles across — and the ceiling is holding at about 15,000 to 16,000 feet above the valley floor. Visibility is 10 miles. The ride is rough but manageable.
+
+But the terrain is high. Very high. Leadville's airport is at 9,934 feet. The surrounding peaks — Mounts Elbert and Massive — are above 14,000. You're at 11,500 with mountains on three sides that are above your altitude. And the cells to the west, between here and Aspen, are sitting right on the passes.
+
+The G1000 shows Aspen 26 miles to the west. Between you and Aspen: the Sawatch Range, with Independence Pass at 12,095 feet and the terrain on either side above 13,500. The pass is in the clouds.
+
+<<link "D1. Land at Leadville — you're in a box with limited options and high terrain all around" "D1-LandLeadville">><<set $pathArray to $pathArray.concat(["Landing at Leadville"])>><</link>>
+<<link "D2. Try to cross Independence Pass to Aspen — it's only 26 miles" "D2-IndependencePass">><<set $badchoices to $badchoices + 2>><<set $pathArray to $pathArray.concat(["Attempting Independence Pass crossing"])>><</link>>
+<<link "D3. Turn east, climb back out of the valley, and head for KBJC" "D3-ClimbOut">><<set $pathArray to $pathArray.concat(["Climbing out of the valley eastbound"])>><</link>>
+
+:: D1-LandLeadville [scenario branch-d ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+<<if $audioEnabled>><<run playOneShot("touchdown", 0.6)>><</if>>
+You enter the pattern at Leadville — Lake County Airport, the highest airport in North America with a paved runway. Right traffic for Runway 34. The wind is out of the northwest at 12, gusting 18.
+
+The density altitude check runs through your head. The ASOS said 1°C at 0845. It's been over an hour. If the temperature has climbed to 10°C, the density altitude is around 11,500 feet. Takeoff roll: over 1,800 feet. Rate of climb: maybe 250 fpm. And that's if you need to depart. Right now you just need to land.
+
+The approach is straightforward — long final, PAPI out of service, but you've got the G1000's altitude references. The 6,400-foot runway at Leadville is more than enough for landing. You touch down firmly and roll out. The air is noticeably thin as you step out of the airplane. Even walking feels slightly effortful.
+
+There is no shuttle from Leadville to Aspen. There is no rental car counter. The FBO — such as it is — has a phone and a vending machine.
+
+You call the one taxi company in Leadville. A driver takes you and Jolie over Independence Pass by car — a winding mountain road that climbs to 12,095 feet. The drive takes ninety minutes. You arrive in Aspen at 1:30 PM. Jolie's garment bag has not wrinkled.
+
+The airplane sits at Leadville. You'll deal with it tomorrow, in the cool morning air, when the density altitude is reasonable and the mountains are quiet.
+
+<div class="debrief">
+<strong>DEBRIEF — Diversion to Leadville</strong>
+
+<strong>What happened:</strong> After descending into the upper Arkansas Valley, you recognized that you were in high terrain with weather blocking the western passes. You landed at Leadville — the highest paved airport in North America — and arranged ground transportation to Aspen. The aircraft and both occupants are safe.
+
+<strong>ADM analysis:</strong> The initial descent into the valley was a higher-risk decision, as it placed you in a terrain-limited environment with few escape options. However, once in the valley, you made the correct assessment: the passes to Aspen were closed by weather, the terrain was above you on three sides, and the safest action was to land at the nearest airport. The decision to land at Leadville rather than attempting the pass was critical. Density altitude is a consideration for any future departure from this airport.
+
+<strong>Hazardous attitudes present:</strong> The initial descent reflected a degree of invulnerability — the belief that you could find a path through the mountains below the weather. Once in the valley, however, you managed the situation well and didn't compound the initial error.
+
+<strong>What good judgment looks like here:</strong> Ideally, the descent into the valley wouldn't have happened — deviating north or turning back were safer options. But given the situation you were in, landing at Leadville was sound. The key lesson is that descending below weather in mountain terrain narrows your options dramatically. The valley felt open from 14,500, but at 11,500, the mountains hemmed you in.
+
+<strong>Key takeaway:</strong> High terrain is a one-way valve. Descending into a mountain valley is easy — the airplane does it naturally. Climbing back out, especially at high density altitudes with weather overhead, may not be possible. Before descending below ridge-top altitude in the mountains, ask yourself: can I get back up?
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: D2-IndependencePass [scenario branch-d ending]
+<<if $audioEnabled>><<audio ":engine" stop>><</if>>
+You turn west toward Independence Pass. The pass itself is at 12,095 feet. You're at 11,500 and climbing, but the 182 is sluggish — at this density altitude, the rate of climb is barely 200 feet per minute. Full power, best angle, and the VSI needle is barely above zero.
+
+The terrain rises ahead. The pass is visible through scattered clouds — a notch in the ridgeline, with rocky slopes climbing steeply on either side. But the clouds are sitting in the notch. What looked like a gap from the valley is a low ceiling draped over the pass like a blanket.
+
+You reach 12,000. The pass is two miles ahead and the cloud base is at 12,200. That's 200 feet of clearance — if the cloud base is uniform, which it isn't. Wisps of cloud stream across the pass in the wind. Turbulence increases. The 182 gets hit by a downdraft and the altimeter drops to 11,700.
+
+You are below the pass elevation, in turbulence, with terrain rising on both sides, and cloud obscuring the route ahead.
+
+The decision is made for you. You bank hard right and retreat into the valley. The descent back to 10,500 is rough. Leadville's runway appears through the haze and you land, pulse hammering, with 2,000 feet of runway to spare.
+
+Jolie has not said a word since the pass attempt. As you shut down on the ramp, she turns to you.
+
+"Don't ever do that again."
+
+<div class="debrief">
+<strong>DEBRIEF — Failed Pass Crossing Attempt</strong>
+
+<strong>What happened:</strong> From the upper Arkansas Valley, you attempted to cross Independence Pass at 12,095 feet in a Cessna 182 with a density altitude above 12,000 feet. The aircraft was unable to out-climb the terrain, clouds obscured the pass, and turbulence pushed you below pass elevation. You retreated to Leadville and landed safely, but the pass crossing attempt was extremely dangerous.
+
+<strong>ADM analysis:</strong> This outcome represents the most dangerous decision chain in the scenario short of a fatal outcome. You descended into a terrain-limited valley (first error), then attempted to cross a 12,000-foot pass in an aircraft with barely 200 fpm climb performance at that altitude (second error). The physics were simple: the airplane couldn't climb fast enough, the terrain was rising faster, and the weather was sitting on the pass. Had the downdraft been 500 fpm instead of 300, or had the retreat path been blocked by weather, this scenario ends differently.
+
+<strong>Hazardous attitudes present:</strong> Get-there-itis in its most dangerous form — the destination was only 26 miles away, and the temptation to push through "just one more obstacle" overrode the physical evidence that the airplane couldn't do it. Invulnerability ("the pass is right there, I can see it"). Macho ("I can fly through this").
+
+<strong>What good judgment looks like here:</strong> Independence Pass at 12,095 feet requires at least 12,500 feet to cross safely in VFR conditions — and that's in clear, smooth air. With clouds on the pass, turbulence, and density altitude reducing the aircraft's climb performance to near-zero, the crossing was physically impossible. The correct decision was to land at Leadville immediately upon reaching the valley and recognizing that the western passes were closed. No mountain pass is worth attempting when you can't out-climb the terrain on either side.
+
+<strong>Key takeaway:</strong> Mountain passes have a minimum altitude and they have a real altitude. The minimum altitude assumes standard conditions, no wind, no clouds, and an aircraft performing at book numbers. When density altitude degrades your climb rate to 200 fpm, a 12,000-foot pass requires you to start the crossing well above 12,000 — and if you can't, the pass is closed to you regardless of what it looks like on the chart.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: D3-ClimbOut [scenario branch-d ending]
+<<if $audioEnabled>><<run crossfadeEngine("engine-rough", "engine-smooth", 3000)>><</if>>
+You've seen enough. The valley is a trap — high terrain on three sides, weather on the passes, and no good options going west. Time to get out the way you came in.
+
+You apply full power and begin climbing east. The terrain along the eastern edge of the valley drops toward the foothills, and the cloud deck above is higher here — bases at 15,000 to 16,000. The 182 climbs slowly at first — 300 fpm at 11,500 feet — but as you clear the ridgeline at 12,800 and the terrain drops away below you, the air smooths and the climb rate improves. By 13,500, you're above the foothills. By 14,500, you're in clear air heading east toward the Front Range.
+
+Denver Center picks you up again. "Four-seven-two-golf-foxtrot, radar contact, seven-zero miles west of Broomfield. Say intentions."
+
+"Four-seven-two-golf-foxtrot, we're going back to Broomfield. Done for the day."
+
+"Roger. Cleared through the Bravo at one-four thousand five hundred. And four-seven-two-golf-foxtrot — good decision."
+
+You land at KBJC at 10:30 AM. The rental car counter is open. Jolie handles the paperwork — she seems to have accepted the situation with an equanimity you appreciate.
+
+The drive to Aspen takes four hours. You arrive at 3:00 PM. You help Marcus set up for the rehearsal dinner, as promised, with thirty minutes to spare.
+
+<div class="debrief">
+<strong>DEBRIEF — Climb Out and Drive</strong>
+
+<strong>What happened:</strong> After descending into the upper Arkansas Valley and finding the western passes blocked by weather, you reversed course and climbed back out of the valley eastbound. You returned to KBJC and drove to Aspen, arriving in time for the rehearsal dinner setup.
+
+<strong>ADM analysis:</strong> The initial descent into the valley was suboptimal — it traded altitude and options for proximity to the destination. However, the recovery was sound: rather than compounding the error by attempting a pass crossing or landing at a high-altitude airport with limited services, you climbed back out the way you came in. This required recognizing that the valley was a dead end and accepting the time cost of backtracking. The ability to reverse a bad decision before it becomes a worse one is the defining skill of safe mountain flying.
+
+<strong>Hazardous attitudes present:</strong> The initial descent reflected get-there-itis and mild invulnerability. Both were overcome when the reality of the valley environment became clear. The climb-out decision showed healthy anti-authority ("I know where I was trying to go, but the mountains say no") and self-discipline.
+
+<strong>What good judgment looks like here:</strong> Ideally, the descent into the valley wouldn't have happened. But given that it did, the climb-out was the best recovery available. You had the altitude to get out (the eastern terrain is lower), the fuel to get back to KBJC (plenty), and the daylight to complete the drive. The key was recognizing that the valley was not going to lead to Aspen today.
+
+<strong>Key takeaway:</strong> In mountain flying, the ability to backtrack is a survival skill. If you descend into a valley and don't like what you find, the strongest move is to climb back out — not to push deeper looking for a way through. The exit is behind you, not ahead.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
+
+:: E-DivertRifle [scenario branch-e ending]
+<<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-smooth", 1000)>><</if>>
+<<if $audioEnabled>><<run playOneShot("touchdown", 0.6)>><</if>>
+<<set $pathArray to $pathArray.concat(["En route to Rifle"])>>
+"Denver Center, four-seven-two-golf-foxtrot, we're diverting to Rifle. Requesting direct."
+
+"Four-seven-two-golf-foxtrot, cleared direct Rifle, descend at pilot's discretion. Rifle altimeter two-niner-niner-niner."
+
+You turn northwest and begin descending. The Colorado River valley opens up ahead — wide, low terrain, the town of Glenwood Springs visible in the distance. The weather here is dramatically different from the Divide: overcast at 10,000, but high enough above the valley floor to be comfortable. The turbulence dies as you leave the mountain ridgeline behind.
+
+The flight to Rifle takes thirty-five minutes. You descend into the pattern, join a left downwind for Runway 26 — the wind is out of the west at 19 gusting 32. It's gusty but workable on Rifle's wide, 7,000-foot runway. You touch down firmly, add a correction for a gust on rollout, and taxi to Atlantic Aviation.
+
+It's 10:30 AM. Aspen is 67 miles by road — an hour and forty-five minutes through Glenwood Canyon.
+
+The FBO desk arranges a rental car. You're on the road by 11:00. Through Glenwood Canyon, the Colorado River churns below red sandstone walls. At Glenwood Springs, you turn south on Highway 82. The Roaring Fork Valley stretches toward Aspen, green and narrow.
+
+You arrive in Aspen at 12:45 PM. Marcus texts: "Perfect timing! Chairs need moving."
+
+Jolie changes into her dress at the venue. You move chairs. The rehearsal dinner is lovely. Nobody asks how you got there.
+
+<div class="debrief">
+<strong>DEBRIEF — Early Diversion to Rifle</strong>
+
+<strong>What happened:</strong> At the first sign of convective weather building over the Continental Divide, you diverted to Rifle Garfield County Airport in the lower Colorado River valley. You landed safely, rented a car, and drove to Aspen with time to spare for the rehearsal dinner setup. This is the optimal outcome for this scenario.
+
+<strong>ADM analysis:</strong> Your decision-making was excellent. When the build-ups over the Divide exceeded what the briefing forecast, and the PIREP confirmed turbulence on the route, you immediately identified the best alternative: Rifle, which sits in lower terrain northwest of the Divide, has an ILS for weather backup, a 7,000-foot runway, and is the closest airport to Aspen by road. You didn't attempt to find gaps, hold for improvement, or descend into terrain-limited valleys. You went where the weather was better and the options were best.
+
+<strong>Hazardous attitudes present:</strong> None dominated. Get-there-itis was present (the wedding, Jolie's expectations, Marcus's request) but was channeled productively — you found a way to complete the mission without compromising safety. This is the difference between managing get-there-itis and being controlled by it.
+
+<strong>What good judgment looks like here:</strong> This is the textbook mountain weather decision. The key elements: early recognition of deteriorating conditions, immediate action (no holding, no gap-hunting), selection of an alternate that maximizes safety AND mission completion, and smooth execution. You had the fuel, altitude, and time to reach Rifle comfortably. The drive to Aspen was short and scenic. The airplane is safe for pickup tomorrow.
+
+<strong>Key takeaway:</strong> The pilot who diverts to Rifle at 9:30 AM is eating lunch in Aspen at 1:00 PM. The pilot who pushes into the build-ups at 9:30 AM is the subject of a Center weather advisory at 10:00 AM. Know where the good weather is. Go there first. Complete the mission from there.
+</div>
+
+<strong>Your path through this scenario:</strong>
+<<for _i, _step range $pathArray>>
+  _step
+<</for>>
+
+<<link "Return to Start">><<run Engine.restart()>><</link>>
