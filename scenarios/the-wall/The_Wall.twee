@@ -337,7 +337,7 @@ a.link-internal:hover {
 <div class="scenario-title">The Wall</div>
 <div class="scenario-subtitle">A mountain weather scenario — KBJC to KASE</div>
 
-It's a Saturday morning in late July. You and Jolie are flying from Rocky Mountain Metropolitan Airport in Broomfield to Aspen for your friend Marcus's wedding. The rehearsal dinner is tonight at 7 PM — Marcus asked you specifically to be there early to help set up. Jolie's already dressed for dinner and her garment bag is in the back of the Skylane.
+It's a Saturday morning in late July. You and Rachel are flying from Rocky Mountain Metropolitan Airport in Broomfield to Aspen for your friend Ben's wedding. The rehearsal dinner is tonight at 7 PM — Ben asked you specifically to be there early to help set up. Rachel's already dressed for dinner and her garment bag is in the back of the Skylane.
 
 The 182T is fueled, preflighted, and parked on the Sheltair ramp. The sun is already warm at 8:30 AM, and you can see the front range to the west. A few cumulus are starting to pop over the peaks, but that's normal for a summer morning. You've got time to review your materials before starting the engine.
 
@@ -414,7 +414,7 @@ Nothing significant for KBJC, KASE, or the route. KLXV: PAPI RWY 16 out of servi
 <strong>ETE:</strong> 0+53 (plus 15 min climb)
 <strong>Fuel on board:</strong> 65 gallons (5.2 hrs endurance at 12.5 GPH cruise)
 <strong>Fuel required:</strong> ~18 gal (1.1 hr flight + 45 min reserve = 1.85 hrs)
-<strong>Passengers:</strong> 1 (Jolie)
+<strong>Passengers:</strong> 1 (Rachel)
 <strong>Remarks:</strong> VFR flight following requested with Denver Center
 
 <strong>Alternates considered:</strong>
@@ -490,8 +490,9 @@ The C182T's service ceiling of 18,100 ft is a theoretical number at maximum gros
 <strong>Denver Sectional — KBJC to KASE corridor:</strong>
 
 <div class="sectional-container">
-<em>[Sectional chart clip will be embedded here — KBJC to KASE via Red Table VOR]</em>
-<div class="sectional-label">Denver Sectional Chart — Rocky Mountain Metro (KBJC) to Aspen (KASE)<br>Chart clip pending — see scenario development notes</div>
+<script id="sectional-zoom-data" type="text/plain">%%AREA_MAP_DATA_URI%%</script>
+<img src="%%AREA_MAP_DATA_URI%%" onclick="openZoomChart()" style="cursor:zoom-in; max-width:100%; border:1px solid #999; border-radius:4px;" alt="Area map — KBJC to KASE corridor">
+<div class="sectional-label">Area Map — Rocky Mountain Metro (KBJC) to Aspen (KASE)<br><em>Click to open in zoomable viewer</em></div>
 </div>
 
 <div class="chart-disclaimer"><em>This chart is provided for training and educational purposes only. It is not intended for navigation and may not reflect current aeronautical information. Always use current, officially published FAA charts and publications for flight planning and navigation.</em></div>
@@ -506,7 +507,7 @@ The C182T's service ceiling of 18,100 ft is a theoretical number at maximum gros
 <<set $pathArray to $pathArray.concat(["Departed KBJC, climbing westbound"])>>
 <<if $audioEnabled>><<audio "engine-smooth" loop volume 0.3 play>><</if>>
 <<if $audioEnabled>><<audio "atc-ambience" loop volume 0.08 play>><</if>>
-Broomfield Tower cleared you for a westbound departure off 30R, and you climbed out over the foothills in smooth morning air. Jolie has her sunglasses on, watching the suburbs fall away below. The G1000 shows the magenta line stretching west toward Red Table VOR — 115 miles to Aspen. You picked up flight following with Denver Center climbing through 9,500.
+Broomfield Tower cleared you for a westbound departure off 30R, and you climbed out over the foothills in smooth morning air. Rachel has her sunglasses on, watching the suburbs fall away below. The G1000 shows the magenta line stretching west toward Red Table VOR — 115 miles to Aspen. You picked up flight following with Denver Center climbing through 9,500.
 
 "November four-seven-two-golf-foxtrot, Denver Center, radar contact. Altimeter three-zero-one-two. Say requested altitude."
 
@@ -520,7 +521,7 @@ Twenty minutes out of Broomfield, the picture starts to change. The cumulus over
 
 Denver Center: "Four-seven-two-golf-foxtrot, be advised, pilot report from a Beech Baron, moderate turbulence and rain showers over Red Table VOR at one-five thousand, approximately ten minutes ago. Several aircraft deviating north and south of the airway."
 
-Jolie pulls her sunglasses off and looks at the build-ups ahead. "Those are getting big. Is that a problem?"
+Rachel pulls her sunglasses off and looks at the build-ups ahead. "Those are getting big. Is that a problem?"
 
 The G1000 shows 85 miles to Aspen. You've burned 8 gallons. The fuel totalizer says 57 gallons remaining — over four hours of fuel. The weather behind you to the east is still clear. To the north, the clouds look slightly less developed. To the south, over Leadville and the Sawatch Range, the build-ups are heavy. Directly ahead, that anvil is getting wider.
 
@@ -535,7 +536,7 @@ The G1000 shows 85 miles to Aspen. You've burned 8 gallons. The fuel totalizer s
 <<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 3000)>><</if>>
 You hold course. There are gaps between the cells — you can see blue sky between two of the larger build-ups, maybe eight miles wide. If you can thread through there, you'll be over the Divide and descending into the Roaring Fork Valley in twenty minutes. The timing should work.
 
-The first turbulence hits at 14,200. Not violent — a sharp bump, then sustained moderate chop that rattles the yoke. The vertical speed indicator swings between plus 500 and minus 800 in the updrafts and downdrafts along the cell boundaries. Rain streaks appear on the windshield. Jolie grabs the handle above the door.
+The first turbulence hits at 14,200. Not violent — a sharp bump, then sustained moderate chop that rattles the yoke. The vertical speed indicator swings between plus 500 and minus 800 in the updrafts and downdrafts along the cell boundaries. Rain streaks appear on the windshield. Rachel grabs the handle above the door.
 
 You push through. The gap you were aiming for is narrower than it looked — maybe four miles now. The cells are merging. Through the gap, you can see the terrain below: the Eagle River valley, green and brown, maybe 9,000 feet below you. But the tops of the build-ups on either side are well above you. Lightning flashes inside the cell to your left.
 
@@ -556,7 +557,7 @@ The downdraft hits without warning. The VSI pegs at minus 2,000 feet per minute.
 
 You're in the cloud. The world outside the windshield is gray-white nothing. The G1000's synthetic vision shows mountain terrain filling the screen — ridgelines at your altitude and above, on both sides. Turbulence is severe now — the airplane is being thrown around hard enough that your headset lifts off your ears.
 
-Jolie says nothing. Her hands are white on the armrest.
+Rachel says nothing. Her hands are white on the armrest.
 
 <<link "A1a. Declare an emergency and ask Center for vectors to lower terrain" "A1a-DeclareEmergency">><<set $pathArray to $pathArray.concat(["Declared emergency in IMC over mountains"])>><</link>>
 <<link "A1b. Focus on flying instruments — wings level, altitude, airspeed — and try to climb above it" "A1b-ClimbAbove">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Attempted to climb above the weather"])>><</link>>
@@ -573,18 +574,18 @@ Jolie says nothing. Her hands are white on the armrest.
 
 You fly the heading. The turbulence is still severe but the rain begins to lighten after four agonizing minutes. The altimeter reads 11,800 — you've lost nearly 3,000 feet since entering the gap. But the G1000 shows the Eagle River valley opening up ahead, terrain dropping. At 11,500 you break out of the clouds. The valley is below you — green, wide, and the terrain ahead drops to 7,000 feet. Eagle County airport is twelve miles to the north.
 
-You land at KEGE twenty minutes later, hands still shaking. Jolie doesn't speak until the prop stops.
+You land at KEGE twenty minutes later, hands still shaking. Rachel doesn't speak until the prop stops.
 
 "I am never doing that again," she says quietly. "We can drive."
 
 <div class="debrief">
 <strong>DEBRIEF — Emergency Descent to Eagle County</strong>
 
-<strong>What happened:</strong> You entered a narrowing gap between thunderstorm cells over the Continental Divide and got caught in a severe downdraft that pushed you into IMC in mountainous terrain. You declared an emergency, followed ATC vectors, and descended into the Eagle River valley, landing safely at Eagle County Regional. The aircraft is undamaged. You and Jolie are unharmed but shaken.
+<strong>What happened:</strong> You entered a narrowing gap between thunderstorm cells over the Continental Divide and got caught in a severe downdraft that pushed you into IMC in mountainous terrain. You declared an emergency, followed ATC vectors, and descended into the Eagle River valley, landing safely at Eagle County Regional. The aircraft is undamaged. You and Rachel are unharmed but shaken.
 
 <strong>ADM analysis:</strong> Two critical errors led to this outcome. First, continuing direct toward visible convective build-ups over the Divide rather than deviating early (impulsivity — "I can make it through the gap"). Second, pressing into a closing gap between cells after already experiencing moderate turbulence and a downdraft. The saving decision was declaring an emergency immediately when the situation deteriorated beyond recovery — this enabled ATC assistance when you needed it most.
 
-<strong>Hazardous attitudes present:</strong> Invulnerability ("the gap is wide enough"), macho ("I can thread through this"), and get-there-itis (the wedding, the commitment to Marcus, Jolie's expectations). The PIREP from the Baron and Center's deviation advisory were both clear warnings that went unheeded.
+<strong>Hazardous attitudes present:</strong> Invulnerability ("the gap is wide enough"), macho ("I can thread through this"), and get-there-itis (the wedding, the commitment to Ben, Rachel's expectations). The PIREP from the Baron and Center's deviation advisory were both clear warnings that went unheeded.
 
 <strong>What good judgment looks like here:</strong> When Denver Center reported heavy precipitation along the airway and the PIREP indicated moderate turbulence, the correct response was to deviate — not to look for gaps. Thunderstorm gaps close faster than a piston single can transit them. The FAA's guidance is to stay at least 20 miles from any thunderstorm. You were trying to fly between cells that were separated by less than eight miles and closing.
 
@@ -639,7 +640,7 @@ You make the call.
 
 You bank right, firmly, 30 degrees. The turbulence is sharp through the turn but manageable. As you roll wings-level heading east, the air smooths almost immediately. The buildups are behind you now. Ahead is the Front Range and the plains beyond — clear, blue, benign.
 
-Jolie watches the mountains recede. "So... we're not going to Aspen?"
+Rachel watches the mountains recede. "So... we're not going to Aspen?"
 
 "Not this way. Not right now."
 
@@ -651,9 +652,9 @@ She's quiet for a long moment. Then: "Can we drive?"
 
 You land back at KBJC forty minutes later. The FBO calls you a rental car. It's a four-hour drive to Aspen over Independence Pass — or five hours via I-70 and Glenwood Springs. You'll miss the rehearsal dinner setup, but you'll make the dinner itself. Barely.
 
-Jolie handles the rental paperwork while you tie down the Skylane. She doesn't say she's angry, but the garment bag comes out of the airplane with a certain emphasis.
+Rachel handles the rental paperwork while you tie down the Skylane. She doesn't say she's angry, but the garment bag comes out of the airplane with a certain emphasis.
 
-The drive is long. You stop for gas in Copper Mountain. The thunderstorms that would have been on your flight path are now visible to the south — towering, black, with lightning visible in broad daylight. Jolie sees them too.
+The drive is long. You stop for gas in Copper Mountain. The thunderstorms that would have been on your flight path are now visible to the south — towering, black, with lightning visible in broad daylight. Rachel sees them too.
 
 "Those are where we would have been?" she asks.
 
@@ -666,7 +667,7 @@ She doesn't say anything else about the rehearsal dinner.
 
 <strong>What happened:</strong> After encountering rapidly building thunderstorms over the Continental Divide, you executed a 180-degree turn and returned to KBJC. You rented a car and drove to Aspen, arriving late for the rehearsal dinner but making the event. The aircraft and both occupants are safe.
 
-<strong>ADM analysis:</strong> Your initial decision to continue direct toward visible convection was suboptimal — the deviation north or a diversion to Rifle would have been better first moves. However, the critical save was executing the 180 when the situation deteriorated. This required overcoming get-there-itis (the rehearsal dinner commitment) and social pressure (Jolie's expectations). Turning around is one of the hardest decisions in general aviation, and you made it when it counted.
+<strong>ADM analysis:</strong> Your initial decision to continue direct toward visible convection was suboptimal — the deviation north or a diversion to Rifle would have been better first moves. However, the critical save was executing the 180 when the situation deteriorated. This required overcoming get-there-itis (the rehearsal dinner commitment) and social pressure (Rachel's expectations). Turning around is one of the hardest decisions in general aviation, and you made it when it counted.
 
 <strong>Hazardous attitudes present:</strong> Get-there-itis influenced the initial decision to continue direct, but was overcome at the second decision point. The 180-degree turn is the textbook mountain weather response when conditions deteriorate beyond your comfort or capability.
 
@@ -696,13 +697,13 @@ You pull the power back and begin a descent toward the valley to the north. The 
 
 You land on Eagle County's generous 9,000-foot runway in smooth air. The FBO marshals you to a tiedown. It's 10:45 AM.
 
-"Well," Jolie says, looking at her phone. "Eagle is... not Aspen."
+"Well," Rachel says, looking at her phone. "Eagle is... not Aspen."
 
 "No. But there's a shuttle. Runs to Aspen every couple hours."
 
 It takes ninety minutes on the bus. You arrive in Aspen at 1:30 PM — plenty of time for the rehearsal dinner. The airplane is safely tied down at Eagle, and you'll pick it up tomorrow morning when the air is smooth and the thunderstorms are sleeping.
 
-Jolie leans against you on the shuttle. "That was a little exciting."
+Rachel leans against you on the shuttle. "That was a little exciting."
 
 "A little."
 
@@ -742,7 +743,7 @@ You turn right thirty degrees. The build-ups along the Divide are concentrated o
 
 Thirty minutes later you're overhead Eagle County VOR at 14,500, and the picture has changed again. The valley below you is clear — you can see the Eagle River, I-70, the town of Eagle — but to the south, between you and Aspen, a solid line of build-ups has formed along the ridge from Vail Pass to Independence Pass. The bases are at maybe 12,000 feet. The tops are well above you. Aspen is on the other side of that wall.
 
-Jolie has been watching the clouds build. "That doesn't look great."
+Rachel has been watching the clouds build. "That doesn't look great."
 
 The G1000 shows Aspen 38 miles to the south-southeast. Rifle is 38 miles to the west, in lower terrain. Eagle County's runway is directly below you. The fuel totalizer shows 48 gallons remaining.
 
@@ -768,7 +769,7 @@ You spiral down into the Eagle River valley and enter the pattern at Eagle Count
 
 It's 10:15 AM. The shuttle to Aspen leaves at 11:00. You'll be there by 12:30.
 
-Jolie adjusts her garment bag on her shoulder. "I was really hoping to fly in."
+Rachel adjusts her garment bag on her shoulder. "I was really hoping to fly in."
 
 "Me too. But that wall isn't going anywhere for hours."
 
@@ -781,7 +782,7 @@ Jolie adjusts her garment bag on her shoulder. "I was really hoping to fly in."
 
 <strong>ADM analysis:</strong> Your decision-making chain was sound from the first deviation onward. You recognized the initial convection, deviated to a better route, and when that route proved blocked, you didn't hunt for shortcuts — you landed at the nearest suitable airport. The northern deviation was a legitimate strategy; the decision to stop at Eagle when the weather blocked the southern leg was the correct follow-through. You used ATC's radar picture to confirm what you could see out the window.
 
-<strong>Hazardous attitudes present:</strong> None dominated the decision chain. Get-there-itis was present (the wedding, Jolie's expectations) but was managed effectively. You maintained awareness that the mission could be completed by ground transportation if the flight couldn't continue.
+<strong>Hazardous attitudes present:</strong> None dominated the decision chain. Get-there-itis was present (the wedding, Rachel's expectations) but was managed effectively. You maintained awareness that the mission could be completed by ground transportation if the flight couldn't continue.
 
 <strong>What good judgment looks like here:</strong> This is what good judgment looks like. The deviation was proactive, not reactive. The diversion was planned, not panicked. And the mental shift from "fly to Aspen" to "get to Aspen" is the hallmark of a mature pilot. The airplane is a tool for the mission, not the mission itself.
 
@@ -815,13 +816,13 @@ You descend into the pattern at Rifle. The crosswind is strong — you crab hard
 
 It's 11:15 AM. Rifle is 67 miles from Aspen by road — about an hour and forty-five minutes over Glenwood Canyon on I-70. The FBO desk can arrange a rental car.
 
-Jolie does the math on her phone. "We'll be there by 1:00. That works."
+Rachel does the math on her phone. "We'll be there by 1:00. That works."
 
 "That works."
 
 The drive through Glenwood Canyon is spectacular — red rock walls, the Colorado River churning below, tunnels carved through the cliff face. At Glenwood Springs, you turn south on Highway 82 into the Roaring Fork Valley. Halfway to Aspen, you drive through a thunderstorm that drops hail on the rental car. The valley walls on either side disappear into cloud.
 
-Jolie looks at you. "That's the valley you were thinking about flying through?"
+Rachel looks at you. "That's the valley you were thinking about flying through?"
 
 "That was the plan, yeah."
 
@@ -902,9 +903,9 @@ You've seen enough. The valley is narrowing, the ceiling is dropping, and you kn
 
 You land at Rifle twenty minutes later. The crosswind has died down some — 270 at 14 gusting 22. The landing is uneventful.
 
-"That was the right call," Jolie says as you taxi in. She'd watched the valley closing behind you through the rear window. "I could see it getting bad."
+"That was the right call," Rachel says as you taxi in. She'd watched the valley closing behind you through the rear window. "I could see it getting bad."
 
-The drive to Aspen takes just under two hours. You arrive at 2:00 PM. Marcus is at the venue, arranging chairs. He looks up when you walk in.
+The drive to Aspen takes just under two hours. You arrive at 2:00 PM. Ben is at the venue, arranging chairs. He looks up when you walk in.
 
 "Cutting it close! I thought you were flying in."
 
@@ -941,7 +942,7 @@ Twenty minutes in, the weather hasn't improved — it's gotten worse. The line o
 
 The fuel totalizer reads 42 gallons. You've burned 6 gallons orbiting. Still plenty of fuel — but each orbit costs about 2 gallons, and you're watching an asset evaporate into the air without getting closer to your destination.
 
-Jolie has been reading on her phone. She looks up. "It's been twenty minutes. Is it getting better?"
+Rachel has been reading on her phone. She looks up. "It's been twenty minutes. Is it getting better?"
 
 "No."
 
@@ -957,7 +958,7 @@ You descend and land at Eagle County. It's 11:00 AM — forty-five minutes later
 
 The shuttle to Aspen departs at 11:30. You make it with time to spare.
 
-The rehearsal dinner goes well. Marcus gives a toast. Jolie wears the dress from the garment bag. You catch yourself looking out the restaurant window at the mountains, where distant lightning strobes above the ridgelines.
+The rehearsal dinner goes well. Ben gives a toast. Rachel wears the dress from the garment bag. You catch yourself looking out the restaurant window at the mountains, where distant lightning strobes above the ridgelines.
 
 <div class="debrief">
 <strong>DEBRIEF — Delayed Diversion to Eagle County</strong>
@@ -990,7 +991,7 @@ You land at Eagle County at 11:45 AM. The wind has picked up — 25 gusting 35 o
 
 The shuttle has left. The next one is at 2:00 PM. You'll arrive in Aspen at 3:30, with the rehearsal dinner at 7:00. Tight but workable.
 
-Jolie sits in the FBO lounge, scrolling through her phone. "The shuttle would have gotten us there two hours ago."
+Rachel sits in the FBO lounge, scrolling through her phone. "The shuttle would have gotten us there two hours ago."
 
 She's not wrong.
 
@@ -1020,13 +1021,13 @@ She's not wrong.
 <<if $audioEnabled>><<audio ":engine" stop>><</if>>
 You pull the power back and descend toward the valley floor. The Eagle River threads south through a canyon toward Vail. The ceiling over the valley is lower than it looked from above — what appeared to be scattered at 9,000 from 14,500 is actually broken at 8,800 from down here, and the valley walls rise to 11,000 on both sides. At 8,500, you're in the corridor. The road is below you. The river is to your right.
 
-For the first five miles, it works. You're following I-70 through the canyon, the ceiling holding about 1,000 feet above you, terrain clearance adequate. Jolie is quiet, watching the canyon walls slide past the windows.
+For the first five miles, it works. You're following I-70 through the canyon, the ceiling holding about 1,000 feet above you, terrain clearance adequate. Rachel is quiet, watching the canyon walls slide past the windows.
 
 Then the valley turns south toward Vail Pass and the ceiling drops abruptly. Clouds are sitting on the pass itself. You can see the highway climbing into the overcast ahead. The terrain on both sides is above the ceiling. You are in a box — walls of rock on the left and right, a ceiling of cloud above, and rising terrain ahead.
 
 You execute a 180. The valley behind you is still open — barely. You fly north, back toward Eagle, and the ceiling lifts. You land at KEGE with shaking hands and a very quiet passenger.
 
-"That," Jolie says after a long silence, "was the stupidest thing I have ever experienced in an airplane."
+"That," Rachel says after a long silence, "was the stupidest thing I have ever experienced in an airplane."
 
 She's not wrong about that either.
 
@@ -1060,11 +1061,11 @@ She's not wrong about that either.
 
 The air is smooth the moment you turn east. The Front Range gleams in the morning sun. Behind you, the line of build-ups over the Divide is clearly visible — a wall of white and gray rising above the ridgeline, anvils spreading east in the upper winds. It looks worse now than it did when you made the call.
 
-Jolie doesn't say anything for five minutes. Then: "So we're not going to the wedding?"
+Rachel doesn't say anything for five minutes. Then: "So we're not going to the wedding?"
 
 "We're not flying to the wedding. We can still drive."
 
-"Harvey, it's a four-hour drive."
+"Mike, it's a four-hour drive."
 
 "I know."
 
@@ -1082,15 +1083,15 @@ She stares out the window at the mountains. "You made the right call. I know tha
 <<if $audioEnabled>><<run playOneShot("touchdown", 0.6)>><</if>>
 You land at Broomfield at 9:45 AM. The rental car counter is open. You're on I-70 by 10:15, climbing into the mountains by car instead of by air.
 
-The drive is beautiful. Through the Eisenhower Tunnel, over Vail Pass, through Glenwood Canyon. Jolie navigates. You stop once for gas and coffee in Silverthorne.
+The drive is beautiful. Through the Eisenhower Tunnel, over Vail Pass, through Glenwood Canyon. Rachel navigates. You stop once for gas and coffee in Silverthorne.
 
 Coming through Glenwood Canyon, you see the thunderstorms that are sitting on the mountains to the south — right where your flight path would have been. They're enormous. One of them has a shelf cloud that runs for twenty miles along the ridgeline. You can see rain falling in solid sheets on the peaks.
 
-You arrive in Aspen at 2:30 PM. Not in time for setup. In time for the rehearsal dinner. Marcus meets you at the venue.
+You arrive in Aspen at 2:30 PM. Not in time for setup. In time for the rehearsal dinner. Ben meets you at the venue.
 
 "I heard the weather's bad over the Divide today," he says. "Smart to drive."
 
-Jolie appears in her dress. She looks at you and smiles — not a strained smile, a real one. "You know what? The drive was kind of nice. We should do road trips more often."
+Rachel appears in her dress. She looks at you and smiles — not a strained smile, a real one. "You know what? The drive was kind of nice. We should do road trips more often."
 
 You don't tell her about the thunderstorms you saw from Glenwood Canyon. She saw them too.
 
@@ -1101,7 +1102,7 @@ You don't tell her about the thunderstorms you saw from Glenwood Canyon. She saw
 
 <strong>ADM analysis:</strong> This is excellent decision-making. You recognized that the weather was deteriorating faster than forecast, evaluated the risk, and made a conservative, early decision to return — before the situation forced your hand. The decision was made with plenty of fuel, altitude, and options. This is the kind of decision that never makes the NTSB database because nothing goes wrong.
 
-<strong>Hazardous attitudes present:</strong> Get-there-itis was present (the wedding, the commitment to Marcus, Jolie's expectations) but was successfully managed. The social pressure was real — Jolie was disappointed, the timing was tight — but you maintained your aeronautical decision-making authority. The mission (getting to Aspen) was completed by alternative means.
+<strong>Hazardous attitudes present:</strong> Get-there-itis was present (the wedding, the commitment to Ben, Rachel's expectations) but was successfully managed. The social pressure was real — Rachel was disappointed, the timing was tight — but you maintained your aeronautical decision-making authority. The mission (getting to Aspen) was completed by alternative means.
 
 <strong>What good judgment looks like here:</strong> This is what good judgment looks like. The signs were clear: convective build-ups exceeding the briefing forecast, a PIREP confirming turbulence on the route, and visual evidence of rapid cell development. The decision to turn back before reaching the most dangerous portion of the route — the high terrain crossing — preserved maximum options. You never entered a situation where the outcome was in doubt.
 
@@ -1119,17 +1120,17 @@ You don't tell her about the thunderstorms you saw from Glenwood Canyon. She saw
 <<if $audioEnabled>><<audio ":engine" stop>><</if>>
 You land at Broomfield and taxi to Sheltair. The plan is to wait — summer storms build in the afternoon and clear by evening. Maybe by 4:00 or 5:00 PM you can make another attempt.
 
-You and Jolie sit in the FBO lounge. You watch the weather. The ASOS at Aspen goes from broken to overcast to thunderstorms at 1:00 PM, just as the TAF predicted. Leadville reports thunderstorms. Eagle reports thunderstorms. The entire western slope is socked in.
+You and Rachel sit in the FBO lounge. You watch the weather. The ASOS at Aspen goes from broken to overcast to thunderstorms at 1:00 PM, just as the TAF predicted. Leadville reports thunderstorms. Eagle reports thunderstorms. The entire western slope is socked in.
 
 At 3:00 PM, the weather starts to improve at Aspen. By 4:00, it's VFR — scattered at 8,000, visibility 10 miles. The TAF says it'll hold through the evening. You could launch now and be there by 5:15.
 
 But you'd be crossing the Divide at 5:00 PM with residual convective activity along the ridgeline. The storms have weakened but not died — the radar still shows cells scattered along the Divide. And the flight would put you into Aspen just before sunset in an unfamiliar mountain valley after a long, frustrating day.
 
-Jolie looks up from her phone. "Marcus texted. Dinner starts at seven. If we leave now..."
+Rachel looks up from her phone. "Ben texted. Dinner starts at seven. If we leave now..."
 
 She means if you fly now. But you know what you'd be flying into — a mountain crossing in the unstable air behind a convective cycle, tired, with sunset approaching and a passenger who's been waiting all day.
 
-You call Marcus. You tell him you're driving. You leave at 4:00 PM and arrive at 8:30, halfway through dinner. Marcus saved you a plate.
+You call Ben. You tell him you're driving. You leave at 4:00 PM and arrive at 8:30, halfway through dinner. Ben saved you a plate.
 
 The 182 spends the night at Broomfield. You fly to Aspen the next morning at 7:00 AM in smooth, clear air. The mountains are silent and beautiful and completely unthreatening. That's how they work.
 
@@ -1184,7 +1185,7 @@ The approach is straightforward — long final, PAPI out of service, but you've 
 
 There is no shuttle from Leadville to Aspen. There is no rental car counter. The FBO — such as it is — has a phone and a vending machine.
 
-You call the one taxi company in Leadville. A driver takes you and Jolie over Independence Pass by car — a winding mountain road that climbs to 12,095 feet. The drive takes ninety minutes. You arrive in Aspen at 1:30 PM. Jolie's garment bag has not wrinkled.
+You call the one taxi company in Leadville. A driver takes you and Rachel over Independence Pass by car — a winding mountain road that climbs to 12,095 feet. The drive takes ninety minutes. You arrive in Aspen at 1:30 PM. Rachel's garment bag has not wrinkled.
 
 The airplane sits at Leadville. You'll deal with it tomorrow, in the cool morning air, when the density altitude is reasonable and the mountains are quiet.
 
@@ -1221,7 +1222,7 @@ You are below the pass elevation, in turbulence, with terrain rising on both sid
 
 The decision is made for you. You bank hard right and retreat into the valley. The descent back to 10,500 is rough. Leadville's runway appears through the haze and you land, pulse hammering, with 2,000 feet of runway to spare.
 
-Jolie has not said a word since the pass attempt. As you shut down on the ramp, she turns to you.
+Rachel has not said a word since the pass attempt. As you shut down on the ramp, she turns to you.
 
 "Don't ever do that again."
 
@@ -1258,9 +1259,9 @@ Denver Center picks you up again. "Four-seven-two-golf-foxtrot, radar contact, s
 
 "Roger. Cleared through the Bravo at one-four thousand five hundred. And four-seven-two-golf-foxtrot — good decision."
 
-You land at KBJC at 10:30 AM. The rental car counter is open. Jolie handles the paperwork — she seems to have accepted the situation with an equanimity you appreciate.
+You land at KBJC at 10:30 AM. The rental car counter is open. Rachel handles the paperwork — she seems to have accepted the situation with an equanimity you appreciate.
 
-The drive to Aspen takes four hours. You arrive at 3:00 PM. You help Marcus set up for the rehearsal dinner, as promised, with thirty minutes to spare.
+The drive to Aspen takes four hours. You arrive at 3:00 PM. You help Ben set up for the rehearsal dinner, as promised, with thirty minutes to spare.
 
 <div class="debrief">
 <strong>DEBRIEF — Climb Out and Drive</strong>
@@ -1299,9 +1300,9 @@ It's 10:30 AM. Aspen is 67 miles by road — an hour and forty-five minutes thro
 
 The FBO desk arranges a rental car. You're on the road by 11:00. Through Glenwood Canyon, the Colorado River churns below red sandstone walls. At Glenwood Springs, you turn south on Highway 82. The Roaring Fork Valley stretches toward Aspen, green and narrow.
 
-You arrive in Aspen at 12:45 PM. Marcus texts: "Perfect timing! Chairs need moving."
+You arrive in Aspen at 12:45 PM. Ben texts: "Perfect timing! Chairs need moving."
 
-Jolie changes into her dress at the venue. You move chairs. The rehearsal dinner is lovely. Nobody asks how you got there.
+Rachel changes into her dress at the venue. You move chairs. The rehearsal dinner is lovely. Nobody asks how you got there.
 
 <div class="debrief">
 <strong>DEBRIEF — Early Diversion to Rifle</strong>
@@ -1310,7 +1311,7 @@ Jolie changes into her dress at the venue. You move chairs. The rehearsal dinner
 
 <strong>ADM analysis:</strong> Your decision-making was excellent. When the build-ups over the Divide exceeded what the briefing forecast, and the PIREP confirmed turbulence on the route, you immediately identified the best alternative: Rifle, which sits in lower terrain northwest of the Divide, has an ILS for weather backup, a 7,000-foot runway, and is the closest airport to Aspen by road. You didn't attempt to find gaps, hold for improvement, or descend into terrain-limited valleys. You went where the weather was better and the options were best.
 
-<strong>Hazardous attitudes present:</strong> None dominated. Get-there-itis was present (the wedding, Jolie's expectations, Marcus's request) but was channeled productively — you found a way to complete the mission without compromising safety. This is the difference between managing get-there-itis and being controlled by it.
+<strong>Hazardous attitudes present:</strong> None dominated. Get-there-itis was present (the wedding, Rachel's expectations, Ben's request) but was channeled productively — you found a way to complete the mission without compromising safety. This is the difference between managing get-there-itis and being controlled by it.
 
 <strong>What good judgment looks like here:</strong> This is the textbook mountain weather decision. The key elements: early recognition of deteriorating conditions, immediate action (no holding, no gap-hunting), selection of an alternate that maximizes safety AND mission completion, and smooth execution. You had the fuel, altitude, and time to reach Rifle comfortably. The drive to Aspen was short and scenic. The airplane is safe for pickup tomorrow.
 

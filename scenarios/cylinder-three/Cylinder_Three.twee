@@ -396,9 +396,9 @@ hr {
 <div class="scenario-title">Cylinder Three</div>
 <div class="scenario-subtitle">A 103ready.com Training Scenario</div>
 
-You're standing in the pilot lounge at Stillwater Regional, watching the morning sun cut through the haze outside the window. Your friend Jolie is on the couch behind you, reading something on her phone, her overnight bag at her feet.
+You're standing in the pilot lounge at Stillwater Regional, watching the morning sun cut through the haze outside the window. Your friend Linda is on the couch behind you, reading something on her phone, her overnight bag at her feet.
 
-The plan is straightforward: fly west to Clinton-Sherman, about an hour and twenty minutes in the 182. Jolie's daughter is getting married tomorrow afternoon in Weatherford, and the two of you are making a weekend of it. You flew together to Stillwater three days ago for a reunion with college friends, and now it's time to head to the wedding.
+The plan is straightforward: fly west to Clinton-Sherman, about an hour and twenty minutes in the 182. Linda's daughter is getting married tomorrow afternoon in Weatherford, and the two of you are making a weekend of it. You flew together to Stillwater three days ago for a reunion with college friends, and now it's time to head to the wedding.
 
 The airplane is fueled, preflighted, and parked on the ramp. You've got about twenty minutes before you want to start the engine. Your flight bag is on the table.
 
@@ -543,7 +543,7 @@ Your route takes you west-southwest across central Oklahoma. The terrain is pred
 <<if $audioEnabled>><<audio "atc-ambience" loop volume 0.08 play>><</if>>
 The departure from Stillwater was textbook. Tower cleared you for a left downwind departure, you turned on course, and climbed to 6,500. Kansas City Center picked you up on flight following — "November four-seven-two-golf-foxtrot, radar contact, three-four miles west of Stillwater, six thousand three hundred climbing six thousand five hundred" — and the morning settled into the kind of quiet cruise that makes you remember why you fly.
 
-Jolie asked a few questions early on — what the green circles on the G1000 were, whether you could see her daughter's town from up here — and then drifted into a comfortable silence, watching the patchwork of brown and green slide past beneath you. The haze softens everything. It's a pretty morning in a plain kind of way.
+Linda asked a few questions early on — what the green circles on the G1000 were, whether you could see her daughter's town from up here — and then drifted into a comfortable silence, watching the patchwork of brown and green slide past beneath you. The haze softens everything. It's a pretty morning in a plain kind of way.
 
 You've been in cruise for about forty minutes. Kingfisher is behind you, maybe twenty miles back. The terrain below is flat and featureless — wheat stubble, section-line roads, the occasional farmstead with a silver grain bin catching the sun. Your destination is about fifty-five miles ahead. Another twenty-five minutes or so.
 
@@ -555,7 +555,7 @@ You run a quick mag check. Right mag: normal drop, maybe fifty RPM. Left mag: th
 
 The engine is making full power. The RPM is steady. The oil pressure and oil temperature are normal. Everything on the panel says this airplane is fine except for that one EGT bar and that slight catch on the left mag.
 
-Jolie looks over. "Everything okay?"
+Linda looks over. "Everything okay?"
 
 "Yeah. Just keeping an eye on something."
 
@@ -583,7 +583,7 @@ Ten minutes pass. The roughness doesn't go away. If anything, the rough cycles a
 
 The EGT on three has climbed another twenty-five degrees. It's now seventy-five above the others. The CHT on three has come up too — not alarming, but it's separated from the pack. You can see it on the bar graph: five bars in a row, and then the sixth one, standing taller.
 
-Jolie shifts in her seat. She's been quiet, but she's noticed the vibration. "Is the engine supposed to sound like that?"
+Linda shifts in her seat. She's been quiet, but she's noticed the vibration. "Is the engine supposed to sound like that?"
 
 "It's running a little rough. I'm watching it."
 
@@ -630,7 +630,7 @@ It doesn't explode. It doesn't seize. The coughs become a stuttering rhythm, and
 
 You pull the mixture to idle cutoff. The propeller windmills in the airstream. The cockpit is suddenly, shockingly quiet.
 
-Jolie's voice is very small. "What's happening?"
+Linda's voice is very small. "What's happening?"
 
 "We've lost the engine. I'm going to put us down."
 
@@ -640,7 +640,7 @@ You pick the best option you can see — a hay field on a gentle slope, maybe a 
 
 The wheels touch and the 182 decelerates hard in the tall grass. The nosewheel digs in. The airplane lurches, yaws left, and the left main gear finds a shallow ditch hidden in the grass. The gear collapses. The propeller strikes the ground. The airplane slides to a stop in a cloud of dust and torn vegetation, canted to the left, the left wing resting on the ground.
 
-The engine is silent. The master switch is off — you don't remember turning it off, but your hands did it. Jolie is next to you, breathing hard, her hand on the dashboard. The windshield is intact. You can see the sky through the dust.
+The engine is silent. The master switch is off — you don't remember turning it off, but your hands did it. Linda is next to you, breathing hard, her hand on the dashboard. The windshield is intact. You can see the sky through the dust.
 
 "Are you okay?"
 
@@ -692,13 +692,13 @@ There's a brief pause. "November four-seven-two-golf-foxtrot, roger your emergen
 
 You turn south. The engine is still running — rough, vibrating, but running. Fourteen miles. About seven minutes. You descend as you go, trading altitude for options. If the engine quits, you want to be close to the ground with the airport in sight, not high and far away.
 
-Jolie is quiet. She's holding the armrest with both hands now, but she's not panicking. She's watching you work.
+Linda is quiet. She's holding the armrest with both hands now, but she's not panicking. She's watching you work.
 
 Watonga appears through the haze — a single runway on flat ground, a windsock, a few hangars. You set up a straight-in approach to runway one-seven, long and stabilized, carrying extra speed. The engine coughs twice on final, and each time your hand moves toward the mixture knob. But it keeps running.
 
 The wheels touch on Watonga's runway and you've never been so grateful for pavement. You roll to the end, clear the runway, and shut down. The engine rattles to a stop and the silence is enormous.
 
-Jolie lets out a long breath. "I need a minute."
+Linda lets out a long breath. "I need a minute."
 
 "Take all the minutes you want."
 
@@ -757,7 +757,7 @@ You shut it down.
 
 A rancher in a pickup truck is already driving toward you from a farm house a quarter mile away. He doesn't look surprised. He looks like a man who's seen airplanes land on this road before.
 
-Jolie looks at you. "Well. You're never going to believe this, but I think that was the most impressive thing I've ever seen you do."
+Linda looks at you. "Well. You're never going to believe this, but I think that was the most impressive thing I've ever seen you do."
 
 <<if $audioEnabled>><<audio ":engine" stop>><<audio "engine-fail" stop>><<audio "wind-quiet" stop>><<audio "field-ambience" loop volume 0.15 play>><</if>>
 <div class="debrief">
@@ -806,7 +806,7 @@ Watonga's runway appears through the haze, and you've never been happier to see 
 
 The landing is smooth. The rollout is uneventful. You taxi to the ramp and shut down.
 
-Jolie looks at you. "Is this Weatherford?"
+Linda looks at you. "Is this Weatherford?"
 
 "No. This is Watonga. The engine wasn't running right, so I landed here. We're about thirty miles from the wedding."
 
@@ -865,7 +865,7 @@ You fly to Watonga with the engine making power and the vibration constant in th
 
 You shut down and sit for a moment.
 
-Jolie reaches over and puts her hand on your arm. "Thank you."
+Linda reaches over and puts her hand on your arm. "Thank you."
 
 "For what?"
 
@@ -919,7 +919,7 @@ Three minutes of troubleshooting, and you know a little more than you did. The l
 
 What you have done is spend three minutes heads-down on the engine page. When you look up, you realize you've drifted about two miles south of your course line. The G1000 is showing the magenta line to your right. It's not a problem — there's nothing out here to hit — but it's a reminder that troubleshooting cost you some of your scan.
 
-Jolie is watching you work the knobs and switches. She doesn't ask. She can tell this isn't casual.
+Linda is watching you work the knobs and switches. She doesn't ask. She can tell this isn't casual.
 
 You're fifty-five miles from Clinton-Sherman. Kingfisher is twenty miles behind you. Enid is thirty-five to the north. The engine is still making power. The roughness persists.
 
@@ -937,7 +937,7 @@ You lean the mixture, just as you would have ten minutes ago. The same thing hap
 
 You've confirmed what you suspected: the problem isn't going away, and the troubleshooting that would have been merely inconclusive earlier is now actively telling you the situation is deteriorating.
 
-Jolie watches you adjust the mixture. "Did that help?"
+Linda watches you adjust the mixture. "Did that help?"
 
 "Not enough."
 
@@ -963,7 +963,7 @@ The runway is ahead. The engine is making partial power — enough to fly, not e
 
 You're on the runway. You brake to a stop and sit there, shaking slightly. The engine idles, rough and rattling.
 
-Jolie is gripping the seat. "Are we okay?"
+Linda is gripping the seat. "Are we okay?"
 
 "We're on the ground."
 
@@ -1026,7 +1026,7 @@ You make Watonga. Barely. The engine is making maybe sixty percent power by the 
 
 A mechanic in Enid will later find the exhaust valve on cylinder three galled and partially welded to the seat — heat damage consistent with sustained operation at excessively lean mixtures with a valve that was already compromised.
 
-Jolie is white-faced but intact. "Let's drive to the wedding."
+Linda is white-faced but intact. "Let's drive to the wedding."
 
 <<if $audioEnabled>><<audio ":engine" stop>><<audio "engine-fail" stop>><<audio "wind-quiet" stop>><<audio "field-ambience" loop volume 0.15 play>><</if>>
 <div class="debrief">
@@ -1076,9 +1076,9 @@ The A&P on duty comes out within ten minutes. You describe the symptoms — the 
 
 Forty-five minutes later, he has the answer. "Exhaust valve on cylinder three. It's sticking. You can see the carbon buildup on the seat. It would have gotten worse." He pauses. "Good call coming in here."
 
-You call Jolie's daughter. You'll be a few hours late. You rent a car from the FBO and point it west toward Weatherford.
+You call Linda's daughter. You'll be a few hours late. You rent a car from the FBO and point it west toward Weatherford.
 
-Jolie, in the passenger seat of the rental car, looks over at you. "I liked the way you handled that."
+Linda, in the passenger seat of the rental car, looks over at you. "I liked the way you handled that."
 
 "I didn't like not knowing what was wrong."
 
@@ -1187,15 +1187,15 @@ The runway is 2,800 feet long. You've landed on shorter. But not with a crosswin
 
 The landing is fine. Firm, but fine. The crosswind pushes you but you hold the centerline. You roll out and taxi clear. The engine runs steady at idle. At a thousand RPM on the ground, it sounds perfectly normal.
 
-Jolie lets out a breath she's apparently been holding. "Well. That was exciting."
+Linda lets out a breath she's apparently been holding. "Well. That was exciting."
 
 You park the airplane on a gravel tiedown area near the hangars. There's a fuel pump, a courtesy phone on the wall of a small block building, and not much else. No one seems to be around. The windsock flaps. A truck passes on the road beyond the fence.
 
-<<link "You shut down, secure the airplane, and start making phone calls. First call: an A&P in Enid who can come take a look. Second call: Jolie's daughter. You're done flying until a mechanic says it's safe." "C1-WaitForMechanic">><<set $pathArray to $pathArray.concat(["Secured aircraft, called mechanic"])>><</link>>
+<<link "You shut down, secure the airplane, and start making phone calls. First call: an A&P in Enid who can come take a look. Second call: Linda's daughter. You're done flying until a mechanic says it's safe." "C1-WaitForMechanic">><<set $pathArray to $pathArray.concat(["Secured aircraft, called mechanic"])>><</link>>
 
 <<link "You run the engine up on the ground. Full power — it sounds smooth. Mag check — normal. Whatever it was, it seems to have cleared. You consider departing again." "C2-GroundRunUp">><<set $pathArray to $pathArray.concat(["Ran engine on ground — sounded normal"])>><</link>>
 
-<<link "You shut down and don't even think about the engine. You call the FBO at Enid and arrange a ride. You and Jolie will drive to the wedding. The airplane stays until a mechanic clears it." "C3-DoneFlying">><<set $pathArray to $pathArray.concat(["Grounded aircraft, arranged ground transport"])>><</link>>
+<<link "You shut down and don't even think about the engine. You call the FBO at Enid and arrange a ride. You and Linda will drive to the wedding. The airplane stays until a mechanic clears it." "C3-DoneFlying">><<set $pathArray to $pathArray.concat(["Grounded aircraft, arranged ground transport"])>><</link>>
 
 :: C1-WaitForMechanic [scenario branch-c ending]
 <<set $pathArray to $pathArray.concat(["Mechanic found sticking valve — aircraft grounded"])>>
@@ -1205,9 +1205,9 @@ You pull out your phone. The first call is to the FBO at Enid Woodring. "Hi, I j
 
 They have a mechanic. He can be there in about an hour.
 
-The second call is to Jolie's daughter. "Hey, sweetheart. We're fine, but we had to land at a little airport about halfway there. The engine was acting up. We're going to be late — maybe a few hours. We'll figure out a ride." You can hear the concern in her voice, and the relief when you explain that you're on the ground and safe.
+The second call is to Linda's daughter. "Hey, sweetheart. We're fine, but we had to land at a little airport about halfway there. The engine was acting up. We're going to be late — maybe a few hours. We'll figure out a ride." You can hear the concern in her voice, and the relief when you explain that you're on the ground and safe.
 
-Jolie sits on a bench outside the small block building and calls her daughter back herself. You can hear her voice, calm and matter-of-fact: "Your mom's friend is a very careful pilot. We're fine. We'll be there."
+Linda sits on a bench outside the small block building and calls her daughter back herself. You can hear her voice, calm and matter-of-fact: "Your mom's friend is a very careful pilot. We're fine. We'll be there."
 
 The mechanic arrives in a white pickup truck from Enid. He's a quiet man with oil-stained hands and a look that says he's seen everything. He pulls the cowl, checks the plugs, runs a borescope into the cylinders. Twenty minutes later, he straightens up.
 
@@ -1215,7 +1215,7 @@ The mechanic arrives in a white pickup truck from Enid. He's a quiet man with oi
 
 You nod. You already knew that was the answer, even if you didn't know the specifics.
 
-You rent a car from a farmer down the road who's happy to earn fifty dollars. You and Jolie drive to Weatherford. You make the rehearsal dinner. The wedding is beautiful. The airplane gets a new valve and is flying again by Wednesday.
+You rent a car from a farmer down the road who's happy to earn fifty dollars. You and Linda drive to Weatherford. You make the rehearsal dinner. The wedding is beautiful. The airplane gets a new valve and is flying again by Wednesday.
 
 <<if $audioEnabled>><<audio ":engine" stop>><<audio "engine-fail" stop>><<audio "wind-quiet" stop>><<audio "field-ambience" loop volume 0.15 play>><</if>>
 <div class="debrief">
@@ -1257,7 +1257,7 @@ You push the throttle up slowly. Fifteen hundred RPM. Smooth. Eighteen hundred. 
 
 You pull the throttle back to idle and sit there for a moment, looking at the engine page. Every EGT bar is in line. Every CHT is normal. The oil pressure and temperature are right where the book says they should be. The airplane is sitting on the ground at Kingfisher, sounding like it just rolled out of annual.
 
-Jolie is watching you. She's smart enough to know what you're thinking.
+Linda is watching you. She's smart enough to know what you're thinking.
 
 "Is it fixed?"
 
@@ -1281,7 +1281,7 @@ You pull the mixture to cutoff. The engine winds down and stops.
 
 "We're staying. Something made that engine run rough at altitude, and a clean run-up on the ground doesn't tell me it won't do it again at six thousand five hundred feet. I'm calling a mechanic."
 
-Jolie nods. She doesn't argue. She's been watching you make decisions all morning, and she's noticed something: you've been making the careful ones.
+Linda nods. She doesn't argue. She's been watching you make decisions all morning, and she's noticed something: you've been making the careful ones.
 
 The mechanic from Enid arrives ninety minutes later. He finds the sticking exhaust valve. "It'll stick intermittently," he explains. "Ground run at sea level, lower cylinder pressures, it might seat fine. Get it up to altitude, higher manifold pressures, higher temperatures — that's when it starts hanging up." He looks at you. "You were smart not to take off again."
 
@@ -1324,7 +1324,7 @@ A clean ground run-up after an in-flight engine anomaly does not mean the proble
 <<set $pathArray to $pathArray.concat(["Engine roughness returned — diverted to Enid"])>>
 You taxi back to runway one-eight and do one more run-up. Clean. Normal. You take the runway, apply power, and the 182 accelerates smoothly. Rotation, climb, and you turn on course toward Clinton-Sherman.
 
-For ten minutes, the engine is perfect. Smooth, quiet, making power. You start to relax. Jolie starts to relax. The haze is thinning to the west, and you can see further now.
+For ten minutes, the engine is perfect. Smooth, quiet, making power. You start to relax. Linda starts to relax. The haze is thinning to the west, and you can see further now.
 
 Then, passing through four thousand five hundred feet, it comes back. The same roughness. The same vibration. The same EGT on cylinder three, fifty degrees above the pack and climbing.
 
@@ -1336,7 +1336,7 @@ You turn north. Enid is twenty miles. The engine is doing exactly what it did be
 
 You land at Enid without incident. The mechanic finds the valve. The airplane is grounded.
 
-Jolie, in the FBO pilot lounge, hands you a cup of coffee. "I was wondering if you were going to take off again."
+Linda, in the FBO pilot lounge, hands you a cup of coffee. "I was wondering if you were going to take off again."
 
 "I shouldn't have."
 
@@ -1382,7 +1382,7 @@ When an engine runs rough in the air and smooth on the ground, trust the air. Th
 <<set $pathArray to $pathArray.concat(["Arranged ground transport — airplane stays"])>>
 You don't even run the engine up. You shut down, tie down, and pull out your phone.
 
-"What are you doing?" Jolie asks.
+"What are you doing?" Linda asks.
 
 "Finding us a ride to Weatherford. This airplane stays here until a mechanic tells me what's wrong with it."
 
@@ -1390,9 +1390,9 @@ You don't even run the engine up. You shut down, tie down, and pull out your pho
 
 "We'll figure that out after the wedding."
 
-You call the Enid Woodring FBO. They can send a courtesy car to Kingfisher — it'll take about forty-five minutes. You call a mechanic in Enid and describe the symptoms. He says he'll drive out to Kingfisher tomorrow. You call Jolie's daughter and let her know you'll be late but you're coming by car.
+You call the Enid Woodring FBO. They can send a courtesy car to Kingfisher — it'll take about forty-five minutes. You call a mechanic in Enid and describe the symptoms. He says he'll drive out to Kingfisher tomorrow. You call Linda's daughter and let her know you'll be late but you're coming by car.
 
-Ninety minutes later, you and Jolie are on Highway 33 headed west in a borrowed sedan, and the airplane is sitting on a gravel tiedown in Kingfisher with a note taped to the panel: "DO NOT FLY — ENGINE ISSUE — MECHANIC COMING."
+Ninety minutes later, you and Linda are on Highway 33 headed west in a borrowed sedan, and the airplane is sitting on a gravel tiedown in Kingfisher with a note taped to the panel: "DO NOT FLY — ENGINE ISSUE — MECHANIC COMING."
 
 The wedding is wonderful. The mechanic finds the sticking valve on Sunday morning. The airplane flies home the following Thursday with a new valve and a clean bill of health.
 
@@ -1447,7 +1447,7 @@ You think about that wind. Three-two-zero at fourteen gusting twenty-two. That's
 
 The turn to the north puts the wind more on your tail, and the groundspeed climbs. Thirty-five miles. At this speed, maybe fifteen minutes. The engine roughness continues — unchanged. The EGT on three is still elevated, the mag check still shows that extra drop on the left, but nothing is getting worse. The airplane is flying. It just doesn't sound right.
 
-Jolie watches the G1000 map. She can see the airport symbol getting closer. "Is that where we're going?"
+Linda watches the G1000 map. She can see the airport symbol getting closer. "Is that where we're going?"
 
 "That's Enid. Good runway, and they have a mechanic. We'll get this looked at before we go any further."
 
@@ -1467,7 +1467,7 @@ A lineman is waiting for you. He's seen the squawk code. "Rough engine?"
 
 He nods. "We've got an A&P here today. Want him to take a look?"
 
-<<link "'Yes. Please. We're not going anywhere until someone tells me what's going on with that engine.' You shut down and start helping Jolie with the bags." "D1-MechanicLook">><<set $pathArray to $pathArray.concat(["Requested mechanic at Enid — grounded aircraft"])>><</link>>
+<<link "'Yes. Please. We're not going anywhere until someone tells me what's going on with that engine.' You shut down and start helping Linda with the bags." "D1-MechanicLook">><<set $pathArray to $pathArray.concat(["Requested mechanic at Enid — grounded aircraft"])>><</link>>
 
 <<link "You hesitate. The engine ran fine at idle on the taxi. Part of you is thinking about the rehearsal dinner, the hotel reservation, the drive from Enid to Weatherford. 'Can he look at it quickly? We're trying to get to Clinton-Sherman today.'" "D2-QuickLook">><<set $pathArray to $pathArray.concat(["Asked for quick look — wanted to continue"])>><</link>>
 
@@ -1477,7 +1477,7 @@ The A&P is a woman named Linda with silver-streaked hair and forearms that sugge
 
 "Let me pull the top cowl. Go get some coffee. This'll take about thirty minutes."
 
-You and Jolie find the pilot lounge. There's coffee, a vending machine, and a couch that's seen better decades. Jolie calls her daughter. You call the rental car company.
+You and Linda find the pilot lounge. There's coffee, a vending machine, and a couch that's seen better decades. Linda calls her daughter. You call the rental car company.
 
 Linda comes back wiping her hands. "Exhaust valve on three. Sticking intermittent — you can see the carbon scoring on the seat and guide. It's not going to get better. I need to pull the cylinder and replace the valve, reseat it, and do a compression check before this airplane goes anywhere."
 
@@ -1586,7 +1586,7 @@ You pull the throttle back to eighteen inches. The engine note drops and the air
 
 "We'll try. We're descending through five thousand now."
 
-Jolie's hand is on the armrest. She's looking out the window at the ground coming up, and then she looks at you. "Tell me what's happening."
+Linda's hand is on the armrest. She's looking out the window at the ground coming up, and then she looks at you. "Tell me what's happening."
 
 "The engine isn't running right. I'd rather land in a field while I have choices than wait until I don't have choices."
 
@@ -1620,7 +1620,7 @@ You're sitting on a county road in Kingfisher County, Oklahoma, with the engine 
 
 The silence is total. Then a meadowlark starts up somewhere in the stubble.
 
-Jolie looks at you, and then she looks out the window at the road stretching away in both directions, and then she starts laughing. Not nervous laughter. Real laughter. "I can honestly say I have never landed on a road before."
+Linda looks at you, and then she looks out the window at the road stretching away in both directions, and then she starts laughing. Not nervous laughter. Real laughter. "I can honestly say I have never landed on a road before."
 
 "Me neither."
 
@@ -1676,13 +1676,13 @@ The left main gear has sunk about three inches into the soil. The nosewheel is b
 
 You shut down. The engine coughs once and stops.
 
-Jolie looks at the wheat stubble pressing against the windows. "Are we stuck?"
+Linda looks at the wheat stubble pressing against the windows. "Are we stuck?"
 
 "The airplane is. We're not."
 
 You climb out. The air smells like cut wheat and engine oil. The gear appears intact — the nosewheel strut is compressed but not bent. The airplane will need to be lifted out of the soft spots and inspected, but it looks like cosmetic damage at worst.
 
-A crop duster pilot lands on the section-line road twenty minutes later — he heard your radio call and came to check on you. He gives you and Jolie a ride into Kingfisher in the back of his truck, and he doesn't stop grinning the whole way. "Best landing I've seen in a wheat field all year."
+A crop duster pilot lands on the section-line road twenty minutes later — he heard your radio call and came to check on you. He gives you and Linda a ride into Kingfisher in the back of his truck, and he doesn't stop grinning the whole way. "Best landing I've seen in a wheat field all year."
 
 <<if $audioEnabled>><<audio ":engine" stop>><<audio "engine-fail" stop>><<audio "wind-quiet" stop>><<audio "field-ambience" loop volume 0.15 play>><</if>>
 <div class="debrief">
@@ -1724,7 +1724,7 @@ You enter the pattern on a midfield crosswind, fly a tight downwind, and turn ba
 
 You park near the hangar and shut down. The wind whispers through the grass. The engine ticks as it cools.
 
-A man in his sixties comes walking from the farmhouse, unhurried, with a blue heeler at his heels. He looks at the airplane, then at you and Jolie climbing out, and nods.
+A man in his sixties comes walking from the farmhouse, unhurried, with a blue heeler at his heels. He looks at the airplane, then at you and Linda climbing out, and nods.
 
 "Engine trouble?"
 
@@ -1732,7 +1732,7 @@ A man in his sixties comes walking from the farmhouse, unhurried, with a blue he
 
 "Hmm." He looks at the cowl. "I'm retired Air Force — maintenance officer. Not current on my A&P, but I can tell you this: if it's rough on one cylinder in a Continental, you're either looking at a plug, a valve, or a fuel injector nozzle. If leaning didn't fix it, it's not the plug." He pauses. "You did the right thing putting it down."
 
-He lets you use his phone, gives you and Jolie sandwiches and iced tea on his porch, and drives you into Kingfisher in his truck when the rental car arrives. The mechanic from Enid confirms the sticking valve two days later. The airplane flies off the grass strip the following week with a new valve and a thank-you case of beer left in the hangar.
+He lets you use his phone, gives you and Linda sandwiches and iced tea on his porch, and drives you into Kingfisher in his truck when the rental car arrives. The mechanic from Enid confirms the sticking valve two days later. The airplane flies off the grass strip the following week with a new valve and a thank-you case of beer left in the hangar.
 
 <<if $audioEnabled>><<audio ":engine" stop>><<audio "engine-fail" stop>><<audio "wind-quiet" stop>><<audio "field-ambience" loop volume 0.15 play>><</if>>
 <div class="debrief">
