@@ -122,9 +122,9 @@ window.openZoomChart = function() {
 		"#chart{position:absolute;transform-origin:0 0;transition:none}",
 		".controls{position:fixed;bottom:20px;right:20px;display:flex;gap:8px;z-index:10}",
 		".controls button{width:40px;height:40px;border:none;border-radius:8px;",
-		"  background:rgba(255,255,255,0.15);color:#fff;font-size:20px;cursor:pointer;",
-		"  backdrop-filter:blur(4px);transition:background 0.2s}",
-		".controls button:hover{background:rgba(255,255,255,0.3)}",
+		"  background:#1a5fb4;color:#fff;font-size:20px;cursor:pointer;",
+		"  font-weight:bold;transition:background 0.2s;box-shadow:0 2px 6px rgba(0,0,0,0.4)}",
+		".controls button:hover{background:#2878d8}",
 		".zoom-level{position:fixed;bottom:24px;right:160px;color:rgba(255,255,255,0.5);",
 		"  font:13px/1 system-ui,sans-serif;z-index:10}",
 		"</style></head><body>",
@@ -245,6 +245,8 @@ a.link-internal:hover {
   border-radius: 6px;
   padding: 10px 20px;
   margin: 6px 4px;
+  min-width: 220px;
+  text-align: center;
   color: #e0e0e0;
   text-decoration: none;
   transition: background 0.2s;
@@ -527,8 +529,8 @@ Your route takes you west-southwest across central Oklahoma. The terrain is pred
 
 <div class="sectional-container">
 <script id="sectional-zoom-data" type="text/plain">%%SECTIONAL_ZOOM_URI%%</script>
-<img src="%%SECTIONAL_DATA_URI%%" alt="DFW VFR Sectional — Stillwater to Clinton-Sherman corridor" onclick="openZoomChart()" style="cursor:zoom-in;">
-<div class="sectional-label">DFW Sectional Chart — Stillwater (KSWO) to Clinton-Sherman (KCSM)<br>Click to open zoomable chart in a new tab</div>
+<img src="%%SECTIONAL_DATA_URI%%" alt="Wichita VFR Sectional — Stillwater to Clinton-Sherman corridor" onclick="openZoomChart()" style="cursor:zoom-in; max-width:100%; border:1px solid #999; border-radius:4px;">
+<div class="sectional-label">Wichita Sectional (FAA, current edition) — Stillwater (KSWO) to Clinton-Sherman (KCSM)<br><em>Click to open in zoomable viewer</em></div>
 </div>
 
 <div class="chart-disclaimer"><em>This chart is provided for training and educational purposes only. It is not intended for navigation and may not reflect current aeronautical information. Always use current, officially published FAA charts and publications for flight planning and navigation.</em></div>

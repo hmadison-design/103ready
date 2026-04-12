@@ -1,0 +1,1589 @@
+:: StoryTitle
+Game Day
+
+:: StoryData
+{
+  "ifid": "A1B2C3D4-E5F6-7890-ABCD-EF1234567890",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Opening"
+}
+
+:: StoryInit
+<<set $badchoices to 0>>
+<<set $pathArray to []>>
+<<set $audioEnabled to false>>
+
+:: StoryScript [script]
+/* Audio toggle button — added to every passage via :passagerender */
+$(document).on(":passagerender", function(ev) {
+	$("#audio-toggle-btn").remove();
+	var btn = $('<button id="audio-toggle-btn" class="audio-toggle"></button>');
+	var updateLabel = function() {
+		if (State.variables.audioEnabled) {
+			btn.text("🔊 Audio On").removeClass("muted");
+		} else {
+			btn.text("🔇 Audio Off").addClass("muted");
+		}
+	};
+	btn.on("click", function() {
+		State.variables.audioEnabled = !State.variables.audioEnabled;
+		if (!State.variables.audioEnabled) {
+			SimpleAudio.muteOnHidden(false);
+			SimpleAudio.tracks.forEach(function(track) { track.stop(); });
+		}
+		updateLabel();
+	});
+	updateLabel();
+	$("body").append(btn);
+});
+
+:: StoryStylesheet [stylesheet]
+body {
+  background-color: #1a1a2e;
+  color: #e0e0e0;
+}
+
+#story {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1em;
+  font-size: 1.05em;
+  line-height: 1.65;
+}
+
+a.link-internal {
+  display: inline-block;
+  padding: 0.5em 1.2em;
+  margin: 0.3em 0.2em;
+  background-color: #2a3a5c;
+  color: #c8d8f0;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 1px solid #3a4a6c;
+  transition: background-color 0.2s;
+}
+a.link-internal:hover {
+  background-color: #3a5a8c;
+}
+
+.scenario-title {
+  font-size: 2em;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 0.2em;
+}
+.scenario-subtitle {
+  font-size: 1.1em;
+  color: #888;
+  text-align: center;
+  margin-bottom: 1.5em;
+  font-style: italic;
+}
+
+.debrief {
+  border-top: 2px solid #555;
+  padding-top: 1em;
+  margin-top: 2em;
+}
+
+.metar-block {
+  background-color: #0d1b2a;
+  padding: 1em;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  margin: 0.5em 0;
+  white-space: pre-wrap;
+  font-size: 0.95em;
+}
+
+.audio-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 6px 12px;
+  background: rgba(42, 58, 92, 0.8);
+  color: #c8d8f0;
+  border: 1px solid #3a4a6c;
+  border-radius: 6px;
+  font-size: 0.85em;
+  cursor: pointer;
+  z-index: 100;
+}
+.audio-toggle.muted {
+  background: rgba(60, 40, 40, 0.8);
+  color: #aa8888;
+}
+
+:: Opening
+<<set $pathArray to $pathArray.concat(["Opening"])>>
+<div class="scenario-title">Game Day</div>
+<div class="scenario-subtitle">A Super Bowl Sunday Sightseeing Flight Gone Wrong</div>
+
+It's a perfect February afternoon in Northern California. Sixty-eight degrees, clear skies, winds calm. The kind of day that makes you feel invincible.
+
+You — Jake Thornton, Sport Pilot, proud owner of eighty-three hours total time and a recently rented Icon A5 — are thirty minutes into what you've been calling "the most epic third date ever." Amber Chen, the girl you met at a rooftop bar in Pacific Heights two weeks ago, is sitting in the right seat of your amphibious light sport aircraft, sunglasses on, hair blowing in the slipstream, looking like a magazine ad for the exact lifestyle you're trying to project.
+
+You departed Monterey Regional (KMRY) VFR about thirty minutes ago. No flight plan filed — who files a flight plan for a scenic coastal hop? No flight following requested — you didn't want ATC cluttering up the radio while you narrated the scenery for Amber. You're cruising at 2,500 MSL, northbound along the Santa Cruz coastline, the Pacific sparkling below you.
+
+You did not check NOTAMs before departure. You checked the weather (CAVU everywhere, easy call), the fuel (full tanks, 20 gallons), and your hair (twice). The NOTAMs didn't make the cut. You were running late because Amber took forty minutes to pick a jacket, and you didn't want to look like you were overthinking things by pulling up a bunch of government notices on your iPad.
+
+This will turn out to be a significant oversight.
+
+"Oh my God," Amber says, pointing northeast. "Is that a stadium? Is that the Super Bowl? I forgot that was today!"
+
+She's right. About twenty-two miles to your northeast, Levi's Stadium in Santa Clara glints in the afternoon sun. The parking lots are a sea of color. You can practically see the tailgaters. Super Bowl LX. The biggest sporting event in the country, happening right there, right now.
+
+What Amber doesn't know — what you also don't know, because you didn't check NOTAMs — is that there is an active Temporary Flight Restriction centered on that stadium. Inner ring: 10 nautical miles, surface to Flight Level 180, absolutely no aircraft. Outer ring: 10 to 30 nautical miles, surface to FL180 — aircraft allowed only with an active flight plan and a discrete ATC-assigned transponder code.
+
+You are currently 22 miles from the stadium.
+
+You are inside the 30-nautical-mile outer ring.
+
+You have neither a flight plan nor a discrete squawk code.
+
+And your girlfriend just asked if you can fly over the Super Bowl.
+
+<<link "\"Hell yeah, babe! Let's go check it out!\"" "A-ApproachStadium">><<set $pathArray to $pathArray.concat(["A: Full send toward stadium"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "\"Hold on... let me check something real quick.\"" "B-CheckEFB">><<set $pathArray to $pathArray.concat(["B: Check ForeFlight first"])>><</link>>
+
+<<link "\"Let me see if I can get us cleared in there.\"" "C-ContactATC">><<set $pathArray to $pathArray.concat(["C: Contact ATC first"])>><</link>>
+
+<<link "\"Nah, let's keep heading to Half Moon Bay. Sunset's gonna be amazing.\"" "D-KeepFlying">><<set $pathArray to $pathArray.concat(["D: Keep flying north"])>><</link>>
+
+:: A-ApproachStadium
+<<set $pathArray to $pathArray.concat(["Heading toward stadium"])>>
+
+"Hell yeah!" you say, banking the Icon A5 into a smooth right turn toward Levi's Stadium. "Let's go check it out."
+
+The narrator would like to note that this is the aviation equivalent of seeing a "WET FLOOR" sign and deciding to sprint.
+
+You push the throttle forward and aim the nose northeast. The A5 responds eagerly — she's a nimble little bird, and at 95 knots, you're covering ground quickly. Amber grins. You grin. Everyone is grinning except the people who are about to be very, very unhappy with you.
+
+You're narrating the sights as you go, doing your best airline-captain voice. "And if you look to your right, you'll see the Santa Cruz Mountains... beautiful terrain... and ahead of us, Levi's Stadium, home of Super Bowl LX."
+
+"You sound like a tour guide," Amber laughs.
+
+"I prefer 'aviation professional.'"
+
+You are neither professional nor, in about three minutes, going to feel like one.
+
+Your ForeFlight is showing a TFR ring on the iPad, but you've been ignoring it. The radio has been quiet on your current frequency — you're tuned to a random CTAF from Monterey, not NorCal Approach, and certainly not 121.5 Guard.
+
+At eight nautical miles from the stadium, something changes. Two dark shapes appear from your ten o'clock, closing fast. Very fast. Faster than anything you've ever seen in the air.
+
+F-16 Fighting Falcons. Two of them. Gray paint, Air National Guard markings. The lead aircraft slides into position off your left wing — close enough that you can see the pilot's helmet visor, the oxygen mask, the general expression of a man whose Sunday afternoon just got ruined by a Sport Pilot in a seaplane.
+
+Amber stops grinning.
+
+"Jake... what are those?"
+
+The lead F-16 rocks its wings. Hard. Unmistakable. The international signal for: "You have been intercepted. Follow me."
+
+What do you do?
+
+<<link "Rock your wings back and follow the lead F-16" "A1-RockWings">><<set $pathArray to $pathArray.concat(["A1: Rocked wings, following"])>><</link>>
+
+<<link "\"Oh s***!\" — Push the nose down and try to get away" "A2-Panic">><<set $pathArray to $pathArray.concat(["A2: Panicked, tried to flee"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "Freeze. Stare. Do nothing." "A3-Freeze">><<set $pathArray to $pathArray.concat(["A3: Froze"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: A1-RockWings
+<<set $pathArray to $pathArray.concat(["Following the F-16"])>>
+
+Something in the back of your brain — some dim, dusty memory from ground school — fires. You snap the Icon into a shallow bank left, then right. Rock, rock, rock. The universal response: "Understood, will comply."
+
+The lead F-16 holds position for a beat, then rolls into a gentle left turn heading south, away from the stadium. The wingman takes up position off your right side. You're boxed in. Escorted.
+
+Your hands are shaking. Amber has gone absolutely silent, which is somehow worse than screaming.
+
+"We're okay," you tell her. "We're cooperating. Just... just stay calm."
+
+She doesn't look calm. She looks like she's reconsidering every life choice that led to her being in a seaplane with you.
+
+The F-16s lead you south. The lead aircraft's wingman pulls slightly ahead and activates an LED message board on the underside of the fuselage. It reads: **TUNE 121.5**
+
+That's Guard frequency. The emergency and intercept frequency. You should already be on it, but you're not, because you've been on the Monterey CTAF this entire time like a tourist.
+
+You need to communicate. How do you do it?
+
+<<link "Tune 121.5 and call: \"Any station, N621IA, being intercepted\"" "A1a-Guard">><<set $pathArray to $pathArray.concat(["A1a: Called on Guard"])>><</link>>
+
+<<link "Try Monterey Tower on 118.7 — maybe they can relay" "A1b-WrongFreq">><<set $pathArray to $pathArray.concat(["A1b: Called wrong frequency"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "Squawk 7700 on the transponder — that'll get attention" "A1c-Squawk">><<set $pathArray to $pathArray.concat(["A1c: Squawked 7700"])>><</link>>
+
+:: A1a-Guard
+<<set $pathArray to $pathArray.concat(["On Guard, talking to NorCal"])>>
+
+You dial 121.5 into the radio. Your voice comes out steadier than you feel.
+
+"Any station, N621IA, Icon A5, being intercepted by military aircraft. Requesting assistance."
+
+Three seconds of silence. Then a calm, professional female voice — NorCal Approach:
+
+"N621IA, NorCal Approach on Guard. Radar contact. You are in violation of the Super Bowl TFR. Confirm you are following the F-16 escort."
+
+"Affirm," you say. "Following the F-16. They're leading us south."
+
+"Roger, N621IA. Squawk 4521. You are being vectored to San Jose International, runway 30 Left. Contact San Jose Tower on 124.0 when the field is in sight. Do not deviate."
+
+San Jose International. An 11,000-foot runway. For your tiny Icon A5. The visual of your little amphibian touching down where 737s normally land would be funny if you weren't about to meet the FBI.
+
+The F-16s hold escort until you have KSJC in sight, then the lead aircraft waggles its wings — "you may proceed" — and both fighters peel away in a climbing left turn, back to whatever alert status they came from. Their Sunday was interrupted because of you.
+
+You switch to San Jose Tower. "San Jose Tower, N621IA, 10 miles south, inbound for 30 Left. Intercepted aircraft."
+
+"N621IA, San Jose Tower. Cleared to land runway 30 Left. Emergency services standing by."
+
+*Emergency services.* For you. In a seaplane.
+
+You line up on final. The runway stretches out ahead of you — 11,000 feet of concrete, built for jets. You're going to use about 800 feet of it. You touch down smooth, because at least your actual stick-and-rudder skills haven't abandoned you today, even if your judgment has.
+
+As you taxi off, you see the welcoming committee: two fire trucks, a police cruiser, and two unmarked black SUVs that absolutely, definitely contain federal agents.
+
+A follow-me truck guides you to a ramp area. You shut down. The prop stops turning.
+
+Amber finally speaks. "Jake. What. Did. You. Do."
+
+It's not a question.
+
+<<link "Step out, cooperate fully with authorities" "Ending-CooperativeA">><<set $pathArray to $pathArray.concat(["Cooperated on the ground"])>><</link>>
+
+<<link "Ask Tower if you can divert to Reid-Hillview instead — smaller, less conspicuous" "Ending-NiceTry">><<set $pathArray to $pathArray.concat(["Tried to divert to smaller airport"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: A1b-WrongFreq
+<<set $pathArray to $pathArray.concat(["Called Monterey Tower — wrong freq"])>>
+
+Your brain defaults to what it knows. Monterey Tower. You just talked to them thirty minutes ago. They'll help.
+
+"Monterey Tower, N621IA, we have a situation—"
+
+Nothing. Static. You're fifty miles from Monterey, on the wrong frequency, talking to nobody.
+
+"Monterey Tower, N621IA—"
+
+Still nothing. The F-16 off your left wing rocks its wings again, more emphatically this time. The LED sign still reads: **TUNE 121.5**
+
+Thirty seconds wasted. The fighters are patient — they've dealt with confused pilots before — but you can feel their patience has a limit.
+
+You abandon the Monterey attempt. Time to try something that might actually work.
+
+<<link "Switch to 121.5 Guard and make the call" "A1a-Guard">><<set $pathArray to $pathArray.concat(["Finally switched to Guard"])>><</link>>
+
+<<link "Squawk 7700 instead — maybe the transponder will do the talking" "A1c-Squawk">><<set $pathArray to $pathArray.concat(["Tried transponder instead"])>><</link>>
+
+:: A1c-Squawk
+<<set $pathArray to $pathArray.concat(["Squawked 7700"])>>
+
+You reach for the transponder and dial in 7700 — the emergency code. Every radar scope in Northern California will see that blip light up. Good instinct, partially — it gets attention. But without voice contact, you're still a mystery aircraft to ATC.
+
+NorCal picks up the 7700 immediately.
+
+"Aircraft squawking 7700 near San Jose, NorCal Approach, say callsign and nature of emergency."
+
+But you're not on 121.5. You're still on the Monterey CTAF. You don't hear NorCal's call.
+
+The F-16 lead activates the LED sign again: **TUNE 121.5 — FOLLOW ME**
+
+The letters scroll across the display, clear as day. The fighter pilot is literally spelling it out for you.
+
+<<link "Tune 121.5 and respond" "A1a-Guard">><<set $pathArray to $pathArray.concat(["Finally tuned Guard"])>><</link>>
+
+<<link "You can't read the sign clearly — flash your landing lights instead" "Ending-SlowLearner">><<set $pathArray to $pathArray.concat(["Couldn't read LED, flashed lights"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: A2-Panic
+<<set $pathArray to $pathArray.concat(["Panicked — dove away"])>>
+
+Every ounce of flight training you've ever had exits the cockpit at once. Your brain makes an executive decision: *Run.*
+
+You shove the yoke forward and add full power. The Icon A5 dives, the nose pitching toward the water. Your airspeed climbs past 100 knots — fast for this airplane, but roughly 1/15th the speed of the aircraft you're running from.
+
+"JAKE, WHAT ARE YOU DOING?!" Amber screams.
+
+"Getting us out of here!"
+
+The narrator would like to point out that in the entire history of aviation, the number of Icon A5s that have successfully outrun F-16 Fighting Falcons is zero. This is because the F-16 cruises at 500 knots and has afterburners. You do not.
+
+The fighters break off for exactly one second — long enough to process that you're fleeing — then reposition. The lead F-16 crosses your flight path about 500 feet ahead and slightly below, expending flares. Bright orange balls of fire streak past your windscreen.
+
+Amber screams again, a real, primal scream. Your wake turbulence alarm would be going off if you had one.
+
+"N621IA, this is interceptor aircraft. You are taking evasive action. Level your wings, reduce power, and follow the lead aircraft IMMEDIATELY. Noncompliance will result in escalated response."
+
+But you don't hear this, because you're still on the Monterey CTAF, the radio volume is too low, and the blood is pounding in your ears so loud it drowns out everything else.
+
+The lead F-16 makes another pass — closer, louder, more aggressive. The second fighter expends flares. This is the military equivalent of "WE ARE NOT KIDDING."
+
+Amber has stopped screaming. She's now crying.
+
+What do you do?
+
+<<link "\"OK, OK, OK!\" — Level off, rock wings, follow them" "A2a-Comply">><<set $pathArray to $pathArray.concat(["A2a: Late compliance"])>><</link>>
+
+<<link "Spot Reid-Hillview airport — try to land there on your own" "A2b-SelfDivert">><<set $pathArray to $pathArray.concat(["A2b: Tried to self-divert"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "Keep running — you can outmaneuver them at low altitude" "A2c-KeepRunning">><<set $pathArray to $pathArray.concat(["A2c: Kept running from F-16s"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: A2a-Comply
+<<set $pathArray to $pathArray.concat(["Late compliance — heading to Moffett"])>>
+
+Reality crashes through the panic. You level the wings, pull the power back, and rock the Icon left-right-left. The lead F-16 repositions off your left wing. You follow.
+
+But the damage is done. You fled from a military intercept. In the eyes of NORAD, NorCal Approach, and every federal agency watching this unfold on radar, you just went from "confused pilot who busted a TFR" to "potential security threat who evaded military aircraft."
+
+The F-16s don't lead you to San Jose International. They lead you north, to Moffett Federal Airfield — KNUQ. A military base. Where the security response will be... proportional to your behavior.
+
+"N621IA, you are being escorted to Moffett Federal Airfield. Runway 32 Left. Comply immediately."
+
+The voice on 121.5 is ice cold. You've tuned Guard now, too late to matter much, but at least you can hear the instructions.
+
+Amber hasn't spoken in five minutes. That's worse than anything.
+
+You line up for Moffett. The runway is enormous — 9,200 feet, built for Navy patrol aircraft. As you approach, you see the ramp: security vehicles with lights flashing, black SUVs, uniformed personnel.
+
+This is no longer an FAA matter. This is a federal law enforcement matter.
+
+<<link "Land at Moffett and cooperate" "Ending-MoffettHumiliation">><<set $pathArray to $pathArray.concat(["Landed at Moffett"])>><</link>>
+
+:: A2b-SelfDivert
+<<set $pathArray to $pathArray.concat(["Trying to divert to KRHV"])>>
+
+You spot Reid-Hillview (KRHV) off to the east — a small GA airport, short runways, the kind of place where a little Icon A5 can land without attracting attention.
+
+Except you're being escorted by two F-16s, so "not attracting attention" isn't really on the menu.
+
+You bank toward KRHV. The lead F-16 immediately crosses your flight path — a hard, unmistakable message: "DO NOT GO THAT WAY. FOLLOW ME."
+
+The second fighter repositions to block your turn. They are not asking. They are telling.
+
+You can either follow the fighter, or ignore a direct military interception command for the second time in three minutes.
+
+<<link "Fine — follow the F-16" "A2a-Comply">><<set $pathArray to $pathArray.concat(["Gave up, followed fighter"])>><</link>>
+
+<<link "Ignore the fighter, continue to KRHV" "Ending-WorstCase">><<set $pathArray to $pathArray.concat(["Ignored fighter — continued to KRHV"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: A2c-KeepRunning
+<<set $pathArray to $pathArray.concat(["Still running from F-16s"])>>
+
+You push the throttle to the wall. The Icon A5 is giving you everything she's got — about 100 knots. The F-16s, which can cruise at Mach 1.2, don't even need to accelerate. They just... keep up. Effortlessly. Like a cheetah following a house cat.
+
+The lead fighter passes directly in front of you — 500 feet of separation, close enough that you see the rivets, close enough that the jet wash rocks your little airplane like a toy in a bathtub. Then flares again. More of them this time.
+
+This is your final warning. The AIM is clear: after the second warning pass, the next step is "escalated response." Nobody wants to think about what that means for a 1,500-pound seaplane.
+
+Amber has gone completely silent. Not crying anymore. Just... done. Processing her life choices.
+
+You can see the pilot's helmet in the lead F-16. He's looking right at you.
+
+<<link "Finally comply — rock wings, follow" "Ending-WorstCase">><<set $pathArray to $pathArray.concat(["Finally gave up after running"])>><</link>>
+
+<<link "You're out of ideas — land in whatever open space you can find" "Ending-FieldLanding">><<set $pathArray to $pathArray.concat(["Panic-landed in a field"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: A3-Freeze
+<<set $pathArray to $pathArray.concat(["Froze — did nothing"])>>
+
+You do nothing. Your hands are on the yoke. Your eyes are wide. Your brain has blue-screened.
+
+The F-16 off your left wing rocks its wings again. Nothing. You're a statue.
+
+"Jake?" Amber's voice is thin. "Jake, those are... those are fighter jets. Jake?"
+
+The lead F-16 pulls ahead and crosses your flight path — minimum 500 feet separation, flares dispensing. Bright orange stars streak across your windscreen. The aircraft shudders in the wake turbulence.
+
+That wakes you up.
+
+Amber grabs your arm. "DO SOMETHING!"
+
+<<link "Rock wings, follow the F-16" "A1-RockWings">><<set $pathArray to $pathArray.concat(["Snapped out of it, followed"])>><</link>>
+
+<<link "Turn away — but in the wrong direction, toward the stadium" "A3b-WrongWay">><<set $pathArray to $pathArray.concat(["Turned wrong way — toward stadium"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "Grab the radio: \"MAYDAY MAYDAY MAYDAY!\"" "A3c-Mayday">><<set $pathArray to $pathArray.concat(["Called MAYDAY on wrong freq"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: A3b-WrongWay
+<<set $pathArray to $pathArray.concat(["Heading toward stadium — wrong direction"])>>
+
+Panic and confusion do terrible things to spatial awareness. The F-16 was leading you south — away from the stadium. Your panicked brain processes "away from the scary jet" as "turn the other direction."
+
+You bank right. Toward the stadium. Toward 68,000 people. Toward the most heavily defended airspace in North America right now.
+
+The F-16s react instantly. Both fighters cross your path — one from each side, flares deploying, in a maneuver that leaves zero ambiguity about the message: **TURN AROUND. NOW.**
+
+You are three nautical miles from the stadium. Both aircraft are between you and it. The lead fighter's LED sign flashes: **MOFFETT — FOLLOW — NOW**
+
+This is no longer a TFR violation. This is a national security incident. You are heading toward a stadium full of people while ignoring military intercept commands.
+
+<<link "FINALLY turn the right way and follow" "Ending-MoffettHumiliation">><<set $pathArray to $pathArray.concat(["Finally turned right direction"])>><</link>>
+
+<<link "Orbit in place, not sure what to do" "Ending-WorstCase">><<set $pathArray to $pathArray.concat(["Orbited in confusion"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: A3c-Mayday
+<<set $pathArray to $pathArray.concat(["MAYDAY on wrong frequency"])>>
+
+You grab the mic and scream:
+
+"MAYDAY MAYDAY MAYDAY! N621IA! We have military aircraft! Requesting immediate assistance! MAYDAY!"
+
+The problem: you're still on the Monterey CTAF. Nobody hears your mayday except a student pilot doing pattern work at Watsonville, who is now very confused.
+
+The F-16 pilot doesn't know you're trying to communicate — he just sees an aircraft that still hasn't rocked its wings or followed instructions. The LED sign changes: **TUNE 121.5 — FOLLOW ME**
+
+At least you're trying to do something. That's marginally better than freezing.
+
+<<link "Tune 121.5, follow the F-16" "Ending-CooperativeA">><<set $pathArray to $pathArray.concat(["Tuned Guard, followed — late"])>><</link>>
+
+<<link "\"I don't know what 121.5 is!\" (you really should)" "Ending-SlowLearner">><<set $pathArray to $pathArray.concat(["Didn't know Guard frequency"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B-CheckEFB
+<<set $pathArray to $pathArray.concat(["Checking ForeFlight"])>>
+
+You reach for your iPad. Amber's words hang in the air — "Can we fly over it?" — but something makes you pause. A flicker of responsibility. A dim memory of your CFI saying "always check your EFB before changing course."
+
+You pull up ForeFlight. The app loads. You zoom in on your position.
+
+And there it is.
+
+A massive red and orange ring, centered on Levi's Stadium. The outer boundary is enormous — 30 nautical miles from the stadium. Your little airplane icon sits right inside that ring. Active now. Surface to Flight Level 180. Super Bowl TFR.
+
+Oh. Oh no.
+
+"What's that red circle?" Amber asks, leaning over to look at the iPad.
+
+Your internal dialogue is running at full volume: *You didn't check NOTAMs. You didn't check a d**n thing. You just took off like you owned the airspace.*
+
+<<link "\"We need to turn around. Right now. There's a no-fly zone.\"" "B1-TurnAround">><<set $pathArray to $pathArray.concat(["B1: Turning around"])>><</link>>
+
+<<link "\"Nothing, just checking our route!\" (hide the TFR to save face)" "B2-HideIt">><<set $pathArray to $pathArray.concat(["B2: Hid the TFR"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "\"We're OK — we're in the outer ring. I think we can be here with a squawk code?\"" "B3-SkirtEdge">><<set $pathArray to $pathArray.concat(["B3: Trying to skirt the edge"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B1-TurnAround
+<<set $pathArray to $pathArray.concat(["B1: Banking south"])>>
+
+Survival instinct overrides ego. You bank the Icon A5 south.
+
+"We're turning around," you tell Amber. "There's a TFR — a no-fly zone — over the stadium. It's active right now. We're inside the outer boundary. That's... not great."
+
+Amber's eyes widen. "Seriously? Can you get in trouble?"
+
+"Yeah. Potentially."
+
+You're heading south now, but you're still inside the 30-nautical-mile outer ring. You've got 15-20 miles before you're clear.
+
+Then the radio crackles.
+
+"Aircraft near Santa Cruz, squawking 1200, say callsign and intentions."
+
+NorCal Approach. They're tracking you.
+
+<<link "Respond honestly: the TFR confession" "B1a-Honest">><<set $pathArray to $pathArray.concat(["B1a: Honest response"])>><</link>>
+
+<<link "Play it cool: \"VFR southbound, returning to Monterey\"" "B1b-PlayCool">><<set $pathArray to $pathArray.concat(["B1b: Playing cool"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "Don't respond — pretend you didn't hear it" "B1c-IgnoreATC">><<set $pathArray to $pathArray.concat(["B1c: Ignored ATC"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B1a-Honest
+<<set $pathArray to $pathArray.concat(["B1a: Honest confession"])>>
+
+You key the mic. Steady voice. Miracle.
+
+"NorCal, Icon A5 N621IA, I just realized I'm inside the Super Bowl TFR. Turning south to exit. My apologies."
+
+Pause. You imagine the controller raising an eyebrow. *A pilot who actually admits it?*
+
+"N621IA, roger. Squawk 4521, ident. Maintain VFR, proceed direct Monterey."
+
+"Squawk 4521, N621IA."
+
+You flip the transponder dial. Discrete code. You're on their scope now.
+
+"N621IA, radar contact. Be advised, expect a phone number to call upon landing at Monterey."
+
+A phone number. The FAA's gentle way of saying "we're investigating this, but we appreciate your honesty."
+
+Amber is quiet in the right seat. You're heading south, the TFR ring shrinking behind you on the iPad.
+
+<<link "\"I'll call them. We handled this the right way.\" (mature response)" "Ending-BestCase">><<set $pathArray to $pathArray.concat(["Mature, accepted consequences"])>><</link>>
+
+<<link "\"Is there any way we can just... forget this happened?\" (on the radio)" "Ending-AlmostBestCase">><<set $pathArray to $pathArray.concat(["Cringey radio moment"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B1b-PlayCool
+<<set $pathArray to $pathArray.concat(["B1b: Playing it cool"])>>
+
+"NorCal, Icon A5 N621IA, VFR southbound, returning to Monterey."
+
+Smooth. Professional. Totally fine, right?
+
+"N621IA, are you aware you are currently inside the Super Bowl TFR? State your intentions."
+
+Not smooth. The controller heard that half-second of hesitation in your transmission. ATC can spot a cover-up from fifty miles away.
+
+<<link "Come clean: \"Affirmative, I just noticed, heading south to exit\"" "B1a-Honest">><<set $pathArray to $pathArray.concat(["Came clean after getting caught"])>><</link>>
+
+<<link "Double down: \"Uh, negative, what TFR?\"" "Ending-PhoneCall">><<set $pathArray to $pathArray.concat(["Still playing dumb"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B1c-IgnoreATC
+<<set $pathArray to $pathArray.concat(["B1c: Pretending not to hear ATC"])>>
+
+You don't respond. Maybe they're talking to someone else. Maybe your radio is acting up.
+
+You're still heading south, still inside the TFR, and you've just ignored a direct radio call from NorCal Approach. That's the kind of decision that gets you visited by fighter jets.
+
+Two minutes pass. No more radio calls.
+
+Then Amber taps your arm.
+
+"Jake... what are those?"
+
+Two dark shapes, closing from your ten o'clock. Fast. Very fast.
+
+F-16s. Because you chose not to answer the radio, ATC escalated.
+
+<<link "Continue to F-16 intercept" "A-ApproachStadium">><<set $pathArray to $pathArray.concat(["Escalated to F-16 intercept"])>><</link>>
+
+:: B2-HideIt
+<<set $pathArray to $pathArray.concat(["B2: Hiding the TFR"])>>
+
+You close the ForeFlight app — well, you turn the iPad away from Amber. The problem doesn't exist if she can't see it, right?
+
+"All good," you tell her. "Just checking our route. Beautiful day, isn't it?"
+
+She smiles and looks back at the scenery. She doesn't know. But you do.
+
+You're inside the outer ring. *Knowingly* now. If anyone finds out you saw the TFR and kept flying? That's not ignorance. That's deliberate.
+
+But your ego is flying the airplane.
+
+Five minutes later. Your ForeFlight is beeping softly under your thigh — TFR proximity alerts. You've silenced them. You're 12 miles from the stadium. The red inner ring boundary is just ahead on the display.
+
+<<link "\"You know what, let's turn back. This was a bad idea.\"" "B2a-LateReverse">><<set $pathArray to $pathArray.concat(["B2a: Late reversal"])>><</link>>
+
+<<link "Cross into the inner ring — \"It's fine, I've done this before\" (you haven't)" "A-ApproachStadium">><<set $pathArray to $pathArray.concat(["B2b: Crossed into inner ring"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "Try to skirt along the inner ring boundary heading north" "B2c-Skirting">><<set $pathArray to $pathArray.concat(["B2c: Skirting the boundary"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B2a-LateReverse
+<<set $pathArray to $pathArray.concat(["B2a: Turning back late"])>>
+
+Reason floods back in. "Amber, I'm being stupid. We need to turn around."
+
+You bank hard south. The Icon A5 creaks in protest.
+
+But NorCal has been tracking you this whole time. The radio crackles.
+
+"N621IA, NorCal Approach. Contact NorCal Approach 124.0, squawk 4521."
+
+They have your N-number. They've been watching.
+
+<<link "Comply and be honest" "B1a-Honest">><<set $pathArray to $pathArray.concat(["Complied honestly"])>><</link>>
+
+<<link "Change squawk back to 1200 and try to disappear" "Ending-CannotHide">><<set $pathArray to $pathArray.concat(["Tried to disappear from radar"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B2c-Skirting
+<<set $pathArray to $pathArray.concat(["B2c: Flying along the boundary"])>>
+
+You're trying to be clever. Stay outside the 10-mile inner ring, fly along the boundary heading north. Thread the needle.
+
+But airplane navigation at low altitude in light winds isn't laser-precise. You're watching ForeFlight like a hawk, trying to hold the line, but the wind is pushing you east. Or your heading is off by a degree. Or your GPS position has a 30-second lag.
+
+Your ForeFlight explodes with an alarm. You've drifted inside the inner ring. You don't even have time to react before two F-16s converge on your position.
+
+<<link "Continue to F-16 intercept" "A-ApproachStadium">><<set $pathArray to $pathArray.concat(["Drifted into inner ring — intercepted"])>><</link>>
+
+:: B3-SkirtEdge
+<<set $pathArray to $pathArray.concat(["B3: Thinks he knows TFR rules"])>>
+
+You've got half an idea about TFR regulations. You think you can be in the outer ring if you have a squawk code. This is partially right — you need ATC contact, an active flight plan, AND a discrete squawk. You have none of these.
+
+"We're actually okay," you tell Amber. "We're in the outer ring, not the inner ring. As long as we get a squawk code, we should be legal."
+
+This is false. But you believe it enough to keep flying.
+
+<<link "Call NorCal Approach and request a squawk code for transit" "B3a-RequestTransit">><<set $pathArray to $pathArray.concat(["B3a: Requesting transit squawk"])>><</link>>
+
+<<link "Squawk 7700 — that gets attention, right?" "B3b-Wrong7700">><<set $pathArray to $pathArray.concat(["B3b: Squawked 7700 — no emergency"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "\"We're fine in the outer ring. Just can't enter the inner one.\"" "B3c-WrongAssumption">><<set $pathArray to $pathArray.concat(["B3c: Wrong assumption"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B3a-RequestTransit
+<<set $pathArray to $pathArray.concat(["B3a: Called NorCal for transit"])>>
+
+"NorCal Approach, Icon A5 N621IA, 2,500 feet near Santa Cruz. Requesting a discrete squawk to transit the outer ring of the Super Bowl TFR."
+
+"N621IA, squawk 4521, ident."
+
+Good start. You've got a code.
+
+"N621IA, radar contact. Are you on a filed flight plan?"
+
+And there's the catch.
+
+"Negative."
+
+Long pause.
+
+"N621IA, you are not authorized to be in this airspace without an active flight plan. Turn south immediately, heading 180. Expect a phone number upon landing at Monterey."
+
+<<link "\"Roger, turning south.\"" "Ending-PhoneCall">><<set $pathArray to $pathArray.concat(["Complied, heading south"])>><</link>>
+
+<<link "\"Can I file one right now?\"" "Ending-PhoneCall">><<set $pathArray to $pathArray.concat(["Asked to file flight plan mid-bust"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B3b-Wrong7700
+<<set $pathArray to $pathArray.concat(["B3b: Emergency squawk without emergency"])>>
+
+You think: *7700 gets instant attention. ATC will HAVE to talk to me. Then I'll explain and get a transit.*
+
+This is the worst idea you've had all day.
+
+You dial 7700 into the transponder. 7700 is the international emergency code. By squawking it, you are telling every radar facility in California that you are having a life-threatening emergency. You are not.
+
+Within sixty seconds, every frequency at NorCal lights up:
+
+"Aircraft squawking 7700 near Santa Cruz, NorCal Approach on Guard, say callsign and nature of emergency!"
+
+Fire trucks mobilize. Coast Guard notified. Hospitals alerted. All because you thought the emergency squawk was a customer service button.
+
+<<link "\"NorCal, no emergency, I was just... trying to get your attention\"" "Ending-7700Incident">><<set $pathArray to $pathArray.concat(["Admitted false emergency"])>><</link>>
+
+<<link "Panic — change squawk back to 1200 without responding" "Ending-7700Worse">><<set $pathArray to $pathArray.concat(["Changed squawk, went silent"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: B3c-WrongAssumption
+<<set $pathArray to $pathArray.concat(["B3c: Assumes outer ring is legal"])>>
+
+You keep flying north, staying outside the inner ring on your iPad, confident you're legal. You're not.
+
+The outer ring of a Super Bowl TFR requires an active flight plan, a discrete ATC-assigned squawk, and two-way radio communication with ATC. You have none of these. Being in the outer ring without authorization is a violation, period.
+
+ATC finds you on radar.
+
+"Aircraft squawking 1200, 15 miles south of San Jose, say callsign."
+
+<<link "Respond to ATC" "Ending-PhoneCall">><<set $pathArray to $pathArray.concat(["Responded to ATC, got vectors out"])>><</link>>
+
+<<link "Miss the call — too busy chatting with Amber" "A-ApproachStadium">><<set $pathArray to $pathArray.concat(["Missed ATC call — F-16 intercept"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: C-ContactATC
+<<set $pathArray to $pathArray.concat(["C: Contacting ATC first"])>>
+
+Good instinct. Before doing anything else, you reach for the radio and dial up NorCal Approach on 124.0.
+
+"NorCal Approach, Icon A5 N621IA, 2,500 feet, 22 miles south of San Jose, VFR, requesting flight following."
+
+There's a pause.
+
+"N621IA, NorCal Approach, squawk 4521 and ident."
+
+You comply. A few seconds later:
+
+"N621IA, radar contact. Be advised, Temporary Flight Restriction in effect for the Super Bowl at Levi's Stadium. You are currently inside the outer ring. The TFR extends from the surface to Flight Level 180, 30-nautical-mile outer ring, 10-nautical-mile inner core. State your intentions."
+
+Amber's eyes go wide. She's pointing at the stadium in the distance.
+
+At least you called ATC before flying headlong into the inner ring. That counts for something.
+
+<<link "\"I was not aware of the TFR. Requesting vectors to exit.\"" "C1-Comply">><<set $pathArray to $pathArray.concat(["C1: Requesting exit vectors"])>><</link>>
+
+<<link "\"Is there any way we can transit through? We're heading to Half Moon Bay.\"" "C2-Negotiate">><<set $pathArray to $pathArray.concat(["C2: Trying to negotiate transit"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "\"Am I legal where I am right now?\"" "C2c-LawyerUp">><<set $pathArray to $pathArray.concat(["C3: Asking about legality"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: C1-Comply
+<<set $pathArray to $pathArray.concat(["C1: Complying, turning south"])>>
+
+"NorCal, N621IA, I was not aware of the TFR. Requesting vectors to exit the area."
+
+"N621IA, roger. Turn left heading 180, maintain VFR. Expect to exit the TFR in approximately 15 miles."
+
+You bank south. Smart, responsible, boring.
+
+Amber looks at the stadium sliding off your left wing. "So we can't see the Super Bowl?"
+
+The disappointment in her voice is real. This was supposed to be the epic sightseeing date. Now it's a compliance exercise.
+
+<<link "\"Sorry, babe. There's a no-fly zone. I should have checked before we left.\"" "C1a-Mature">><<set $pathArray to $pathArray.concat(["C1a: Honest with Amber"])>><</link>>
+
+<<link "\"Tell you what, let me see if they'll let us skirt around it...\"" "C1b-PushBack">><<set $pathArray to $pathArray.concat(["C1b: Pushing back with ATC"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "\"Screw it, hold on—\" (turn back toward the TFR)" "C1c-Stupid">><<set $pathArray to $pathArray.concat(["C1c: Turned back into TFR"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: C1a-Mature
+<<set $pathArray to $pathArray.concat(["C1a: Being mature about it"])>>
+
+"Sorry, babe. There's a no-fly zone. I should have checked before we left. That's my fault."
+
+Amber considers this. You watch her process it — the disappointment, the admission, the fact that you're owning the mistake instead of trying to get around it.
+
+"That's... actually pretty responsible," she says.
+
+"Jake Thornton, responsible. Mark the calendar."
+
+Ten minutes later, you cross the outer boundary. ATC confirms: "N621IA, you are clear of the TFR. Squawk VFR, frequency change approved. Be advised, expect a phone number to call when on the ground."
+
+<<link "\"Roger, request the number. And... thanks for the help.\"" "Ending-BestCase">><<set $pathArray to $pathArray.concat(["Accepted consequences gracefully"])>><</link>>
+
+<<link "\"Copy. Hey, any chance that phone call is optional?\"" "Ending-AlmostBestCase">><<set $pathArray to $pathArray.concat(["Asked if phone call was optional"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: C1b-PushBack
+<<set $pathArray to $pathArray.concat(["C1b: Trying to negotiate with ATC"])>>
+
+You call ATC back. "NorCal, N621IA, any chance we can get a transit through the outer ring northbound?"
+
+"Negative. All aircraft must exit the TFR unless on an active IFR or VFR flight plan filed prior to TFR activation with a discrete squawk code. You have neither. Continue heading 180."
+
+Amber overheard. "They said no, right?"
+
+<<link "\"Yeah, they said no. We'll do Half Moon Bay another day.\"" "Ending-BestCase">><<set $pathArray to $pathArray.concat(["Accepted the no"])>><</link>>
+
+<<link "\"I bet I could get above it...\" (the A5 ceiling is 11,000 ft; the TFR goes to FL180)" "Ending-AlmostBestCase">><<set $pathArray to $pathArray.concat(["Suggested climbing above FL180 in an A5"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: C1c-Stupid
+<<set $pathArray to $pathArray.concat(["C1c: Defying ATC, turning back"])>>
+
+Something stupid and competitive overrides your judgment. You bank right. Back toward the stadium. Back into the TFR. After ATC explicitly told you to exit.
+
+"N621IA! I show you turning northbound! Turn south IMMEDIATELY!"
+
+The controller is not asking.
+
+Amber goes white. "What the hell are you doing?!"
+
+<<link "\"Oh God, sorry, turning south now\"" "Ending-PhoneCall">><<set $pathArray to $pathArray.concat(["Turned back after defying ATC"])>><</link>>
+
+<<link "Keep going — \"We're just going to take a quick look\"" "A-ApproachStadium">><<set $pathArray to $pathArray.concat(["Defied ATC, continued to stadium"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: C2-Negotiate
+<<set $pathArray to $pathArray.concat(["C2: Negotiating transit"])>>
+
+"NorCal, N621IA, is there any way we can transit through? We're heading to Half Moon Bay."
+
+"N621IA, negative. You are not authorized for transit. Turn left heading 180, maintain VFR, exit the TFR."
+
+No means no. But you have options about how to take it.
+
+<<link "Turn south as instructed" "C1-Comply">><<set $pathArray to $pathArray.concat(["C2a: Accepted the no"])>><</link>>
+
+<<link "\"What if I climb above it?\"" "C2b-ClimbAbove">><<set $pathArray to $pathArray.concat(["C2b: Trying to climb above"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "\"Am I legal in the outer ring?\"" "C2c-LawyerUp">><<set $pathArray to $pathArray.concat(["C2c: Lawyering up"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: C2b-ClimbAbove
+<<set $pathArray to $pathArray.concat(["C2b: Climb above the TFR?"])>>
+
+"NorCal, N621IA, what if I climb above the TFR ceiling?"
+
+Deadpan response: "N621IA, the TFR extends from the surface to Flight Level one eight zero. That's 18,000 feet. Your aircraft's service ceiling is below the TFR ceiling. Turn south."
+
+Eighteen thousand feet. Your Icon A5 maxes out around eleven thousand. Even if it didn't, you'd need supplemental oxygen above 12,500. You have no supplemental oxygen. You are in a seaplane.
+
+Jake has not thought this through.
+
+<<link "Turn south, chastened" "Ending-AlmostBestCase">><<set $pathArray to $pathArray.concat(["Gave up on climbing idea"])>><</link>>
+
+:: C2c-LawyerUp
+<<set $pathArray to $pathArray.concat(["Asking about legality"])>>
+
+"NorCal, N621IA, just to clarify — am I legal where I am right now in the outer ring?"
+
+The controller's voice is firm: "N621IA, you are inside the TFR without an active flight plan or discrete ATC-assigned squawk code. You are NOT legal. Turn south immediately, heading 180."
+
+<<link "Comply — turn south" "Ending-PhoneCall">><<set $pathArray to $pathArray.concat(["Finally complied after lawyering"])>><</link>>
+
+<<link "\"I'd like to speak with your supervisor\"" "Ending-Supervisor">><<set $pathArray to $pathArray.concat(["Asked for the ATC supervisor"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: D-KeepFlying
+<<set $pathArray to $pathArray.concat(["D: Keeping heading to Half Moon Bay"])>>
+
+"Nah, let's keep heading north," you tell Amber. "Half Moon Bay at sunset is going to be way cooler than a stadium. Trust me."
+
+Amber looks mildly disappointed but goes along. "You're the pilot."
+
+You continue northbound along the coast, the stadium shrinking in your peripheral vision. Good call. You didn't take the bait.
+
+The problem: you're still inside the 30-nautical-mile outer ring of the TFR. The TFR extends north well past your route. Half Moon Bay Airport (KHAF) is about 25 miles from Levi's Stadium — still inside the outer ring.
+
+You don't know any of this, because you didn't check NOTAMs.
+
+Five minutes later, NorCal broadcasts on the general frequency: "All aircraft, the Super Bowl TFR is active. Aircraft not on an active flight plan with a discrete squawk code must exit the area immediately."
+
+<<link "\"Huh, I should probably check in...\" — Contact NorCal" "C-ContactATC">><<set $pathArray to $pathArray.concat(["D1: Heard broadcast, contacted ATC"])>><</link>>
+
+<<link "You're chatting with Amber and miss the broadcast" "D2-MissedCall">><<set $pathArray to $pathArray.concat(["D2: Missed the broadcast"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "You heard it but figure \"I'm heading away from the stadium, not me\"" "D3-NotMe">><<set $pathArray to $pathArray.concat(["D3: Figured it didn't apply"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: D2-MissedCall
+<<set $pathArray to $pathArray.concat(["D2: Missed the ATC broadcast"])>>
+
+You didn't hear ATC's broadcast because you were explaining to Amber how the Icon A5 can land on water. You were doing the hand motions and everything — showing how the sponsons work, how the water rudder deploys. She was genuinely interested.
+
+Ten minutes later. You're approaching Half Moon Bay from the south, still inside the outer ring. ATC calls your N-number directly:
+
+"N621IA, NorCal Approach, radar contact, you are inside an active TFR. State your intentions."
+
+<<link "Respond and comply immediately" "D2a-Comply">><<set $pathArray to $pathArray.concat(["D2a: Responded immediately"])>><</link>>
+
+<<link "\"What TFR?\" (genuine ignorance)" "D2b-Ignorance">><<set $pathArray to $pathArray.concat(["D2b: What TFR?"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "Radio volume is too low — you miss this call too" "D2c-Intercepted">><<set $pathArray to $pathArray.concat(["D2c: Missed the direct call too"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: D2a-Comply
+<<set $pathArray to $pathArray.concat(["D2a: Complying with ATC"])>>
+
+"NorCal, N621IA, negative on the TFR awareness. I'm heading to Half Moon Bay. How do I exit?"
+
+"N621IA, turn left heading 240, maintain VFR. You'll exit the TFR in approximately 8 miles over the Pacific."
+
+You comply. Eight minutes later, NorCal clears you: "N621IA, you are clear of the TFR. Squawk VFR. Be advised, expect a phone number to call upon landing."
+
+<<link "\"Roger, ready to copy the number.\"" "Ending-PhoneCall">><<set $pathArray to $pathArray.concat(["Accepted phone number"])>><</link>>
+
+<<link "\"Is Half Moon Bay clear of the TFR? Can I land there?\"" "Ending-HalfMoon">><<set $pathArray to $pathArray.concat(["Asked about Half Moon Bay"])>><</link>>
+
+:: D2b-Ignorance
+<<set $pathArray to $pathArray.concat(["D2b: Genuinely clueless"])>>
+
+"What TFR?"
+
+You hear the controller sigh through the radio. Actually sigh.
+
+"Super Bowl Temporary Flight Restriction. Active now. Surface to Flight Level 180. All aircraft require authorization. You do not have authorization. Turn left heading 240 immediately."
+
+"Oh! Oh s***. Roger, turning left 240. Sorry about that."
+
+<<link "Continue west over the Pacific, exit the TFR" "Ending-PhoneCall">><<set $pathArray to $pathArray.concat(["Complied after learning about TFR"])>><</link>>
+
+<<link "\"Can you give me a squawk so I can land at Half Moon Bay?\"" "Ending-HalfMoon">><<set $pathArray to $pathArray.concat(["Requested Half Moon Bay landing"])>><</link>>
+
+:: D2c-Intercepted
+<<set $pathArray to $pathArray.concat(["D2c: Missed all radio calls"])>>
+
+Your radio volume is too low. You've been talking over every transmission. ATC has tried calling you three times now. Time to escalate.
+
+You're approaching Half Moon Bay when Amber taps your shoulder.
+
+"Jake... what's that helicopter doing?"
+
+A United States Coast Guard MH-65 Dolphin helicopter has materialized off your right wing, closing smoothly into formation. It's flashing a blue light. On the side, an LED message board scrolls: **CONTACT ATC 121.5**
+
+Your blood runs cold.
+
+<<link "See the sign, tune 121.5, call in" "Ending-CoastGuard">><<set $pathArray to $pathArray.concat(["Saw sign, contacted Guard"])>><</link>>
+
+<<link "\"What the... why is that helicopter flashing at us?\"" "Ending-CoastGuard">><<set $pathArray to $pathArray.concat(["Amber had to read the sign for you"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: D3-NotMe
+<<set $pathArray to $pathArray.concat(["D3: Figured TFR doesn't apply"])>>
+
+You heard the TFR broadcast. But you're heading NORTH. Away from the stadium. You're not going near that thing. They don't mean you.
+
+They absolutely do mean you. The outer ring extends 30 nautical miles in every direction. You are inside it. "Heading away" doesn't matter.
+
+Your ForeFlight has been beeping softly for the last ten minutes. TFR proximity alerts. You turned the volume down because it was annoying while you were talking to Amber.
+
+<<link "Finally look at ForeFlight and see the TFR ring around your position" "B-CheckEFB">><<set $pathArray to $pathArray.concat(["D3a: Checked ForeFlight"])>><</link>>
+
+<<link "Keep flying until ATC contacts you directly" "D2-MissedCall">><<set $pathArray to $pathArray.concat(["D3b: Kept flying, ignored alerts"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+<<link "Amber notices the ForeFlight alert: \"Jake, what does 'TFR ALERT' mean?\"" "D3c-AmberNotices">><<set $pathArray to $pathArray.concat(["D3c: Amber noticed the alert"])>><</link>>
+
+:: D3c-AmberNotices
+<<set $pathArray to $pathArray.concat(["D3c: Amber spotted the TFR alert"])>>
+
+"Jake, what does 'TFR ALERT' mean?"
+
+Your girlfriend, who has zero aviation knowledge, is pointing at your iPad. The bright red banner you've been ignoring for ten minutes is flashing at you: **ACTIVE TFR — YOUR POSITION IS INSIDE THE RESTRICTED AREA**
+
+"That red circle on the map... are we inside it?"
+
+You look at ForeFlight. You look at the red ring. You look at your airplane icon, squarely inside it. You look at Amber.
+
+<<link "\"S***. Yeah, we are. Hold on, I need to call ATC.\"" "Ending-BestCase">><<set $pathArray to $pathArray.concat(["Admitted it, called ATC immediately"])>><</link>>
+
+<<link "\"Don't worry about it, it's just a... weather advisory.\"" "Ending-AmberGoogles">><<set $pathArray to $pathArray.concat(["Lied to Amber about the TFR"])>><<set $badchoices to $badchoices + 1>><</link>>
+
+:: Ending-BestCase
+<div class="debrief">
+
+**Outcome: Minor turbulence, soft landing**
+
+You land at Monterey. You call the number NorCal gave you. It's the FAA Flight Standards District Office.
+
+"N621IA, we have a report of your aircraft entering the Super Bowl TFR without authorization. You turned around when you realized the error. You cooperated with ATC. Can you explain what happened?"
+
+"I didn't check NOTAMs before departure. That was my mistake."
+
+"That's correct. You'll receive a Letter of Investigation. Depending on the circumstances, you may be scheduled for a 709 ride — that's a check flight with an FAA examiner. Your cooperation today will be noted."
+
+That's it. Not great, not catastrophic. You made a mistake and handled the aftermath like an adult.
+
+Amber, to your surprise, isn't horrified. "You owned up to it," she says at dinner. "Most guys would have tried to bluff their way through."
+
+She's right. There might be a fourth date after all.
+
+**The ADM lessons:**
+
+- **Always check NOTAMs before every flight.** This is non-negotiable. Five minutes of review would have prevented everything.
+- **Early detection and honest response to mistakes is infinitely better than denial or evasion.** You caught the problem, turned around, and confessed to ATC. That's how a good pilot handles an error.
+- **ATC is not the enemy.** They're keeping you alive. When they give you an instruction, comply first, ask questions later.
+- **Ego management is an ADM skill.** The temptation to impress Amber was real. The right call was boring. You made the boring call. That's maturity.
+
+**The regulations:**
+
+- **14 CFR 91.103** — Preflight action. Pilots must familiarize themselves with all available information concerning the flight, including NOTAMs.
+- **14 CFR 91.137/91.141/91.145** — TFR compliance. Super Bowl TFRs combine security and sporting event restrictions. Violation is a federal matter.
+- **AIM 5-6-13** — Intercept procedures. You avoided this entirely by catching the problem early.
+
+**Consequence summary:**
+
+- Letter of Investigation from the FAA
+- Possible 709 ride (FAA check flight)
+- Possible Warning Notice rather than formal violation, given cooperation
+- No certificate suspension
+- Insurance rates may increase
+- Your story becomes the example pilots tell each other: "Here's how to handle it right"
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-AlmostBestCase
+<div class="debrief">
+
+**Outcome: Same as best case, but with a viral radio moment**
+
+Same outcome as the best case — Letter of Investigation, possible 709 ride, no suspension — except for one detail.
+
+Somewhere during your radio exchange, you said something that made the controller laugh. Maybe you asked if the phone call was optional. Maybe you suggested climbing above FL180 in a seaplane. Maybe you tried to negotiate a transit through the most heavily defended airspace in North America on Super Bowl Sunday.
+
+Whatever it was, the recording is now part of the NorCal TRACON's annual "Greatest Hits" compilation — a tradition where controllers play the year's most memorable radio moments at the facility holiday party.
+
+Your voice, your callsign, your moment of peak cringe — immortalized forever in the break room of every ATC facility in the Bay Area.
+
+Amber finds the whole thing hilarious. "You asked if the phone call was OPTIONAL?" She tells this story at every dinner party for the next three years.
+
+**The ADM lessons:**
+
+- Everything from the Best Case, plus: when you've made a mistake, don't compound it with comedy on the radio. ATC is recording. Their supervisors review recordings. Your cringey moment lives forever.
+- Accept the consequence. Don't try to negotiate your way out of it. The recording will not improve with creative bargaining.
+
+**The regulations:**
+
+- Same as Best Case (14 CFR 91.103, 91.137, 91.141, 91.145)
+
+**Consequence summary:**
+
+- Same as Best Case
+- Plus your voice on the TRACON holiday party compilation
+- Amber stays in the picture, but she will never let you forget this
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-PhoneCall
+<div class="debrief">
+
+**Outcome: Standard TFR bust — the phone call nobody wants to make**
+
+You land at Monterey. You call the number.
+
+The FAA inspector is professional and thorough. He takes your statement, your N-number, your certificate number. He doesn't yell. He doesn't need to.
+
+"Mr. Thornton, NOTAMs exist to keep you alive and to protect public safety. Read them. Every time."
+
+You explain to Amber what happens next: investigation, possible check ride, possible suspension if the FAA feels strongly about it.
+
+She's quiet. The magic of the day is gone.
+
+"I thought you were supposed to be a good pilot," she says finally.
+
+"I am a good pilot who made a bad decision."
+
+"Is there a difference?"
+
+There is. But it's hard to explain when you're holding a federal phone number.
+
+**The ADM lessons:**
+
+- **TFRs are not suggestions.** They are regulatory airspace restrictions with enforcement mechanisms.
+- **ATC is always watching.** You can't hide from radar. Don't try.
+- **Ignorance of NOTAMs is not a defense.** 14 CFR 91.103 requires you to check before every flight.
+- **Your passenger trusted you.** Amber got in that airplane because she believed you knew what you were doing. You owed her better planning.
+
+**The regulations:**
+
+- **14 CFR 91.103** — Preflight action. You failed to check NOTAMs.
+- **14 CFR 91.137/91.145** — TFR compliance. You were inside without authorization.
+- **14 CFR 91.123** — Compliance with ATC clearances and instructions.
+- **TFR violations** can result in civil penalties ($10,000–$50,000), certificate action, or both.
+
+**Consequence summary:**
+
+- FAA Letter of Investigation
+- 709 ride (FAA check flight) — likely mandatory
+- Possible certificate suspension (60–180 days)
+- Insurance will increase or drop you
+- No criminal referral (you cooperated)
+- Amber is confused and somewhat distant
+- You have learned an expensive lesson
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-CooperativeA
+<div class="debrief">
+
+**Outcome: Intercepted by F-16s. Landed at San Jose International. Detained. Certificate suspended.**
+
+You step out of the Icon A5 onto the massive ramp at KSJC. An FBI agent is already approaching, badge visible. Behind him, a San Jose police officer and an FAA inspector.
+
+The next two and a half hours are a blur of questions, photocopied documents, and a windowless room that smells like government-issue coffee.
+
+"Why did you violate the TFR?" "I didn't know about it." "Why didn't you check NOTAMs?" "I... was running late." "Why were you heading toward the stadium?" "My girlfriend asked."
+
+None of these are good answers.
+
+An FAA inspector hands you a letter. Your Sport Pilot certificate is **suspended** pending investigation. A civil penalty is likely — somewhere between $25,000 and $50,000.
+
+When they finally release you, Amber is sitting in the FBO lobby, arms crossed, staring at the floor. She's been there for two hours.
+
+"So," she says. "How was your epic third date?"
+
+You don't hear from her for three weeks.
+
+**The ADM lessons:**
+
+- **Intercept compliance saved you from far worse.** You rocked wings, followed the F-16, contacted Guard. These are the correct responses per AIM 5-6-13. Without them, this would be a criminal matter.
+- **The TFR was entirely preventable.** Five minutes checking NOTAMs would have shown the TFR. You would have planned around it.
+- **Social pressure drove the initial bad decision.** Amber asked to see the stadium. You said yes because you wanted to impress her, not because it was safe.
+- **The Icon A5 on an 11,000-foot runway is a visual metaphor** for how out of your depth you were.
+
+**The regulations:**
+
+- **14 CFR 91.103** — Preflight action. NOTAMs were not checked.
+- **14 CFR 91.137/91.141/91.145** — TFR violation.
+- **AIM 5-6-13** — Intercept procedures. You eventually complied correctly: rock wings, follow, tune 121.5, squawk as instructed.
+- **AIM 5-6-14, TBL 5-6-1** — Intercept signals. The F-16 rocked wings (follow me), you rocked back (understood).
+
+**Consequence summary:**
+
+- Certificate suspended pending FAA hearing
+- Civil penalty: $25,000–$50,000
+- No criminal charges (you cooperated)
+- Insurance carrier canceling your policy
+- Your name is in the FAA enforcement database
+- Amber has gone quiet
+- The FBO line guy at San Jose tells this story for years
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-NiceTry
+<div class="debrief">
+
+**Outcome: Asked to divert to a smaller airport. During a military intercept. ATC said no.**
+
+After the F-16s peeled away and Tower cleared you to land at KSJC, you keyed the mic:
+
+"San Jose Tower, N621IA... is there any chance I could divert to Reid-Hillview? It's, uh... closer to where I need to be."
+
+Silence. Then:
+
+"N621IA, you are cleared to land runway 30 Left. Do not request diversions. Land immediately."
+
+So you land at KSJC anyway. Same FBI, same detention, same consequences — but with an extra line item on your file noting "continued negotiation during intercept" and a controller who will be telling this story at every retirement party until 2050.
+
+Everything from Ending-CooperativeA applies, except your fine is bumped higher ($50,000) and your suspension is longer because the FAA views continued pushback during an intercept as evidence of poor judgment.
+
+Amber is not impressed that you tried to redirect to a "less embarrassing" airport while being escorted by fighter jets.
+
+**The ADM lessons:**
+
+- Everything from Ending-CooperativeA, plus: The time to negotiate is BEFORE you get intercepted, not during.
+- When ATC clears you to a specific airport during an intercept, that's not a suggestion.
+
+**The regulations:**
+
+- Everything from Ending-CooperativeA, plus:
+- **14 CFR 91.123** — Compliance with ATC instructions. You were given a clearance. You tried to change it. During an intercept.
+
+**Consequence summary:**
+
+- Same as Ending-CooperativeA but worse
+- Higher fine ($50,000+)
+- Longer suspension
+- Extra cringe on the recording
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-SlowLearner
+<div class="debrief">
+
+**Outcome: Multiple failures before compliance. Certificate revoked. Amber Ubers home.**
+
+You tried the wrong frequency. Then you squawked 7700 without voice contact. Then you couldn't read the LED sign. Each individual action wasn't catastrophic, but the pattern — confusion, delay, inability to follow basic intercept procedures — paints a picture of a pilot who doesn't belong in the national airspace system.
+
+The F-16s eventually got you to KSJC. It took three times as long as it should have.
+
+The FAA's letter doesn't suspend your certificate. It **revokes** it. Revocation is not the same as suspension. Suspension means "you can't fly for X months." Revocation means "start over from scratch."
+
+To get a new certificate, you'd need to wait a minimum of one year, then pass a new written exam, oral exam, and practical test. As if you'd never flown before.
+
+Amber calls an Uber from the KSJC FBO. She doesn't say goodbye. She doesn't need to — her expression said everything when the FBI walked you into the terminal building.
+
+**The ADM lessons:**
+
+- **Each failure compounds the next.** One mistake is recoverable. A pattern of failures is evidence of unfitness.
+- **Know your emergency procedures BEFORE the emergency.** Guard frequency (121.5), intercept signals (AIM 5-6-14), transponder codes — these should be reflex, not guesswork.
+- **121.5 MHz is the most important frequency in aviation.** If you don't know it, you don't belong in the cockpit.
+
+**The regulations:**
+
+- **AIM 5-6-13** — Intercept procedures. You failed to follow them in a timely manner.
+- **AIM 5-6-14, TBL 5-6-1** — Intercept signals. The LED sign was a gift. You couldn't use it.
+- **14 CFR 91.103** — Preflight action. None was taken.
+
+**Consequence summary:**
+
+- Certificate **revoked** (not suspended)
+- Minimum one year before reapplication
+- Civil penalty: $50,000+
+- To fly again: new written, oral, and practical exams
+- Amber: gone
+- Your confidence as a pilot: gone
+- The FBO line guy's story about you: priceless
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-MoffettHumiliation
+<div class="debrief">
+
+**Outcome: Escorted to Moffett Federal Airfield. FBI. Certificate revoked. National news.**
+
+Your wheels touch down on Moffett's runway 32 Left. The base goes into heightened security mode. Fire trucks, police, military personnel, black SUVs — the full federal response package.
+
+A follow-me vehicle guides you to a ramp area. When you shut down, federal agents approach from multiple directions. One reaches in and calmly says, "Out of the aircraft. Hands visible."
+
+You and Amber are separated. Not to interrogate — to prevent you from coordinating a story (as if you have one).
+
+Six hours of questioning. FBI agents, military officers, an FAA inspector. The same questions, different ways:
+
+"Why did you violate the TFR?" "Why did you flee from the escort?" "Why did you attempt to evade military aircraft?"
+
+Your answers all contain the words "I panicked," which are honest but not helpful.
+
+The Facebook post showing your Icon A5 escorted by F-16s goes viral by evening. "Bay Area Pilot Violates Super Bowl TFR, Gets Intercepted by Fighter Jets" trends on every social platform. Your N-number is visible. Aviation enthusiasts identify you within hours.
+
+Your certificate is **revoked**. Not suspended. The FAA is done with you.
+
+Amber takes an Uber home. She doesn't wait for you. She blocks your number the next morning.
+
+**The ADM lessons:**
+
+- **Evasive action escalates everything.** Fleeing from military aircraft transforms a civil TFR violation into a potential criminal matter.
+- **Moffett is a federal facility.** Landing there without authorization is a federal offense. The military chose it specifically because of your behavior.
+- **Your actions affected hundreds of people.** The intercept response mobilized military and civilian resources. The airspace disruption affected other flights. This was not a victimless mistake.
+
+**The regulations:**
+
+- **14 CFR 91.103, 91.137, 91.141, 91.145** — TFR violation.
+- **AIM 5-6-13** — Intercept procedures. You initially failed to comply.
+- **18 U.S.C. 32** — Interference with air navigation. Your evasion put you in this territory.
+- **49 U.S.C. 46307** — Violation of national defense airspace.
+
+**Consequence summary:**
+
+- Certificate **revoked**
+- Civil penalty: $50,000–$100,000
+- Possible criminal prosecution (DOJ review pending)
+- Your name in news articles, aviation databases, forever
+- Minimum three years before certificate reapplication
+- Amber: blocked you
+- Internet: knows your name
+- Your mom: not proud
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-WorstCase
+<div class="debrief">
+
+**Outcome: Ran from F-16s. Multiple non-compliance events. Federal charges. Career over.**
+
+You ran. You kept running. You ignored every signal, every command, every chance to stop making it worse. The F-16 pilots — whose job it is to protect 68,000 people in that stadium — had to treat you like a genuine threat because you behaved like one.
+
+They forced you down. The landing wasn't gentle and it wasn't pretty. Law enforcement converged from every direction. You were pulled from the aircraft, handcuffed, and read your rights on live television — because news helicopters were already overhead.
+
+Eight hours of federal interrogation. Not FAA inspection — FBI interrogation. They asked about your intentions, your mental state, whether you were planning anything. You weren't, but your panic and repeated evasion made it look like you might have been.
+
+You're charged with:
+
+- Violation of TFR (14 CFR 91.137/91.145)
+- Interference with military aircraft (18 U.S.C. 32)
+- Reckless endangerment
+- Evasion of law enforcement
+
+Your Sport Pilot certificate isn't just revoked — it's revoked with a notation linking to pending federal charges.
+
+You need a criminal defense lawyer. This is not optional.
+
+Amber went home with her parents. Her father called to say, "Don't contact her again." He was very calm about it, which was worse than yelling.
+
+The video goes viral: "Man Tries to Outrun F-16 in Seaplane." The comments section is brutal.
+
+**The ADM lessons:**
+
+- **Evasive action from military aircraft is a federal crime.** Not a mistake. A crime.
+- **You had chances to comply at every step.** Each time you chose escalation.
+- **Desperation is not a defense.** "I panicked" doesn't undo the consequences of fleeing from fighter jets over a stadium full of people.
+- **You will never fly again.** That's not dramatic — that's the reality of a federal conviction involving aircraft.
+
+**The regulations:**
+
+- **14 CFR 91.137/91.145** — TFR violation.
+- **18 U.S.C. 32** — Destruction or interference with aircraft or aircraft facilities. Penalty: up to 20 years.
+- **49 U.S.C. 46307** — Violation of national defense airspace.
+- **AIM 5-6-13** — Intercept procedures. Noncompliance may result in the use of force.
+
+**Consequence summary:**
+
+- Certificate permanently revoked
+- Federal criminal charges
+- Civil penalty: $50,000+
+- Legal fees: $30,000–$100,000+
+- Possible federal prison time
+- Your name in every aviation cautionary tale for the next decade
+- Amber: gone
+- Your mom: devastated
+- Your flying career: over
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-FieldLanding
+<div class="debrief">
+
+**Outcome: Panic-landed in a field. Surrounded by law enforcement. Trending on social media.**
+
+You ran out of ideas and put the Icon A5 down in what looked like solid ground near the Alviso marshlands. It wasn't solid. The gear sank, the prop bit dirt, and the airframe came to a stop in a shower of mud and desperation.
+
+Amber hit her head on the instrument panel. Nothing serious — but enough to need checking. You've just turned a federal airspace violation into a potential injury accident.
+
+Before you can unbuckle, twenty law enforcement vehicles converge. CHP, Santa Clara County Sheriff, FBI, military police. There are news helicopters overhead. Bystanders with phones. Instagram is about to get very familiar with your face.
+
+You're ordered out at gunpoint. Handcuffed. Photographed. The Icon A5, crumpled in the mud with law enforcement tape around it, becomes the most shared aviation image of the month.
+
+**The ADM lessons:**
+
+- **Panic landing doesn't solve the intercept problem.** It just adds a crash on top of your violations.
+- **You can't hide from the FAA.** They have your N-number, your radar track, everything.
+- **A field is not an airport.** Landing in unsuitable terrain risks your life, your passenger's life, and ties up emergency services.
+- **The internet remembers.** That photo lives forever.
+
+**The regulations:**
+
+- **14 CFR 91.137/91.145** — TFR violation.
+- **14 CFR 91.13** — Careless or reckless operation.
+- **NTSB reporting requirements** — This is now an accident if there's injury or substantial damage.
+
+**Consequence summary:**
+
+- Certificate revoked
+- Civil penalty: $25,000–$50,000
+- Icon A5 rental company suing for $75,000+ in aircraft damage
+- Insurance claim: almost certainly denied
+- Criminal charges possible
+- You're famous on Reddit for all the wrong reasons
+- Amber's parents have blocked your number
+- Tow truck bill for extracting a seaplane from a marsh: surprisingly expensive
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-CannotHide
+<div class="debrief">
+
+**Outcome: Tried to disappear from radar. ATC had your N-number. Evasion makes everything worse.**
+
+You were given a discrete squawk code by ATC, then changed it back to 1200 trying to "disappear." This is called evasion, and it's documented.
+
+ATC tracked your entire flight. They have your N-number, your altitude history, the exact second you changed squawks, and a recording of every radio interaction. You can't hide.
+
+The FAA's investigation is now double-depth. The original TFR violation was maybe a warning notice. The evasion attempt? That's a suspension at minimum.
+
+Amber's review of the date: "He changed his radio thing on purpose to hide from air traffic control. That's really dumb, Jake."
+
+She's right.
+
+**The ADM lessons:**
+
+- **You cannot hide from radar.** ATC has technology and recording capabilities that make evasion impossible.
+- **Evasion is always worse than the original violation.** It shows intent to deceive, which the FAA takes very seriously.
+- **The panic response is never the right response.** When you mess up, comply, confess, cooperate.
+
+**The regulations:**
+
+- **14 CFR 91.137** — TFR violation.
+- **14 CFR 91.123** — Failure to comply with ATC instructions.
+- Additional enforcement for attempted evasion or obstruction.
+
+**Consequence summary:**
+
+- FAA investigation with escalated severity
+- Certificate suspension: 180+ days
+- Mandatory 709 ride
+- Possible criminal referral for deliberate evasion
+- Insurance: dropped or tripled
+- Amber: departed
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-7700Incident
+<div class="debrief">
+
+**Outcome: False emergency squawk. TFR violation PLUS false emergency. Double the paperwork.**
+
+You squawked 7700 — the international emergency code — without having an actual emergency. You did it to "get ATC's attention." Every radar scope in Northern California lit up. Emergency responses were mobilized. Coast Guard notified. Hospitals alerted. Thousands of dollars in emergency resources activated.
+
+Because you thought the emergency button was a customer service line.
+
+"N621IA, do NOT squawk emergency unless you have an actual emergency. You have generated multiple emergency responses. Turn south immediately."
+
+The controller's voice is ice. You've taken a TFR bust and added a false emergency declaration. That's two separate violations. Two separate investigations. Twice the paperwork, twice the penalty.
+
+**The ADM lessons:**
+
+- **Squawk codes have specific meanings.** 7700 = life-threatening emergency. 7600 = communications failure. 7500 = hijack. These are not interchangeable and they are not attention-getters.
+- **False emergency declarations are federal offenses.** They cost money, endanger people, and are taken extremely seriously.
+- **There is no clever transponder trick** that gets you authorization into a TFR.
+
+**The regulations:**
+
+- **14 CFR 91.137** — TFR violation.
+- **49 U.S.C. 46306** — False reporting of aviation emergencies. Punishable by up to 5 years and $250,000.
+- **14 CFR 91.413** — Improper operation of transponder.
+
+**Consequence summary:**
+
+- FAA investigation for BOTH TFR violation and false emergency
+- Certificate suspension: 180+ days
+- Federal civil penalty: up to $27,500
+- Possible criminal charges for false emergency
+- Insurance: canceled
+- Amber: gone. There is no third date.
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-7700Worse
+<div class="debrief">
+
+**Outcome: Squawked emergency, then went silent and changed codes. F-16 intercept.**
+
+You squawked 7700, then panicked and changed back to 1200 without explanation. That sequence — emergency squawk, sudden silence, code change — is the behavior pattern of an aircraft with hostile intent: declare emergency to draw attention, then go dark.
+
+From the perspective of NORAD, you just went from "confused pilot" to "potential threat."
+
+F-16s are scrambled within minutes. They find you near Half Moon Bay, clueless, and escort you to land.
+
+This is no longer a TFR violation. It's a national security incident triggered by your false emergency squawk and subsequent evasion pattern.
+
+**The ADM lessons:**
+
+- **Once you squawk 7700, you cannot un-squawk without explanation.** Going silent after an emergency declaration looks like hostile action.
+- **Military interceptors do not have a sense of humor.** They treat the radar signature, not the pilot's intentions.
+- **Your actions triggered the maximum possible response** from a sequence that started with a simple TFR bust.
+
+**The regulations:**
+
+- **14 CFR 91.137** — TFR violation.
+- **49 U.S.C. 46306** — False emergency reporting.
+- **18 U.S.C. 32** — Possible interference with air navigation charges.
+
+**Consequence summary:**
+
+- F-16 intercept and forced landing
+- FBI detention: 6+ hours
+- Certificate revocation likely
+- Criminal charges probable
+- Icon A5 impounded for inspection
+- Amber's parents are conferencing with their lawyer
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-Supervisor
+<div class="debrief">
+
+**Outcome: Asked to speak to the ATC supervisor. Your radio tape is now a training aid.**
+
+You asked ATC to let you speak with their supervisor. During a TFR violation. While being told to exit restricted airspace.
+
+The controller's response was textbook: "N621IA, turn south heading 180 now. Supervisor will call you on the ground."
+
+That recording — your voice, confidently requesting a supervisor escalation while illegally inside the most heavily defended airspace in Northern California — is now used in controller training as an example of pilot behavior to expect during TFR events. It's filed under "Overconfident Sport Pilots, Subsection: Negotiation Attempts."
+
+The supervisor did call you. Two weeks later. It was an FAA inspector, not a TRACON supervisor. She was professional, thorough, and had the recording queued up on her computer.
+
+"Mr. Thornton, your flight has been flagged as a training example. You're not being cited for a formal violation — you did comply with the exit instruction — but your attempt to negotiate TFR restrictions and request supervisor escalation has made your flight a case study in what not to do."
+
+Amber tells the story at parties. Her version is worse than what actually happened.
+
+**The ADM lessons:**
+
+- **ATC is not customer service.** There is no escalation path during an active airspace violation.
+- **"I'd like to speak with your supervisor" is the aviation equivalent of "Do you know who I am?"** It impresses nobody.
+- **Comply first. Dispute later.** If you think ATC is wrong, you have rights — but those rights are exercised on the ground, not at 2,500 feet inside a TFR.
+
+**The regulations:**
+
+- **14 CFR 91.123** — Compliance with ATC instructions is not optional.
+- **14 CFR 91.137/91.145** — TFR compliance.
+- **14 CFR 91.103** — You should have checked NOTAMs.
+
+**Consequence summary:**
+
+- Official FAA counseling (no formal violation)
+- Your flight recording: permanent training material
+- You're on the FAA's radar for future enforcement
+- Amber's workplace knows a version of this story
+- No second date
+- Meme potential: dangerously high
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-HalfMoon
+<div class="debrief">
+
+**Outcome: Landed at Half Moon Bay. Called the number. Awkward date continues.**
+
+You never went near the stadium. You never entered the inner ring. You were heading to Half Moon Bay the whole time and happened to be inside the outer ring without knowing it.
+
+This is the lightest possible version of a TFR bust. ATC vectored you clear, gave you a phone number, and sent you on your way.
+
+You land at KHAF, tie down the Icon, and call the number from the FBO.
+
+The inspector is surprisingly understanding. "You were 25 miles from the stadium heading away from it. You cooperated when contacted. We still need to document this — you were inside without authorization — but this is not the kind of case that typically results in certificate action."
+
+You might get a Warning Notice. Might get a 709 ride. Might get nothing but a letter and a reminder to check NOTAMs.
+
+Amber is waiting at the FBO with two coffees from the little cafe across the street.
+
+"So," she says. "That was... not what I expected from a pilot who promised me the most epic date ever."
+
+"To be fair, it was pretty memorable."
+
+She almost smiles. "Next time, check the... what did you call it? The NOTAMs?"
+
+"The NOTAMs. Yeah. Next time."
+
+There is a next time. But she makes you show her the NOTAM briefing before every flight. Forever.
+
+**The ADM lessons:**
+
+- **Even the "boring" path through a TFR violation has consequences.** You weren't sightseeing the stadium, but you were still inside unauthorized airspace.
+- **The TFR outer ring is larger than you think.** 30 nautical miles covers most of the Bay Area.
+- **You got lucky.** The inspector noted your direction of travel and cooperation. Not every inspector would be this lenient.
+
+**The regulations:**
+
+- **14 CFR 91.103** — Preflight action. NOTAMs were not checked.
+- **14 CFR 91.137/91.145** — TFR violation (outer ring, unauthorized).
+
+**Consequence summary:**
+
+- Warning Notice or Letter of Investigation
+- Possible 709 ride
+- No suspension likely
+- Insurance impact: minimal
+- Amber: sticking around, but will never let you skip NOTAMs again
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-CoastGuard
+<div class="debrief">
+
+**Outcome: Coast Guard helicopter intercept near Half Moon Bay. Less dramatic than F-16s. Still an investigation.**
+
+A Coast Guard MH-65 Dolphin helicopter escorted you to Half Moon Bay. It's less dramatic than F-16s — no flares, no afterburners, no viral video material — but it's still a federal interception.
+
+The Coast Guard personnel are professional and thorough. They take your statement, your license, your medical. They note that your radio volume was set low and that you missed multiple ATC calls.
+
+One of them asks: "Why weren't you monitoring 121.5 or NorCal's frequency?"
+
+"I was... explaining the airplane to my passenger."
+
+He writes that down.
+
+The investigation is real. The phone call to the FSDO is real. But because you never approached the stadium, never entered the inner ring, and cooperated the moment the helicopter got your attention, the consequences are moderate.
+
+Amber catches a ride-share to SFO. She thanks you politely for the experience, like you're an Uber driver. Her tone tells you everything you need to know about the future of this relationship.
+
+**The ADM lessons:**
+
+- **Distraction is the pilot's worst enemy.** You were focused on impressing Amber instead of monitoring the radio.
+- **Radio volume matters.** If you can't hear ATC, you can't comply with ATC.
+- **Coast Guard intercepts are rare.** Getting one means you genuinely failed to respond to normal communication channels.
+- **Your passenger's safety was in your hands.** You prioritized her attention over her safety.
+
+**The regulations:**
+
+- **14 CFR 91.103** — Preflight action. NOTAMs not checked.
+- **14 CFR 91.137/91.145** — TFR violation.
+- **AIM 5-6-13** — Intercept procedures apply to helicopter intercepts as well as fighter intercepts.
+
+**Consequence summary:**
+
+- FAA enforcement action: probable fine and/or certificate suspension
+- Mandatory remedial training before flying again
+- Insurance implications
+- Amber: gone
+- A lesson in why "impressive" and "safe" are not synonyms
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
+
+:: Ending-AmberGoogles
+<div class="debrief">
+
+**Outcome: Your girlfriend Googled "TFR." She caught your lie. No third date.**
+
+When Amber asked about the red circle on ForeFlight, you told her it was "just a weather advisory." She Googled "TFR" on her phone and found out the truth in about four seconds.
+
+Then she demanded you call ATC. Which you did. Because at that point, your non-pilot girlfriend had better situational awareness than you, and both of you knew it.
+
+You complied with ATC, exited the TFR, and landed at Half Moon Bay. The FAA investigation is underway. Standard TFR bust consequences.
+
+But the real damage isn't regulatory. It's personal. You lied to Amber about an aviation safety issue while she was sitting in your airplane. She trusted you with her life, and you responded by lying about the thing that was putting it at risk.
+
+There is no third date. There is no fourth date. There is no "let me explain" conversation. She blocks your number that evening.
+
+Months later, you hear through mutual friends that she tells this story at parties: "So this guy told me it was a WEATHER ADVISORY while we were flying inside restricted airspace over the Super Bowl..." Laughter follows. Every time.
+
+**The ADM lessons:**
+
+- **Lying about safety issues is the most dangerous thing you can do as PIC.** Your passenger trusted you. You broke that trust.
+- **Your non-pilot passenger caught the TFR before you did.** That's not her being impressive — that's you being negligent.
+- **Ego kills.** You lied because admitting the mistake would have made you look bad. Looking bad is better than being dishonest about safety.
+- **Smartphones are a pilot's friend and enemy.** Amber's Google search saved both of you from flying deeper into the TFR.
+
+**The regulations:**
+
+- **14 CFR 91.103** — Preflight action. NOTAMs were not checked.
+- **14 CFR 91.137/91.145** — TFR violation.
+
+**Consequence summary:**
+
+- Standard TFR investigation (Letter, possible 709 ride, possible suspension)
+- Amber: permanently gone
+- Your credibility as a pilot: severely damaged
+- Her party story about you: devastating and accurate
+- The lesson: integrity matters more than ego, always
+
+<<link "Try Again — Maybe Check NOTAMs This Time" "Opening">><<set $pathArray to []>><<set $badchoices to 0>><</link>>
+</div>
