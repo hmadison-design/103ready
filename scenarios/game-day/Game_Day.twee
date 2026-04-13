@@ -10,6 +10,30 @@ Game Day
 }
 
 :: StoryInit
+/*
+SCENARIO TITLE:       Game Day
+AUDIENCE:             Pilot (GA / Sport Pilot)
+TONE:                 Entertainer
+PRIMARY TOPIC:        Airspace violations and NOTAM compliance (TFR)
+SECONDARY TOPIC:      Military intercept procedures (AIM 5-6-2)
+AIRCRAFT/EQUIPMENT:   Icon A5 (Light Sport, amphibious, Rotax 912 iS, pusher)
+SETTING:              Monterey Regional (KMRY) to San Francisco Bay Area coast,
+                      intercepted and escorted to Moffett Federal Airfield (KNUQ).
+                      February afternoon, Super Bowl Sunday.
+WEATHER:              VFR at departure. KNUQ winds 160 at 16 gusting 24.
+ADM THEMES:           Get-there-itis, self-imposed pressure (impressing date),
+                      confirmation bias, failure to conduct preflight action
+HAZARDOUS ATTITUDES:  Invulnerability, Anti-authority, Macho, Impulsivity
+TOTAL ENDINGS:        9 (Cooperate [3 variants], Ignorance, LawyeredUp, Cuffs,
+                      Tailwind ground loop, TheLongWalk, Splash, FullChase,
+                      BeachBum). No fatal endings (Entertainer tone).
+MIN DECISION DEPTH:   4
+TIMED DECISIONS:      No
+ESTIMATED DURATION:   15-20 minutes
+VERSION:              3.1
+LAST REVIEWED:        2026-04-12
+REVIEWER:             Aviation accuracy review — Claude / Harvey Madison
+*/
 <<set $badchoices to 0>>
 <<set $pathArray to []>>
 <<set $audioEnabled to false>>
