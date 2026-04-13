@@ -162,7 +162,7 @@ You didn't check NOTAMs this morning. Too busy. Amber was waiting downstairs, yo
 
 About twenty minutes ago, Amber pointed northeast and said, "Oh my God, is that a stadium?" It was. Levi's Stadium in Santa Clara, glinting in the February afternoon sun. Super Bowl LX. You banked the A5 northeast toward it without a second thought.
 
-Your iPad is clipped to the kneeboard between your legs. ForeFlight is running. The sectional chart is displayed. There is a big, obvious red circle on it — the TFR — and your little blue ownship arrow is sitting deep inside it. Not near the edge. Not approaching. Inside. Twelve nautical miles from the stadium, well within the inner ring that extends 10 NM from the stadium, surface to Flight Level 180.
+Your iPad is clipped to the kneeboard between your legs. ForeFlight is running. The sectional chart is displayed. There is a big, obvious red circle on it — the TFR — and your little blue ownship arrow is sitting deep inside it. Not near the edge. Not approaching. Inside. Eight nautical miles from the stadium, well within the inner ring that extends 10 NM from the stadium, surface to Flight Level 180.
 
 You haven't looked at the iPad once since turning northeast.
 
@@ -185,7 +185,7 @@ You look down.
 
 Your stomach does something that feels like a barrel roll.
 
-The TFR. The big red circle. The one you didn't think about because you were too busy being a d**n rockstar. Your ownship icon is deep inside it. Not near the edge. Not approaching. Inside. Twelve nautical miles from Levi's Stadium, at 2,500 feet, during Super Bowl LX airspace restrictions.
+The TFR. The big red circle. The one you didn't think about because you were too busy being a d**n rockstar. Your ownship icon is deep inside it. Not near the edge. Not approaching. Inside. Eight nautical miles from Levi's Stadium, at 2,500 feet, during Super Bowl LX airspace restrictions.
 
 Your mouth goes dry.
 
@@ -199,7 +199,7 @@ The first is sliding into formation off your left wing, so close you can read th
 
 The lead F-16 pilot rocks his wings. One roll. Two rolls. The intercept signal. You have been intercepted.
 
-Your hands are shaking. Your grip on the yoke has gone white-knuckled. Sweat is running down your ribs, and your heart is doing something your cardiologist would not approve of.
+Your hands are shaking. Your grip on the stick has gone white-knuckled. Sweat is running down your ribs, and your heart is doing something your cardiologist would not approve of.
 
 "Jake..." Amber's voice has changed. "Are those fighter jets? Why are there fighter jets next to us?"
 
@@ -216,11 +216,11 @@ Your epic third date has officially gone sideways.
 :: RockWings
 <<set $pathArray to $pathArray.concat(["Rocked wings correctly"])>>
 
-You grip the yoke, take a breath, and rock your wings. Left, right, left. The intercept acknowledgment signal. "I see you. I understand. I will comply."
+You grip the stick, take a breath, and rock your wings. Left, right, left. The intercept acknowledgment signal. "I see you. I understand. I will comply."
 
 The left F-16 dips its wings in response — a subtle nod from one aviator to another. For a half second, you feel almost competent.
 
-The fighter initiates a slow, level turn to the northwest. Follow me. Fly this way. The universal intercept signal, except delivered by a $30 million aircraft that could turn you into confetti without breaking a sweat.
+The fighter initiates a slow, level turn to the northwest. Follow me. Fly this way. The universal intercept signal, except delivered by a $65 million aircraft that could turn you into confetti without breaking a sweat.
 
 You bank to match the heading, adrenaline still hammering in your chest.
 
@@ -245,11 +245,11 @@ You need to do something about the radio. Now.
 :: WaveAtFighter
 <<set $pathArray to $pathArray.concat(["Waved at fighter"])>>
 
-You take your right hand off the yoke and give the F-16 a big, friendly wave. A genuine, enthusiastic, "hey there, we're all just flying around on this beautiful day" wave.
+You take your right hand off the stick and give the F-16 a big, friendly wave. A genuine, enthusiastic, "hey there, we're all just flying around on this beautiful day" wave.
 
 The F-16 pilot does not wave back.
 
-Because waving is not in AIM 5-6-2. Waving is not in any military intercept manual. Waving is what you do at neighbors, at your mom, at the cute barista who remembers your order. Waving at a $30 million fighter jet is the aviation equivalent of trying to pay for your Uber with Monopoly money.
+Because waving is not in AIM 5-6-2. Waving is not in any military intercept manual. Waving is what you do at neighbors, at your mom, at the cute barista who remembers your order. Waving at a $65 million fighter jet is the aviation equivalent of trying to pay for your Uber with Monopoly money.
 
 The fighter rocks its wings again — more aggressively this time. A second rock. This is no longer "do you see me?" This is "DO YOU UNDERSTAND WHAT IS HAPPENING?"
 
@@ -266,9 +266,9 @@ She's not wrong.
 :: WaveHarder
 <<set $pathArray to $pathArray.concat(["Waved with both hands"])>>
 
-You commit. Both hands off the yoke. A full, Olympic-level, two-handed wave. You are FRIENDLY. You are COMPLIANT. You are also, for a brief and terrifying moment, not flying the airplane.
+You commit. Both hands off the stick. A full, Olympic-level, two-handed wave. You are FRIENDLY. You are COMPLIANT. You are also, for a brief and terrifying moment, not flying the airplane.
 
-"JAKE!" Amber's hand snaps to the yoke. She grabs it like it's the only thing keeping her alive — because, objectively, it is. The A5 wobbles, then stabilizes under her white-knuckled grip.
+"JAKE!" Amber's hand snaps to the stick. She grabs it like it's the only thing keeping her alive — because, objectively, it is. The A5 wobbles, then stabilizes under her white-knuckled grip.
 
 The F-16 pilot sees: an unidentified aircraft inside a TFR, pilot waving arms, aircraft momentarily uncontrolled. This is not the behavior of a compliant pilot. This is the behavior of someone who either doesn't understand what's happening or is a threat.
 
@@ -276,7 +276,7 @@ The lead fighter pulls an abrupt turn across your nose — flares dispensing in 
 
 Amber screams. A full, primal, visceral scream that would normally be reserved for horror movies but is perfectly justified here.
 
-The narrator observes: Jake has waved at a military interceptor — twice — and let go of the flight controls to do it. His passenger is now flying the airplane. His dating life is over. The only thing left to salvage is his pilot certificate, and the clock is ticking.
+You have waved at a military interceptor — twice — and let go of the flight controls to do it. Your passenger is now flying the airplane. Your dating life is over. The only thing left to salvage is your pilot certificate, and the clock is ticking.
 
 <<link "Rock your wings and comply — NOW" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Complied after waving panic"])>><</link>>
 
@@ -325,7 +325,7 @@ Amber, reading your face: "That wasn't them, was it."
 :: RelayViaBonanza
 <<set $pathArray to $pathArray.concat(["Relay through Bonanza pilot"])>>
 
-"Bonanza, can you relay to ATC that I'm being intercepted? November six-two-one India-Alpha, Icon A5, twelve miles southwest of San Jose!"
+"Bonanza, can you relay to ATC that I'm being intercepted? November six-two-one India-Alpha, Icon A5, eight miles southwest of Santa Clara!"
 
 The Bonanza pilot: "I mean... I can try? I'm talking to NorCal on one-three-two-point-one. Hold on."
 
@@ -357,7 +357,7 @@ Amber grabs your arm. "Jake, PLEASE. They want you to do something. Whatever you
 :: RockWingsLate
 <<set $pathArray to $pathArray.concat(["Late wing rock acknowledgment"])>>
 
-You grip the yoke and rock your wings. Left, right, left. The signal the F-16 has been waiting for.
+You grip the stick and rock your wings. Left, right, left. The signal the F-16 has been waiting for.
 
 The lead fighter sees it. Banks into a slow, deliberate turn to the northwest. Follow me. But the vibe has changed. There's weight to it. The delay cost you — the ground response is escalating because an unidentified aircraft inside the Super Bowl TFR took its sweet time acknowledging a military intercept.
 
@@ -398,7 +398,7 @@ Amber: "Those jets are still here. Shouldn't you DO something?"
 
 You rotate the frequency selector to 121.5 MHz. Guard. The emergency channel. The frequency where every controller and most pilots are listening.
 
-You key the mic: "Any station, this is November six-two-one India-Alpha, Icon A5, approximately twelve miles southwest of San Jose, two thousand five hundred feet, VFR. I appear to have been intercepted by military aircraft. Request assistance."
+You key the mic: "Any station, this is November six-two-one India-Alpha, Icon A5, approximately eight miles southwest of Santa Clara, two thousand five hundred feet, VFR. I appear to have been intercepted by military aircraft. Request assistance."
 
 The response is immediate.
 
@@ -471,7 +471,7 @@ You're following the fighters with zero voice contact. Your transponder is still
 
 On the ground, in the tower, in the command post — they're looking at a target and zero voice contact. Is the pilot incapacitated? Does he speak English? Medical emergency? No comms means maximum suspicion. Maximum preparation.
 
-The F-16s lead directly toward Moffett Federal Airfield. The enormous runway appears: 9,202 feet of government concrete.
+The F-16s lead directly toward Moffett Federal Airfield. The enormous runway appears: 9,197 feet of government concrete.
 
 <<link "Approach Moffett" "ApproachMoffett">><<set $pathArray to $pathArray.concat(["Approaching Moffett silently"])>><</link>>
 
@@ -563,12 +563,12 @@ You set the transponder: 7-7-0-0.
 <<else>>
 On the ground, controllers watch the blip change. Squawk 7700 — General Emergency. No voice contact, but at least the code is right.
 
-"Aircraft squawking seven-seven-zero-zero, twelve miles southwest of San Jose, if you read, ident." They're trying to reach you. But nobody's talking.
+"Aircraft squawking seven-seven-zero-zero, eight miles southwest of Santa Clara, if you read, ident." They're trying to reach you. But nobody's talking.
 <</if>>
 
 The fighter begins leading toward Moffett Federal Airfield — KNUQ. The F-16 circles the field, lowers its landing gear, and overflies the runway in the direction of landing. The signal is unmistakable: land at this airport.
 
-Moffett: enormous runway stretching 9,202 feet, hangars the size of airplane hangars — because they literally are airplane hangars — home of NASA Ames, Global Hawk drones, P-3 Orions. Your Icon A5 is 22 feet long. It's like parking a bicycle at a truck stop.
+Moffett: enormous runway stretching 9,197 feet, hangars the size of airplane hangars — because they literally are airplane hangars — home of NASA Ames, Global Hawk drones, P-3 Orions. Your Icon A5 is 23 feet long. It's like parking a bicycle at a truck stop.
 
 Amber grabs your arm. "Is that a military base? We're landing at a MILITARY BASE?"
 
@@ -577,13 +577,13 @@ Amber grabs your arm. "Is that a military base? We're landing at a MILITARY BASE
 :: ApproachMoffett
 <<set $pathArray to $pathArray.concat(["ApproachMoffett"])>>
 
-Moffett Federal Airfield swings into view. 9,202 feet of concrete. Enormous hangars. NASA Ames sprawling below.
+Moffett Federal Airfield swings into view. 9,197 feet of concrete. Enormous hangars. NASA Ames sprawling below.
 
 But there's a problem.
 
-The windsock is stiff and pointing almost perpendicular to the runway. Runway 32L. The wind is from the west — you can see it in the ripples on the salt ponds, in the way the flags on the hangars are stretched taut. For Runway 32, heading 320, wind from 270 gives a crosswind component of roughly 14 knots steady, gusting to 19.
+The windsock is stiff — and it's pointing the same direction you'd be landing. Tailwind. Runway 32R. The wind is from the south-southeast — you can see it in the ripples on the salt ponds, in the way the flags on the hangars are stretched taut. For Runway 32R, heading 320, wind from 160 at 16 gusting 24 gives a tailwind component of roughly 15 knots steady, gusting to 22.
 
-The Icon A5's demonstrated crosswind component is 16 knots. The gusts exceed that. And for an 83-hour Sport Pilot who has done maybe ten crosswind landings in his life? This is beyond personal minimums by a wide margin.
+Fifteen knots of tailwind. Your groundspeed on touchdown will be 30 knots hotter than normal. The A5 will float halfway down the runway before the wheels touch, and then you'll need dramatically more stopping distance. Every rule of thumb from ground school says maximum tailwind for landing is 10 knots — and that's for pilots who practice tailwind landings. The gusts are more than double that. For an 83-hour Sport Pilot who has never intentionally landed with a tailwind? This is a non-starter.
 
 Jake notices the windsock. His stomach tightens.
 
@@ -591,28 +591,28 @@ Jake notices the windsock. His stomach tightens.
 
 Amber: "What do you mean, 'doesn't look great'?"
 
-<<link "Set up for landing — it's a 9,000-foot runway, how hard can it be?" "AttemptCrosswind">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Attempting crosswind landing"])>><</link>>
+<<link "Set up for landing — it's a 9,000-foot runway, how hard can it be?" "AttemptCrosswind">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Attempting tailwind landing"])>><</link>>
 
 <<link "Rock wings and circle the airport, flash your landing light, look for light gun signals" "CircleAndFlash">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Circling and flashing"])>><</link>>
 
 <<link "Try to get the F-16 pilot's attention with hand gestures" "HandGestures">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Charades at altitude"])>><</link>>
 
 <<if $radioEstablished>>
-<<link "Key the mic: 'Winds are beyond my aircraft limits. Request alternative runway or divert.'" "DeclareUnable">><<set $pathArray to $pathArray.concat(["Declared unable"])>><</link>>
+<<link "Key the mic: 'Runway 32 has a strong tailwind. Request Runway 14 Left.'" "DeclareUnable">><<set $pathArray to $pathArray.concat(["Declared unable"])>><</link>>
 <<else>>
-<span class="disabled-choice">Declare "unable" and request an alternative</span><span class="disabled-hint">(requires radio contact with ATC)</span>
+<span class="disabled-choice">Declare "unable" and request the reciprocal runway</span><span class="disabled-hint">(requires radio contact with ATC)</span>
 <</if>>
 
 :: AttemptCrosswind
-<<set $pathArray to $pathArray.concat(["Attempted crosswind landing"])>>
+<<set $pathArray to $pathArray.concat(["Attempted tailwind landing"])>>
 
 Jake sets up for the approach. He's committed now.
 
 The 9,000-foot runway makes it look easy from above. It is not easy.
 
-On short final, the crosswind hits. The A5 weathervanes hard left. Jake tries to correct — too much right rudder, too little aileron. A gust catches the high wing. The airplane skids sideways, touches down left main first, bounces, and the nosewheel digs in at an angle.
+On short final, the tailwind is immediately obvious. The groundspeed is way too high — the runway numbers flash past before Jake has even started to flare. He floats. And floats. A thousand feet of runway disappears under the hull. He forces the airplane onto the pavement, touches down fast and flat, and immediately realizes he's running out of options.
 
-The airplane ground loops. Not dramatically — not Hollywood — but enough. The right wingtip catches the ground. The airplane slides to a stop in the grass 30 feet off the centerline. Right tire blown. Prop bent. Right wing creased.
+Jake stands on the brakes. The nosewheel skids. A gust from behind shoves the tail, the airplane weathervanes hard, and the right main gear catches the runway edge. The airplane ground loops off the pavement. The right wingtip catches the ground. The airplane slides to a stop in the grass 40 feet off the centerline. Right tire blown. Right wing creased. Hull gouged.
 
 Nobody's hurt. The A5 is not so lucky.
 
@@ -628,15 +628,15 @@ Jake rocks his wings and starts circling Moffett. He flashes the landing light o
 From the F-16 pilot's perspective: the intercepted aircraft just started circling the airport instead of landing. This looks like non-compliance. The second F-16 closes distance. On the ground, additional emergency vehicles dispatch.
 
 <<if $radioEstablished>>
-ATC crackles: "November six-two-one India-Alpha, what are you doing? You were directed to land Runway 32 Left. State your intentions."
+ATC crackles: "November six-two-one India-Alpha, what are you doing? You were directed to land Runway 32 Right. State your intentions."
 
-Jake keys the mic: "The crosswind... it's too much for my aircraft."
+Jake keys the mic: "The tailwind... it's too much for my aircraft."
 
-ATC, after a pause: "November six-two-one India-Alpha, roger. Winds two-seven-zero at one-eight gusting two-five. Runway 14 Right is available, left quartering headwind. Cleared to land Runway 14 Right."
+ATC, after a pause: "November six-two-one India-Alpha, roger. Winds one-six-zero at one-six gusting two-four. Runway 14 Left is available, headwind one-five. Cleared to land Runway 14 Left."
 
-A runway INTO the wind. Jake could have just asked. Instead he circled a military installation while being intercepted by fighter jets.
+A runway into the wind. Jake could have just asked. Instead he circled a military installation while being intercepted by fighter jets.
 
-<<link "Land on the into-wind runway" "LandMoffett14R">><<set $pathArray to $pathArray.concat(["Landing 14R after circling"])>><</link>>
+<<link "Land on the into-wind runway" "LandMoffett14R">><<set $pathArray to $pathArray.concat(["Landing 14L after circling"])>><</link>>
 <<else>>
 Without radio contact, nobody knows WHY you're circling. They just see an intercepted aircraft refusing to land.
 
@@ -665,7 +665,7 @@ She's right. Charades does not work at altitude. Back to reality.
 <<if $radioEstablished>>
 <<link "Key the mic and declare unable" "DeclareUnable">><<set $pathArray to $pathArray.concat(["Declaring unable after gestures"])>><</link>>
 <<else>>
-<span class="disabled-choice">Declare "unable" on the radio</span><span class="disabled-hint">(requires radio contact with ATC)</span>
+<span class="disabled-choice">Declare "unable" and request the reciprocal runway</span><span class="disabled-hint">(requires radio contact with ATC)</span>
 <</if>>
 
 <<link "Set up for landing anyway" "AttemptCrosswind">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Landing after failed gestures"])>><</link>>
@@ -675,13 +675,13 @@ She's right. Charades does not work at altitude. Back to reality.
 :: DeclareUnable
 <<set $pathArray to $pathArray.concat(["Declared unable on radio"])>>
 
-Jake keys the mic: "Moffett tower, November six-two-one India-Alpha, winds are beyond my aircraft's demonstrated crosswind component. Request alternative runway or divert."
+Jake keys the mic: "Moffett tower, November six-two-one India-Alpha, Runway 32 Right has a fifteen-knot tailwind, well beyond my limits. Request Runway 14 Left."
 
-ATC responds after a brief pause: "November six-two-one India-Alpha, roger. Winds two-seven-zero at one-eight gusting two-five. Runway 14 Right is available, left quartering headwind. Cleared to land Runway 14 Right."
+ATC responds after a brief pause: "November six-two-one India-Alpha, roger. Winds one-six-zero at one-six gusting two-four. Runway 14 Left, headwind one-five. Cleared to land Runway 14 Left."
 
-Runway 14R. Headwind component of roughly 14 knots, crosswind component maybe 8. Well within the A5's capability and Jake's comfort zone.
+Runway 14L. Headwind of 15 knots, crosswind negligible. The wind that was working against you on 32R is now working for you on 14L.
 
-The F-16 circles the field again, overflies 14R with gear down. Land HERE, on THIS runway.
+The F-16 circles the field again, overflies 14L with gear down. Land HERE, on THIS runway.
 
 Jake sets up for final. This approach is clean. The headwind keeps the groundspeed low. He flares, touches down centerline, and rolls out smooth.
 
@@ -693,7 +693,7 @@ Amber: "Was that... was that okay?"
 
 It's the last okay thing that happens today.
 
-<<link "Taxi to the ramp" "LandMoffett">><<set $pathArray to $pathArray.concat(["Landed 14R successfully"])>><</link>>
+<<link "Taxi to the ramp" "LandMoffett">><<set $pathArray to $pathArray.concat(["Landed 14L successfully"])>><</link>>
 
 :: LandMoffett
 <<set $pathArray to $pathArray.concat(["Landed at Moffett"])>>
@@ -725,9 +725,9 @@ You shut down the engine. The welcoming committee starts walking toward the airp
 <<link "Get indignant — this is a free country" "Ending-Cuffs">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Got belligerent"])>><</link>>
 
 :: LandMoffett14R
-<<set $pathArray to $pathArray.concat(["Landed 14R after circling"])>>
+<<set $pathArray to $pathArray.concat(["Landed 14L after circling"])>>
 
-The A5 touches down on Runway 14R. Smooth. Clean. The kind of landing that doesn't make it into incident reports.
+The A5 touches down on Runway 14L. Into the wind. Smooth. Clean. The kind of landing that doesn't make it into incident reports.
 
 Except you're still getting an incident report. The circling over a military installation during an intercept doesn't disappear because the final approach was pretty.
 
@@ -755,7 +755,7 @@ You land. You taxi. You shut down.
 :: KeepRunning
 <<set $pathArray to $pathArray.concat(["Running from fighters"])>>
 
-You haul back on the yoke and bank hard away. The Icon A5 at full throttle: about 100 knots. Being pursued by aircraft that cruise above 500 knots.
+You haul back on the stick and bank hard away. The Icon A5 at full throttle: about 100 knots. Being pursued by aircraft that cruise above 500 knots.
 
 This is the aviation equivalent of running from a traffic stop. On foot. Past the K-9 unit.
 
@@ -988,7 +988,7 @@ Your pilot certificate is emergency revoked before you leave the building. The o
 
 **What good judgment looks like:** Cooperate. Completely. Your only job on the ground is demonstrating you're not a threat.
 
-**Key regulations:** 18 USC 111 (obstructing federal officer); 49 USC 46307 (national defense airspace); 14 CFR 61.16 (emergency revocation).
+**Key regulations:** 18 USC 111 (obstructing federal officer); 49 USC 46307 (national defense airspace); 49 USC 44709 (emergency certificate action).
 
 **Consequences:** Federal criminal charges, emergency certificate revocation, arrest record, $50,000+ legal fees, possible prison (up to 1 year), viral security camera footage.
 
@@ -998,19 +998,19 @@ Your pilot certificate is emergency revoked before you leave the building. The o
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
 :: Ending-Crosswind
-<<set $pathArray to $pathArray.concat(["Ending: Crosswind ground loop"])>>
+<<set $pathArray to $pathArray.concat(["Ending: Tailwind ground loop"])>>
 
-The A5 sits in the grass, listing to starboard. Right wing creased. Right tire blown. Prop bent.
+The A5 sits in the grass, listing to starboard. Right wing creased. Right tire blown. Hull gouged.
 
 Amber sits on the grass facing away. She does not look at Jake. She does not speak to Jake. Her phone is out. She is texting her mother: "Mom you were right about everything."
 
 Five minutes later: NASA security. Within the hour: FAA. The rental company's insurance adjuster — who apparently has Google Alerts set for "Icon A5 incident" — arrives with two cups of coffee and a deposition form.
 
-"So," the adjuster says, "you initiated an approach in crosswind conditions exceeding the aircraft's demonstrated crosswind capability?"
+"So," the adjuster says, "you initiated a downwind approach with a fifteen-knot tailwind?"
 
 "The runway is 9,000 feet—"
 
-"That's not what I asked. Were you aware of the crosswind limits?"
+"That's not what I asked. Were you aware of the tailwind?"
 
 Jake's silence is answer enough.
 
@@ -1020,17 +1020,17 @@ Amber walks to the nearest officer. "I don't know him. I'm calling an Uber."
 
 <div class="debrief">
 
-**What happened:** You attempted a crosswind landing in conditions exceeding the Icon A5's demonstrated crosswind component (16 knots) with gusts to 19. You ground looped, damaging the aircraft extensively.
+**What happened:** You attempted a landing with a 15-knot tailwind gusting to 24. Your groundspeed was far too high, the A5 floated past any usable touchdown zone, and the resulting ground loop damaged the aircraft extensively.
 
-**ADM Analysis:** Overconfidence and external pressure. The F-16 escort created pressure to land immediately, which you allowed to override your judgment about the aircraft's limits and your own personal minimums.
+**ADM Analysis:** Overconfidence and external pressure. The F-16 escort created pressure to land immediately, which you allowed to override your judgment about the conditions. A 9,000-foot runway feels infinite — until you're floating over it at 30 knots above normal touchdown speed.
 
-**What good judgment looks like:** The moment you calculate a crosswind exceeding your personal minimums, you declare "unable" to ATC. You do not attempt to muscle through it. You accept the aircraft's limits as your limits.
+**What good judgment looks like:** The moment you see the windsock pointing the wrong direction, you declare "unable" to ATC and request the reciprocal runway. You do not attempt to muscle through a tailwind landing. A long runway does not fix bad aerodynamics.
 
-**Key regulations:** 14 CFR 91.3 (PIC responsibility); 14 CFR 91.13 (careless/reckless); AC 61-23C (personal minimums).
+**Key regulations:** 14 CFR 91.3 (PIC responsibility); 14 CFR 91.13 (careless/reckless); FAA-H-8083-25B (personal minimums).
 
 **Consequences:** TFR violation PLUS aircraft damage ($78,000+). Insurance may deny under pilot error clause. Rental company ban. FSDO investigation. If Avemco denies, you're personally liable for the full damage.
 
-**Key takeaway:** The aircraft's demonstrated crosswind component is not a challenge — it's a limit. When you exceed it, physics wins. Every time.
+**Key takeaway:** A tailwind turns every runway into a short runway. Fifteen knots of tailwind on a 9,000-foot runway is worse than zero tailwind on a 3,000-foot strip. When the windsock says no, request the reciprocal.
 </div>
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
