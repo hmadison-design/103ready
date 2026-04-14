@@ -42,6 +42,16 @@ compile_scenario() {
   local src_dir="scenarios/${slug}"
   local out="output/${slug}.html"
   echo "== Compiling ${slug} -> ${out} =="
+  # Guard: each scenario folder must contain exactly one .twee file.
+  # Stray .twee files (old drafts, v1 copies) can silently overwrite passages.
+  local twee_count
+  twee_count=$(find "${src_dir}" -maxdepth 1 -type f -name '*.twee' | wc -l | tr -d ' ')
+  if [ "${twee_count}" -ne 1 ]; then
+    echo "ERROR: ${src_dir} has ${twee_count} .twee files; expected exactly 1."
+    echo "Rename any stale drafts to .twee.bak so tweego ignores them."
+    find "${src_dir}" -maxdepth 1 -type f -name '*.twee'
+    exit 1
+  fi
   (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}")
 }
 
