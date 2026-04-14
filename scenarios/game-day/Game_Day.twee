@@ -165,6 +165,22 @@ a.link-internal:hover {
   margin-bottom: 0.5em;
 }
 
+/* --- Main Menu button (injected) --- */
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block;
+  padding: 0.55em 1.3em;
+  background: #1A3C57;
+  color: #fff !important;
+  border: 1px solid #2E5C82;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+.main-menu-btn:hover,
+.main-menu-btn:focus { background: #2E5C82; outline: none; }
+
 :: Opening
 <<set $pathArray to $pathArray.concat(["Opening"])>>
 <div class="scenario-title">Game Day</div>
@@ -198,6 +214,7 @@ The sun is warm. Amber is laughing at something on her phone. The radio is tuned
 
 <<link "I'm invincible!" "Realization">><<set $pathArray to $pathArray.concat(["Hobson: I'm invincible!"])>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Realization
 <<set $pathArray to $pathArray.concat(["Realization"])>>
 
@@ -919,6 +936,7 @@ The rental company bans you for life. Amber's mother arrives within the hour. "M
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Ending-Ignorance
 <<set $pathArray to $pathArray.concat(["Ending: Claimed ignorance"])>>
 
@@ -953,6 +971,7 @@ Amber overhears this exchange. She googles "red flags in relationships" and take
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Ending-LawyeredUp
 <<set $pathArray to $pathArray.concat(["Ending: Demanded lawyer"])>>
 
@@ -985,6 +1004,7 @@ Jake exercised his Fifth Amendment rights. He also exercised his right to be sin
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Ending-Cuffs
 <<set $pathArray to $pathArray.concat(["Ending: Handcuffed"])>>
 
@@ -1021,6 +1041,7 @@ Your pilot certificate is emergency revoked before you leave the building. The o
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Ending-Crosswind
 <<set $pathArray to $pathArray.concat(["Ending: Tailwind ground loop"])>>
 
@@ -1059,6 +1080,7 @@ Amber walks to the nearest officer. "I don't know him. I'm calling an Uber."
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Ending-TheLongWalk
 <<set $pathArray to $pathArray.concat(["Ending: The Long Walk"])>>
 
@@ -1091,6 +1113,7 @@ The rental company bans you for life via email that evening. Subject line: "Life
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Ending-Splash
 <<set $pathArray to $pathArray.concat(["Ending: Water landing"])>>
 
@@ -1127,6 +1150,7 @@ The news footage goes viral by evening. "Sport Pilot Ditches Icon A5 in Bay Afte
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Ending-FullChase
 <<set $pathArray to $pathArray.concat(["Ending: Full chase"])>>
 
@@ -1161,6 +1185,7 @@ Your mugshot is on the news by evening.
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Ending-BeachBum
 <<set $pathArray to $pathArray.concat(["Ending: Beach landing"])>>
 
@@ -1196,3 +1221,5 @@ The Icon A5 has to be disassembled and trucked off the beach because it cannot f
 </div>
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>

@@ -342,6 +342,22 @@ a.link-internal:hover {
   color: #aa8888;
 }
 
+/* --- Main Menu button (injected) --- */
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block;
+  padding: 0.55em 1.3em;
+  background: #1A3C57;
+  color: #fff !important;
+  border: 1px solid #2E5C82;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+.main-menu-btn:hover,
+.main-menu-btn:focus { background: #2E5C82; outline: none; }
+
 :: FlightPrep [preflight]
 <<set $pathArray to $pathArray.concat(["Preflight — reviewing materials"])>>
 
@@ -373,6 +389,7 @@ You've reviewed all your materials. Time to decide.
 <<link '<span class="preflight-btn">Begin Flight Anyway</span>' "Opening">><</link>>
 <</if>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Preflight-Weather [preflight]
 <<set $pathArray to $pathArray.concat(["Reviewed weather briefing"])>>
 <strong>Standard Briefing — Denver AFSS</strong>
@@ -737,6 +754,7 @@ Key takeaway: When you turn back and find weather between you and home, the miss
 
 <<link "Return to Start" "Opening">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A1b-DivertKAPA [scenario branch-a ending]
 <<if $audioEnabled>><<audio "engine-smooth" loop volume 0.3 play>><</if>>
 <<if $audioEnabled>><<audio "atc-ambience" loop volume 0.08 play>><</if>>
@@ -809,6 +827,7 @@ Key takeaway: Mountain flying in Colorado requires flexibility. You need at leas
 
 <<link "Return to Start" "Opening">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A2-DeviateEagle [scenario branch-a]
 <<if $audioEnabled>><<audio "engine-smooth" loop volume 0.3 play>><</if>>
 <<if $audioEnabled>><<audio "atc-ambience" loop volume 0.1 play>><</if>>
@@ -940,6 +959,7 @@ Key takeaway: When the weather blocks your original destination, the correct res
 
 <<link "Return to Start" "Opening">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A2b-TryRifle [scenario branch-a]
 <<if $audioEnabled>><<audio "engine-smooth" loop volume 0.3 play>><</if>>
 <<if $audioEnabled>><<audio "atc-ambience" loop volume 0.08 play>><</if>>
@@ -1036,6 +1056,7 @@ Key takeaway: Know your crosswind limits and practice them. A long, wide runway 
 
 <<link "Return to Start" "Opening">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A2b-GoAroundEagle [scenario branch-a ending]
 <<if $audioEnabled>><<audio "engine-smooth" loop volume 0.3 play>><</if>>
 <<if $audioEnabled>><<audio "atc-ambience" loop volume 0.1 play>><</if>>
@@ -1110,6 +1131,7 @@ Key takeaway: Evaluate your own crosswind skill honestly. If 36-knot gusts are b
 
 <<link "Return to Start" "Opening">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A2c-HoldEagle [scenario branch-a ending]
 <<if $audioEnabled>><<audio "engine-smooth" loop volume 0.3 play>><</if>>
 <<if $audioEnabled>><<audio "atc-ambience" loop volume 0.1 play>><</if>>
@@ -1178,6 +1200,7 @@ Key takeaway: When you're overhead a safe airport and the destination weather is
 
 <<link "Return to Start" "Opening">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A3-PushGap [scenario branch-a]
 <<if $audioEnabled>><<audio "engine-smooth" loop volume 0.3 play>><</if>>
 <<if $audioEnabled>><<audio "wind-turbulence" loop volume 0.25 play>><</if>>
@@ -1292,6 +1315,7 @@ The fact that you survived is a gift. Learn from the errors that led here so tha
 
 <<link "Return to Start" "Opening">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A3b-ClimbAbove [scenario branch-a ending]
 <<if $audioEnabled>><<audio "engine-rough" loop volume 0.2 play>><</if>>
 <<if $audioEnabled>><<audio "stall-horn" play>><</if>>
@@ -1379,6 +1403,7 @@ Act early. Deviate early. Declare early. Don't wait until the emergency is termi
 
 <<link "Return to Start" "Opening">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B-DeviateNorth [scenario branch-b]
 <<set $pathArray to $pathArray.concat(["Deviated north toward Eagle County"])>>
 <<if $audioEnabled>><<audio "radio-squelch" play>><</if>>
@@ -1526,6 +1551,7 @@ The gusty crosswind landing at Eagle required solid technique but was entirely w
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B1b-GoAround [scenario branch-b ending]
 <<if $audioEnabled>><<audio "engine-smooth" stop>><<audio "touchdown" play>><</if>>
 <<set $pathArray to $pathArray.concat(["Went around, second approach in worse conditions"])>>
@@ -1579,6 +1605,7 @@ The go-around itself was executed correctly. There is never anything wrong with 
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B2-ContinueRifle [scenario branch-b]
 <<set $pathArray to $pathArray.concat(["Continuing west to Rifle"])>>
 <<if $audioEnabled>><<audio "engine-smooth" play>><</if>>
@@ -1687,6 +1714,7 @@ The decision NOT to attempt the Roaring Fork Valley—to see the narrowing valle
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B2b-RoaringFork [scenario branch-b]
 <<set $pathArray to $pathArray.concat(["Continuing into the Roaring Fork Valley"])>>
 <<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 3000)>><</if>>
@@ -1791,6 +1819,7 @@ Your decision to attempt the valley was the error—the weather signs were clear
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B2b-PressAspen [scenario branch-b ending]
 <<if $audioEnabled>><<audio "engine-rough" stop>><</if>>
 <<set $pathArray to $pathArray.concat(["Continued into severely deteriorating conditions"])>>
@@ -1855,6 +1884,7 @@ You were 50 feet from a ridge. Trees at your altitude. Stall horn in the flare a
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B3-TrySouth [scenario branch-b]
 <<set $pathArray to $pathArray.concat(["Attempting to penetrate the weather wall south"])>>
 <<set $badchoices to $badchoices + 1>>
@@ -1928,6 +1958,7 @@ You land at Eagle County thirty minutes later, having aged ten years. The tower 
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B3a-RetreatEagle [scenario branch-b ending]
 <<if $audioEnabled>><<run crossfadeEngine("engine-rough", "engine-smooth", 3000)>><<audio "touchdown" play>><</if>>
 <<set $pathArray to $pathArray.concat(["Declared MAYDAY, retreated north to Eagle"])>>
@@ -1992,6 +2023,7 @@ You overrode professional radar analysis with a visual impression from 38 miles 
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C-ContactFSS [scenario branch-c]
 <<set $pathArray to $pathArray.concat(["Called Flight Service for updated weather"])>>
 <<if $audioEnabled>><<audio "radio-squelch" play>><</if>>
@@ -2086,6 +2118,7 @@ _step
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 </div>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C1b-PushGap [scenario branch-c ending]
 <<set $pathArray to $pathArray.concat(["Pushed into the convective SIGMET area"])>>
 <<if $audioEnabled>><<audio "engine" stop>><</if>>
@@ -2125,6 +2158,7 @@ _step
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 </div>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C2-TurnBackKBJC [scenario branch-c]
 <<set $pathArray to $pathArray.concat(["Turning back based on Flight Service briefing"])>>
 <<if $audioEnabled>><<audio "radio-squelch" play>><</if>>
@@ -2199,6 +2233,7 @@ _step
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 </div>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C2b-Reverse180 [scenario branch-c]
 <<set $pathArray to $pathArray.concat(["Reversed the 180, heading back west"])>>
 <<if $audioEnabled>><<audio "engine-smooth" stop>><</if>>
@@ -2261,6 +2296,7 @@ _step
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 </div>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C2b-PressOnWeather [scenario branch-c ending]
 <<set $pathArray to $pathArray.concat(["Pressed into SIGMET area after reversing safety decision"])>>
 <<if $audioEnabled>><<audio "engine" stop>><</if>>
@@ -2300,6 +2336,7 @@ _step
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 </div>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C3-DivertEagle [scenario branch-c]
 <<set $pathArray to $pathArray.concat(["Diverting to Eagle County"])>>
 <<if $audioEnabled>><<audio "radio-squelch" play>><</if>>
@@ -2358,6 +2395,7 @@ _step
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 </div>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C3b-ContinueRifle [scenario branch-c ending]
 <<set $pathArray to $pathArray.concat(["Overflew Eagle, continued to Rifle"])>>
 <<if $audioEnabled>><<audio "engine" stop>><</if>>
@@ -2402,6 +2440,7 @@ _step
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 </div>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: D-ClimbHigher [scenario branch-d]
 <<set $pathArray to $pathArray.concat(["Climbing to 16,500 for better position"])>>
 
@@ -2520,6 +2559,7 @@ This is the lesson that separates good mountain pilots from ones who push the we
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: D1b-DivertRifle [scenario branch-d ending]
 <<set $pathArray to $pathArray.concat(["Landing at Rifle with wider weather margin"])>>
 
@@ -2570,6 +2610,7 @@ The hardest part of being a good pilot isn't being capable. It's being comfortab
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: D2-DescendEagle [scenario branch-d]
 <<set $pathArray to $pathArray.concat(["Confirming direct route blocked — descending to Eagle County"])>>
 
@@ -2635,6 +2676,7 @@ This is especially true in mountain weather. Taking the good airport in front of
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: D2b-ContinueToRifle [scenario branch-d ending]
 <<set $pathArray to $pathArray.concat(["Overflying Eagle, continuing to Rifle"])>>
 
@@ -2689,6 +2731,7 @@ In mountain weather, facts beat preference.
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: D3-TurnBackAltitude [scenario branch-d]
 <<set $pathArray to $pathArray.concat(["Turning back east — weather too serious from 16,500"])>>
 
@@ -2780,6 +2823,7 @@ You chose to respect the weather. That's mountain wisdom.
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: D3b-TryCorridor [scenario branch-d ending]
 <<set $pathArray to $pathArray.concat(["Reversing course to attempt the northern corridor"])>>
 
@@ -2847,3 +2891,5 @@ The hardest part of being a good pilot isn't skill. It's discipline. It's the di
 </ul>
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>

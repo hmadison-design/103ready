@@ -393,6 +393,22 @@ hr {
   margin-bottom: 2em;
 }
 
+/* --- Main Menu button (injected) --- */
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block;
+  padding: 0.55em 1.3em;
+  background: #1A3C57;
+  color: #fff !important;
+  border: 1px solid #2E5C82;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+.main-menu-btn:hover,
+.main-menu-btn:focus { background: #2E5C82; outline: none; }
+
 :: FlightPrep [preflight]
 <<if $audioEnabled>><<audio ":all" stop>><</if>>
 <div class="scenario-title">Cylinder Three</div>
@@ -417,6 +433,7 @@ The airplane is fueled, preflighted, and parked on the ramp. You've got about tw
 
 <<link '<span class="preflight-btn" style="background:#2a4a3a; border-color:#2ecc71;">Begin Flight →</span>' "Opening">><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: Preflight-Weather [preflight]
 <<set $readWeather to true>>
 <h3>Weather Briefing — obtained via 1800wxbrief.com at 0845 CDT</h3>
@@ -685,6 +702,7 @@ An engine that is getting worse will continue to get worse. The trend is the mes
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A1b-LateEmergency [scenario branch-a ending]
 <<if $audioEnabled>><<audio "radio-squelch" volume 0.4 play>><</if>>
 <<set $pathArray to $pathArray.concat(["Diverted under emergency — landed safely"])>>
@@ -738,6 +756,7 @@ The best time to divert is when you first recognize a worsening trend. The secon
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A1c-LateDescent [scenario branch-a ending]
 <<if $audioEnabled>><<audio "radio-squelch" volume 0.4 play>><</if>>
 <<set $pathArray to $pathArray.concat(["Precautionary landing — aircraft intact"])>>
@@ -795,6 +814,7 @@ A precautionary landing is not a failure. It's one of the best tools a pilot has
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A3-DeclareEmergency [scenario branch-a ending]
 <<if $audioEnabled>><<audio "radio-squelch" volume 0.4 play>><</if>>
 <<set $pathArray to $pathArray.concat(["Declared emergency — diverted safely to Watonga"])>>
@@ -850,6 +870,7 @@ There is no shame in an emergency declaration. It's a tool, not a confession. Us
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: A4-LateDescend [scenario branch-a ending]
 <<if $audioEnabled>><<audio "radio-squelch" volume 0.4 play>><</if>>
 <<set $pathArray to $pathArray.concat(["Descended and made precautionary landing"])>>
@@ -907,6 +928,7 @@ When in doubt about the engine, trade altitude for options. The ground is where 
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B-Troubleshoot [scenario branch-b]
 <<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 2000)>><</if>>
 You reach for the mixture knob and pull it back — slowly, deliberately, leaning the engine well past where you'd normally set it in cruise. The EGTs climb across the board, all six cylinders running hotter as the fuel flow drops. You watch the engine analyzer.
@@ -1007,6 +1029,7 @@ A hypothesis is not a diagnosis. If you can't confirm the problem from the cockp
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B2-LeanBurn [scenario branch-b ending]
 <<if $audioEnabled>><<audio "engine-rough" loop volume 0.5 play>><</if>>
 <<set $pathArray to $pathArray.concat(["Sustained lean burn — engine worsened"])>>
@@ -1064,6 +1087,7 @@ Troubleshooting is a test, not a treatment. If the test doesn't produce a clear 
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B3-DivertEnid [scenario branch-b ending]
 <<set $pathArray to $pathArray.concat(["Diverted to Enid — landed safely, mechanic found valve"])>>
 "Kansas City Center, November four-seven-two-golf-foxtrot. We've got a rough-running engine. Tried troubleshooting, can't confirm the cause. We'd like to divert to Enid Woodring for maintenance."
@@ -1120,6 +1144,7 @@ Not knowing what's wrong is itself a reason to land. You don't need a diagnosis 
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: B4-DivertNearest [scenario branch-b ending]
 <<set $pathArray to $pathArray.concat(["ATC vectored to Watonga — landed safely"])>>
 "Kansas City Center, November four-seven-two-golf-foxtrot, engine running rough. Unable to resolve in flight. Request vectors to nearest suitable airport with maintenance capability."
@@ -1164,6 +1189,7 @@ Land first, solve problems second. The best airport for an engine problem is the
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C-Kingfisher [scenario branch-c]
 <<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 2000)>><</if>>
 <<if $audioEnabled>><<audio "radio-squelch" volume 0.4 play>><</if>>
@@ -1251,6 +1277,7 @@ The best pilots are the ones who make the boring decision. Divert, land, call a 
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C2-GroundRunUp [scenario branch-c]
 <<if $audioEnabled>><<run crossfadeEngine("engine-rough", "engine-smooth", 2000)>><</if>>
 You sit in the airplane with the engine at idle, listening. It sounds... normal. Completely normal. The smooth, steady idle of a Continental IO-540 with nothing wrong.
@@ -1321,6 +1348,7 @@ A clean ground run-up after an in-flight engine anomaly does not mean the proble
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C2b-DepartAgain [scenario branch-c ending]
 <<if $audioEnabled>><<audio "engine-smooth" loop volume 0.3 play>><</if>>
 <<set $pathArray to $pathArray.concat(["Engine roughness returned — diverted to Enid"])>>
@@ -1380,6 +1408,7 @@ When an engine runs rough in the air and smooth on the ground, trust the air. Th
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C3-DoneFlying [scenario branch-c ending]
 <<set $pathArray to $pathArray.concat(["Arranged ground transport — airplane stays"])>>
 You don't even run the engine up. You shut down, tie down, and pull out your phone.
@@ -1430,6 +1459,7 @@ The airplane is a tool. When the tool isn't working, put it down and pick up a d
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: D-Enid [scenario branch-d]
 <<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 2000)>><</if>>
 <<if $audioEnabled>><<audio "radio-squelch" volume 0.4 play>><</if>>
@@ -1523,6 +1553,7 @@ When the engine tells you something is wrong, listen. Land where someone can fix
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: D2-QuickLook [scenario branch-d ending]
 <<set $pathArray to $pathArray.concat(["Mechanic found valve — aircraft grounded"])>>
 The lineman gives you a look — not judgmental, just knowing. "I'll get him."
@@ -1573,6 +1604,7 @@ A diversion isn't complete when the wheels touch down. It's complete when you've
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: E-Precautionary [scenario branch-e]
 <<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 2000)>><</if>>
 <<if $audioEnabled>><<audio "radio-squelch" volume 0.4 play>><</if>>
@@ -1668,6 +1700,7 @@ A precautionary landing with a running engine is always better than a forced lan
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: E2-WheatField [scenario branch-e ending]
 <<set $pathArray to $pathArray.concat(["Wheat field landing — minor gear damage"])>>
 You set up a final approach into the wind, aiming for the center of the wheat field. The stubble is short — six inches, maybe eight — and the soil looks dry and firm. You carry a little extra speed, seventy knots over the threshold that doesn't exist, and flare.
@@ -1718,6 +1751,7 @@ A precautionary landing you walk away from is a good landing, period. The airpla
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
 
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: E3-PrivateStrip [scenario branch-e ending]
 <<set $pathArray to $pathArray.concat(["Landed on private grass strip — best possible outcome"])>>
 You turn east and descend toward the grass strip. It's about three miles, and from this altitude you can see it clearly — a mowed grass runway, oriented roughly north-south, maybe two thousand feet long. The windsock is showing the same southwest wind you've been dealing with all morning. A metal hangar sits at the south end, and there's a gravel drive leading to a farmhouse.
@@ -1769,3 +1803,5 @@ Land while you have choices. And while you're descending, keep looking. The best
 <</for>>
 
 <<link "Return to Start">><<run Engine.restart()>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
