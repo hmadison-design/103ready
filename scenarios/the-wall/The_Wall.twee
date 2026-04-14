@@ -87,7 +87,12 @@ window.openZoomChart = function(elementId) {
 	var id = elementId || "sectional-zoom-data";
 	var zoomSrc = document.getElementById(id);
 	if (!zoomSrc) return;
-	var src = zoomSrc.textContent;
+	var src = zoomSrc.textContent.trim();
+	/* Popup is about:blank — prepend origin so root-relative paths resolve. */
+	if (src && !/^(data:|https?:)/.test(src)) {
+		if (src.charAt(0) !== '/') src = '/' + src;
+		src = window.location.origin + src;
+	}
 	var w = window.open("", "_blank");
 	if (!w) { alert("Pop-up blocked — please allow pop-ups for this site."); return; }
 	var html = [
@@ -518,16 +523,16 @@ The C182T's service ceiling of 18,100 ft is a theoretical number at maximum gros
 <strong>Denver Sectional — KBJC to KASE corridor:</strong>
 
 <div class="sectional-container">
-<script id="sectional-zoom-data" type="text/plain">%%SECTIONAL_DATA_URI%%</script>
-<img src="%%SECTIONAL_DATA_URI%%" onclick="openZoomChart('sectional-zoom-data')" style="cursor:zoom-in; max-width:100%; border:1px solid #999; border-radius:4px;" alt="Denver Sectional — KBJC to KASE corridor">
+<script id="sectional-zoom-data" type="text/plain">/scenarios/the-wall/images/sectional_denver_kbjc_kase.jpg</script>
+<img src="/scenarios/the-wall/images/sectional_denver_kbjc_kase.jpg" onclick="openZoomChart('sectional-zoom-data')" style="cursor:zoom-in; max-width:100%; border:1px solid #999; border-radius:4px;" alt="Denver Sectional — KBJC to KASE corridor">
 <div class="sectional-label">Denver Sectional (FAA, current edition) — KBJC to KASE corridor<br><em>Click to open in zoomable viewer</em></div>
 </div>
 
 <strong>Area Map — Route overview:</strong>
 
 <div class="sectional-container">
-<script id="area-map-zoom-data" type="text/plain">%%AREA_MAP_DATA_URI%%</script>
-<img src="%%AREA_MAP_DATA_URI%%" onclick="openZoomChart('area-map-zoom-data')" style="cursor:zoom-in; max-width:100%; border:1px solid #999; border-radius:4px;" alt="Annotated area map — KBJC to KASE with terrain and airports">
+<script id="area-map-zoom-data" type="text/plain">/scenarios/the-wall/images/area_map.jpg</script>
+<img src="/scenarios/the-wall/images/area_map.jpg" onclick="openZoomChart('area-map-zoom-data')" style="cursor:zoom-in; max-width:100%; border:1px solid #999; border-radius:4px;" alt="Annotated area map — KBJC to KASE with terrain and airports">
 <div class="sectional-label">Annotated route overview — key airports, terrain, and the Continental Divide<br><em>Click to open in zoomable viewer</em></div>
 </div>
 

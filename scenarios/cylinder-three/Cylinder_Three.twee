@@ -109,7 +109,12 @@ $(document).on(":passagerender", function(ev) {
 
 /* Sectional chart zoom — opens high-res chart in a pan/zoom viewer */
 window.openZoomChart = function() {
-	var zoomSrc = document.getElementById("sectional-zoom-data").textContent;
+	var zoomSrc = document.getElementById("sectional-zoom-data").textContent.trim();
+	/* Popup is about:blank — prepend origin so root-relative paths resolve. */
+	if (zoomSrc && !/^(data:|https?:)/.test(zoomSrc)) {
+		if (zoomSrc.charAt(0) !== '/') zoomSrc = '/' + zoomSrc;
+		zoomSrc = window.location.origin + zoomSrc;
+	}
 	var w = window.open("", "_blank");
 	if (!w) { alert("Pop-up blocked — please allow pop-ups for this site."); return; }
 	var html = [
@@ -545,8 +550,8 @@ Your route takes you west-southwest across central Oklahoma. The terrain is pred
 <strong>VFR Sectional — KSWO to KCSM corridor:</strong>
 
 <div class="sectional-container">
-<script id="sectional-zoom-data" type="text/plain">%%SECTIONAL_ZOOM_URI%%</script>
-<img src="%%SECTIONAL_DATA_URI%%" alt="Wichita VFR Sectional — Stillwater to Clinton-Sherman corridor" onclick="openZoomChart()" style="cursor:zoom-in; max-width:100%; border:1px solid #999; border-radius:4px;">
+<script id="sectional-zoom-data" type="text/plain">/scenarios/cylinder-three/images/sectional_wichita_kswo_kcsm.jpg</script>
+<img src="/scenarios/cylinder-three/images/sectional_wichita_kswo_kcsm.jpg" alt="Wichita VFR Sectional — Stillwater to Clinton-Sherman corridor" onclick="openZoomChart()" style="cursor:zoom-in; max-width:100%; border:1px solid #999; border-radius:4px;">
 <div class="sectional-label">Wichita Sectional (FAA, current edition) — Stillwater (KSWO) to Clinton-Sherman (KCSM)<br><em>Click to open in zoomable viewer</em></div>
 </div>
 
