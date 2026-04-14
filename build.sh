@@ -18,7 +18,7 @@ echo "== Fetching tweego ${TWEEGO_VER} =="
 curl -fsSL -o tweego.zip "${TWEEGO_URL}"
 unzip -oq tweego.zip
 chmod +x tweego
-./tweego --version
+./tweego --version || true
 
 echo "== Fetching SugarCube ${SUGARCUBE_VER} =="
 curl -fsSL -o sugarcube.zip "${SUGARCUBE_URL}"
