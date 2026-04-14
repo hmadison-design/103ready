@@ -1,35 +1,43 @@
 #!/usr/bin/env bash
 # Cloudflare Pages build script for 103ready.com.
-# Downloads tweego, compiles each scenario's .twee to playable HTML,
-# and copies the landing page + logo into the publish directory.
+# Downloads tweego + SugarCube, compiles each scenario's .twee to playable HTML,
+# then copies the landing page + logo + per-scenario assets into output/.
 set -euo pipefail
 
 TWEEGO_VER="2.1.1"
-TWEEGO_URL="https://github.com/tmedwards/tweego/releases/download/v${TWEEGO_VER}/tweego-${TWEEGO_VER}+storyformats-linux-x64.zip"
+TWEEGO_URL="https://github.com/tmedwards/tweego/releases/download/v${TWEEGO_VER}/tweego-${TWEEGO_VER}-linux-x64.zip"
 
-rm -rf output
+SUGARCUBE_VER="2.37.3"
+SUGARCUBE_URL="https://github.com/tmedwards/sugarcube-2/releases/download/v${SUGARCUBE_VER}/sugarcube-${SUGARCUBE_VER}-for-twine-2.1-local.zip"
+
+rm -rf output build-tmp
 mkdir -p output build-tmp
 cd build-tmp
 
 echo "== Fetching tweego ${TWEEGO_VER} =="
-curl -sSL -o tweego.zip "${TWEEGO_URL}"
+curl -fsSL -o tweego.zip "${TWEEGO_URL}"
 unzip -oq tweego.zip
 chmod +x tweego
 ./tweego --version
 
+echo "== Fetching SugarCube ${SUGARCUBE_VER} =="
+curl -fsSL -o sugarcube.zip "${SUGARCUBE_URL}"
+mkdir -p sc
+unzip -oq sugarcube.zip -d sc
+# Locate the format.js inside whatever folder SugarCube unzipped to,
+# and place it at storyformats/sugarcube-2/ next to the tweego binary.
+mkdir -p storyformats/sugarcube-2
+SC_FORMAT=$(find sc -name format.js | head -1)
+if [ -z "${SC_FORMAT}" ]; then
+  echo "ERROR: could not find SugarCube format.js"
+  exit 1
+fi
+cp "${SC_FORMAT}" storyformats/sugarcube-2/format.js
+echo "SugarCube format.js staged at storyformats/sugarcube-2/format.js"
+
 cd ..
 
-compile() {
-  local slug="$1"
-  local src_dir="scenarios/${slug}"
-  local out="output/${slug}.html"
-  echo "== Compiling ${slug} -> ${out} =="
-  build-tmp/tweego -o "${out}" -f sugarcube-2 --head=build-tmp/storyformats "${src_dir}"
-}
-
-# tweego needs the storyformats dir adjacent or passed explicitly; bundled zip
-# puts them under storyformats/ alongside the binary. Use --head only if needed.
-compile_simple() {
+compile_scenario() {
   local slug="$1"
   local src_dir="scenarios/${slug}"
   local out="output/${slug}.html"
@@ -37,15 +45,15 @@ compile_simple() {
   (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}")
 }
 
-compile_simple "game-day"
-compile_simple "the-wall"
-compile_simple "cylinder-three"
+compile_scenario "game-day"
+compile_scenario "the-wall"
+compile_scenario "cylinder-three"
 
 echo "== Staging landing page =="
 cp public/index.html output/index.html
 cp public/103ready_logo.svg output/103ready_logo.svg
 
-# Copy per-scenario audio/images if present (used by scenarios at runtime).
+# Copy per-scenario audio/images if present (referenced at runtime).
 for slug in game-day the-wall cylinder-three; do
   for sub in audio images; do
     if [ -d "scenarios/${slug}/${sub}" ]; then
