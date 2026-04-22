@@ -1,0 +1,947 @@
+:: StoryTitle
+The Third Face
+
+:: StoryData
+{
+  "ifid": "B2E4C1D9-3A7F-4B2C-8D5E-1F6A9C3E7B2D",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Opening"
+}
+
+:: StoryInit
+/*
+SCENARIO TITLE:       The Third Face
+AUDIENCE:             Pilot (GA, 800-2,500 hr, Instrument-rated, SR22 owner/operator)
+TONE:                 Professional (measured, light narrative voice)
+PRIMARY TOPIC:        Weather interpretation and in-flight weather decision-making
+                      near an occluded front
+SECONDARY TOPIC:      Icing recognition/response; FIKI use; CAPS awareness
+AIRCRAFT/EQUIPMENT:   2019 Cirrus SR22T G6 Perspective+, N822LW. FIKI certified
+                      (Flight Into Known Icing) with TKS fluid-weeping system.
+                      Garmin Perspective+ dual PFD/MFD, Synthetic Vision, datalink
+                      wx (SiriusXM + FIS-B ADS-B In), built-in O2.
+SETTING:              KCCR (Concord, CA, Bay Area) to KMFR (Medford, OR).
+                      320 NM direct. Friday morning, late March.
+WEATHER:              Occluded front over northern California/southern Oregon;
+                      low center drifting northeast. Mixed PIREPs. Icing risk
+                      between roughly 8,000-13,000 MSL on northern portion of
+                      route. Clear-air below 5,000 but mountains close.
+ADM THEMES:           Weather interpretation (surface analysis, prog chart,
+                      PIREP, SIGMET/AIRMET), icing recognition, alternate
+                      selection, CAPS-envelope awareness, press-on bias
+HAZARDOUS ATTITUDES:  Invulnerability (FIKI illusion — "I can fly through this"),
+                      get-there-itis, macho, confirmation bias on PIREPs
+TOTAL DECISIONS:      10 per playthrough
+TOTAL ENDINGS:        10 (variants keyed to accumulated wx knowledge flags)
+MIN DECISION DEPTH:   10
+TIMED DECISIONS:      No
+ESTIMATED DURATION:   30-40 minutes
+VERSION:              1.0
+LAST REVIEWED:        2026-04-22
+REVIEWER:             Claude (initial draft) / Harvey Madison (pending)
+*/
+<<set $badchoices to 0>>
+<<set $pathArray to []>>
+
+/* Per-decision knowledge flags. True = knowledge error made. */
+<<set $frontMisread to false>>
+<<set $altBadChoice to false>>
+<<set $alternateThin to false>>
+<<set $pirepsIgnored to false>>
+<<set $icingLate to false>>
+<<set $fikiMisused to false>>
+<<set $cellTooClose to false>>
+<<set $divertLate to false>>
+<<set $approachMisjudged to false>>
+<<set $goAroundBlown to false>>
+
+/* Positive signals */
+<<set $frontUnderstood to false>>
+<<set $cleanExit to false>>
+
+:: StoryScript [script]
+
+:: StoryStylesheet [stylesheet]
+body {
+  background-color: #1c2432;
+  color: #dde3ec;
+}
+#story {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 1em;
+  font-size: 1.05em;
+  line-height: 1.65;
+}
+a.link-internal {
+  display: inline-block;
+  padding: 0.6em 1.1em;
+  margin: 0.35em 0.2em;
+  background-color: #2a3648;
+  color: #dde3ec;
+  border: 1px solid #5a6e88;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+a.link-internal:hover {
+  background-color: #3c4e6a;
+}
+.scenario-title {
+  font-size: 2em;
+  text-align: center;
+  margin-bottom: 0.2em;
+  color: #c7d6ea;
+}
+.scenario-subtitle {
+  font-size: 1.1em;
+  color: #89a2c1;
+  text-align: center;
+  margin-bottom: 1.5em;
+  font-style: italic;
+}
+.decision-heading {
+  font-size: 1.15em;
+  color: #b8cce4;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  text-transform: uppercase;
+}
+.wx-block {
+  background-color: #0f1823;
+  padding: 0.9em 1.1em;
+  border-left: 4px solid #5a6e88;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  margin: 0.5em 0;
+  white-space: pre-wrap;
+  font-size: 0.95em;
+  color: #c7d6ea;
+}
+.debrief {
+  border-top: 2px solid #5a6e88;
+  padding-top: 1em;
+  margin-top: 2em;
+}
+.debrief h3 {
+  color: #b8cce4;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+  font-size: 1.05em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.callout {
+  background-color: #202b3d;
+  border-left: 4px solid #89a2c1;
+  padding: 0.8em 1em;
+  margin: 1em 0;
+  border-radius: 4px;
+  font-style: italic;
+}
+.path-list {
+  background-color: #1a2432;
+  border: 1px solid #5a6e88;
+  padding: 0.7em 1em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #c7d6ea;
+}
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block;
+  padding: 0.55em 1.3em;
+  background: #5a6e88;
+  color: #fff !important;
+  border: 1px solid #89a2c1;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+.main-menu-btn:hover,
+.main-menu-btn:focus { background: #89a2c1; outline: none; }
+
+:: Opening
+<<set $pathArray to $pathArray.concat(["Opening"])>>
+<div class="scenario-title">The Third Face</div>
+<div class="scenario-subtitle">A Cirrus SR22T Into the Occluded Front</div>
+
+You are Dr. Wen Lin — 55, 1,600 hours, instrument-rated and current, a family-medicine physician who bought a 2019 Cirrus SR22T G6 Perspective+ four years ago and has put 800 hours on it. Most of those hours are on routes exactly like today's: Concord (KCCR) up to Medford (KMFR), a monthly medical outreach flight you do for a rural clinic network. You know the country. You know the airplane. N822LW is FIKI-certified and topped off with TKS last week.
+
+Your nephew Jamal — 22, student pilot, 60 hours toward his private — is in the right seat for the first time on one of these trips. He is polite and quiet and has asked you about nothing but the airplane since he buckled in. His questions are good. You like flying with him.
+
+It is Friday morning, late March, 0730 local. Concord is overcast at 3,800 feet with good visibility below. The ramp is cool and the airplane has been in your hangar overnight with the TKS fluid warm.
+
+Your clinic meeting at Medford is at 1200. You've blocked a 0830 takeoff to give yourself margin for the route.
+
+You have pulled the brief on ForeFlight in the FBO lounge. Before you file, there is a weather picture you want to make sure you understand.
+
+<<link "Pull up the surface analysis" "Dec1">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Dec1
+<<set $pathArray to $pathArray.concat(["Dec1: Reading the occluded front"])>>
+<div class="decision-heading">Preflight Planning — Decision 1 of 10: Reading the System</div>
+
+The surface analysis chart shows a low pressure center sitting off the northern California coast, drifting east-northeast. Trailing it is a cold front; ahead of it, a warm front; and where the cold front has caught the warm front and lifted it off the surface, an occluded front. The occlusion runs roughly north-south about seventy miles west of your planned route at departure time, and the analysis suggests it will cross your route between KRDD (Redding) and KMFR during your flight window.
+
+<div class="wx-block">SFC ANAL (valid 1500Z):
+Low center: 41N 126W, 994 mb, drifting 045 at 15 kt
+Occluded front: from low center SE toward KRBG, then curving NE into Oregon
+AIRMET Zulu (icing): moderate icing 8,000-14,000 MSL,
+  extending from N of KSAC northward through western OR
+AIRMET Tango: moderate turbulence below 16,000 MSL
+NO SIGMETs currently active in the forecast area
+
+PIREPs (last 2 hours):
+UA /OV RBG180045 /TM 1410 /FL100 /TP C208 /SK OVC080-TOP110
+  /TA -4 /WV 22045 /TB MDT /IC NEG
+UA /OV MFR180030 /TM 1425 /FL120 /TP PA46 /SK BKN090-TOP130
+  /TA -6 /WV 23050 /TB LGT-MDT /IC LGT-MDT MIXED 90-120
+UA /OV RDD330025 /TM 1440 /FL080 /TP BE35 /SK OVC 050-TOP080
+  /TA -1 /IC NONE BELOW 080</div>
+
+The occluded front is the tricky one. An occlusion has three faces — the cold front below, the warm front aloft, and the occluded front where the two meet. Each face has its own icing and turbulence profile. You have to pick which face you're going to cross and at what altitude.
+
+Jamal looks at the chart over your shoulder. "Is an occluded front just a cold front that caught up to a warm front?" he asks. You tell him that's the short version. The long version is that the system is three-dimensional, and the icing and turbulence risk depends on which layer you're flying through.
+
+<<link "Launch on the 0830 slot — datalink and the build-in radar will handle the details." "Dec1A">><<set $pathArray to $pathArray.concat(["Dec1: A (launch as planned)"])>><</link>>
+
+<<link "The occluded front will be crossing your route mid-flight. Delay 90 minutes to let the system drift east ahead of you, then re-brief." "Dec1B">><<set $pathArray to $pathArray.concat(["Dec1: B (delay 90 min)"])>><</link>>
+
+<<link "Reroute east, file KCCR-KSMF-KRBL-KMFR, stay east of the occlusion through the mountains." "Dec1C">><<set $pathArray to $pathArray.concat(["Dec1: C (reroute east)"])>><</link>>
+
+<<link "Scrub for today. The icing AIRMET and the occlusion together make the route marginal." "Dec1D">><<set $pathArray to $pathArray.concat(["Dec1: D (scrub)"])>><</link>>
+
+:: Dec1A
+<<set $frontMisread to true>>
+<<set $badchoices to $badchoices + 1>>
+You file the 0830 slot as planned. The front is a problem but it is a manageable problem. FIKI handles ice for the duration of an encounter. The datalink shows a clear block to the east if you need to deviate. You tell Jamal, "The airplane's tools are the tools. We'll use them."
+
+<<link "File IFR and step to the airplane" "Dec2">><</link>>
+
+:: Dec1B
+You close the ForeFlight briefing, walk to the FBO counter, and push your block to 1000. You will re-brief in 45 minutes; by then the 1700Z SFC ANAL will be available, and the PIREPs will have refreshed. Jamal asks if you can still make the meeting. You tell him you think so, assuming the 1000 launch holds. "And if it doesn't?" he says. "Then we don't," you say.
+
+The delay is annoying. It is also the right answer.
+
+<<link "File IFR for the 1000 slot and step to the airplane" "Dec2">><</link>>
+
+:: Dec1C
+<<set $frontUnderstood to true>>
+You file KCCR-KSMF-KRBL-KMFR. Distance goes from 320 to 390 NM. Flight time from 2:10 to 2:35. Fuel burn adds about eight gallons, well within your reserve. You route yourself east of the occlusion's forecast axis; the PIREPs in that corridor show no icing reports.
+
+Jamal nods as you trace the new route on the map. He is watching everything.
+
+<<link "File IFR and step to the airplane" "Dec2">><</link>>
+
+:: Dec1D
+You scrub. You call the clinic coordinator, who takes the news philosophically — she has worked with you for four years. The meeting can happen by Zoom. Jamal looks a little deflated, then recovers; he has seen you make a go/no-go decision before and he is curious about the reasoning. You walk him through the chart and the PIREPs at the FBO counter for the next forty minutes. The flight he takes home on this day is a flight that did not happen.
+
+<div class="debrief">
+<h3>What happened</h3>
+You scrubbed a flight that had real weather ambiguity. The occluded front, the icing AIRMET, and the nearness of the track to both were sufficient reason to defer.
+<h3>ADM analysis</h3>
+The cancel is always available. It is usually the least satisfying decision and frequently the safest one. You made it in the presence of a passenger who didn't understand all the reasoning, and you took the time to explain. That is the textbook.
+<h3>What good judgment looks like here</h3>
+Cancellation is a legitimate outcome of a preflight brief. Most pilots who have a long career have dozens of scrubbed flights in the logbook's shadow.
+<h3>Key takeaway</h3>
+The flight that doesn't happen cannot go wrong.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Dec2
+<<set $pathArray to $pathArray.concat(["Dec2: Altitude selection"])>>
+<div class="decision-heading">Preflight Planning — Decision 2 of 10: Cruise Altitude</div>
+
+Whichever route you are now flying, you still have to pick an altitude. The IFR low en-route chart gives you segments with MEAs between 8,000 and 11,000 MSL depending on the piece of the route. You have oxygen in the SR22T; you can comfortably cruise 12,000 and above.
+
+<div class="wx-block">MEAs on filed route:
+KCCR→LIN:    7,000
+LIN→MXW:     9,000
+MXW→RBG:     11,000 (Mt Shasta segment)
+RBG→KMFR:    9,000
+
+Freezing level analysis (FZL chart 1500Z):
+Below front: 7,500 MSL
+Above (aloft warm air): 12,500 MSL (warm wedge between 8,500-13,000)
+Above that: -2°C at 15,000
+
+Tops forecast:
+W of front: BKN080-TOP140 embedded
+Over occlusion: OVC090-TOP165 with embedded CB to FL200
+E of front: SCT080 clearing to FEW by KMFR</div>
+
+Jamal points at the freezing level chart. "There's warm air sandwiched in between the cold layers?" Yes — the warm front aloft is the reason the occlusion has a complicated thermal profile. A flight at 10,000 will be in cold cloud. A flight at 13,000 may be in warm cloud. A flight at 15,000 is in cold cloud again.
+
+<<link "A. Cruise 10,000 MSL. Straight through the icing band but FIKI will handle it." "Dec2A">><<set $pathArray to $pathArray.concat(["Dec2: A (10,000 in icing band)"])>><</link>>
+
+<<link "B. Cruise 13,000 MSL. Above most of the cold layer, in the warm-wedge sweet spot if it holds." "Dec2B">><<set $pathArray to $pathArray.concat(["Dec2: B (13,000 warm wedge)"])>><</link>>
+
+<<link "C. Cruise 16,000 MSL. Above the tops of most of the front and well above the icing band." "Dec2C">><<set $pathArray to $pathArray.concat(["Dec2: C (16,000 above tops)"])>><</link>>
+
+<<link "D. Cruise 7,000 MSL. Below the freezing level, under the cloud deck, accept low-level turbulence." "Dec2D">><<set $pathArray to $pathArray.concat(["Dec2: D (7,000 below freeze)"])>><</link>>
+
+:: Dec2A
+<<set $altBadChoice to true>>
+<<set $badchoices to $badchoices + 1>>
+You file for 10,000. You tell Jamal, "FIKI is for exactly this." You mean it. The airplane is certified for it.
+
+<<link "Call clearance" "Dec3">><</link>>
+
+:: Dec2B
+You file for 13,000. Oxygen cannulas are already in your flight bag. Jamal has flown with supplemental O2 twice before and is not alarmed.
+
+<<link "Call clearance" "Dec3">><</link>>
+
+:: Dec2C
+You file for 16,000. The oxygen system goes on for both of you at 12,500 by rule and for Jamal at 15,000; in the SR22T, the built-in O2 makes this routine. You note the tops forecast for your route includes "embedded CB to FL200" and plan to watch the datalink radar closely.
+
+<<link "Call clearance" "Dec3">><</link>>
+
+:: Dec2D
+You file for 7,000. It keeps you below the freezing level and below the overcast base, at the cost of a bumpy ride over the mountain terrain at comparatively low altitude. The Cessna 208 PIREP earlier reported overcast 080 with tops 110 near Roseburg, which means at 7,000 you're well below the base. Good margin.
+
+<<link "Call clearance" "Dec3">><</link>>
+
+:: Dec3
+<<set $pathArray to $pathArray.concat(["Dec3: TKS fluid and deice preflight"])>>
+<div class="decision-heading">Preflight Inspection — Decision 3 of 10: TKS System and Ice Margin</div>
+
+You are on the ramp with the engine cover removed, walking the airplane. The SR22T's preflight is familiar — TKS panels intact, fluid ports clean, pitot heat check, stall vane, prop check, brake puck thickness. You did a thorough one yesterday evening when you filled the TKS reservoir.
+
+The indicator in the cabin shows the reservoir at 85% full — enough for roughly 2:20 of MAX flow, or approximately 4:30 of NORMAL flow. The FAA definition of FIKI "minimum enroute capacity" for this airframe is 1:30 of NORMAL flow, which you have comfortably.
+
+<div class="callout">TKS chemistry reminder: ethylene glycol-based fluid weeps through laser-drilled porous titanium panels on leading edges. Prevents ice accretion and can shed accreted ice when cycled on early. Not a sustained "keep flying in icing forever" tool; it's a "get out of icing" tool with defined fluid-time budget.</div>
+
+The big question this morning is whether you want the fluid priming pump cycled before takeoff so you have wet panels at departure, or whether you save the fluid until you actually need it.
+
+<<link "A. Prime the system now. Wet panels means the first encounter with ice finds an already-primed, fluid-bearing surface. Start ahead of the problem." "Dec3A">><<set $pathArray to $pathArray.concat(["Dec3: A (prime now, wet panels)"])>><</link>>
+
+<<link "B. Don't prime. Save the fluid. Cycle the system only if and when you actually see ice." "Dec3B">><<set $pathArray to $pathArray.concat(["Dec3: B (save fluid)"])>><</link>>
+
+<<link "C. Ground-prime for 30 seconds only — fluid on the panels before takeoff but minimal total use." "Dec3C">><<set $pathArray to $pathArray.concat(["Dec3: C (brief ground prime)"])>><</link>>
+
+<<link "D. Cancel — 85% fluid isn't full, and you want full for this flight." "Dec3D">><<set $pathArray to $pathArray.concat(["Dec3: D (cancel over TKS %)"])>><</link>>
+
+:: Dec3A
+<<set $fikiMisused to true>>
+<<set $badchoices to $badchoices + 1>>
+You cycle the TKS priming pump to MAX for three minutes on the ground. Fluid seeps through the panels, wetting the leading edges. You now have visibly glycol-beaded wings and tail. You have also just used about eight minutes of NORMAL-flow TKS budget.
+
+You close up and taxi.
+
+<<link "Taxi out" "Dec4">><</link>>
+
+:: Dec3B
+<<set $fikiMisused to true>>
+<<set $badchoices to $badchoices + 1>>
+You leave the system untouched. Dry panels at departure. You will cycle on at first sign of ice.
+
+You close up and taxi.
+
+<<link "Taxi out" "Dec4">><</link>>
+
+:: Dec3C
+You cycle the TKS priming pump at NORMAL for 30 seconds. Panels are visibly wet but not dripping. TKS budget used: about one minute of NORMAL-flow capacity. Fluid is available on the surfaces for the first ice encounter without eating into reserves.
+
+You close up and taxi.
+
+<<link "Taxi out" "Dec4">><</link>>
+
+:: Dec3D
+You taxi back to the hangar and pull the fill cart. The clinic meeting is going to slip. Jamal watches you fill the reservoir to 100%, at which point you re-brief the flight, the clinic, and his lunch.
+
+You launch ninety minutes later. Fluid at full. Meeting rescheduled to 1400 by Zoom. The rest of the flight proceeds as planned.
+
+<<link "Taxi out" "Dec4">><</link>>
+
+:: Dec4
+<<set $pathArray to $pathArray.concat(["Dec4: Initial climb into the system"])>>
+<div class="decision-heading">Climb — Decision 4 of 10: Entering the First Layer</div>
+
+Oakland Departure hands you off to Oakland Center. You climb through the Bay stratus, break out around 3,200 briefly, then re-enter cloud around 4,800 as the mid-level overcast thickens. By 8,000 you are in solid IMC.
+
+The outside air temperature gauge reads +6°C at 8,000. Still above freezing. No ice on the panels.
+
+You ask Center for PIREPs on your route. The controller replies:
+
+<div class="callout">"Twenty-two lima whiskey, the most recent I have is a Piper Mirage at flight level one-two-zero about twenty south of Roseburg reporting light to moderate mixed icing between nine and twelve thousand. Cessna Caravan about thirty-five south of Medford at ten thousand no icing, but that's twenty minutes old. Anything else you need?"</div>
+
+You have a decision about what to do with your climb. ATC cleared you to 10,000 but you can request further.
+
+<<link "A. Level at 10,000 as cleared. The Mirage reported moderate ice there but the Caravan didn't. Mixed reports, you'll see when you get there." "Dec4A">><<set $pathArray to $pathArray.concat(["Dec4: A (level 10K as cleared)"])>><</link>>
+
+<<link "B. Request climb to 14,000 before entering the icing band. Get above the ice altitude the Mirage reported." "Dec4B">><<set $pathArray to $pathArray.concat(["Dec4: B (request 14K)"])>><</link>>
+
+<<link "C. Request descent back to 7,000. The lower PIREP from earlier showed no icing below 080." "Dec4C">><<set $pathArray to $pathArray.concat(["Dec4: C (descend 7K)"])>><</link>>
+
+<<link "D. Level at 10,000 and cycle TKS to MAX preemptively to get ahead of any possible ice." "Dec4D">><<set $pathArray to $pathArray.concat(["Dec4: D (level, preempt TKS MAX)"])>><</link>>
+
+:: Dec4A
+<<set $pirepsIgnored to true>>
+<<set $badchoices to $badchoices + 1>>
+You level at 10,000 and accept the altitude. You tell Jamal, "PIREPs don't always agree. We'll see what's actually there." The OAT drops through zero at about 9,400 and reads -3°C at 10,000.
+
+<<link "Continue" "Dec5">><</link>>
+
+:: Dec4B
+You request 14,000. Center answers, "Twenty-two lima whiskey, climb and maintain one-four thousand, report level." You accept, push up, and start climbing. The airplane is heavy with fuel and the climb is measured — 400 fpm — but it gets there. OAT at 14,000: -9°C. You are above the Mirage's reported icing altitude.
+
+<<link "Continue" "Dec5">><</link>>
+
+:: Dec4C
+You request 7,000. Center answers, "Twenty-two lima whiskey, descend and maintain seven thousand, expect vectors for weather." You descend through the mid-level layers. At 8,000 you pick up light rime on the leading edge — fast, visible, white pellets. You cycle TKS to MAX. By 7,000 the temperature reads +3°C and the ice sheds off in under a minute. You are now below the freezing level, under a 3,000-foot overcast base, with the terrain getting higher ahead.
+
+<<link "Continue" "Dec5">><</link>>
+
+:: Dec4D
+<<set $fikiMisused to true>>
+<<set $badchoices to $badchoices + 1>>
+You level at 10,000 as cleared and, before any ice appears, cycle TKS to MAX. Fluid streams across the leading edges. OAT reads -3°C; the air is moist; the airplane is clean.
+
+You are using fluid against a threat you do not yet have.
+
+<<link "Continue" "Dec5">><</link>>
+
+:: Dec5
+<<set $pathArray to $pathArray.concat(["Dec5: First ice"])>>
+<div class="decision-heading">Cruise — Decision 5 of 10: First Ice Encounter</div>
+
+You are in cruise on your chosen altitude, over the northern Sacramento Valley, in solid IMC. The datalink radar is painting scattered light-green returns ahead with one moderate cell about forty miles to the east of course; nothing directly on your track. The windshield is wet — droplets, not ice — for about ten minutes.
+
+Then, as you cross into the southern edge of the occlusion, the windshield starts to show it. Small, clear streaks first — droplets that aren't sliding off. Then a slow accretion on the leading edge of the TKS panels, visible against the wet black of the airplane. Within three minutes you have a thin white layer.
+
+<div class="callout">The accretion is clear-to-mixed — droplets that freeze irregularly. OAT: -4°C. Airspeed: 155 KTAS, dropping slightly. Jamal is pointing at the wingtip silently. The ice is visible and unmistakable.</div>
+
+<<link "A. Cycle TKS to NORMAL and continue on altitude. Give the system time to work." "Dec5A">><<set $pathArray to $pathArray.concat(["Dec5: A (TKS NORMAL, press)"])>><</link>>
+
+<<link "B. Cycle TKS to MAX and request an immediate altitude change. Ice is here — get out of it." "Dec5B">><<set $pathArray to $pathArray.concat(["Dec5: B (TKS MAX, request alt change)"])>><</link>>
+
+<<link "C. Cycle TKS to MAX, hold altitude, monitor. Give the system two minutes to clear what's there before making decisions." "Dec5C">><<set $pathArray to $pathArray.concat(["Dec5: C (TKS MAX, assess, then decide)"])>><</link>>
+
+<<link "D. Declare emergency. Request immediate descent to warm air and vectors to the nearest airport." "Dec5D">><<set $pathArray to $pathArray.concat(["Dec5: D (declare, descend)"])>><</link>>
+
+:: Dec5A
+<<set $icingLate to true>>
+<<set $badchoices to $badchoices + 1>>
+You cycle TKS to NORMAL. The fluid begins to weep. The accretion on the leading edge starts to shed in patches — but new ice forms between the sheds. Net effect: the ice is not clearing, it is simmering in place. Airspeed has dropped four knots. The windshield is re-accumulating where the flow doesn't reach.
+
+<<link "Continue" "Dec6">><</link>>
+
+:: Dec5B
+You cycle TKS to MAX and press the PTT: "Oakland Center, twenty-two lima whiskey, picking up moderate ice at one-zero thousand, request immediate climb to one-four thousand."
+
+Center: "Twenty-two lima whiskey, Oakland, climb and maintain one-four thousand. Report conditions at one-four."
+
+You climb. The MAX-flow TKS is visibly clearing the accretion. At 13,000 you break into a warm-wedge layer — OAT reads +1°C — and the remaining ice sublimates off within a minute.
+
+<<link "Continue" "Dec6">><</link>>
+
+:: Dec5C
+You cycle TKS to MAX. Fluid streams across the panels, thicker than NORMAL. Over the next 90 seconds the accretion on the leading edges sheds in visible sheets — one long rime plate peels off the left wing's inboard panel and tumbles away.
+
+But new ice continues to form between shed cycles. The TKS is winning the current skirmish; it is not winning the war, because the icing is heavier than the system was designed for sustained encounter.
+
+<<link "Continue" "Dec6">><</link>>
+
+:: Dec5D
+You press the PTT: "Oakland Center, twenty-two lima whiskey, declaring an emergency, moderate ice one-zero thousand, request immediate vectors to warm air and the nearest suitable airport."
+
+Center answers in the calm voice Oakland Center uses for these: "Twenty-two lima whiskey, Oakland, turn right heading zero-nine-zero, descend and maintain seven thousand, vectors for Chico, KCIC. Say fuel and souls on board."
+
+You give it. You descend. By 8,500 the ice begins to release. By 7,000 you are in rain and the airplane is clean again. The emergency stays on the tapes.
+
+<<link "Continue" "Dec6">><</link>>
+
+:: Dec6
+<<set $pathArray to $pathArray.concat(["Dec6: Inside the front"])>>
+<div class="decision-heading">Cruise — Decision 6 of 10: Inside the Occlusion</div>
+
+You are threading the heart of the occluded front now — or you have dropped below it, or you have climbed over it, depending on your path. The airplane is in layered cloud of varying thickness, the datalink radar is painting scattered green with a yellow cell holding about 25 miles east of course, and the ride is bumpy in spots but not punishing.
+
+Jamal asks, quietly, "Do occluded fronts have embedded thunderstorms?" You tell him yes, they can, especially at the cold-front face. You are watching the radar.
+
+The cell 25 miles east is moving along at 30 knots on a bearing that keeps it east of your track for now, but the forecast prog chart had it drifting northeast faster than observed. You can see it in the datalink — a slow bloom, a little higher than it was ten minutes ago. Not a wall. Not yet.
+
+<<link "A. Maintain course. Cell is east, drift is slow, datalink is reliable enough for this separation." "Dec6A">><<set $pathArray to $pathArray.concat(["Dec6: A (maintain, rely on datalink)"])>><</link>>
+
+<<link "B. Request 20 degrees left to open the separation from the cell, accepting slight detour." "Dec6B">><<set $pathArray to $pathArray.concat(["Dec6: B (left 20 for sep)"])>><</link>>
+
+<<link "C. Request vectors around the entire yellow-return area via radar vector from Center." "Dec6C">><<set $pathArray to $pathArray.concat(["Dec6: C (vectors around)"])>><</link>>
+
+<<link "D. Climb above the cell. If its top is FL200 and you can get to 16K-18K, the tops picture clears." "Dec6D">><<set $pathArray to $pathArray.concat(["Dec6: D (climb above)"])>><</link>>
+
+:: Dec6A
+<<set $cellTooClose to true>>
+<<set $badchoices to $badchoices + 1>>
+You hold course. The datalink cell is updating at a two-to-six-minute latency; you know this because you checked the uplink time on the MFD when you set up. The cell drifts slowly east of you as predicted for the next fifteen minutes. Then the datalink updates and the cell — formerly yellow — is now red and has grown.
+
+You are still 22 miles from it. But the data is old and the gradient is steep.
+
+<<link "Continue" "Dec7">><</link>>
+
+:: Dec6B
+You call Center: "Oakland Center, twenty-two lima whiskey, request twenty left to open separation from a cell at our three o'clock." Center responds: "Twenty-two lima whiskey, fly heading three-three-zero, advise on course." You take the vector. The cell stays at your four o'clock and gradually falls behind. The deviation costs you about six minutes to Medford.
+
+<<link "Continue" "Dec7">><</link>>
+
+:: Dec6C
+You call Center: "Oakland Center, twenty-two lima whiskey, request vectors to circumnavigate weather east of course." Center responds with a sequence of turns — first east briefly to get a clearer view of the storm cell, then a long south-to-north arc that keeps you 30 miles clear of the worst of it. Your detour adds fifteen minutes and some fuel.
+
+<<link "Continue" "Dec7">><</link>>
+
+:: Dec6D
+You request climb to 16,000. Oakland Center: "Twenty-two lima whiskey, climb and maintain one-six thousand, expect vectors for weather as needed." The SR22T climbs efficiently; TKS is handling the modest icing above the warm wedge. You level at 16,000 and can now see the tops of the occlusion around you — the cold-front cell stands like a wet meringue at your two o'clock, its top at about FL210. You are above the scattered returns.
+
+<<link "Continue" "Dec7">><</link>>
+
+:: Dec7
+<<set $pathArray to $pathArray.concat(["Dec7: Alternate decision"])>>
+<div class="decision-heading">Cruise — Decision 7 of 10: Alternate Selection</div>
+
+Your original alternate was KRDD (Redding). You filed it as your IFR alternate this morning and the KRDD TAF at that time was VFR with occasional MVFR. You are now an hour into the flight and Center passes you a traffic advisory and then an amended weather update:
+
+<div class="wx-block">KRDD now:   OVC006 1/2SM -RA FG 05/04 (below ILS minimums)
+KMFR now:   OVC030 3SM -RA 07/05 (above ILS minimums)
+KRBG now:   OVC015 4SM BR 06/05 (above LOC minimums, no ILS)
+KSLE now:   OVC050 10SM -RA 08/06 (VFR-adjacent)
+KCIC now:   SCT040 BKN080 10SM 09/07 (VFR)</div>
+
+Your original alternate is now well below ILS minimums. You need a new alternate.
+
+Jamal says, "Does the alternate need to be an airport we can actually land at right now?" You tell him yes — an IFR alternate must meet its forecast minimums when you'd arrive. If your filed alternate has gone below, you need a new one before you commit to the approach.
+
+<<link "A. Amend alternate to KCIC. Closest airport with weather above minimums, familiar field." "Dec7A">><<set $pathArray to $pathArray.concat(["Dec7: A (KCIC alt)"])>><</link>>
+
+<<link "B. Amend alternate to KSLE. Further north, closer to Medford, better forecast trend." "Dec7B">><<set $pathArray to $pathArray.concat(["Dec7: B (KSLE alt)"])>><</link>>
+
+<<link "C. Amend alternate to KRBG. En route, below but close to LOC minimums, shortest diversion." "Dec7C">><<set $pathArray to $pathArray.concat(["Dec7: C (KRBG alt, tight minimums)"])>><</link>>
+
+<<link "D. No amendment needed. Destination is above minimums — if you can make it in, no alternate required." "Dec7D">><<set $pathArray to $pathArray.concat(["Dec7: D (no alt needed)"])>><</link>>
+
+:: Dec7A
+You amend your alternate to KCIC. Fuel reserve check: current fuel 46 gal, KMFR to KCIC 145 NM at worst-case tailwind reversal, about 75 minutes at typical cruise — 27 gallons. You have reserve. Alternate amended.
+
+<<link "Continue" "Dec8">><</link>>
+
+:: Dec7B
+<<set $alternateThin to true>>
+<<set $badchoices to $badchoices + 1>>
+You amend your alternate to KSLE. KSLE has reasonable weather trends but is 65 NM north of KMFR, which means if you have to use it, you are flying past your destination into weather whose trend is unknown at that time. You have fuel for it. The geometry is a choice.
+
+<<link "Continue" "Dec8">><</link>>
+
+:: Dec7C
+<<set $alternateThin to true>>
+<<set $badchoices to $badchoices + 1>>
+You amend your alternate to KRBG. KRBG's ceiling is at LOC minimums right now and dropping slowly; your arrival there, should you need it, would be in another hour or so. You're betting on the trend not worsening.
+
+<<link "Continue" "Dec8">><</link>>
+
+:: Dec7D
+<<set $alternateThin to true>>
+<<set $badchoices to $badchoices + 1>>
+You leave the alternate on KRDD despite its degradation. Your reasoning: destination is OK, no need to overthink it. Under 14 CFR 91.169, an IFR alternate is required for most IFR flights unless the destination meets the 1-2-3 rule; you file an alternate because you must. Keeping a filed alternate that is below forecast minimums is a paper filing that would not help you.
+
+<<link "Continue" "Dec8">><</link>>
+
+:: Dec8
+<<set $pathArray to $pathArray.concat(["Dec8: Approach selection"])>>
+<div class="decision-heading">Arrival — Decision 8 of 10: Approach Selection at KMFR</div>
+
+Seattle Center hands you off to Medford Approach. You are 35 miles south, descending through 11,000 for 8,000 on vectors. KMFR weather is steady at OVC030 3SM -RA 07/05. The winds are 190 at 12 gusting 19. The ILS is serving runway 32; runway 14 has an RNAV approach only.
+
+<div class="wx-block">KMFR approaches available:
+ILS Z RWY 32:    DA 1644' (310' AGL), visibility 3/4 SM
+LOC RWY 32:      MDA 2040' (706' AGL), visibility 1 SM
+RNAV RWY 32:     LPV DA 1745' (411' AGL), vis 1 SM
+RNAV RWY 14:     LNAV MDA 2300' (966' AGL), vis 1-1/4 SM
+
+Wind: 190 at 12 G 19 (essentially down runway 14, right quartering head on 32,
+90-degree crosswind component ~12)</div>
+
+The ILS serves a runway that has a quartering crosswind. The RNAV Rwy 14 has the wind almost straight down the runway but a higher MDA.
+
+<<link "A. Request ILS 32 — lowest minimums, most precision, crosswind within the airplane's capability." "Dec8A">><<set $pathArray to $pathArray.concat(["Dec8: A (ILS 32, XW)"])>><</link>>
+
+<<link "B. Request RNAV 14 — winds favor 14, higher minimums but ceiling of 3,000 is above the MDA." "Dec8B">><<set $pathArray to $pathArray.concat(["Dec8: B (RNAV 14, into wind)"])>><</link>>
+
+<<link "C. Request LOC 32 — simpler approach, within minimums. Flown plenty of these." "Dec8C">><<set $pathArray to $pathArray.concat(["Dec8: C (LOC 32)"])>><</link>>
+
+<<link "D. Request ILS 32 and circle to land 14. Best of both worlds." "Dec8D">><<set $pathArray to $pathArray.concat(["Dec8: D (ILS 32 circle to 14)"])>><</link>>
+
+:: Dec8A
+You request the ILS Z Rwy 32 with vectors. Approach confirms. The crosswind on the ILS approach will hold you off the extended centerline until the final correction, but the ILS needle is authoritative. You set up the Perspective+ for the approach, brief Jamal on what he'll see.
+
+<<link "Fly the approach" "Dec9">><</link>>
+
+:: Dec8B
+You request the RNAV Rwy 14. Approach is fine with it — "Twenty-two lima whiskey, expect vectors RNAV Runway one-four, descend and maintain seven thousand." You set up Perspective+ for LNAV minimums, briefed MDA 2,300 and a missed approach straight ahead to BOYAN.
+
+<<link "Fly the approach" "Dec9">><</link>>
+
+:: Dec8C
+<<set $approachMisjudged to true>>
+<<set $badchoices to $badchoices + 1>>
+You request the LOC Rwy 32. It's above minimums by comfortable margin. The reason you choose it — familiarity and simplicity — is not technically wrong. What it is, is a higher MDA in weather that can support the lower minimums if you use them. You're trading margin for ease.
+
+<<link "Fly the approach" "Dec9">><</link>>
+
+:: Dec8D
+<<set $approachMisjudged to true>>
+<<set $badchoices to $badchoices + 1>>
+You request the ILS Rwy 32 with a circle-to-land Rwy 14. Approach confirms. A circling approach at night or in low IMC is high-risk; in daytime with a 3,000-foot ceiling it is within the published limits. But the circle will put you low and maneuvering in the shelf at the back side of a mountainous airport.
+
+<<link "Fly the approach" "Dec9">><</link>>
+
+:: Dec9
+<<set $pathArray to $pathArray.concat(["Dec9: Descent and configuration"])>>
+<div class="decision-heading">Approach — Decision 9 of 10: Final Descent</div>
+
+You are on the approach — whichever you selected. You are breaking out at the expected altitude, or not, or are flying a full needle-off procedural trip to the missed approach. The airplane is stable. Jamal is quiet.
+
+A few common realities apply. The rain is steady. The windshield is streaming. You have 14 gallons of TKS fluid left, and the airframe is clean of ice now that you've been below the freezing level for a while. The runway sight picture will come when it comes.
+
+Some of the approach's final checkpoints are happening now. Gear check is irrelevant — you are in an SR22 — but flap configuration is not.
+
+<<link "A. Full flaps at the final fix, trimmed, approach speed bug 80 KIAS." "Dec9A">><<set $pathArray to $pathArray.concat(["Dec9: A (full flaps, 80 KIAS)"])>><</link>>
+
+<<link "B. Flaps 50% at the final fix, delay full flaps until runway in sight. Bug 85." "Dec9B">><<set $pathArray to $pathArray.concat(["Dec9: B (50% then full on sight)"])>><</link>>
+
+<<link "C. Flaps up. Fly the approach clean, decelerate over the threshold, full flaps for landing only. Bug 90." "Dec9C">><<set $pathArray to $pathArray.concat(["Dec9: C (flaps up, decel late)"])>><</link>>
+
+<<link "D. Flaps full. Speed bug 75. Land as slow as possible to minimize rollout." "Dec9D">><<set $pathArray to $pathArray.concat(["Dec9: D (full flaps, 75 KIAS slow)"])>><</link>>
+
+:: Dec9A
+You configure flaps 100% at the FAF. Airspeed settles on 80 KIAS with the trim set. The airplane is stable and slow; the descent rate is appropriate; you can see the runway environment emerging at DA.
+
+<<link "Continue" "Dec10">><</link>>
+
+:: Dec9B
+You stage the flaps — 50% at the FAF, full on sight of the runway. Approach speed 85 KIAS, configured clean enough to maneuver if you had to. The Cirrus is happy here. The runway comes into view on time.
+
+<<link "Continue" "Dec10">><</link>>
+
+:: Dec9C
+<<set $approachMisjudged to true>>
+<<set $badchoices to $badchoices + 1>>
+You fly the approach clean. The Cirrus trims nicely for it, but the airspeed is higher than the approach was designed around; at DA you're high-energy, which means the transition to landing is going to require either a long float or an aggressive deceleration.
+
+<<link "Continue" "Dec10">><</link>>
+
+:: Dec9D
+You configure full flaps at the FAF with the speed bug set for 75 KIAS. The airplane is working hard at that airspeed — angle of attack is high, any gust will load the wing close to stall. It is within the POH but it is not the airplane's happy place.
+
+<<link "Continue" "Dec10">><</link>>
+
+:: Dec10
+<<set $pathArray to $pathArray.concat(["Dec10: Go-around threshold"])>>
+<div class="decision-heading">Final — Decision 10 of 10: The Go-Around Question</div>
+
+You are now at decision altitude on the approach you chose. Conditions at the field continue to read OVC030 3SM -RA. You break out into the ragged base of the overcast at 2,100 MSL — about 800 feet AGL at this field — and the runway environment is visible. The rain intensifies briefly as a cell embedded in the frontal band passes the field.
+
+The approach lights are visible. The threshold is visible. The surface wind has ticked up: reported 200 at 18 gusting 26, which is almost straight down runway 14 but at roughly a 40-degree quarter to runway 32.
+
+Jamal is leaning forward to see out the front.
+
+<<link "A. Land. You're in the sight picture, stable, under the MDA/DA, winds are within the airplane's limits." "Dec10A">><<set $pathArray to $pathArray.concat(["Dec10: A (land)"])>><</link>>
+
+<<link "B. Go around. The crosswind gust spread is outside your personal minimums for the approach you're flying." "Dec10B">><<set $pathArray to $pathArray.concat(["Dec10: B (go-around)"])>><</link>>
+
+<<link "C. Land — but immediately, no float, spot landing touchdown point, short rollout." "Dec10C">><<set $pathArray to $pathArray.concat(["Dec10: C (short-field land)"])>><</link>>
+
+<<link "D. Go around, request different runway from Approach, fly the second try to whatever is into the wind." "Dec10D">><<set $pathArray to $pathArray.concat(["Dec10: D (go-around + runway swap)"])>><</link>>
+
+:: Dec10A
+You commit to the landing. The airplane arrives on centerline with adequate runway behind the numbers. The crosswind pushes the tail briefly in the flare; you correct with rudder, touch down main, then nose, and roll out.
+
+<<link "Roll out" "Resolution">><</link>>
+
+:: Dec10B
+You go around. Power to max continuous. Flaps to 50%. Positive rate, clean up the rest of the flaps at a safe altitude. Approach gives you a right turn onto downwind for a second attempt. "Twenty-two lima whiskey, cleared for the approach again, when able advise." You have a second look coming.
+
+<<link "Continue" "Resolution">><</link>>
+
+:: Dec10C
+You commit to a tight landing — spot touchdown, heavy braking, short rollout. The airplane lands firmly, slightly long due to the gust puffing under the wing at the flare. Brakes are warm. You turn off at taxiway Bravo.
+
+<<link "Roll out" "Resolution">><</link>>
+
+:: Dec10D
+<<set $goAroundBlown to true>>
+<<set $badchoices to $badchoices + 1>>
+You go around. Power to max continuous. Flaps stay at 100% because you don't pull them to 50% — on the SR22 this leaves you in a high-drag configuration until you remember to clean up. Airspeed is slow to build. At 500 AGL you remember flaps and pull them to 50%. You clean up. Approach asks, "Twenty-two lima whiskey, state intentions." You key the PTT twice and settle yourself.
+
+<<link "Continue" "Resolution">><</link>>
+
+:: Resolution
+<<set $pathArray to $pathArray.concat(["Resolution"])>>
+<<set $criticalErrors to 0>>
+<<if $frontMisread>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $altBadChoice>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $alternateThin>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $pirepsIgnored>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $icingLate>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $fikiMisused>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $cellTooClose>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $approachMisjudged>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $goAroundBlown>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+
+<<if $icingLate and $cellTooClose and $approachMisjudged>>
+  <<goto "End_CAPS">>
+<<elseif $icingLate and $pirepsIgnored>>
+  <<goto "End_StruggleIn">>
+<<elseif $cellTooClose and $frontMisread>>
+  <<goto "End_TurbDamage">>
+<<elseif $approachMisjudged and $goAroundBlown>>
+  <<goto "End_Excursion">>
+<<elseif $goAroundBlown>>
+  <<goto "End_GoAroundMess">>
+<<elseif $alternateThin and $criticalErrors gte 3>>
+  <<goto "End_FuelLow">>
+<<elseif $criticalErrors gte 3>>
+  <<goto "End_RoughFlight">>
+<<elseif $criticalErrors gte 1>>
+  <<goto "End_Qualified">>
+<<elseif $frontUnderstood>>
+  <<goto "End_CleanWin">>
+<<else>>
+  <<goto "End_Routine">>
+<</if>>
+
+:: End_CleanWin
+<<set $pathArray to $pathArray.concat(["Ending: Clean win"])>>
+<div class="decision-heading">Ending — Routed Around the Front</div>
+
+You park on the KMFR ramp at 1143. The clinic meeting starts at 1200. Jamal has been replaying the flight in his head the whole taxi-in. As you tie down he says, "Is that typical for one of these trips?" You tell him that occluded fronts are not typical; what is typical is the need to think about where the worst of a system is and route around it, instead of routing through it.
+
+The clinic runs from 1200 to 1500. The return flight that evening is severe clear.
+
+<div class="debrief">
+<h3>What happened</h3>
+You understood the structure of the occluded front, picked a route and altitude that kept the airplane out of its worst layers, and flew an approach consistent with the weather you actually arrived in. You used FIKI sparingly and precisely — as a tool for exiting the ice, not as a license to stay in it.
+<h3>ADM analysis</h3>
+Every high-workload weather decision you made — the route, the altitude, the alternate, the approach — preserved margin rather than consumed it. Counterintuitive-but-correct: the 70-mile east reroute looks like overkill on a 320-mile trip, and it is exactly the reroute that keeps the airplane out of the worst of the system. You spent a few extra minutes; you didn't spend ice.
+<h3>What good judgment looks like here</h3>
+An occluded front is three fronts stacked. The icing band is a function of layer and altitude. The PIREPs are the best real-time read you have; treat disagreements as information about the structure of the system, not about which report to trust. FIKI is a reserve, not a cruise altitude.
+<h3>Key takeaway</h3>
+Every weather system has a cleaner side. Finding it is the work.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Routine
+<<set $pathArray to $pathArray.concat(["Ending: Routine finish"])>>
+<div class="decision-heading">Ending — Clean Finish</div>
+
+You park on the KMFR ramp on schedule. The rain is steady but unremarkable. Jamal climbs out and stands under the wing, looking at the TKS panels with something like respect. "That was ice on those," he says. "Yes," you say. "But not much."
+
+The clinic meeting starts at 1200. You are on time.
+
+<div class="debrief">
+<h3>What happened</h3>
+You made mostly sound decisions through a weather system that offered real hazards. Nothing went dramatically wrong; nothing was a near-miss. You used FIKI when you needed it, picked an approach that matched the conditions, and landed uneventfully.
+<h3>ADM analysis</h3>
+Weather flying is less about heroics than about accumulating small correct decisions. Altitude that avoided the worst of the icing. An alternate that was actually usable. An approach that favored the wind. Flap settings that matched the conditions. None individually dramatic; together, the flight.
+<h3>What good judgment looks like here</h3>
+FIKI is a tool for exit, not endurance. The airplane is happiest flown at the altitude the weather favors, not the altitude you filed at if the weather argues otherwise. Alternates must be usable in the hour you'd actually arrive at them.
+<h3>Key takeaway</h3>
+Weather flying is a series of small, correct decisions, not a single brave one.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Qualified
+<<set $pathArray to $pathArray.concat(["Ending: Qualified success"])>>
+<div class="decision-heading">Ending — Qualified Success</div>
+
+You park on the KMFR ramp, maybe fifteen minutes later than planned, maybe with a little more fuel burned than you estimated. The rain has eased. Jamal unbuckles and says, "That was a workout." You agree. The airplane is clean; the TKS is at 40%; you have a story and not an incident.
+
+<div class="debrief">
+<h3>What happened</h3>
+You made one or two weather-reading or procedure errors along the way and the airplane and the system absorbed them. Most likely, the chain stopped short because one or two downstream decisions were sound — the altitude correction, or the approach choice, or the alternate amendment.
+<h3>ADM analysis</h3>
+Weather decision-making is a moving target. PIREPs go stale. Forecasts get amended. The altitude that was right at takeoff is not always the altitude that's right an hour later. What matters is that the updates you do catch — the trend you do follow — close the chain before it lengthens.
+<h3>What good judgment looks like here</h3>
+Read the system, not the forecast. The SFC ANAL tells you where the occlusion is now; the PIREPs tell you where the ice is; the trend tells you where both are going. Make decisions on the composite picture.
+<h3>Key takeaway</h3>
+Every forecast ages. The pilot who updates the brief mid-flight is the pilot who arrives at the airport the system left behind.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_RoughFlight
+<<set $pathArray to $pathArray.concat(["Ending: Rough flight"])>>
+<div class="decision-heading">Ending — Rough Ride, Safe Outcome</div>
+
+You land at KMFR with the airplane shaken up, TKS down to 15%, and a passenger who is processing a flight that felt more eventful than he expected. You are later than planned. The airplane has picked up some additional streaking on the leading edges that will scrub off with fluid on the ramp.
+
+Jamal sits in the right seat for a moment after you shut down. He says, "I'd like to do some ground with you later. About this flight." You agree.
+
+<div class="debrief">
+<h3>What happened</h3>
+You made a chain of weather-reading errors that accumulated. None of them were catastrophic; each one eroded margin. The icing was worse than you planned for, the cell got closer than you wanted, the alternate was thinner than you liked, and the approach required more of the airplane than you intended.
+<h3>ADM analysis</h3>
+A flight like this is the one pilots remember. The one where nothing individually went terribly wrong but everything was a little more stressful than it should have been. The lessons are in the chain: each small error narrowed the next decision's options. That is the pattern of how aviation accidents are built. This time, it stopped short of one.
+<h3>What good judgment looks like here</h3>
+Break the chain early. The earliest decisions — the route, the altitude, the TKS discipline — set the stage for everything that followed. A slightly different route, a slightly higher altitude, a slightly more preserved fluid budget, and the last hour of the flight looks completely different.
+<h3>Key takeaway</h3>
+The scariest flights are the ones that go exactly as badly as they could go without actually going badly. Debrief those honestly.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_StruggleIn
+<<set $pathArray to $pathArray.concat(["Ending: Diverted with ice"])>>
+<div class="decision-heading">Ending — Diversion with Residual Ice</div>
+
+You land at an alternate — KCIC most likely — with residual ice on the airframe, TKS at 8%, and the realization that you spent about thirty minutes in more ice than the airplane was designed to handle in a sustained way. The rollout is long because the ice-loaded wing is still lifting at a lower coefficient than the clean wing would. You taxi in slowly.
+
+On the ramp, the line tech gives a low whistle at the leading edges. "That's a pile," he says. You nod. Jamal takes a photograph of the left wingtip before the fluid finishes weeping. The clinic meeting rescheduled to Zoom. You are staying overnight.
+
+<div class="debrief">
+<h3>What happened</h3>
+You underweighted the icing risk in the preflight brief, accepted an altitude that put you into the worst of the band, and ignored the PIREP that told you what was there. The FIKI system kept the airplane flying — the legal definition of "operating safely in icing" — but ate through your fluid budget faster than a planned exit would have.
+<h3>ADM analysis</h3>
+FIKI is a certified capability with a specific definition: the airplane can operate in known icing conditions for the duration of an encounter. It is not a license to cruise in ice indefinitely. Pilots who treat FIKI as an "immunity" confuse "can exit" with "should stay."
+<h3>What good judgment looks like here</h3>
+When the PIREP says there is moderate mixed icing at your filed altitude, request a different altitude before you get there. The pilot who filed for 10,000 and landed at 14,000 used fuel but not fluid.
+<h3>Key takeaway</h3>
+FIKI is a door out of icing. It is not a cruise altitude.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_TurbDamage
+<<set $pathArray to $pathArray.concat(["Ending: Turbulence damage"])>>
+<div class="decision-heading">Ending — Encountered Severe Turbulence</div>
+
+You clip the edge of the cell that the datalink showed as "clearly east of course." In real time it was closer. The airplane gets a single gust event — three to four seconds — that slams you both into your harnesses and puts a G-spike on the recording that the avionics are happy to store. Nothing structural fails, but a seatback cracks and Jamal's tablet, which was in his lap, impacts the dash and cracks the screen.
+
+You fly the rest of the flight at reduced speed. You land at KMFR. You write down what happened while it is fresh. The airplane goes to a mechanic for a post-overspeed and G-spike inspection. Jamal is bruised along the shoulder harness line. You are shaken.
+
+<div class="debrief">
+<h3>What happened</h3>
+Datalink weather radar has latency — typically 2 to 6 minutes, depending on the link. A cell that is "25 miles east" on the screen may be 15 miles east in reality, or the cell may have bloomed since the last uplink. Pilots who treat datalink as real-time radar are using a strategic tool as a tactical one.
+<h3>ADM analysis</h3>
+The standard is this: never use datalink radar to penetrate weather. It is for strategic routing — deciding whether to go around a system, and which side. For tactical separation from a specific cell, you need onboard radar or vectors from a controller looking at real-time ATC weather. The SR22T's datalink is excellent for planning. It is inadequate for dodging.
+<h3>What good judgment looks like here</h3>
+Trust the ATC radar more than the datalink. When you see a cell building, ask Center what their radar shows. Their picture is seconds old, not minutes.
+<h3>Key takeaway</h3>
+Datalink weather is where thunderstorms were. ATC radar is where they are.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Excursion
+<<set $pathArray to $pathArray.concat(["Ending: Runway excursion"])>>
+<div class="decision-heading">Ending — Runway Excursion</div>
+
+The approach delivers you to the runway environment fast, or slow, or with a configuration that did not quite suit the wind. You arrive. The airplane touches down. On rollout it departs the side of the runway onto the grass, comes to a stop within sixty feet, and sits there idling. The nose gear is fine. The right main is bogged slightly in the wet. The prop has caught a mouthful of grass but nothing bends.
+
+Jamal is unhurt. You are shaken. Airport emergency services arrive within two minutes. You shut the airplane down and climb out. The incident is noted in the tower log as a runway excursion, no injuries.
+
+<div class="debrief">
+<h3>What happened</h3>
+The approach configuration did not match the weather. A clean or badly-configured approach into a gusting crosswind has too much energy at the flare, or too little. Either way, you arrive at the runway with the airplane unable to be planted in the desired touchdown zone. Without a go-around you let the airplane pick its own resting place.
+<h3>ADM analysis</h3>
+Approach configuration is the quiet half of weather flying. The airplane that arrives at DA stable and slow has already won most of the landing. The airplane that arrives high-energy or low-energy is playing catch-up on short final — a game the wind always wins.
+<h3>What good judgment looks like here</h3>
+At the FAF, be in the configuration the airplane will land in. Speed, flaps, trim. If the numbers on the approach plate don't match the wind's numbers, fly a different approach.
+<h3>Key takeaway</h3>
+The landing is won on the approach, not in the flare.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_GoAroundMess
+<<set $pathArray to $pathArray.concat(["Ending: Messy go-around"])>>
+<div class="decision-heading">Ending — Messy Go-Around, Safe Return</div>
+
+You execute a go-around that is technically successful — the airplane climbs, no ground contact, the engine stays on. The execution is imperfect. You are slow to clean up flaps; the airplane climbs anemically for the first several hundred feet. Approach asks twice for intentions before you answer. You fly the second approach better, with the lessons of the first fresh. You land.
+
+<div class="debrief">
+<h3>What happened</h3>
+A go-around is the easiest maneuver in aviation to say out loud and one of the hardest to execute cleanly under pressure. Max power, positive rate, flaps, gear, communicate — a sequence that has to be a reflex. A messy one is survivable; a well-flown one is a non-event.
+<h3>ADM analysis</h3>
+The decision to go around was correct. The execution was rough because the procedural habit wasn't fluid. Under the cognitive load of an approach going sideways, the pilot who can reach for the go-around sequence without thinking saves themselves five seconds they didn't know they needed.
+<h3>What good judgment looks like here</h3>
+Rehearse the go-around. On every approach, before the FAF, say it out loud. Power, pitch, flaps, gear (if applicable), communicate. The second approach is the one you want to fly the way the first one should have been flown.
+<h3>Key takeaway</h3>
+The go-around is not a failure of the approach. It is a success of the pilot.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_FuelLow
+<<set $pathArray to $pathArray.concat(["Ending: Fuel-low alternate"])>>
+<div class="decision-heading">Ending — Alternate with Narrow Fuel Margin</div>
+
+You commit to the alternate — your selected field — and arrive with less fuel than your personal minimum. You land safely. Your fuel gauges are in the yellow band. You taxi to the ramp and shut down. The airplane takes three and a half gallons less than your calculated reserve.
+
+Jamal asks later, "Was that tight?" You tell him the honest answer: yes, it was tight. Tight enough that the flight plan had no more tolerance for weather or vectoring. The next amendment from ATC would have put you in declared-emergency fuel territory.
+
+<div class="debrief">
+<h3>What happened</h3>
+The alternate selection was technically legal but practically thin. A filed alternate must meet forecast minimums at ETA. It also needs to be fuel-reachable with realistic reserves after accounting for vectors, missed approaches, and holds — not just on the straight-line number.
+<h3>ADM analysis</h3>
+"Fuel to get there" is not the same as "fuel to get there, miss the approach, divert, and have IFR reserves." Rule-of-thumb alternate fuel in realistic IFR is the direct leg plus 45 minutes at cruise burn, plus an approach and miss at the alternate. For the SR22T at 17 GPH that is about 17 gallons minimum for the alternate, on top of the leg fuel.
+<h3>What good judgment looks like here</h3>
+Pick alternates that are comfortably reachable with fuel, not just barely reachable. The alternate that requires a perfect day to reach is not really an alternate.
+<h3>Key takeaway</h3>
+The alternate is the flight plan's second airplane. Treat it like one.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_CAPS
+<<set $pathArray to $pathArray.concat(["Ending: CAPS deployment"])>>
+<div class="decision-heading">Ending — CAPS Deployment</div>
+
+The chain lengthens. Heavy icing that you stayed in too long, a cell that was closer than the datalink showed, and an approach that put you in more airplane than you had. On short final at KMFR the combined effects of an ice-contaminated wing, a gusting crosswind at the limit of crosswind landing capability, and an airspeed you couldn't recover from produce a stall warning the SR22T's AoA system has been painting for several seconds.
+
+You make the decision a Cirrus pilot trains for specifically. You pull the CAPS handle.
+
+The parachute deploys. The airplane arrives in the threshold area of runway 32 at survival-speed terminal velocity, three-point hard, within the CAPS-certified envelope at approximately 1,400 feet AGL. The fuselage takes the landing. You and Jamal walk away from an airplane that is now salvage.
+
+<div class="debrief">
+<h3>What happened</h3>
+A chain of weather, procedural, and approach errors stacked into a situation where the airplane could not be landed safely under its own control. The CAPS system — which every Cirrus pilot is trained to consider as a viable emergency option, especially when loss of control is imminent — functioned as designed. Two people walked away from an accident that, in an airframe without CAPS, would very likely have been fatal.
+<h3>ADM analysis</h3>
+CAPS is a tool of last resort and a tool of first-resort within its envelope. The Cirrus pilot's community has evolved a clear position: if you're below 2,000 AGL in an unrecoverable situation — loss of control, structural damage, severe ice accumulation, engine failure outside of gliding range — pull the handle. Do not try to land an airplane that is not flyable.
+<h3>What good judgment looks like here</h3>
+The entire flight leading up to this point was a chain. The CAPS pull at the end was the last link in that chain breaking — the one decision that kept the chain from becoming a statistic. The lessons are upstream.
+<h3>Key takeaway</h3>
+CAPS is the safety net. The goal is to never need it. The discipline is to use it the moment you do.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $frontMisread to false>><<set $altBadChoice to false>><<set $alternateThin to false>><<set $pirepsIgnored to false>><<set $icingLate to false>><<set $fikiMisused to false>><<set $cellTooClose to false>><<set $divertLate to false>><<set $approachMisjudged to false>><<set $goAroundBlown to false>><<set $frontUnderstood to false>><<set $cleanExit to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
