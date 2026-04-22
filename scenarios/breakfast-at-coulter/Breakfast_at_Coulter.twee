@@ -1,0 +1,1157 @@
+:: StoryTitle
+Breakfast at Coulter
+
+:: StoryData
+{
+  "ifid": "6E7D4D4B-ADB0-4E12-91DE-A7A31C53F306",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Opening"
+}
+
+:: StoryInit
+/*
+SCENARIO TITLE:       Breakfast at Coulter
+AUDIENCE:             Pilot (GA, 500-1,000 hr, Private/Instrument)
+TONE:                 Professional (light narrative voice)
+PRIMARY TOPIC:        Aeronautical knowledge — interpretation, sequencing, and
+                      practical application across preflight planning, preflight
+                      inspection, and flight operations
+SECONDARY TOPIC:      Cross-country operations at a non-towered fly-in
+AIRCRAFT/EQUIPMENT:   Cessna 172R, 2003, N472DG. Lycoming IO-360-L2A (180 hp,
+                      fuel-injected). No carb heat. Fixed-pitch prop. Standard
+                      steam gauges with Garmin GTN 650 and ADS-B In/Out.
+SETTING:              KGTU (Georgetown, TX) to KCFD (Coulter Field, Bryan, TX),
+                      early June, Sunday morning. Pancake breakfast fly-in at
+                      the destination. ~65 NM trip, planned 40 min en route.
+WEATHER:              VFR departure and arrival. Morning low-level turbulence
+                      east of I-35 between 3,000 and 6,000 ft. Afternoon
+                      thunderstorms forecast but not during the flight window.
+ADM THEMES:           Knowledge application, sequencing, interpretation of
+                      ambiguous data, PIC authority in taxi and pattern
+                      operations. ADM is the substrate; knowledge is the focus.
+HAZARDOUS ATTITUDES:  Invulnerability (mild), impulsivity, resignation
+TOTAL DECISIONS:      10 per playthrough (every path visits all 10)
+TOTAL ENDINGS:        11 (variants keyed off accumulated knowledge flags)
+MIN DECISION DEPTH:   10 (exceeds 8-decision minimum per author request and
+                      4-decision design floor per instructions)
+TIMED DECISIONS:      No
+ESTIMATED DURATION:   25-35 minutes
+VERSION:              1.0
+LAST REVIEWED:        2026-04-22
+REVIEWER:             Claude (initial draft) / Harvey Madison (pending)
+*/
+<<set $badchoices to 0>>
+<<set $pathArray to []>>
+
+/* Per-decision knowledge flags. True = knowledge error made. */
+<<set $weatherMissed to false>>
+<<set $notamMissed to false>>
+<<set $fuelTight to false>>
+<<set $batteryUnchecked to false>>
+<<set $propUnchecked to false>>
+<<set $waterNotCleared to false>>
+<<set $magDropIgnored to false>>
+<<set $taxiConfusion to false>>
+<<set $trafficLate to false>>
+<<set $patternNonStandard to false>>
+
+/* Positive signals — pilot caught something well. */
+<<set $savedCrane to false>>
+<<set $verifiedFuel to false>>
+<<set $clearedMags to false>>
+
+:: StoryScript [script]
+/* No audio or special runtime hooks for this scenario. */
+
+:: StoryStylesheet [stylesheet]
+body {
+  background-color: #f4efe6;
+  color: #2a2a2a;
+}
+#story {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 1em;
+  font-size: 1.05em;
+  line-height: 1.65;
+}
+a.link-internal {
+  display: inline-block;
+  padding: 0.6em 1.1em;
+  margin: 0.35em 0.2em;
+  background-color: #eaddc2;
+  color: #2a2a2a;
+  border: 1px solid #b8a37e;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+a.link-internal:hover {
+  background-color: #d9c59a;
+}
+.scenario-title {
+  font-size: 2em;
+  color: #2a2a2a;
+  text-align: center;
+  margin-bottom: 0.2em;
+}
+.scenario-subtitle {
+  font-size: 1.1em;
+  color: #8a6f3a;
+  text-align: center;
+  margin-bottom: 1.5em;
+  font-style: italic;
+}
+.decision-heading {
+  font-size: 1.15em;
+  color: #6b4a1f;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  text-transform: uppercase;
+}
+.wx-block {
+  background-color: #efe4cd;
+  padding: 0.9em 1.1em;
+  border-left: 4px solid #b8a37e;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  margin: 0.5em 0;
+  white-space: pre-wrap;
+  font-size: 0.95em;
+}
+.debrief {
+  border-top: 2px solid #b8a37e;
+  padding-top: 1em;
+  margin-top: 2em;
+}
+.debrief h3 {
+  color: #6b4a1f;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+  font-size: 1.05em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.callout {
+  background-color: #eee3cb;
+  border-left: 4px solid #8a6f3a;
+  padding: 0.8em 1em;
+  margin: 1em 0;
+  border-radius: 4px;
+  font-style: italic;
+}
+.path-list {
+  background-color: #f9f2e0;
+  border: 1px solid #c8b28a;
+  padding: 0.7em 1em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #4a4a4a;
+}
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block;
+  padding: 0.55em 1.3em;
+  background: #6b4a1f;
+  color: #fff !important;
+  border: 1px solid #8a6f3a;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+.main-menu-btn:hover,
+.main-menu-btn:focus { background: #8a6f3a; outline: none; }
+
+:: Opening
+<<set $pathArray to $pathArray.concat(["Opening"])>>
+<div class="scenario-title">Breakfast at Coulter</div>
+<div class="scenario-subtitle">A Sunday Morning Cross-Country in a Cessna 172R</div>
+
+You are 42, a private pilot with about 720 hours and an instrument rating you keep meaning to get current on. It is a Sunday in early June, 6:47 a.m., and you have a 7:15 takeoff blocked in the Georgetown Flying Club's dispatch book on N472DG — the club's 2003 Cessna 172R.
+
+Today's mission is uncomplicated and pleasant. Destination: Coulter Field (KCFD) in Bryan, Texas. Sixty-five nautical miles southeast. A little over forty minutes in the air. The Brazos Valley Aviation Alliance is putting on its annual Father's Day pancake breakfast fly-in from 0800 to 1030. Your college roommate Marisol — now a CFI based out of CFD — saved you a seat at the ramp and told you she'd scramble eggs herself if you were late. You will not be late.
+
+Outside the club office, the Texas morning is already making promises about how warm it's going to be later. A mockingbird is running through its full catalog from a fence post. The club's yellow lab, Dakota, thumps his tail at you from under the coffee table without bothering to open his eyes. You pour a cup from the pot that Diane, the Sunday dispatcher, keeps running before dawn on fly-in weekends, and carry it to the flight-planning table.
+
+ForeFlight loads. You sign out the airplane on the club schedule. The screen fills with the briefing you pulled up last night, refreshed to this morning's data. The weather is, at first glance, unremarkable. Which is its own kind of information.
+
+Let's see what we have.
+
+<<link "Open the briefing" "Dec1">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Dec1
+<<set $pathArray to $pathArray.concat(["Dec1: Weather briefing"])>>
+<div class="decision-heading">Preflight Planning — Decision 1 of 10: Weather</div>
+
+Your tablet shows the morning brief. Nothing jumps out as a scrub, but a careful read suggests a few things worth weighing.
+
+<div class="wx-block">METARs (top of the hour)
+KGTU 081155Z 19006G14KT 10SM CLR 26/19 A3001
+KCFD 081155Z 17005KT 10SM CLR 25/19 A3001</div>
+
+<div class="wx-block">KAUS TAF
+KAUS 081132Z 0812/0912 18008G16KT P6SM SKC
+ FM081800 20012G22KT P6SM FEW060 BKN150
+ FM082200 21015G28KT 4SM TSRA BKN040CB</div>
+
+<div class="wx-block">PIREP (25 minutes old)
+UA /OV AUS090020 /TM 1230 /FL045 /TP C182 /TB MOD /RM TURB LYR 3500-5500</div>
+
+The Aviation Weather Center's Central Texas Forecast Discussion mentions "a strong upper-level jet streak that will promote notable low-level turbulence, particularly east of I-35 between 3,000 and 6,000 feet, easing after 1700Z as the jet shifts north. Surface winds increase through the day with gusts exceeding 25 knots by early afternoon. Thunderstorms likely 2100Z–0000Z."
+
+You are looking at a flight that sits squarely in Central Texas. Route runs 65 NM east-southeast. Your planned return is 1400 local — 1900Z.
+
+<<link "A. Conditions are fine. VFR everywhere, surface winds are light, morning hours. Go." "Dec1A">><</link>>
+
+<<link "B. Go, but front-run the day — take off now, plan altitudes out of the turbulence band, plan to be wheels-up for the return no later than 1900Z." "Dec1B">><</link>>
+
+<<link "C. Delay an hour and see if the PIREPs stabilize." "Dec1C">><</link>>
+
+<<link "D. Call 1-800-wxbrief for a standard briefing before deciding." "Dec1D">><</link>>
+
+:: Dec1A
+<<set $pathArray to $pathArray.concat(["1A: Weather looks fine — go"])>>
+<<set $weatherMissed to true>>
+<<set $badchoices to $badchoices + 1>>
+
+The METARs are clean, the TAF is clean in the morning window, and the sun is up. You plan 4,500 for cruise and close the brief.
+
+<<link "Continue." "Dec2">><</link>>
+
+:: Dec1B
+<<set $pathArray to $pathArray.concat(["1B: Go now, plan around the turbulence and afternoon weather"])>>
+
+You plan departure at 0715, cruise at 3,500 — eastbound, correct hemispheric, and a thousand feet below the forecast turbulence band. Return planned no later than 1900Z, well ahead of the 2100Z thunderstorm window. The PIREP and the forecast discussion agree on the same story; you have a plan for both ends.
+
+<<link "Continue." "Dec2">><</link>>
+
+:: Dec1C
+<<set $pathArray to $pathArray.concat(["1C: Delay an hour"])>>
+<<set $weatherMissed to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You refill your coffee and watch the clock. At 0750 you refresh the briefing. Nothing has changed — the jet streak is still there, the PIREP is still there, and now you've eaten an hour of your morning buffer. You file for an 0815 departure and head for the airplane.
+
+<<link "Continue." "Dec2">><</link>>
+
+:: Dec1D
+<<set $pathArray to $pathArray.concat(["1D: Call FSS for standard briefing"])>>
+
+The FSS specialist reads you the same METARs and TAFs and adds a verbal PIREP from another Skyhawk at 3,000 heading northwest: smooth at three, bumpy above four. That matches what you already see. You thank the briefer, plan cruise at 3,500, and plan wheels-up by 0715 and wheels-up on the return by 1900Z.
+
+<<link "Continue." "Dec2">><</link>>
+
+:: Dec2
+<<set $pathArray to $pathArray.concat(["Dec2: NOTAMs"])>>
+<div class="decision-heading">Preflight Planning — Decision 2 of 10: NOTAMs</div>
+
+You run the NOTAM tab. The briefer app dumps everything into one scrollable column.
+
+<div class="wx-block">KGTU
+!GTU 06/021 GTU TWY C CLSD 080600-081800
+!GTU 06/019 GTU RWY 18 RVR INOP
+
+KCFD
+!CFD 06/014 CFD OBST CRANE (ASN 2026-ASW-00482)
+   1.2NM SSW ARPT, 150FT AGL/533FT MSL UNLGTD
+   TIL 081200Z
+!CFD 06/016 CFD AIRSHOW SPECIAL EVENT
+   INCREASED VFR TFC 081200-081800Z
+   FLY-IN EVENT REF AC 90-66C
+
+EN ROUTE
+!ZHU 06/212 GPS UNRLBL 100NM RADIUS
+   KGRK/HOOD — INTERMITTENT
+   081900-082300Z
+
+TFRS: None along route.</div>
+
+<<link "A. File the briefing. Nothing is actionable — the closed taxiway will be obvious when you get there, and the rest is noise." "Dec2A">><</link>>
+
+<<link "B. Note the crane south of CFD — it sits on the extended centerline of runway 18. Brief it for the approach." "Dec2B">><</link>>
+
+<<link "C. The Fort Hood GPS test is the big one. Plan a route home that avoids that entire ring." "Dec2C">><</link>>
+
+<<link "D. Everything matters — jot the crane, the airshow traffic increase, the closed taxiway at Georgetown, and the GPS test window." "Dec2D">><</link>>
+
+:: Dec2A
+<<set $pathArray to $pathArray.concat(["2A: NOTAMs not actionable"])>>
+<<set $notamMissed to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You close the NOTAM tab and move to weight and balance.
+
+<<link "Continue." "Dec3">><</link>>
+
+:: Dec2B
+<<set $pathArray to $pathArray.concat(["2B: Noted the crane south of CFD"])>>
+<<set $savedCrane to true>>
+
+You scribble "CRANE 1.2 SSW KCFD, 533 MSL, UNLIT, til 1200Z" on your kneeboard. The crane is unlit and sits 166 feet under a three-mile final for runway 18 at a pattern altitude of 1,367 MSL — plenty of clearance, but worth knowing it's there. You move on to weight and balance.
+
+<<link "Continue." "Dec3">><</link>>
+
+:: Dec2C
+<<set $pathArray to $pathArray.concat(["2C: Re-route to avoid GPS test"])>>
+<<set $notamMissed to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You spend eight minutes sketching a route that avoids the Fort Hood GPS test ring, then realize the ring doesn't activate until 1900Z — you'll be long home by then — and that in any case, the test is "intermittent," not a GPS outage. You revert to the original route and keep going, without noting the crane.
+
+<<link "Continue." "Dec3">><</link>>
+
+:: Dec2D
+<<set $pathArray to $pathArray.concat(["2D: Briefed all relevant NOTAMs"])>>
+<<set $savedCrane to true>>
+
+You note each one on your kneeboard: crane on final at CFD (unlit, 533 MSL, expires at noon), airshow traffic at the destination, Taxiway Charlie closed at Georgetown, and the GPS test window that falls well after your return. A full picture.
+
+<<link "Continue." "Dec3">><</link>>
+
+:: Dec3
+<<set $pathArray to $pathArray.concat(["Dec3: Fuel and W&B"])>>
+<div class="decision-heading">Preflight Planning — Decision 3 of 10: Fuel and Weight</div>
+
+You bring up the club's W&B sheet for N472DG. Empty weight 1,658 lbs; max gross 2,450.
+
+<div class="wx-block">PILOT (seat 1)         185 lbs
+BAG (baggage zone 1)    12 lbs
+FUEL (per club form)    28 gal @ 6 lb/gal = 168 lbs</div>
+
+Route 65 NM, cruise 115 KTAS. Winds aloft 210/18 at 3,000 put your groundspeed around 98 kt eastbound. Time en route ~40 min. Burn 8.5 gph at 75% power gives you roughly 6 gal each way, plus 1 gal climb, 1 gal taxi, and 45 min reserve (6.4 gal) — call it 19 to 20 gallons round trip with a normal reserve.
+
+The club's sign-out sheet says the last dispatch listed 28 gallons on board, three days ago. You have not walked the airplane yet.
+
+<<link "A. The club form says 28 gallons — enough for the round trip with legal reserve. File that number and plan to launch on what's on board." "Dec3A">><</link>>
+
+<<link "B. Dip the tanks personally before you commit. If below 30 gallons total, fuel to tabs (40 gal)." "Dec3B">><</link>>
+
+<<link "C. Fuel to tabs regardless of what's on board. Simple and safe." "Dec3C">><</link>>
+
+<<link "D. Fuel to full. Biggest margin, no questions." "Dec3D">><</link>>
+
+:: Dec3A
+<<set $pathArray to $pathArray.concat(["3A: Trust the form — launch on 28 gal"])>>
+<<set $fuelTight to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You file the W&B with 28 gallons and head for the airplane.
+
+<<link "Continue." "Dec4">><</link>>
+
+:: Dec3B
+<<set $pathArray to $pathArray.concat(["3B: Dip the tanks; fuel to tabs if low"])>>
+<<set $verifiedFuel to true>>
+
+You grab the dipstick from the club office and head out to the ramp. Left tank reads just under 13 gallons. Right tank reads 14. That's 27 total — a gallon less than the form said, which is normal drift. You sign up for the fuel truck and fill to tabs: 40 gallons total. Round-trip burn of ~20 gallons leaves you 20 gal of buffer above your legal reserve. You walk back to redo W&B with the new fuel weight (240 lbs) — still well under gross.
+
+<<link "Continue." "Dec4">><</link>>
+
+:: Dec3C
+<<set $pathArray to $pathArray.concat(["3C: Fuel to tabs without checking"])>>
+
+You skip the dip and order fuel to tabs — 40 gallons. It's a common shortcut; the risk is that you don't catch a fuel-quantity discrepancy if the tanks were low. Today they aren't, and you end up with 40 gallons on the ramp. Enough margin for the day.
+
+<<link "Continue." "Dec4">><</link>>
+
+:: Dec3D
+<<set $pathArray to $pathArray.concat(["3D: Fuel to full"])>>
+
+Full tanks — 53 gallons. Solo pilot, 12-lb bag, full fuel: W&B runs well under max gross and within the envelope. You burn more taxi fuel than you need to, but you will not be thinking about fuel again today.
+
+<<link "Continue." "Dec4">><</link>>
+
+:: Dec4
+<<set $pathArray to $pathArray.concat(["Dec4: Cockpit interior check"])>>
+<div class="decision-heading">Preflight Inspection — Decision 4 of 10: Interior / Battery</div>
+
+N472DG is on the south ramp. You pull the cowl plugs, unlock the cabin, and start the interior portion of the preflight: control lock out, seat belts, ELT armed, circuit breakers in, fuel selector on BOTH, mixture ICO, throttle closed, mags off.
+
+Your hand stops on the master switch. Both halves — BAT and ALT — are in the UP position. The airplane's been sitting since Friday evening.
+
+You glance at the voltmeter, which is black. Of course it is; the master is off from the avionics side of the bus too, as it should be with the airplane dead.
+
+The question is: how long has the master been on, and how much life is left in the battery?
+
+<<link "A. Flip the master ON briefly and read the voltage. Whatever it reads, try to start — the alternator will recover it in flight." "Dec4A">><</link>>
+
+<<link "B. Flip the master ON briefly and read the voltage. If it's low, shut it down and call the FBO to put it on a charger or swap it for a known-good battery." "Dec4B">><</link>>
+
+<<link "C. Don't bother reading voltage — Friday night to Sunday morning with master on is only ~36 hours. Try to start." "Dec4C">><</link>>
+
+<<link "D. Don't touch the switches. This is a maintenance write-up. Take the next club airplane." "Dec4D">><</link>>
+
+:: Dec4A
+<<set $pathArray to $pathArray.concat(["4A: Read voltage then try to start anyway"])>>
+<<set $batteryUnchecked to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You flip the master. The voltmeter sits at 11.6 volts. Lower than you'd like — a healthy resting 12-volt system should read 12.4 to 12.8 — but you figure the starter will spin and the alternator will bring it back. You leave the master on and continue the preflight.
+
+<<link "Continue." "Dec5">><</link>>
+
+:: Dec4B
+<<set $pathArray to $pathArray.concat(["4B: Read voltage; charge/swap if low"])>>
+
+You flip the master. The voltmeter sits at 11.6 volts — well below a healthy resting value. You shut the master back off, walk to the FBO, and explain. The line tech swaps in a charged battery from the shop's rotation in about twenty minutes. When you return, the voltmeter reads 12.7. You note the battery swap in the squawk sheet for the club's maintenance officer to tie out. You are about fifteen minutes behind schedule.
+
+<<link "Continue." "Dec5">><</link>>
+
+:: Dec4C
+<<set $pathArray to $pathArray.concat(["4C: Assume battery is fine — skip voltage check"])>>
+<<set $batteryUnchecked to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You leave the master switch alone for now and move on. How long it was actually on remains unknown.
+
+<<link "Continue." "Dec5">><</link>>
+
+:: Dec4D
+<<set $pathArray to $pathArray.concat(["4D: Write up, take another plane"])>>
+<<set $batteryUnchecked to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You head back to the dispatch desk. The only other IFR-equipped 172 is booked. You could take N621BG — a 152 — but it won't beat the headwind and get you to CFD in time. Or you could wait. You hesitate, then walk back to N472DG, flip the master off, and continue the preflight without the voltage check.
+
+<<link "Continue." "Dec5">><</link>>
+
+:: Dec5
+<<set $pathArray to $pathArray.concat(["Dec5: External walkaround"])>>
+<div class="decision-heading">Preflight Inspection — Decision 5 of 10: Walkaround / Prop</div>
+
+Per the 172R POH, you work the external preflight in the standard order: cabin, empennage, right wing trailing edge, right wing, nose, left wing, left wing trailing edge.
+
+At the nose, the oil dipstick reads five quarts — normal range, on the lower end of it. The air intake is clear. You check the spinner, the cowling fasteners, the exhaust stack.
+
+Then the propeller. You run your hand along the leading edge of the first blade — smooth. Then the second blade.
+
+There is a nick on the second blade, about eight inches out from the hub on the leading edge. Maybe 10 mm long. Not deep. It has a small raised burr you can feel with your thumbnail.
+
+You don't remember it from your last flight in this airplane, but you've also flown seven other club airplanes this year and you could be wrong.
+
+<<link "A. It's small. Run your thumbnail along it — no sharp edge catching — and fly. Prop nicks this size are cosmetic." "Dec5A">><</link>>
+
+<<link "B. Check the airplane's squawk sheet first. If the nick is noted and signed off, fly. If not, stop and call the club maintenance officer." "Dec5B">><</link>>
+
+<<link "C. Take photos and text the club's maintenance officer. Don't fly until you hear back." "Dec5C">><</link>>
+
+<<link "D. Swap airplanes. Any unexplained prop damage is a no-go." "Dec5D">><</link>>
+
+:: Dec5A
+<<set $pathArray to $pathArray.concat(["5A: Fly with the nick — 'cosmetic'"])>>
+<<set $propUnchecked to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You file it under "normal wear" in your head and continue to the left wing.
+
+<<link "Continue." "Dec6">><</link>>
+
+:: Dec5B
+<<set $pathArray to $pathArray.concat(["5B: Check squawk sheet first"])>>
+
+You pull the squawk binder from the cabin. Third entry from the top: "Minor LE nick outer 1/3 blade #2, within Lycoming SB 1006A limits per Advisory Circular 20-37, dressed and signed off 5/28/26 by J. Rivas, A&P IA." You match the location and size to the write-up. It checks. You sign your name next to the review line and continue.
+
+<<link "Continue." "Dec6">><</link>>
+
+:: Dec5C
+<<set $pathArray to $pathArray.concat(["5C: Photo and text maintenance officer"])>>
+
+You text Rivas, the club's A&P IA, with a photo and the location. He calls back two minutes later. "That's the one from last Thursday — I filed it, dressed it, and signed it off. Should be in the squawk binder. Sorry the logbook note wasn't obvious." You find the entry. You are about four minutes behind schedule.
+
+<<link "Continue." "Dec6">><</link>>
+
+:: Dec5D
+<<set $pathArray to $pathArray.concat(["5D: Swap airplanes"])>>
+<<set $propUnchecked to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You walk back to dispatch. The only other 172 available now — N987JK — has a student check-ride scheduled in an hour. You would have to return before the student pre-flights, which means no breakfast at Coulter. You walk back out to N472DG and continue the preflight. The prop nick stays in your head but you don't check the squawk binder.
+
+<<link "Continue." "Dec6">><</link>>
+
+:: Dec6
+<<set $pathArray to $pathArray.concat(["Dec6: Fuel sumps"])>>
+<div class="decision-heading">Preflight Inspection — Decision 6 of 10: Fuel Sumps</div>
+
+The 172R has thirteen fuel-drain points: five under each wing, one at the fuselage strainer, and two more at tank drains. You grab the GATS jar and work the sequence. Wing drains: ten samples, ten clear blue samples.
+
+At the fuselage strainer, you pull a sample. There is a small bubble of water at the bottom of the jar — maybe two milliliters, cleanly separated from the 100LL above it.
+
+<<link "A. Dump the sample and try the strainer again. Two clean draws in a row means the water's cleared." "Dec6A">><</link>>
+
+<<link "B. Rock the wings side to side, wait thirty seconds, and resample the strainer *and* the wing drains." "Dec6B">><</link>>
+
+<<link "C. A couple of milliliters of water is normal overnight condensation. Continue the preflight." "Dec6C">><</link>>
+
+<<link "D. Water contamination requires grounding the airplane. Stop and call maintenance." "Dec6D">><</link>>
+
+:: Dec6A
+<<set $pathArray to $pathArray.concat(["6A: Dump, resample strainer only"])>>
+<<set $waterNotCleared to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You dump the contaminated sample on the ramp and try the strainer twice more. Both come up clean. You close the GATS jar and continue.
+
+<<link "Continue." "Dec7">><</link>>
+
+:: Dec6B
+<<set $pathArray to $pathArray.concat(["6B: Rock wings and resample all drains"])>>
+
+You walk out to the left wingtip and push down, letting it rock back up; same on the right. You wait thirty seconds. Then you resample the strainer — clean. You re-sample all ten wing drains. The outermost drain on the left wing produces one more small bead of water on the first try, then clean on the second. All other samples are clean. You close the GATS jar and continue.
+
+<<link "Continue." "Dec7">><</link>>
+
+:: Dec6C
+<<set $pathArray to $pathArray.concat(["6C: Call it condensation; move on"])>>
+<<set $waterNotCleared to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You dump the sample and close up the GATS jar. A couple of milliliters is, by weight, a very small amount of water; the engine will burn through it without noticing. Probably.
+
+<<link "Continue." "Dec7">><</link>>
+
+:: Dec6D
+<<set $pathArray to $pathArray.concat(["6D: Ground the airplane over water in strainer"])>>
+
+You call Rivas. Over the phone, he asks how much. You say two milliliters. He pauses for a second that contains a small, patient sigh, then walks you through rocking the wings and resampling. You do. Everything comes up clean on the second round. "That's your answer," he says. "That was overnight condensation, and you moved it through. You're fine." You thank him and close the GATS jar.
+
+<<link "Continue." "Dec7">><</link>>
+
+:: Dec7
+<<set $pathArray to $pathArray.concat(["Dec7: Run-up"])>>
+<div class="decision-heading">Preflight Inspection — Decision 7 of 10: Run-up</div>
+
+Preflight done. You board, run the before-start checklist, prime, crack the throttle, clear the prop, and start. The IO-360 catches on the second blade. Oil pressure rises into the green within ten seconds. You call ground for taxi clearance and get "Cessna 472DG, Georgetown Ground, taxi to runway one-eight via Alpha, hold short runway one-eight." You taxi to the run-up pad west of the threshold and swing into the wind.
+
+Run-up checklist: flight controls free and correct, trim set for takeoff, flaps up, fuel selector BOTH, mixture rich, annunciators out. Throttle up to 1,700.
+
+<div class="wx-block">MAG CHECK
+Left mag:  1,700 -> 1,620  (drop 80)
+Right mag: 1,700 -> 1,555  (drop 145)
+Differential: 65 RPM</div>
+
+Lycoming guidance for this engine: max drop 175 RPM; max differential between mags 50 RPM. Both drops are inside the individual limit. The differential — 65 — is slightly over the 50 RPM guideline.
+
+<<link "A. Both mags within 175. Move on." "Dec7A">><</link>>
+
+<<link "B. Try to clear a fouled plug: lean the mixture at 2,000 RPM for thirty seconds, then recheck both mags." "Dec7B">><</link>>
+
+<<link "C. Taxi back. 65 RPM differential means maintenance before flight." "Dec7C">><</link>>
+
+<<link "D. Run the same mag check again at the same RPM. If it reads the same, it's consistent, and that's good." "Dec7D">><</link>>
+
+:: Dec7A
+<<set $pathArray to $pathArray.concat(["7A: Accept 65 RPM diff, move on"])>>
+<<set $magDropIgnored to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You roll the throttle back to idle and call tower.
+
+<<link "Continue." "Dec8">><</link>>
+
+:: Dec7B
+<<set $pathArray to $pathArray.concat(["7B: Lean at 2000 RPM to clear plug"])>>
+<<set $clearedMags to true>>
+
+You bring the throttle to 2,000, lean the mixture until the EGTs peak and then pull slightly past, and hold it there for thirty seconds. A small hesitation in the engine note — probably lead burning off — then smooth. You enrichen, drop back to 1,700, and recheck. Left 70, right 90. Differential 20. Within spec.
+
+<<link "Continue." "Dec8">><</link>>
+
+:: Dec7C
+<<set $pathArray to $pathArray.concat(["7C: Taxi back for maintenance"])>>
+<<set $magDropIgnored to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You call ground, return to the ramp, and call Rivas. He has you run the lean-out procedure over the phone — the standard plug-clearing technique. You do. The differential drops to 20. He tells you the airplane is fine to fly. You are now thirty minutes behind schedule. You taxi back to the runup pad and redo the run-up — this time the mags are clean. You call tower.
+
+<<link "Continue." "Dec8">><</link>>
+
+:: Dec7D
+<<set $pathArray to $pathArray.concat(["7D: Repeat the mag check at 1,700"])>>
+<<set $magDropIgnored to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You run the mag check a second time at the same RPM. Left 85. Right 145. Essentially the same numbers. You take consistency as confirmation and roll the throttle back.
+
+<<link "Continue." "Dec8">><</link>>
+
+:: Dec8
+<<set $pathArray to $pathArray.concat(["Dec8: Taxi clearance conflict"])>>
+<div class="decision-heading">Flight Operations — Decision 8 of 10: Taxi</div>
+
+You listen to ATIS before calling ground a second time.
+
+<div class="wx-block">GEORGETOWN ATIS INFORMATION CHARLIE
+1320Z. WIND 190 AT 8 GUST 16. VIS 10. SKY CLEAR.
+TEMP 29. DEWPOINT 19. ALTIMETER 30-01.
+LANDING AND DEPARTING RUNWAY 18.
+NOTICE: TAXIWAY CHARLIE CLOSED FOR MAINTENANCE
+BETWEEN ALPHA AND DELTA.
+ADVISE ON INITIAL CONTACT YOU HAVE CHARLIE.</div>
+
+You key up.
+
+<div class="wx-block">YOU: Georgetown Ground, Cessna four-seven-two-delta-golf at the
+     runup pad west of one-eight, ready to taxi for departure,
+     with Charlie.
+
+GND: Cessna four-seven-two-delta-golf, Georgetown Ground, taxi
+     to runway one-eight via Alpha, Charlie, hold short runway
+     one-eight.</div>
+
+The clearance routes you across the closed taxiway.
+
+<<link "A. Read back and taxi. Ground knows which parts of Charlie are open. They wouldn't clear you across it otherwise." "Dec8A">><</link>>
+
+<<link "B. Read back and query: 'Ground, 2DG, we have Charlie closed per ATIS — verify routing?'" "Dec8B">><</link>>
+
+<<link "C. Read back the clearance, start taxiing, and deviate around the closed portion when you get there." "Dec8C">><</link>>
+
+<<link "D. Ask ground to repeat the clearance, hoping they'll notice the error." "Dec8D">><</link>>
+
+:: Dec8A
+<<set $pathArray to $pathArray.concat(["8A: Read back and taxi"])>>
+<<set $taxiConfusion to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You read back the clearance verbatim and release the brakes. Alpha taxiway runs east, turns south onto Charlie, and you follow it.
+
+About two hundred feet down Charlie, a set of orange construction barricades appears across the taxiway with a small excavator parked on the far side. You brake hard and stop. Your tower clearance led you into a closed area.
+
+<<link "Continue." "Dec8A2">><</link>>
+
+:: Dec8A2
+<<set $pathArray to $pathArray.concat(["8A.continued: Stopped short of barricades, called ground"])>>
+
+"Georgetown Ground, 472DG, I'm stopped on Charlie short of the barricades. Request alternate routing."
+
+There is a quiet half-second on the radio. Then: "472DG, Ground, apologies for the routing confusion — taxi back to Alpha, hold your position, we'll have a vehicle meet you with guidance." Two minutes later, a yellow airport truck with a FOLLOW ME sign appears, leads you back to Alpha, and turns you down Delta to the runway. You reach the hold short line eleven minutes after you first asked to taxi.
+
+<<link "Continue." "Dec9">><</link>>
+
+:: Dec8B
+<<set $pathArray to $pathArray.concat(["8B: Query the clearance"])>>
+
+You key the mic. "Ground, 472DG — confirm routing through Charlie? ATIS had Charlie closed between Alpha and Delta."
+
+A second of dead air. Then: "472DG, Ground, apologies, correction — taxi to runway one-eight via Alpha, Delta, hold short runway one-eight."
+
+"Alpha, Delta, hold short one-eight, 472DG." You roll forward.
+
+<<link "Continue." "Dec9">><</link>>
+
+:: Dec8C
+<<set $pathArray to $pathArray.concat(["8C: Deviate without clearance"])>>
+<<set $taxiConfusion to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You read back the clearance and start taxiing, planning to cut across a ramp area that bypasses the closed section. As you angle off Charlie, the ground controller's voice jumps an octave: "472DG, Ground, where are you going?" You explain. There is a polite pause. "472DG, taxi via Alpha, Delta, hold short one-eight. In the future, request a clarification before deviating from a taxi clearance." You acknowledge. You reach the hold short six minutes late.
+
+<<link "Continue." "Dec9">><</link>>
+
+:: Dec8D
+<<set $pathArray to $pathArray.concat(["8D: Ask for repeat"])>>
+<<set $taxiConfusion to true>>
+<<set $badchoices to $badchoices + 1>>
+
+"Ground, say again for 472DG?" The controller repeats the same clearance — Alpha, Charlie, hold short. You read it back a second time. You start taxiing, and the issue resolves itself three minutes later when you hit the barricades on Charlie, brake, and call ground to explain.
+
+<<link "Continue." "Dec9">><</link>>
+
+:: Dec9
+<<set $pathArray to $pathArray.concat(["Dec9: En route traffic"])>>
+<div class="decision-heading">Flight Operations — Decision 9 of 10: En Route Traffic</div>
+
+You are airborne. Tower hands you off at the Class D boundary and you press east-southeast at 3,500 MSL — a proper eastbound VFR altitude. The airplane is bumping a little; nothing the PIREP didn't warn you about. Fuel burn looks right. ATC isn't required for flight following here and you're on the appropriate Austin Approach frequency with a VFR discrete code, advisories received.
+
+Twenty-six miles east of Georgetown, your ADS-B display paints traffic.
+
+<div class="wx-block">TRAFFIC
+Bearing: 12 o'clock
+Range: 6.0 NM
+Track: 260 (westbound)
+Altitude: 3,500 MSL
+Closing rate: ~230 kt</div>
+
+Six miles and 230 knots of closure gives you roughly 95 seconds. Austin Approach calls: "472DG, traffic twelve o'clock, six miles, opposite direction, 3,500, type unknown."
+
+<<link "A. 'Traffic, 472DG, looking.' Monitor — he's six miles out, you've got time. Adjust only if you don't see him by two miles." "Dec9A">><</link>>
+
+<<link "B. 'Traffic, 472DG, looking — turning right twenty degrees.' Initiate the standard head-on deviation immediately." "Dec9B">><</link>>
+
+<<link "C. 'Traffic, 472DG — climbing to 4,500.' Get out of his altitude block." "Dec9C">><</link>>
+
+<<link "D. 'Traffic, 472DG — descending to 3,000.' Get out of his altitude block." "Dec9D">><</link>>
+
+:: Dec9A
+<<set $pathArray to $pathArray.concat(["9A: Wait and watch"])>>
+<<set $trafficLate to true>>
+<<set $badchoices to $badchoices + 1>>
+
+You strain forward against the shoulder harness, scanning the horizon. You pick him up at about three miles — a low-wing Mooney — slightly above your sightline. Thirty seconds to impact. You bank right.
+
+<<link "Continue." "Dec9A2">><</link>>
+
+:: Dec9A2
+<<set $pathArray to $pathArray.concat(["9A.continued: Late right break"])>>
+
+He banks right too — his own evasive action. You both pass each other about half a mile apart, which is close enough to clearly see the green paint scheme and the pilot's head turning to follow you. Approach's voice is level but faster than before. "472DG, that was a near-miss; suggest you consider more immediate deviation on head-on traffic in the future." "472DG, concur, thanks."
+
+<<link "Continue." "Dec10">><</link>>
+
+:: Dec9B
+<<set $pathArray to $pathArray.concat(["9B: Right deviation immediately"])>>
+
+You bank right twenty degrees. Ninety seconds later, the Mooney passes down your left side at roughly a mile, visibly below and offset. You straighten out back toward the destination. Approach: "472DG, traffic no factor." "472DG, roger."
+
+<<link "Continue." "Dec10">><</link>>
+
+:: Dec9C
+<<set $pathArray to $pathArray.concat(["9C: Climb to 4,500"])>>
+
+You pitch for climb, 500 fpm. 4,500 is not a correct hemispheric VFR altitude for an eastbound course (3,500 or 5,500 would be), but a momentary deviation for traffic avoidance is legal. You're passing 3,900 when the Mooney slides past a thousand feet below you, his eastbound traffic now your westbound traffic. You continue to 5,500 — the next correct eastbound altitude — and stay there for the last ten miles.
+
+<<link "Continue." "Dec10">><</link>>
+
+:: Dec9D
+<<set $pathArray to $pathArray.concat(["9D: Descend to 3,000"])>>
+
+You pitch for descent. At 3,200 the Mooney passes overhead, offset about half a mile to your left. You level at 3,000 for traffic separation. Descending into more turbulence than you had at 3,500 costs you a bumpy last fifteen miles, and 3,000 is not a correct eastbound hemispheric altitude for a sustained leg, but for avoidance it served the purpose. You start a gentle climb back to 3,500 after traffic is clear.
+
+<<link "Continue." "Dec10">><</link>>
+
+:: Dec10
+<<set $pathArray to $pathArray.concat(["Dec10: Pattern entry at CFD"])>>
+<div class="decision-heading">Flight Operations — Decision 10 of 10: Arrival</div>
+
+Coulter Field comes into view at your eleven o'clock, fifteen miles out. You start the descent from 3,500 toward 2,000 — that's pattern altitude (1,367 MSL) plus approximately 600 feet, the altitude you'd need to cross over midfield.
+
+CTAF 122.7 is alive. You listen for a full minute before keying up. In that minute you hear a Skyhawk on the 45, a Cherokee on downwind, a Bonanza on final, and a twin calling a ten-mile straight-in for runway 18. The fly-in is well underway. Winds at the field: 170 at 5.
+
+<div class="callout">Your position: five miles west of the field, 2,000 MSL, active runway 18 with left traffic. The 45° entry to the downwind for runway 18 is on the east side of the field.</div>
+
+<<link "A. Announce 'ten-mile straight-in for runway 18, Coulter traffic.' Save time and radio congestion." "Dec10A">><</link>>
+
+<<link "B. Cross midfield at 2,000 (pattern + 600), descend on the east side to 1,367, and enter 45° to left downwind." "Dec10B">><</link>>
+
+<<link "C. Enter direct on left base for runway 18 — shortest distance, same runway as everyone else." "Dec10C">><</link>>
+
+<<link "D. Announce 'upwind runway 18, Coulter' and join the downwind from a crosswind turn over the numbers." "Dec10D">><</link>>
+
+:: Dec10A
+<<set $pathArray to $pathArray.concat(["10A: Straight-in at a fly-in"])>>
+<<set $patternNonStandard to true>>
+<<set $badchoices to $badchoices + 1>>
+
+<<link "Continue." "Resolution">><</link>>
+
+:: Dec10B
+<<set $pathArray to $pathArray.concat(["10B: Midfield cross at +600, 45 to downwind"])>>
+
+<<link "Continue." "Resolution">><</link>>
+
+:: Dec10C
+<<set $pathArray to $pathArray.concat(["10C: Direct left base"])>>
+<<set $patternNonStandard to true>>
+<<set $badchoices to $badchoices + 1>>
+
+<<link "Continue." "Resolution">><</link>>
+
+:: Dec10D
+<<set $pathArray to $pathArray.concat(["10D: Upwind then crosswind join"])>>
+<<set $patternNonStandard to true>>
+
+<<link "Continue." "Resolution">><</link>>
+
+:: Resolution
+<<set $pathArray to $pathArray.concat(["Resolution routing"])>>
+
+/* Resolution routing priority:
+   1. Critical paired faults -> catastrophic-ish (off-airport or rough running)
+   2. Single-critical mechanical issue -> partial/precautionary
+   3. Pattern conflict -> near-miss at CFD
+   4. En route close call -> near-miss en route
+   5. Multi-flag "mess" endings
+   6. Mostly-clean flight with minor footnote
+   7. Full success
+*/
+
+<<if $waterNotCleared and $magDropIgnored>>
+  <<goto "EndRoughRunner">>
+<<elseif $magDropIgnored and $batteryUnchecked>>
+  <<goto "EndAlternatorAndRough">>
+<<elseif $waterNotCleared>>
+  <<goto "EndSputter">>
+<<elseif $magDropIgnored>>
+  <<goto "EndMagDiversion">>
+<<elseif $batteryUnchecked>>
+  <<goto "EndAlternator">>
+<<elseif $trafficLate and $patternNonStandard>>
+  <<goto "EndTwoNearMisses">>
+<<elseif $trafficLate>>
+  <<goto "EndEnrouteNearMiss">>
+<<elseif $patternNonStandard>>
+  <<goto "EndPatternConflict">>
+<<elseif $taxiConfusion>>
+  <<goto "EndTaxiSheep">>
+<<elseif $badchoices gte 3>>
+  <<goto "EndCompromised">>
+<<elseif $badchoices gte 1>>
+  <<goto "EndPancakesEarnedMinor">>
+<<else>>
+  <<goto "EndPancakesEarned">>
+<</if>>
+
+:: EndPancakesEarned
+<<set $pathArray to $pathArray.concat(["Ending: Pancakes Earned (full success)"])>>
+<div class="scenario-title">Pancakes Earned</div>
+
+You cross midfield at 2,000, descend on the east side, and roll in on the 45° to the left downwind for runway 18 with the pattern in sight. You slot in behind a Cherokee turning base and land on the second third of a 4,000-foot runway. You taxi to transient parking at Coulter and shut down. Marisol is leaning on the fence with two plates of pancakes and a coffee.
+
+She hands you a plate. "What took you?"
+
+"Preflight."
+
+"Respectable answer."
+
+The return flight is uneventful. You are on the ground at Georgetown at 1340 local — twenty minutes ahead of your 1400 plan and well clear of the afternoon weather. You tie the airplane down, return the GATS jar and the key to the club office, and sit down to fill out the dispatch form with the cleanest Hobbs-to-tach ratio you've had in a while.
+
+<div class="debrief">
+<h3>What happened</h3>
+You flew the mission you planned, made good decisions at every decision point, and walked away with a clean flight and a full stomach. That is, in fact, what a well-executed pancake run looks like.
+
+<h3>Knowledge in play</h3>
+You read the forecast discussion and PIREP as a single story, not as separate line items. You briefed the unlit crane under the runway-18 final. You verified your fuel by dipstick rather than trusting a club form. You checked battery voltage before the first start. You referenced the squawk binder before clearing a prop nick. You rocked the wings and resampled after finding water in the strainer. You cleared the borderline mag differential with a lean-out. You queried a taxi clearance that conflicted with ATIS. You broke right on head-on traffic. You entered the pattern per AC 90-66C from the non-pattern side.
+
+<h3>Key takeaway</h3>
+The most satisfying flights are the ones where you knew what each step was *for*. Nothing flashy happened today because you didn't give anything the chance to get flashy.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndPancakesEarnedMinor
+<<set $pathArray to $pathArray.concat(["Ending: Pancakes Earned (with footnote)"])>>
+<div class="scenario-title">Pancakes Earned (With a Footnote)</div>
+
+You cross midfield, descend on the east side, and join the 45° to the left downwind for runway 18. Pattern is busy but orderly. You land long enough to clear at the midfield taxiway and shut down in transient parking.
+
+Marisol hands you a plate. "What took you?"
+
+"Preflight."
+
+"Respectable answer."
+
+The return is uneventful. On the drive home from Georgetown, you find yourself replaying the one decision you'd change if you could. Not big. Worth knowing.
+
+<div class="debrief">
+<h3>What happened</h3>
+A good flight with a single soft spot. Not every item in a preflight has to be perfect for the day to be safe, but the pilot who notices the one thing that was slightly off is the pilot who stays sharp.
+
+<h3>Knowledge in play</h3>
+Most of the scenario's decision points were handled well. The remaining item is a good subject for a quiet review on the next preflight: what you'd look for, why, and what you'd do differently. That's what a good post-flight looks like.
+
+<h3>Key takeaway</h3>
+A flight with one footnote is a good flight. A pilot who treats the footnote seriously gets better. A pilot who ignores it collects footnotes until they form a paragraph.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndCompromised
+<<set $pathArray to $pathArray.concat(["Ending: Compromised but Safe"])>>
+<div class="scenario-title">Safe. Compromised. Thinking About It.</div>
+
+You land at Coulter without an incident. Marisol hands you a plate. You eat the pancakes. The return flight is uneventful.
+
+On the drive home from Georgetown you keep replaying the day — not one thing, but a few. Each one alone was minor. Strung together, they weren't a chain that broke anything, but they were a chain, and the fact that you can list them is itself the information.
+
+<div class="debrief">
+<h3>What happened</h3>
+The flight was safe. Nothing broke. But several small knowledge errors accumulated across the planning and preflight phases, and the fact that they didn't cost you anything today is partly luck. The NTSB accident database is full of flights where similar chains weren't absorbed.
+
+<h3>Knowledge in play</h3>
+A cluster of small misses — any one of which would have been a footnote — together forms a pattern. Good pilots keep a running self-inventory during and after every flight and treat any cluster of small misses as a signal to recalibrate, not a tally to forget about.
+
+<h3>Key takeaway</h3>
+Safe is not the same as well-flown. A day where nothing happened can still be a day to learn from.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndTaxiSheep
+<<set $pathArray to $pathArray.concat(["Ending: Clipped on Charlie"])>>
+<div class="scenario-title">The Orange-Cone Footnote</div>
+
+Once in the air, the rest of the flight is uneventful. You land at Coulter, eat pancakes, fly home. But by Tuesday morning, two things are waiting for you.
+
+The first is an email from the club's chief pilot asking you to stop by the office at your convenience — a "quick chat" about Sunday's taxi readback. Someone at the tower filed an informational report; it's not a pilot deviation, but it's a note. The chief pilot wants to talk about it before it becomes one.
+
+The second is a text from Marisol. "Tower got you, didn't they." You don't ask how she knows. Every pilot knows how she knows.
+
+<div class="debrief">
+<h3>What happened</h3>
+The tower's clearance was wrong. Your job as PIC was to catch it and ask a question before wheels started rolling. Taxi clearances are just as binding as airborne clearances, and deviating from a clearance — even to avoid a real hazard — requires amended authorization.
+
+<h3>Knowledge in play</h3>
+Runway-incursion-prevention doctrine is explicit about this: read back every taxi instruction verbatim, and if anything about it doesn't match your understanding of the airport, query it *before* releasing the brakes. ATC is not infallible. The phrase "we have Charlie closed per ATIS — verify routing?" costs three seconds and saves the controller as much embarrassment as it saves you.
+
+<h3>Key takeaway</h3>
+When a clearance doesn't match what you see or what ATIS said, ask before you roll. Taxi is where most ground mistakes start, and the only redundancy in the system at that moment is you.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndPatternConflict
+<<set $pathArray to $pathArray.concat(["Ending: Pattern Conflict at CFD"])>>
+<div class="scenario-title">The Downwind Explanation</div>
+
+You complete your chosen entry and land. You taxi in. Marisol is waiting at the fence, and so is a second pilot you don't know — a silver-haired man in a Bonanza cap and a tight expression.
+
+"Were you the Skyhawk on the straight-in?" — or, depending on which way you cut it, the left base, or the upwind cross. "I was the Cherokee on downwind. We came closer than I'd like."
+
+You two have a careful, civil conversation on the ramp. He isn't angry; he is precise. He explains where he was, where you arrived, and where the geometry didn't work. You explain your reasoning. He nods, shakes your hand, and heads off to find pancakes. The story will travel the ramp by lunch. It will not travel further than that.
+
+<div class="debrief">
+<h3>What happened</h3>
+At a busy non-towered airport — especially at a fly-in — the standard pattern entries exist because they're predictable. When every pilot in the pattern can predict where every other pilot will appear, the system works. Non-standard entries (straight-ins, direct base, crosswind joins from the pattern side) break that predictability, and the cost shows up most often in the final ninety seconds of the flight.
+
+<h3>Knowledge in play</h3>
+FAA Advisory Circular 90-66C — the non-towered-airport doctrine — is explicit about when a straight-in is appropriate (it generally isn't at a fly-in) and how to enter from the non-pattern side (cross midfield at pattern + 500 or more, descend on the pattern side, enter 45° to downwind). Not because it's The Rules. Because the other pilots are scanning the places the doctrine says you'll appear.
+
+<h3>Key takeaway</h3>
+At a busy non-towered airport, predictability is a safety system. Use it.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndEnrouteNearMiss
+<<set $pathArray to $pathArray.concat(["Ending: En Route Near-Miss"])>>
+<div class="scenario-title">Half a Mile</div>
+
+The rest of the flight is uneventful. You land at Coulter and park. Your hands take another minute to stop thinking about the Mooney.
+
+On Monday you see the ASRS-style informal note the other pilot posted on a regional pilot forum — no registration numbers, no times, just a general note about a head-on at 3,500 "in the usual turbulence window east of Austin." The forum commenters do what forum commenters do. You read it once and close the tab.
+
+<div class="debrief">
+<h3>What happened</h3>
+Head-on traffic at cruise altitudes closes at roughly 230 knots in small aircraft. Six miles is ninety seconds. Four miles is sixty. By two miles — the distance where ADS-B traffic becomes visually intuitive — you have about thirty seconds to bank, pitch, or both.
+
+<h3>Knowledge in play</h3>
+14 CFR 91.113(e) is explicit: when two aircraft approach head-on, each shall alter course to the right. The rule exists because it's deterministic — if both pilots obey it, both pass each other safely. Waiting to see the other aircraft before deviating introduces uncertainty that the rule is designed to eliminate.
+
+<h3>Key takeaway</h3>
+When ATC or ADS-B paints head-on traffic at altitude, the clock is already running. Break right, announce, and then look.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndTwoNearMisses
+<<set $pathArray to $pathArray.concat(["Ending: Two Near-Misses"])>>
+<div class="scenario-title">Two for the Logbook</div>
+
+Your day involves two pilots you did not plan to meet — the Mooney at 3,500, and whoever you ended up close to in the pattern at Coulter. Neither collision actually happens. Both were closer than the usual margin a clean flight produces.
+
+On the ramp, the Cherokee pilot from the pattern finds you and explains, precisely and without heat, where the geometry went wrong. You ride home that afternoon replaying both encounters.
+
+<div class="debrief">
+<h3>What happened</h3>
+Two separate close calls in one flight is a pattern, not a coincidence. Head-on traffic at cruise is a right-break problem with a deterministic rule. A busy non-towered pattern is a predictability problem with a published recommended entry. Both situations have clean answers. Both times, you reached for a different one.
+
+<h3>Knowledge in play</h3>
+14 CFR 91.113(e) for head-on traffic. FAA AC 90-66C for pattern entries at non-towered airports. Both are doctrine for good reason — they reduce the number of ways two pilots who cannot see each other can surprise each other.
+
+<h3>Key takeaway</h3>
+Doctrine exists because the other pilots in the sky are operating on it. When you depart from it, the system loses its predictability — and predictability is most of the safety margin in uncontrolled airspace.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndAlternator
+<<set $pathArray to $pathArray.concat(["Ending: Alternator Out"])>>
+<div class="scenario-title">The Red ALT Light</div>
+
+Twenty-two minutes into the flight, somewhere abeam Caldwell, the red ALT annunciator illuminates on the panel. The voltmeter, which should read around 14 volts with the alternator loaded, reads 12.1 — battery voltage, already dropping under the avionics load.
+
+You shed load: GTN 650 off, transponder to standby, one comm, no strobes, no pitot heat. You reduce cruise power, declare a precautionary landing at Coulter on CTAF (your primary radio still works, for now), and execute a shortened approach. The Bonanza you heard on final earlier is gone; you have the runway. You land, taxi to transient, and shut down with maybe fifteen minutes of battery-radio time left in the system.
+
+You find Marisol before the pancakes run out. Over coffee, you text the club's maintenance officer and arrange for a ferry-mechanic to come down and diagnose. The airplane will not fly home today.
+
+<div class="debrief">
+<h3>What happened</h3>
+The master switch left on Friday evening drew the battery down. You launched anyway. The weak battery was able to crank the engine; the alternator, which had to work harder than normal to recover battery state, overheated or tripped its overvoltage protection at some point in cruise. With the alternator off-line, your electrical system ran on battery alone — a finite resource.
+
+<h3>Knowledge in play</h3>
+A 12-volt aircraft battery at rest reads 12.4–12.8 volts. At 11.6 volts, it's partially discharged and has reduced capacity. Starting an engine with a weak battery can succeed, but the alternator then has to do two jobs at once — power the running system and recharge a depleted battery. Electrical systems rarely fail in ways that are catastrophic at the moment of launch; they fail forty minutes into the flight, when the aircraft is far from help.
+
+<h3>Key takeaway</h3>
+The electrical system is a diagnosis problem, not a launch-and-hope problem. A low resting voltage is a signal, not a nuisance. Get it charged, swap it, or go back to dispatch.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndSputter
+<<set $pathArray to $pathArray.concat(["Ending: Rough Runner — Water Contamination"])>>
+<div class="scenario-title">The Stumble</div>
+
+Twenty minutes east of Georgetown, the engine stumbles. Not a full cough — a hiccup, a half-second pause, a recovery. You are already reaching for the fuel selector and the ignition.
+
+Thirty seconds later it happens again. Same pattern.
+
+You swing north toward Giddings (K55R) — you can see the runway from altitude — and declare a precautionary landing on CTAF. The engine keeps running, roughly, all the way to the pattern. You land. The engine runs fine on the taxi. You shut it down in front of the small FBO and call Rivas.
+
+The pancakes at Coulter are being eaten by other people right now.
+
+<div class="debrief">
+<h3>What happened</h3>
+A small amount of water in the fuel system — likely suspended in the tanks, undisturbed by a one-shot strainer sample — migrated during turbulent cruise and briefly disrupted fuel flow to the cylinders. The engine's stumbles were fuel-starvation events on the scale of milliseconds. If larger pockets of water had been present, the stumbles would have been longer.
+
+<h3>Knowledge in play</h3>
+The proper fuel-sump protocol — when you find water — is to drain the affected sump point, rock the wings to dislodge water pooled away from the drain, wait, and re-sample *all* drains, not just the one that showed contamination. A single clean resample from one drain does not prove the tanks are clean. The protocol exists because water is denser than avgas and hides in the low spots of the tank's structure.
+
+<h3>Key takeaway</h3>
+Water contamination is a protocol problem, not a judgment call. When you find any, you run the full clearance sequence — rock, wait, sample everything — until three consecutive samples are clean. Anything else is hope.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndMagDiversion
+<<set $pathArray to $pathArray.concat(["Ending: Rough Runner — Mag Issue"])>>
+<div class="scenario-title">One and a Half Magnetos</div>
+
+Somewhere east of Elgin, the engine develops a rough note. Not a vibration so much as a change in tone — coarser, a little less responsive. Oil pressure is in the green. Oil temperature is in the green. CHT is slightly elevated on two cylinders.
+
+You think about where you are and what's close. Giddings (K55R) is ten miles northeast. You turn. You announce on CTAF, land, and taxi in on an engine that is running but clearly not happy. Rivas calls you back after the shutdown. Based on your description — borderline mag drop at run-up, roughness in cruise, slightly elevated CHT on the right pair — his working theory is a magneto beginning to fail rather than a stuck plug.
+
+"Sit tight. I'll drive out."
+
+You spend the morning at the Giddings FBO instead of the breakfast at Coulter.
+
+<div class="debrief">
+<h3>What happened</h3>
+A borderline mag check at run-up — 65 RPM differential, which exceeds the 50 RPM guideline for this engine — was a signal that something in the ignition system was either fouled or deteriorating. When a lean-out doesn't clear it, that's the diagnosis: not carbon, not condensation, but mechanical. A mag with a failing internal component can produce the exact pattern you saw in cruise.
+
+<h3>Knowledge in play</h3>
+Lycoming publishes mag-check guidance in every IO-360 POH and maintenance manual: maximum drop 175 RPM per mag, maximum differential 50 RPM between mags. Individual drops within spec but differential out of spec is a specific failure mode — one mag is working fine and the other isn't. The in-the-field lean-out is the right first troubleshooting step. When it doesn't work, the answer is on the ground.
+
+<h3>Key takeaway</h3>
+Ignition diagnostics at run-up are exact. The numbers are not guidelines; they are numbers. "Within max" and "within differential" are two different tests, and the airplane has to pass both.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndRoughRunner
+<<set $pathArray to $pathArray.concat(["Ending: Forced Landing — Water + Mag"])>>
+<div class="scenario-title">Giddings Pasture</div>
+
+At 3,500 feet, twenty-five miles east of Georgetown, the engine coughs. Hard. Not a stumble — a cough that drops RPM for a full second before recovering. The EGT on the right pair spikes. Oil pressure is green. You are already pitching for best glide and looking.
+
+Giddings is eleven miles. Too far.
+
+You pick a field. A green rectangle of soy that slopes the wrong way but ends in a gravel road that runs parallel to your glide path. You declare on 121.5, squawk 7700, and run the flow: mixture, mags, fuel selector, carb heat (you don't have carb heat; you move on), primer locked, master on, seat belts tight. You fly the pattern you have available. You land in the soy.
+
+The airplane is upright. You are upright. The nose gear is bent. The prop is bent. Nobody is injured.
+
+You call 911, then Rivas, then the club.
+
+<div class="debrief">
+<h3>What happened</h3>
+Two latent faults. A water pocket in the tanks that you didn't clear. A mag differential at run-up you didn't troubleshoot. Either one alone is usually absorbed by the margins in the engine. Both together — in turbulent air that agitates fuel and stresses the whole system — produced a partial power loss at a position that put you between airports.
+
+<h3>Knowledge in play</h3>
+Preflight and run-up items each exist because they catch a specific class of problem. Water in the sumps = intermittent fuel starvation. A borderline mag = ignition compromise. Individual pilots often discount either as "probably fine, just conservative guidance." The issue is that the guidance is calibrated against a single failure at a time. When two small ones stack up, the engine doesn't ask which was primary.
+
+<h3>Key takeaway</h3>
+This is how chains build. Not with one dramatic error — with two small ones that each seemed reasonable in isolation. Breaking either link would have broken this chain. Break them. Every time.
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
+
+:: EndAlternatorAndRough
+<<set $pathArray to $pathArray.concat(["Ending: Mag Issue + Alternator"])>>
+<div class="scenario-title">Two Systems at Once</div>
+
+About fifteen minutes in, the red ALT annunciator illuminates. You start the load-shed. Then — because today is not a one-at-a-time kind of day — the engine develops a rough note about five minutes after that. Not as bad as a full stumble, but clearly not right.
+
+You turn toward Giddings (K55R). Ten miles. You can see it. You make the runway on a power-compromised approach, with minimal electrical, and land.
+
+You shut down and call Rivas. Over the phone, he walks you through what you tell him and puts the pieces together. "Battery was low out of Georgetown — yeah. The alternator couldn't keep up, gave out. And the mag differential — yeah. Two unrelated things you chose to launch with. Yeah."
+
+He'll come get the airplane tomorrow. You text Marisol from the Giddings FBO.
+
+<div class="debrief">
+<h3>What happened</h3>
+Two separate preflight signals dismissed; two separate in-flight consequences.
+
+<h3>Knowledge in play</h3>
+The pilot's job in the preflight phase is to decide which imperfections are flyable and which aren't. Every signal — low battery voltage, borderline mag differential — has a known failure path that experienced pilots have seen before. The signals aren't subtle; the discipline is.
+
+<h3>Key takeaway</h3>
+The airplane will tell you what's wrong before you take off if you're willing to listen. Two soft no-go signals in one preflight is not the airplane saying "probably fine." It's the airplane saying "probably not."
+</div>
+
+<div class="path-list">
+<strong>Your path</strong><br>
+<<for _p range $pathArray>>_p<br><</for>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
