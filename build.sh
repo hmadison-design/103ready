@@ -59,13 +59,14 @@ compile_scenario "game-day"
 compile_scenario "the-wall"
 compile_scenario "cylinder-three"
 compile_scenario "breakfast-at-coulter"
+compile_scenario "blue-line"
 
 echo "== Staging landing page =="
 cp public/index.html output/index.html
 cp public/103ready_logo.svg output/103ready_logo.svg
 
 # Copy per-scenario audio/images if present (referenced at runtime).
-for slug in game-day the-wall cylinder-three breakfast-at-coulter; do
+for slug in game-day the-wall cylinder-three breakfast-at-coulter blue-line; do
   for sub in audio images; do
     if [ -d "scenarios/${slug}/${sub}" ]; then
       mkdir -p "output/scenarios/${slug}/${sub}"

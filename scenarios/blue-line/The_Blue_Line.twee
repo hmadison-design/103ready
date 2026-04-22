@@ -1,0 +1,978 @@
+:: StoryTitle
+The Blue Line
+
+:: StoryData
+{
+  "ifid": "7A3F8D2B-8C4E-4F1A-9B3D-2E5C8F7A4D1E",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Opening"
+}
+
+:: StoryInit
+/*
+SCENARIO TITLE:       The Blue Line
+AUDIENCE:             Pilot (GA, multi-engine, 1,500-3,000 hr, Commercial/Instrument/MEI)
+TONE:                 Professional (light narrative voice)
+PRIMARY TOPIC:        Multi-engine operations and single-engine decision-making
+SECONDARY TOPIC:      Mountain cross-country; engine-indication interpretation
+AIRCRAFT/EQUIPMENT:   1998 Beechcraft B58 Baron, N258HT. Twin Continental IO-550-C
+                      (300 hp each, fuel-injected). Hartzell 3-blade props with
+                      feather. Crossfeed valve. Cowl flaps both engines. Garmin
+                      GTN 750 + G5 backup, JPI EDM-960 engine monitor.
+SETTING:              KAPA (Centennial, CO) to KGJT (Grand Junction, CO), about
+                      190 NM direct over the Continental Divide. Tuesday morning
+                      in mid-October. A keynote is waiting at the other end.
+WEATHER:              VFR all stations; westerly winds aloft 25-40 KT with mountain
+                      wave possibility; AIRMET Tango for moderate turbulence and
+                      mountain obscuration advisories for isolated ridgelines.
+ADM THEMES:           Single-engine decision-making, terrain awareness, social
+                      pressure from a keynote schedule, trust of engine instruments
+HAZARDOUS ATTITUDES:  Invulnerability (twin redundancy illusion), macho
+                      (press-on-over-terrain), resignation (fatalism about
+                      mountain engine-out)
+TOTAL DECISIONS:      10 per playthrough (every path visits all 10)
+TOTAL ENDINGS:        10 (variants keyed off accumulated knowledge flags)
+MIN DECISION DEPTH:   10 (exceeds 8-decision minimum per author request)
+TIMED DECISIONS:      No
+ESTIMATED DURATION:   30-40 minutes
+VERSION:              1.0
+LAST REVIEWED:        2026-04-22
+REVIEWER:             Claude (initial draft) / Harvey Madison (pending)
+*/
+<<set $badchoices to 0>>
+<<set $pathArray to []>>
+
+/* Per-decision knowledge flags. True = knowledge error made. */
+<<set $altRouteError to false>>
+<<set $fuelStainMissed to false>>
+<<set $propTestError to false>>
+<<set $runupError to false>>
+<<set $briefIncomplete to false>>
+<<set $climbMgmtError to false>>
+<<set $crossfeedMisused to false>>
+<<set $oilSignalLate to false>>
+<<set $featherError to false>>
+<<set $approachError to false>>
+
+/* Positive signals */
+<<set $caughtStain to false>>
+<<set $cleanSecure to false>>
+<<set $stableApproach to false>>
+
+:: StoryScript [script]
+/* No audio or runtime hooks. */
+
+:: StoryStylesheet [stylesheet]
+body {
+  background-color: #eef3f7;
+  color: #1c2733;
+}
+#story {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 1em;
+  font-size: 1.05em;
+  line-height: 1.65;
+}
+a.link-internal {
+  display: inline-block;
+  padding: 0.6em 1.1em;
+  margin: 0.35em 0.2em;
+  background-color: #dbe6f0;
+  color: #1c2733;
+  border: 1px solid #6f8ba9;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+a.link-internal:hover {
+  background-color: #b8cee1;
+}
+.scenario-title {
+  font-size: 2em;
+  text-align: center;
+  margin-bottom: 0.2em;
+  color: #0f3558;
+}
+.scenario-subtitle {
+  font-size: 1.1em;
+  color: #2d5a88;
+  text-align: center;
+  margin-bottom: 1.5em;
+  font-style: italic;
+}
+.decision-heading {
+  font-size: 1.15em;
+  color: #0f3558;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  text-transform: uppercase;
+}
+.wx-block {
+  background-color: #dbe6f0;
+  padding: 0.9em 1.1em;
+  border-left: 4px solid #6f8ba9;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  margin: 0.5em 0;
+  white-space: pre-wrap;
+  font-size: 0.95em;
+}
+.debrief {
+  border-top: 2px solid #6f8ba9;
+  padding-top: 1em;
+  margin-top: 2em;
+}
+.debrief h3 {
+  color: #0f3558;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+  font-size: 1.05em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.callout {
+  background-color: #dde8f2;
+  border-left: 4px solid #2d5a88;
+  padding: 0.8em 1em;
+  margin: 1em 0;
+  border-radius: 4px;
+  font-style: italic;
+}
+.path-list {
+  background-color: #eaf1f7;
+  border: 1px solid #6f8ba9;
+  padding: 0.7em 1em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: #1c2733;
+}
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block;
+  padding: 0.55em 1.3em;
+  background: #0f3558;
+  color: #fff !important;
+  border: 1px solid #2d5a88;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+.main-menu-btn:hover,
+.main-menu-btn:focus { background: #2d5a88; outline: none; }
+
+:: Opening
+<<set $pathArray to $pathArray.concat(["Opening"])>>
+<div class="scenario-title">The Blue Line</div>
+<div class="scenario-subtitle">A Mountain Crossing in a Beechcraft Baron</div>
+
+You are Nadine Okafor — 48 years old, CFI-MEI, ATP-bound, a little over 2,400 hours total with 580 of it in twins. You bought this 1998 Beechcraft B58 Baron, N258HT, six years ago with the proceeds of a patent and you have hand-polished every fairing on it since. It is a good airplane. You know it.
+
+It is a Tuesday morning in mid-October, just past 0800. Centennial Airport (KAPA) is crisp and clear, the Front Range sharp behind the hangars, the windsock suggesting light-and-variable before the valley winds come up. Your husband Teo — geology professor, non-pilot, a man who flies comfortably with you because he has put in the hours to earn that comfort — is finishing a phone call on the ramp. He has a 1:00 p.m. keynote at Mesa State in Grand Junction. About a hundred and ninety nautical miles and one continental divide away.
+
+You have run this mission dozens of times. You know the route. You know the Baron. You know which passes close early when the wind comes up and which ones hold. The book on your lap is open to the performance section.
+
+ForeFlight shows westerly winds at cruise altitude, 25 to 40 knots across the spine. An AIRMET Tango for moderate turbulence. A mountain obscuration advisory for a ridge segment south of Glenwood, which doesn't affect you. The weather is VFR all the way, but the terrain doesn't care about the weather.
+
+Before you file, you want to settle the route.
+
+<<link "Work the route" "Dec1">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Dec1
+<<set $pathArray to $pathArray.concat(["Dec1: Route and altitude"])>>
+<div class="decision-heading">Preflight Planning — Decision 1 of 10: Route and Altitude</div>
+
+Four realistic options are on your tablet.
+
+<div class="wx-block">Winds Aloft (DEN area, FD):
+FL120  26040-02
+FL150  27045-09
+FL180  27050-18
+
+MEA reminder (V8 APA → GJT segment JNC): 16,000 MSL
+MEA (V210 south via KALS, KPUB): 14,500 MSL max segment
+Single-engine service ceiling (N258HT at 5,100 lbs, ISA): ~7,000 MSL</div>
+
+Baron doesn't have factory oxygen. You never installed it. That's a fact that matters this morning.
+
+Teo slides the coffee carrier through your door, looks at the screen, says, "Whatever you pick is fine." He means it. He has also said "the paper's in pretty good shape but I want one more pass before the talk," which means he wants to be wheels-down at KGJT at 1030 local, ideally earlier. You heard him.
+
+What do you plan?
+
+<<link "A. Direct KAPA-KGJT, climb to 17,500 MSL VFR for the best winds and to stay clear of peaks." "Dec1A">><<set $pathArray to $pathArray.concat(["Dec1: A (direct 17,500 no O2)"])>><</link>>
+
+<<link "B. VFR via V210 south around the worst of it, cruise 14,500 MSL, accept the extra time." "Dec1B">><<set $pathArray to $pathArray.concat(["Dec1: B (V210 14,500)"])>><</link>>
+
+<<link "C. VFR direct over V8, cruise 14,000 MSL, pick your way under the MEA segments with clear terrain in sight." "Dec1C">><<set $pathArray to $pathArray.concat(["Dec1: C (V8 direct 14,000)"])>><</link>>
+
+<<link "D. File IFR, pick up a clearance from Denver Departure, fly the published route at the assigned altitude." "Dec1D">><<set $pathArray to $pathArray.concat(["Dec1: D (IFR pickup)"])>><</link>>
+
+:: Dec1A
+<<set $altRouteError to true>>
+<<set $badchoices to $badchoices + 1>>
+You finalize the plan at 17,500 VFR direct. You'll spend perhaps forty minutes above 12,500 and, by the book, most of that above 14,000. You glance once at the oxygen bottle locker in the back of the hangar — the one you emptied two winters ago and never refilled. You keep moving.
+
+You file VFR flight plan and close the tablet.
+
+<<link "Walk out to the airplane" "Dec2">><</link>>
+
+:: Dec1B
+You finalize the plan at 14,500 MSL via V210 south. It'll add twenty minutes to the leg, maybe twenty-five, but the terrain falls away reliably to the south and the MEA is within your comfortable cruise ceiling. You file and close the tablet.
+
+<<link "Walk out to the airplane" "Dec2">><</link>>
+
+:: Dec1C
+<<set $altRouteError to true>>
+<<set $badchoices to $badchoices + 1>>
+You finalize the plan at 14,000 MSL along V8 direct. You tell yourself you'll pick up an IFR clearance from Denver Center if the MEA segments pinch, and that the winds at fourteen are a little friendlier than at sixteen anyway. You file VFR and close the tablet.
+
+<<link "Walk out to the airplane" "Dec2">><</link>>
+
+:: Dec1D
+You finalize the plan as an IFR flight from KAPA to KGJT, routing as filed over the published airway structure. It's a slightly longer clearance than direct and the climb will be busier — Denver Departure is their usual cheerful symphony — but you'll be in radar, talking to somebody, and the assigned altitudes take the MEA argument off the table. You file and close the tablet.
+
+<<link "Walk out to the airplane" "Dec2">><</link>>
+
+:: Dec2
+<<set $pathArray to $pathArray.concat(["Dec2: Fuel stain on inboard filler"])>>
+<div class="decision-heading">Preflight Inspection — Decision 2 of 10: Left Inboard Fuel Filler</div>
+
+The Baron sits on the west tiedown. You work the left side first — your habit. Cowl latches, prop blades, belly drains. You climb the step, open the left inboard filler.
+
+There's a thin stain on the paint just aft of the filler cap — a faint, feathered gray shadow radiating about three inches back from the cap. You weren't the last person to fuel the airplane. Teo flew with you back from Rapid City Sunday evening; the FBO topped both inboards before shutdown. When you left the hangar yesterday the cap was clean.
+
+You touch the stain. Your fingertip comes away lightly wet. Not dripping. Wet.
+
+<<link "A. Stain is probably a spill from the fuel-up. Wipe it, cap off, fuel it to tabs, continue preflight." "Dec2A">><<set $pathArray to $pathArray.concat(["Dec2: A (wipe, fuel, continue)"])>><</link>>
+
+<<link "B. Wipe it clean, top off to tabs, watch the cap area for ten minutes during the rest of preflight to see if it comes back." "Dec2B">><<set $pathArray to $pathArray.concat(["Dec2: B (wipe, refuel, re-check)"])>><</link>>
+
+<<link "C. Call APA maintenance — have them come look before you do anything else." "Dec2C">><<set $pathArray to $pathArray.concat(["Dec2: C (call maint)"])>><</link>>
+
+<<link "D. Top off only the right side. Plan to run both engines from the right tank via crossfeed for the first hour." "Dec2D">><<set $pathArray to $pathArray.concat(["Dec2: D (one-side fuel, crossfeed)"])>><</link>>
+
+:: Dec2A
+<<set $fuelStainMissed to true>>
+<<set $badchoices to $badchoices + 1>>
+You wipe the stain with the rag in your flight bag, seat the cap, and keep moving. The fuel truck rolls over a few minutes later. You watch the inboard fill to the tab and cap it yourself. The stain doesn't reappear visibly while you're looking, which you note and file.
+
+The rest of the preflight is routine. You work the right side, then the underside, then the tail.
+
+<<link "Climb in for engine start" "Dec3">><</link>>
+
+:: Dec2B
+<<set $caughtStain to true>>
+You wipe the stain with the rag in your flight bag, seat the cap. The fuel truck rolls over and tops the inboards to the tab. You ask the line tech to leave you for ten minutes — you'll wave him off when you're done. You go through the rest of the preflight deliberately, checking the left inboard every minute or two as you circle the airplane.
+
+At the ten-minute mark the cap area is clean and dry. Whatever it was, it has not come back.
+
+<<link "Climb in for engine start" "Dec3">><</link>>
+
+:: Dec2C
+You radio the maintenance shop. Mick, who has looked after this airplane since you bought it, walks out with a flashlight and a clean rag. He pulls the cap, checks the O-ring, presses the bladder collar with his thumb, sniffs. He shakes his head.
+
+"Cap O-ring is a little tired. I've got one in the box. Twenty minutes."
+
+You watch him work. Twenty-two minutes later the O-ring is new, the area is clean, and Mick has signed a line in the logbook. Your 0815 departure is now a 0900 departure.
+
+Teo checks his watch and says nothing. You can hear him not saying it.
+
+<<link "Climb in for engine start" "Dec3">><</link>>
+
+:: Dec2D
+<<set $fuelStainMissed to true>>
+<<set $badchoices to $badchoices + 1>>
+You wipe the stain, reseat the cap, and tell the line tech you want fuel only in the right inboard. He asks if everything's OK. You tell him you want to run some crossfeed numbers en route and wave him toward the right filler. Right inboard comes up to the tab; left stays where it is. You close the cap on the left without refueling.
+
+The rest of the preflight is routine. You work the right side, then the underside, then the tail.
+
+<<link "Climb in for engine start" "Dec3">><</link>>
+
+:: Dec3
+<<set $pathArray to $pathArray.concat(["Dec3: Propeller check procedure"])>>
+<div class="decision-heading">Engine Start — Decision 3 of 10: Prop Feather Check</div>
+
+You are in the left seat, Teo in the right, headsets on, doors closed and latched. Left engine is started and stabilized at 1000 RPM. The JPI is quiet and green. You bring the right up. Oil pressure pegs to 60 in both. Fuel pressure healthy. Vacuum steady.
+
+Before takeoff — part of the Baron's expected check — you'll verify the propeller governors are working and that the feathering mechanism is ready to do its job if asked. The POH describes a propeller cycle: retard each prop control at roughly 1800 to 2000 RPM until the RPM drops 200-300 and recovers, confirming governor action and a warm oil supply to the prop hub.
+
+What you don't do on the Baron — because the oil-pressure feather system won't support it statically — is pull either prop all the way to the feather detent on the ramp.
+
+You are about to do the check. How?
+
+<<link "A. Cycle each prop once at 1800-2000 RPM per POH. Confirm 200-300 RPM drop and smooth recovery, both engines." "Dec3A">><<set $pathArray to $pathArray.concat(["Dec3: A (POH cycle both)"])>><</link>>
+
+<<link "B. Skip it. You cycled them yesterday on the Rapid City flight and everything was normal." "Dec3B">><<set $pathArray to $pathArray.concat(["Dec3: B (skip)"])>><</link>>
+
+<<link "C. Pull each prop briefly into the feather detent to confirm full feather travel." "Dec3C">><<set $pathArray to $pathArray.concat(["Dec3: C (full-feather static)"])>><</link>>
+
+<<link "D. Cycle each prop three times back-to-back to make sure the governor oil is fully warmed through." "Dec3D">><<set $pathArray to $pathArray.concat(["Dec3: D (triple cycle)"])>><</link>>
+
+:: Dec3A
+You cycle the left prop at 1900 RPM: RPM bleeds down to about 1650 and recovers smoothly, MP tracks. You repeat on the right: 1900, bleeds down to 1620, recovers. Both governors respond. Oil pressure holds steady on both.
+
+You re-set cruise-idle and wait for clearance.
+
+<<link "Continue with runup" "Dec4">><</link>>
+
+:: Dec3B
+<<set $propTestError to true>>
+<<set $badchoices to $badchoices + 1>>
+You let the engines stabilize at cruise-idle and wait for clearance. The JPI shows green. You haven't exercised the governors this morning.
+
+<<link "Continue with runup" "Dec4">><</link>>
+
+:: Dec3C
+<<set $propTestError to true>>
+<<set $badchoices to $badchoices + 1>>
+You pull the left prop control all the way back to the feather detent. RPM drops quickly — 1400, 1100, 900. The prop blades visibly pause near coarse pitch but, without sufficient oil pressure through the system to complete the feather cycle on the ground, they sag into the mid-coarse range and the engine begins to roughen as the combustion airflow changes. You push the prop control forward smartly. The engine returns to idle-cruise range, oil pressure recovering. The JPI paints a brief amber dot on the right CHT, which fades. You do the same test on the right engine, slightly more gently, and get a similar result.
+
+You re-set cruise-idle and wait for clearance.
+
+<<link "Continue with runup" "Dec4">><</link>>
+
+:: Dec3D
+You cycle the left prop at 1900 RPM: bleeds to 1650 and recovers. You immediately cycle it again, then a third time. All three cycles are smooth and comparable. You repeat on the right with similar results.
+
+The runup line has grown behind you — a King Air is holding short of the runup area, and the pilot is visibly patient. You re-set cruise-idle.
+
+<<link "Continue with runup" "Dec4">><</link>>
+
+:: Dec4
+<<set $pathArray to $pathArray.concat(["Dec4: Runup anomaly"])>>
+<div class="decision-heading">Runup — Decision 4 of 10: Mag Drop Differential</div>
+
+Runup, per the Baron checklist, is done at 1700 RPM on each engine.
+
+Left engine first. You advance to 1700. Left mag: 75 RPM drop, smooth. Right mag: 50 RPM drop, smooth. Differential 25 RPM. Within limits.
+
+Right engine. Advance to 1700. Right mag: 60 RPM drop, smooth. Left mag: 135 RPM drop, with a faint but audible roughness. Differential 75 RPM.
+
+The POH for the IO-550-C in this airframe allows mag drops up to 150 RPM and differentials up to 50 RPM. You are over the differential.
+
+<div class="callout">JPI EDM-960 on the right engine, left-mag selected: cylinder #2 EGT has dropped about 180°F compared to the other five. The other five are normal and stable. Cylinder #2 spark on the lower plug (the one fed by the left magneto) is suspect — fouling or plug weakness.</div>
+
+<<link "A. Run the right engine at 2000 RPM, full rich then lean aggressively for 30 seconds to burn off a fouled plug. Re-check." "Dec4A">><<set $pathArray to $pathArray.concat(["Dec4: A (burn-off lean)"])>><</link>>
+
+<<link "B. Taxi back to the ramp, shut down, let it cool, re-runup in 20 minutes." "Dec4B">><<set $pathArray to $pathArray.concat(["Dec4: B (taxi back, re-runup)"])>><</link>>
+
+<<link "C. Return to the ramp. Have maintenance pull the #2 lower plug and look at it. Delay the trip." "Dec4C">><<set $pathArray to $pathArray.concat(["Dec4: C (maintenance, delay)"])>><</link>>
+
+<<link "D. Drop is within POH max. Differential is a little wide but the engine runs smoothly on both mags together. Continue." "Dec4D">><<set $pathArray to $pathArray.concat(["Dec4: D (continue, within limits)"])>><</link>>
+
+:: Dec4A
+You hold the right engine at 2000 RPM, mixture full rich briefly, then pull the mixture toward peak and past — 30 seconds at aggressive lean, watching the JPI. Cylinder #2 EGT climbs, normalizes. You return to 1700, re-check: left mag 65 RPM drop, smooth, cylinder #2 EGT in family with the other five. Differential 5 RPM.
+
+The burn-off worked. You release the brakes, taxi toward the hold short.
+
+<<link "Continue to takeoff" "Dec5">><</link>>
+
+:: Dec4B
+You taxi back to the runup area, set the parking brake, let both engines cool at idle for 90 seconds, shut down. You sit with Teo for about 18 minutes while the oil stabilizes. You restart, taxi back out, runup again. Right engine, 1700, left mag: 70 RPM drop, smooth, cylinder #2 back in family. Differential 10 RPM.
+
+The cool-restart worked. You taxi toward the hold short.
+
+<<link "Continue to takeoff" "Dec5">><</link>>
+
+:: Dec4C
+You taxi back to the ramp. Mick is not thrilled to see you again. He pulls the #2 lower plug. It's slightly oily — nothing catastrophic, a little lead fouling. He cleans it, gaps it, torques it back, signs the line.
+
+You are airborne at 1005, ninety minutes late. Teo is reading on his tablet, not complaining, not looking up. The keynote window is tighter than you'd like.
+
+<<link "Continue to takeoff" "Dec5">><</link>>
+
+:: Dec4D
+<<set $runupError to true>>
+<<set $badchoices to $badchoices + 1>>
+You note the differential is outside the POH limit but figure the engine is making clean, smooth power on both mags together. You release the brakes and taxi toward the hold short.
+
+<<link "Continue to takeoff" "Dec5">><</link>>
+
+:: Dec5
+<<set $pathArray to $pathArray.concat(["Dec5: Takeoff brief"])>>
+<div class="decision-heading">Before Takeoff — Decision 5 of 10: Engine-Failure Brief</div>
+
+You are number two for runway 17L. The King Air rolls out and breaks left for Colorado Springs. Tower calls you up: "Baron two-five-eight hotel tango, line up and wait, runway one-seven left."
+
+Before you release the brakes, you say your takeoff brief out loud. You have been saying some version of this brief in front of CFI candidates for years. You know what a good one sounds like.
+
+What does yours say today?
+
+<<link "A. \"If anything happens below 85 knots — Vyse — I abort. Above 85 we continue, regardless of altitude.\"" "Dec5A">><<set $pathArray to $pathArray.concat(["Dec5: A (below/above Vyse only)"])>><</link>>
+
+<<link "B. \"Any problem on the roll, I abort. Once we're airborne with positive rate and Vyse, we continue.\"" "Dec5B">><<set $pathArray to $pathArray.concat(["Dec5: B (abort until airborne)"])>><</link>>
+
+<<link "C. \"Below blue line AGL — 500 feet — I abort or land straight ahead. Above 500, we continue to altitude.\"" "Dec5C">><<set $pathArray to $pathArray.concat(["Dec5: C (blue-line AGL)"])>><</link>>
+
+<<link "D. \"If we lose one before rotation, I chop both and abort. Airborne below 500 AGL with gear still in the wells, I gear up if it is, pitch for Vyse, land straight ahead or shallow turn to the nearest open terrain. Airborne above 500 AGL with Vyse secured, gear up, I feather the bad engine, accept best single-engine climb to 800 AGL minimum, turn right back for the runway or to I-25 as an off-field option if 7L is blocked.\"" "Dec5D">><<set $pathArray to $pathArray.concat(["Dec5: D (full brief)"])>><</link>>
+
+:: Dec5A
+<<set $briefIncomplete to true>>
+<<set $badchoices to $badchoices + 1>>
+Teo nods. Tower clears you: "Baron two-five-eight hotel tango, runway one-seven left, cleared for takeoff."
+
+You release the brakes. Power up smoothly.
+
+<<link "Climb out" "Dec6">><</link>>
+
+:: Dec5B
+<<set $briefIncomplete to true>>
+<<set $badchoices to $badchoices + 1>>
+Teo nods. Tower clears you. You release the brakes. Power up smoothly.
+
+<<link "Climb out" "Dec6">><</link>>
+
+:: Dec5C
+<<set $briefIncomplete to true>>
+<<set $badchoices to $badchoices + 1>>
+Teo nods. Tower clears you. You release the brakes. Power up smoothly.
+
+<<link "Climb out" "Dec6">><</link>>
+
+:: Dec5D
+Teo nods. He has heard some version of this brief on every flight he has ever been on with you. Tower clears you: "Baron two-five-eight hotel tango, runway one-seven left, cleared for takeoff."
+
+You release the brakes. Power up smoothly.
+
+<<link "Climb out" "Dec6">><</link>>
+
+:: Dec6
+<<set $pathArray to $pathArray.concat(["Dec6: Climb management"])>>
+<div class="decision-heading">Climb — Decision 6 of 10: Power and Mixture Management</div>
+
+Rotation at 90 KIAS. Positive rate, gear up. You pitch for Vy initially, then transition toward Vyse as the terrain closes in. Denver Departure gives you a vector and a climb to 12,500. You respond and set up for the long climb.
+
+Density altitude at APA is 6,300 right now. By 10,000 indicated you'll be closing on a 12,500 density altitude. Cylinder head temps are climbing normally. Manifold pressure is decaying with altitude.
+
+How do you manage the climb?
+
+<<link "A. Keep mixtures full rich the entire way to cruise altitude. 100% power. Let the engines run rich — better for cooling." "Dec6A">><<set $pathArray to $pathArray.concat(["Dec6: A (full rich 100%)"])>><</link>>
+
+<<link "B. Full rich through 3,000 AGL, then lean each engine to peak EGT for the remainder of the climb." "Dec6B">><<set $pathArray to $pathArray.concat(["Dec6: B (peak EGT climb)"])>><</link>>
+
+<<link "C. Reduce to climb power — 25\" MP / 2500 RPM — mixtures full rich, cowl flaps in trail position." "Dec6C">><<set $pathArray to $pathArray.concat(["Dec6: C (climb power, trail cowl flaps)"])>><</link>>
+
+<<link "D. Climb power — 25\" MP / 2500 RPM — cowl flaps full open, mixtures full rich through 5,000 DA, then lean progressively to keep fuel flow on the target climb curve." "Dec6D">><<set $pathArray to $pathArray.concat(["Dec6: D (climb power, open cowl, lean to target FF)"])>><</link>>
+
+:: Dec6A
+<<set $climbMgmtError to true>>
+<<set $badchoices to $badchoices + 1>>
+You leave everything at the firewall. Mixtures full rich. 2700 RPM. Full manifold pressure at sea level, decaying as you climb. Cowl flaps remain where you set them on the ramp — trail.
+
+By 10,000 the CHTs are higher than you're used to seeing in climb. Fuel flow is high. Cylinder #2 on the right is running richer and cooler than the others, which should be the outlier and is not.
+
+You continue climb to 14,000. The airplane gets there eventually.
+
+<<link "Level at cruise" "Dec7">><</link>>
+
+:: Dec6B
+<<set $climbMgmtError to true>>
+<<set $badchoices to $badchoices + 1>>
+You pass 3,000 AGL, reduce nothing, and bring each mixture smoothly back to peak EGT, as shown on the JPI. The engines get leaner. CHTs rise — cylinders running at peak are running at the hottest combination of TIT and CHT available to them. The climb continues but you can see the temps trending in the wrong direction.
+
+You arrive at 14,000 with CHTs higher than you want.
+
+<<link "Level at cruise" "Dec7">><</link>>
+
+:: Dec6C
+You reduce to 25" / 2500 as you pass 1,000 AGL. Mixtures stay full rich. Cowl flaps are in trail — not fully open, but not closed. CHTs climb steadily but not alarmingly. Fuel flow is healthy. You get to 14,000 in reasonable time.
+
+<<link "Level at cruise" "Dec7">><</link>>
+
+:: Dec6D
+You reduce to 25" / 2500 as you pass 1,000 AGL. Cowl flaps full open. Mixtures full rich through 5,000 density altitude, then you start walking them back progressively, holding the fuel-flow climb curve you've memorized for the IO-550-C. CHTs climb and level, sitting in the low 380s. Fuel flow appropriate for each altitude band.
+
+You arrive at 14,000 comfortably.
+
+<<link "Level at cruise" "Dec7">><</link>>
+
+:: Dec7
+<<set $pathArray to $pathArray.concat(["Dec7: Fuel imbalance in cruise"])>>
+<div class="decision-heading">Cruise — Decision 7 of 10: Fuel Imbalance</div>
+
+Level at cruise. Power set — 23" / 2300 RPM — mixtures back. TAS showing 185 knots. Ground speed showing 147. The winds at altitude are where the forecast said they'd be. The Sawatch Range is under your nose, white on the peaks, ochre in the meadows.
+
+You glance at the fuel gauges. Fifty-eight minutes into the flight.
+
+<div class="wx-block">Left main:  62 gallons
+Right main: 54 gallons
+Differential: 8 gallons (left heavy)</div>
+
+Each engine feeds from its own main by default. An 8-gallon differential at 58 minutes is larger than normal. The crossfeed valve in the center of the pedestal is, as expected, closed.
+
+<<link "A. Eight gallons is within normal tolerances for Baron tanks with different ambient temps in the tiedown — leave it." "Dec7A">><<set $pathArray to $pathArray.concat(["Dec7: A (ignore)"])>><</link>>
+
+<<link "B. Open crossfeed, feed the right engine from the left tank for about 15 minutes to balance." "Dec7B">><<set $pathArray to $pathArray.concat(["Dec7: B (crossfeed right from left)"])>><</link>>
+
+<<link "C. Log the imbalance, plan to pull the right cowl at KGJT to look for a fuel leak, monitor the differential for the rest of the flight." "Dec7C">><<set $pathArray to $pathArray.concat(["Dec7: C (log, monitor, inspect at destination)"])>><</link>>
+
+<<link "D. This is serious. Turn back to APA, where you have maintenance, before the terrain gets worse." "Dec7D">><<set $pathArray to $pathArray.concat(["Dec7: D (return to APA)"])>><</link>>
+
+:: Dec7A
+<<set $crossfeedMisused to true>>
+<<set $badchoices to $badchoices + 1>>
+You leave the fuel as it is. Each engine continues to draw from its own tank. You note the differential mentally and return your attention to the panel and the view.
+
+<<link "Continue" "Dec8">><</link>>
+
+:: Dec7B
+You open the crossfeed valve and select the right engine to feed from the left main. You set a timer on the clock: 15 minutes. Fuel flow on the right is unchanged; the engine is simply drawing from a different bay now. You note the current readings on your kneeboard.
+
+<<link "Continue" "Dec8">><</link>>
+
+:: Dec7C
+You write "right tank 8 gal low, inspect cowl at GJT" on your kneeboard. You start watching the differential closely. Over the next ten minutes it increases by about one gallon.
+
+<<link "Continue" "Dec8">><</link>>
+
+:: Dec7D
+You tell Teo you're turning back. He blinks twice. "Is something wrong?" you say it's a fuel imbalance that needs maintenance eyes. You notify Denver Center you're returning to APA and begin a gentle turn. Teo is, to his credit, calm. His jaw is set. You feel him doing the math on his talk.
+
+<<link "Continue" "Dec8">><</link>>
+
+:: Dec8
+<<set $pathArray to $pathArray.concat(["Dec8: Right engine oil pressure dropping"])>>
+<div class="decision-heading">Cruise — Decision 8 of 10: Right Engine Trend</div>
+
+Eighty-one minutes into the flight, crossing the Divide. You're level at 14,000 — or you've just started a descent toward KAPA if Decision 7 put you on that path. Either way, you are over terrain that does not forgive a sick engine.
+
+The JPI flashes an amber advisory: right engine oil pressure, 48 psi. The normal cruise range is 55-90, yellow band below 50. You look at the oil temp: 215°F and rising. It has been 195° all flight. CHTs on the right are trending up a column.
+
+The engine is still making power. The fuel flow is where you set it. The RPM is steady. But the oil is telling you something.
+
+You have airports within realistic reach:
+
+<div class="wx-block">KRIL (Rifle):        38 NM ahead, field elevation 5,537, rwy 8/26 10,002 ft
+KEGE (Eagle):        22 NM left (south), field elevation 6,548, terrain-flanked
+KASE (Aspen):        30 NM south, field elevation 7,820, surrounded by terrain
+KLXV (Leadville):    45 NM behind, field elevation 9,934, gets you down but not low
+KGJT (Grand Junction): 72 NM ahead, field elevation 4,858, flat valley approach</div>
+
+Teo says, quietly, "What are you seeing?" You tell him. He says, "Do whatever you need to do."
+
+<<link "A. Engine is making power. Keep going to KGJT — another 22 minutes. You're more than halfway now." "Dec8A">><<set $pathArray to $pathArray.concat(["Dec8: A (press to GJT)"])>><</link>>
+
+<<link "B. Reduce right engine power to 18\" MP, watch the trend, continue toward KRIL as the nearest low-elevation field." "Dec8B">><<set $pathArray to $pathArray.concat(["Dec8: B (reduce right pwr, continue to RIL)"])>><</link>>
+
+<<link "C. Divert to KEGE — closer, and you can fly the valley approach straight in." "Dec8C">><<set $pathArray to $pathArray.concat(["Dec8: C (divert EGE)"])>><</link>>
+
+<<link "D. Divert to KASE. Long runway, IFR infrastructure, worst-case you shoot an instrument approach." "Dec8D">><<set $pathArray to $pathArray.concat(["Dec8: D (divert ASE)"])>><</link>>
+
+:: Dec8A
+<<set $oilSignalLate to true>>
+<<set $badchoices to $badchoices + 1>>
+You keep the airplane pointed at KGJT. You tell Teo you're watching it. You reduce right engine power slightly just in case. Oil pressure drifts down to 42, then 38. Oil temp is now 225°F and climbing.
+
+You have twenty-one minutes of flight between you and the airport.
+
+<<link "Continue" "Dec9">><</link>>
+
+:: Dec8B
+You reduce right engine power to 18" MP and adjust trim for the left engine's increased relative load. You call Denver Center: "Denver Center, Baron two-five-eight hotel tango, declaring precautionary divert to Rifle, right engine oil pressure and temp indication, still making power."
+
+Center responds: "Two-five-eight hotel tango, Denver Center, understand Rifle, say souls and fuel."
+
+"Two souls, three hours fuel."
+
+"Two-five-eight hotel tango, roger, descend and maintain one-two thousand, direct Rifle when able, advise on ground."
+
+You turn toward KRIL, 38 miles now at your angle.
+
+<<link "Continue" "Dec9">><</link>>
+
+:: Dec8C
+You turn left toward KEGE and tell Denver Center. Center acknowledges the divert. The valley narrows as you descend. KEGE's approach is straightforward if you stay over the river, but the airport is flanked by rising terrain on both sides and the single-engine performance margin on the right engine is nothing you want to test if you're vectored off.
+
+<<link "Continue" "Dec9">><</link>>
+
+:: Dec8D
+You turn left toward KASE. Center acknowledges the divert. You begin a descent out of 14,000 — KASE sits at 7,820 and is walled by ridges on three sides. You have clear weather, which helps. What you don't have is a valley-floor approach; you'll be threading into a bowl. Your single-engine service ceiling at current weight is around 7,000.
+
+<<link "Continue" "Dec9">><</link>>
+
+:: Dec9
+<<set $pathArray to $pathArray.concat(["Dec9: Right engine failure / feather decision"])>>
+<div class="decision-heading">Engine Failure — Decision 9 of 10: Securing the Right Engine</div>
+
+Right engine oil pressure is now below 30 psi. Oil temp is off the top of the green arc. CHT is climbing fast. The JPI is painting red.
+
+Then the right engine RPM begins to drop. Not a dramatic failure — a slow, wheezing loss, as if the engine is running out of appetite. Manifold pressure follows the RPM down. The airplane yaws right as thrust drops. You crank left rudder and trim it out. The left engine is still making its power. The airplane is flying.
+
+You need to secure the right engine. Which memory sequence do you execute?
+
+<<link "A. Mixture idle cutoff. Prop control to FEATHER. Magneto switches OFF. Cowl flap CLOSED." "Dec9A">><<set $pathArray to $pathArray.concat(["Dec9: A (mix, feather, mags, cowl)"])>><</link>>
+
+<<link "B. Mixture idle cutoff. Fuel selector OFF. Prop control to FEATHER. Magnetos OFF. Cowl flap CLOSED." "Dec9B">><<set $pathArray to $pathArray.concat(["Dec9: B (mix, fuel, feather, mags, cowl)"])>><</link>>
+
+<<link "C. Prop control to FEATHER first — immediately. Get the drag killed. Troubleshoot the rest after Vyse is secured." "Dec9C">><<set $pathArray to $pathArray.concat(["Dec9: C (feather first)"])>><</link>>
+
+<<link "D. Reduce right power carefully to maintain some manifold pressure. Don't feather yet — try to limp it in for landing." "Dec9D">><<set $pathArray to $pathArray.concat(["Dec9: D (reduce power, limp)"])>><</link>>
+
+:: Dec9A
+<<set $featherError to true>>
+<<set $badchoices to $badchoices + 1>>
+Mixture to idle cutoff. Prop control to the feather detent — the RPM drops and the blades swing into the feathered position, flattening the disc drag. Mags off. Cowl flap closed. You have missed the fuel selector.
+
+Fuel continues to line from the right main to the engine-driven pump. The pump is not pushing the fuel through the injectors — the mixture is cut — but the line is pressurized. You don't see it yet, but fuel is accumulating at the spider valve. You fly left-engine-only toward your chosen airport.
+
+<<link "Set up for approach" "Dec10">><</link>>
+
+:: Dec9B
+<<set $cleanSecure to true>>
+Mixture to idle cutoff. Fuel selector OFF. Prop to feather — the blades swing over and the engine spools to a stop, cleanly feathered. Magnetos OFF. Cowl flap closed. Fuel flow zeroed. The right side of the airplane is secure.
+
+You trim the airplane for single-engine cruise-descent. The left engine is holding climb-power-plus, carrying you and Teo and the fuel onward. Airspeed: Vyse, 105 KIAS.
+
+<<link "Set up for approach" "Dec10">><</link>>
+
+:: Dec9C
+<<set $featherError to true>>
+<<set $badchoices to $badchoices + 1>>
+You pull the right prop control straight to the feather detent before touching anything else. The RPM drops. The blades swing over. The drag reduces and the airplane settles into a more tractable attitude.
+
+You then go back to mixture — idle cutoff. Fuel selector OFF. Mags OFF. Cowl flap closed. The engine is secured, if in a slightly different order than the book prescribes. You trim the airplane at Vyse.
+
+<<link "Set up for approach" "Dec10">><</link>>
+
+:: Dec9D
+<<set $featherError to true>>
+<<set $badchoices to $badchoices + 1>>
+You pull the right throttle back to half, trying to coax whatever the engine has left. RPM continues to decay. Oil pressure is now below 10. The airplane yaws as thrust falls off completely and the prop disc is windmilling flat in the relative wind. Drag is enormous. The airplane settles into a descent you don't want. The left engine is at climb power.
+
+You realize you're behind the airplane. You pull the prop to feather. The blades swing over eventually. The drag drops. Airspeed is below Vyse.
+
+You push nose-over, trade altitude for Vyse. You get Vyse back. You have lost two thousand feet.
+
+<<link "Set up for approach" "Dec10">><</link>>
+
+:: Dec10
+<<set $pathArray to $pathArray.concat(["Dec10: Single-engine approach"])>>
+<div class="decision-heading">Approach — Decision 10 of 10: Single-Engine Approach Configuration</div>
+
+You are set up for KRIL (or whichever airport your divert choice delivered — the geometry is essentially the same: a valley-floor airport with a 10,000-foot runway, winds down the runway, no one ahead of you in the pattern). You have declared. Rifle Radio has cleared the traffic pattern for you. A county sheriff truck and a crash unit are moving toward the runway edge.
+
+You are five miles out, 3,500 feet above field elevation, airspeed Vyse plus five. The left engine is healthy and you have trimmed it around the yaw.
+
+The choice now is how you configure.
+
+<<link "A. Straight-in, gear down at the final approach fix, full flaps, fly approach at Vref." "Dec10A">><<set $pathArray to $pathArray.concat(["Dec10: A (gear FAF, full flaps, Vref)"])>><</link>>
+
+<<link "B. Overhead break to a tight downwind, gear down midfield downwind, full flaps turning base." "Dec10B">><<set $pathArray to $pathArray.concat(["Dec10: B (overhead break)"])>><</link>>
+
+<<link "C. Straight-in. Gear down on short final once landing is assured. Approach flaps only (15°). Hold Vyse+5 until short final, then decelerate to Vref over the fence." "Dec10C">><<set $pathArray to $pathArray.concat(["Dec10: C (gear late, partial flaps, Vyse discipline)"])>><</link>>
+
+<<link "D. Extend downwind to let the altitude bleed off, gear down midfield, full flaps turning base, Vyse down to Vref at the numbers." "Dec10D">><<set $pathArray to $pathArray.concat(["Dec10: D (extended downwind, full flaps)"])>><</link>>
+
+:: Dec10A
+<<set $approachError to true>>
+<<set $badchoices to $badchoices + 1>>
+You drop the gear at the FAF. Drag spikes — you pitch to hold altitude, then pitch to hold Vyse, then pitch to hold Vref, then pitch again. You are at full flaps on short final. The airplane is stable. You have committed to the landing. The left engine is carrying you. A go-around from this configuration, with gear down and full flaps on a single engine, is a statistics problem you have decided to not have.
+
+<<link "Roll out" "Resolution">><</link>>
+
+:: Dec10B
+<<set $approachError to true>>
+<<set $badchoices to $badchoices + 1>>
+You pitch up, bank right, and fly an overhead entry to a left downwind. The tight pattern is fine for a two-engine airplane. On one engine it is tight in a way you feel. You drop gear at midfield downwind. You turn base. You go to full flaps. The left engine is honest. You roll out on final low and a little fast.
+
+<<link "Roll out" "Resolution">><</link>>
+
+:: Dec10C
+<<set $stableApproach to true>>
+You hold Vyse+5 all the way down. You run the airplane in clean and flat. Gear is still up. On short final, once you have the runway made and a positive energy margin, gear down, flaps to approach — 15°, not full. The airplane settles onto the numbers with drag still in reserve. If anything goes sideways on short final you have a go-around left.
+
+<<link "Roll out" "Resolution">><</link>>
+
+:: Dec10D
+You extend the downwind to let the altitude bleed — you're high and hot and you know it. Gear midfield downwind. Turning base, flaps to full. You decelerate to Vref at the numbers. The approach is stable but committed — full flaps on one engine means a go-around would be very, very marginal. You have decided it won't be one.
+
+<<link "Roll out" "Resolution">><</link>>
+
+:: Resolution
+<<set $pathArray to $pathArray.concat(["Resolution"])>>
+<<set $criticalErrors to 0>>
+<<if $altRouteError>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $fuelStainMissed>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $runupError>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $briefIncomplete>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $oilSignalLate>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $featherError>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+<<if $approachError>><<set $criticalErrors to $criticalErrors + 1>><</if>>
+
+<<if $featherError and $approachError and $oilSignalLate>>
+  <<goto "End_Crash">>
+<<elseif $approachError and $oilSignalLate>>
+  <<goto "End_GearCollapse">>
+<<elseif $featherError and $approachError>>
+  <<goto "End_Excursion">>
+<<elseif $oilSignalLate and $briefIncomplete>>
+  <<goto "End_OffAirport">>
+<<elseif $featherError>>
+  <<goto "End_HardLanding">>
+<<elseif $approachError>>
+  <<goto "End_LongRollout">>
+<<elseif $criticalErrors gte 3>>
+  <<goto "End_Delay">>
+<<elseif $criticalErrors gte 1>>
+  <<goto "End_Qualified">>
+<<elseif $stableApproach and $cleanSecure>>
+  <<goto "End_CleanSuccess">>
+<<else>>
+  <<goto "End_SoundDivert">>
+<</if>>
+
+:: End_CleanSuccess
+<<set $pathArray to $pathArray.concat(["Ending: Clean success"])>>
+<div class="decision-heading">Ending — Clean Single-Engine Recovery</div>
+
+You touch down long — deliberately long, past the overrun, on the numbers you picked. The left engine idles. You roll out with the gear and partial flaps you selected and taxi clear with the sheriff truck escorting on the ramp side.
+
+Rifle FBO has a tug waiting. You shut the left engine down cleanly. You and Teo climb out onto the ramp. The right engine cowl is warm to the touch; the prop is still, three blades flat to the relative wind, exactly as you commanded. An A&P from the FBO is already walking around with his flashlight. He pops the right cowl.
+
+The crankshaft-driven oil pump had failed — an internal seal that decided, after eleven hundred hours since overhaul, to let go. The engine would have seized on its own in a matter of minutes if you'd kept pulling power from it.
+
+Teo's keynote is rescheduled for 4:00 p.m. by the Mesa State department chair, who was a grad student with him at Stanford and who would have rescheduled it twice for him. He gives a good talk. You listen by phone from the Rifle FBO's conference room while waiting for the maintenance courtesy car.
+
+<div class="debrief">
+<h3>What happened</h3>
+You identified an engine developing a mechanical problem, diverted to an airport whose geometry and elevation favored single-engine operations, secured the engine with a complete memory-items sequence, and flew a single-engine approach with the drag and energy discipline that the Baron requires.
+<h3>ADM analysis</h3>
+Multi-engine ADM is fundamentally about having room. Altitude is room. Fuel is room. An airport in sight with a long flat runway is room. You preserved room at every decision. The counterintuitive-but-correct element here was holding flaps at approach setting, not full, and putting the gear down late — which feels like less safety and is actually more, because it keeps a go-around alive until the last possible moment.
+<h3>What good judgment looks like here</h3>
+The Baron's single-engine service ceiling (roughly 7,000 MSL at typical weights) defines the geography of your diversion options in mountainous country. An airport surrounded by higher terrain that requires a go-around on one engine is an airport you cannot safely commit to unless the weather and the situation absolutely require it. A valley-floor field with a long runway, straight-in geometry, and energy in reserve is the right answer almost every time.
+<h3>Key takeaway</h3>
+In a twin, single-engine performance is not the backup plan. It is the plan you are always flying. The second engine is there to get you to the airport where you can land — not to save you from having to think about landing.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_SoundDivert
+<<set $pathArray to $pathArray.concat(["Ending: Sound divert"])>>
+<div class="decision-heading">Ending — Sound Decisions, Good Outcome</div>
+
+You land at the diversion airport with the engine secured, the airplane under control, and no smoke in the cockpit. The sheriff escort follows you to the FBO. You shut down. Teo gets out and walks the airplane with you. The right cowl is warm but not scorched. The prop is flat to the wind.
+
+Mesa State moves the keynote back an hour and a half. Teo gives the talk from an airport conference room by Zoom, which is fine because his audience is already sold and has coffee. You fly commercial back to Denver the next morning. The Baron comes home on a trailer a week later.
+
+<div class="debrief">
+<h3>What happened</h3>
+The trip did not finish the way it was planned, but it finished with you and Teo walking off a ramp with a story and a repair invoice rather than a hospital visit. Somewhere along the chain you handled the most important decisions correctly — particularly the divert and the secure-engine sequence — and the airplane did what it was designed to do.
+<h3>ADM analysis</h3>
+You may have a small knowledge error or two upstream — a brief that was incomplete, a mixture call that was off, a mag drop you accepted on the edge of the book. None of them compounded. The chain did not connect. That is real aviation.
+<h3>What good judgment looks like here</h3>
+The two most consequential decisions on this flight were Decision 8 (how to respond to a mechanical trend before it became a failure) and Decision 9 (how to secure the engine once the trend became an event). Good choices in both, even if earlier decisions were imperfect, preserved the outcome.
+<h3>Key takeaway</h3>
+Not every flight is a clean sheet. Most flights have a small error somewhere. The job is to not let the small error find a big error to team up with.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Qualified
+<<set $pathArray to $pathArray.concat(["Ending: Qualified success"])>>
+<div class="decision-heading">Ending — Qualified Success</div>
+
+You land with the engine secured and the airplane under control. The rollout is long and slightly uneven. The sheriff truck pulls alongside as you turn off onto the long taxiway.
+
+Teo is quiet in the right seat. You are quiet in the left. The FBO lineman waves you to the ramp.
+
+Mesa State rebooks the keynote. You catch a commercial flight home the next day. The Baron stays at the diversion airport for a week while the right engine is pulled and inspected. Overhaul is booked.
+
+<div class="debrief">
+<h3>What happened</h3>
+The trip did not complete. You made a sound decision on the big moment — the divert, and/or the feather — but you arrived there with one or two knowledge errors already on the chain. You got away with them because the downstream decisions held.
+<h3>ADM analysis</h3>
+The real pattern to notice is how tolerant a twin is of small upstream errors when the big downstream decisions are sound. The opposite is also true: a clean planning brief is no substitute for a sound emergency response. Most of the time in a twin, the outcome is determined by what you do in the last ten minutes, not the first ten.
+<h3>What good judgment looks like here</h3>
+The two items that carried this outcome were recognizing the engine trend early enough to divert to a sensible airport, and securing the engine with a sequence that killed its drag and fuel lines. Upstream planning and preflight errors are the reason this is a qualified rather than a clean success — they worked against your margin without consuming it.
+<h3>Key takeaway</h3>
+Twins reward good habits. Every small habit — the routine mag check, the full brief, the proper cowl-flap setting — is an investment in the one flight where you need to draw on the account.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Delay
+<<set $pathArray to $pathArray.concat(["Ending: Delay and friction"])>>
+<div class="decision-heading">Ending — Delay, Diversion, and Friction</div>
+
+You land at the diversion airport with the engine secured. Rollout is stable. You taxi to the ramp with the sheriff truck in company, shut down the left engine, and climb out onto a cold valley ramp where the FBO's lineman is already moving a tug toward you.
+
+Teo gets out without saying anything. Whatever he was going to say about the keynote, he is holding onto. You call Mesa State from the FBO counter; the keynote is rescheduled for 5:00 p.m., and Teo will give it by Zoom. You will not be in the audience. You will be on the phone with the insurance adjuster.
+
+Teo finally speaks in the FBO lounge: "What happened up there?"
+
+You tell him, truthfully and completely. He listens. He nods. He says, "OK." And then he says, "The fuel thing — on the ramp — that was the first thing, wasn't it?" You agree it was.
+
+The flight home three days later is quiet. Teo reads. You fly.
+
+<div class="debrief">
+<h3>What happened</h3>
+You landed successfully, but the chain of small decisions before the engine event got long enough to be visible to a non-pilot sitting next to you. The fuel stain, the mag differential, the climb management — none of them caused the engine failure, which was a mechanical event the airplane had already decided to have. What they did was make the reserves thinner when the event came.
+<h3>ADM analysis</h3>
+Several hazardous attitudes were available on this flight and one or two were accepted. Invulnerability — the belief that twin redundancy will cover a multi-layer planning error — is the most subtle of them. Resignation — accepting a borderline runup because it's within limits on paper — is the most common. The outcome was survivable because the later decisions were sound. It did not have to be.
+<h3>What good judgment looks like here</h3>
+A sound preflight is not about paranoia. It is about reducing the number of items on your kneeboard you have to monitor in the cockpit. Every deferred decision becomes a cognitive load at altitude. Deferred decisions stack.
+<h3>Key takeaway</h3>
+The trip that gets rescheduled is not the worst possible outcome. Sometimes it is the mature one.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_LongRollout
+<<set $pathArray to $pathArray.concat(["Ending: Long rollout, aircraft OK"])>>
+<div class="decision-heading">Ending — Long Rollout, Aircraft Intact</div>
+
+You land hot and long, right main first, then left, then nose. The gear holds. The left engine is at idle. You use almost all of the 10,000 feet of runway — the gear-down, full-flaps configuration on one engine left you with nothing to do but fly the airplane to a stop. The sheriff truck at the midfield intersection closes in as you turn off at the end.
+
+You and Teo taxi to the FBO, shut down, climb out. The airplane is intact. Brakes are warm but not glowing. You look at the prop disc on the right — flat to the wind, three feathered blades, exactly as you commanded.
+
+Teo is quiet for longer than usual. You give him the quiet. On the ramp, he says, "You made that work." You tell him you don't know if you made it work. You tell him the airplane made it work. He is kind about the distinction.
+
+<div class="debrief">
+<h3>What happened</h3>
+A full-flaps single-engine approach is flyable, and you flew it. What you gave up was any meaningful ability to go around — a single-engine go-around at full flaps is outside the Baron's capability at most weights, and the textbook doesn't pretend otherwise. The airplane was stable, the geometry worked, and you landed. You also used almost all the runway.
+<h3>ADM analysis</h3>
+The configuration choice at Decision 10 was the one that drove this ending. Full flaps feel safer — they're the short-field instinct from single-engine training — and they are exactly wrong for a single-engine twin approach. The Baron community's standard is approach flaps (15°) until the runway is made, then full flaps optional after gear down if the geometry allows.
+<h3>What good judgment looks like here</h3>
+Fly the approach with something left in the bag until you don't need it anymore. Gear on short final, flaps partial, Vyse+5 to Vref transition. If anything asks you for a go-around, you want to have one available.
+<h3>Key takeaway</h3>
+In a single-engine Baron approach, the configuration that feels safest is the one that removes your go-around option. The configuration that keeps your options open is the one to fly.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_HardLanding
+<<set $pathArray to $pathArray.concat(["Ending: Hard landing"])>>
+<div class="decision-heading">Ending — Hard Landing, No Injuries</div>
+
+The airplane arrives on the runway harder than you wanted. Right main first — you were out of rudder trim on the flare, fighting the yaw asymmetry of a less-than-perfectly-feathered prop — then left main, then nose. The nose gear squawks as it absorbs more load than the book likes. The right main shock strut compresses and stays compressed. You roll out long and crooked.
+
+Taxi clear. Shut down. Teo steps down onto the ramp. He is shaken but unhurt. You walk around the airplane and find the nose gear truck cocked slightly and the right main strut bottomed. The prop disc on the right is feathered but not perfectly — you can see one blade slightly out of the plane of the others.
+
+<div class="debrief">
+<h3>What happened</h3>
+The secure-engine sequence was incomplete or out of order, which left residual drag on the right side that you fought through the approach and the flare. The landing was survivable, but the airplane is damaged — the right main will need attention, the nose strut will need inspection, and the feathering mechanism on the right engine will be pulled apart and looked at.
+<h3>ADM analysis</h3>
+Memory items exist because in the moment you need them, you won't have time to read a checklist. The Baron's secure-engine memory sequence — mixture ICO, fuel selector OFF, prop to FEATHER, mags OFF, cowl flap CLOSED — is five steps, and every one of them matters. Skipping the fuel selector leaves live fuel at the engine. Doing the feather first before killing fuel gives you feathered blades with fuel still going somewhere it shouldn't. The order matters.
+<h3>What good judgment looks like here</h3>
+Memory items are rehearsed items. They are not something you assemble in the moment out of logic. The rehearsal is the whole point. If the Baron's secure-engine sequence isn't something you can say in your sleep, it isn't a memory item — it's a recipe you're reading off a wet card at 14,000 feet.
+<h3>Key takeaway</h3>
+Rehearse the sequence, in order, out loud, on the ground, every time. The one time you need it will be the one time you don't have the cognitive budget to improvise.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_OffAirport
+<<set $pathArray to $pathArray.concat(["Ending: Off-airport"])>>
+<div class="decision-heading">Ending — Off-Airport Landing in a Valley Meadow</div>
+
+You press the divert too late. By the time you turn for the nearest sensible airport, the right engine's oil pressure is past zero and the CHT is in the red. The cylinder seizes — a fast event, a short judder, and the prop stops windmilling instantly. You feather by reflex. The left engine is carrying you but it cannot hold altitude — between the drag from an imperfect feather, the density altitude, and the asymmetric yaw, you are descending.
+
+You pick a meadow along the Colorado River west of Eagle. It's narrow and sloped but it is green and open and long enough. You configure for a gear-up landing — the ground is soft, wet, uneven — and fly the Baron onto it at Vref. The belly takes the grass. The wings come level. The airplane slides to a stop in roughly eight hundred feet.
+
+Teo is bruised where the shoulder harness caught him across the collarbone. You have a scrape where the door frame caught your knee climbing out. The airplane has its belly open to the sky in a way it did not that morning.
+
+<div class="debrief">
+<h3>What happened</h3>
+You waited too long to divert. By the time you committed, you had lost the option of reaching an airport on one engine at that density altitude. You made the right final call — an off-airport landing onto the best available terrain — and flew it competently. Both of you walked away.
+<h3>ADM analysis</h3>
+The engine trend at Decision 8 was the moment. Mountain flying in a twin rewards the pilot who treats the first yellow indication as the whole problem. An engine that is deteriorating at 14,000 MSL over the Divide is an engine that will fail before you can get across the Divide. The options narrow fast.
+<h3>What good judgment looks like here</h3>
+Divert to the lowest, flattest, longest airport within your single-engine reach at the first meaningful indication of a failing engine. Not the second. Not after you've watched it for ten minutes. The first.
+<h3>Key takeaway</h3>
+The off-airport landing, flown well, is a good day. The off-airport landing you didn't have to have is a better one.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Excursion
+<<set $pathArray to $pathArray.concat(["Ending: Runway excursion"])>>
+<div class="decision-heading">Ending — Runway Excursion, No Injuries</div>
+
+You arrive on the runway fast. The airplane is trying to yaw right and you are trying to convince it otherwise. You are full-flaps, gear down, Vref plus whatever the approach math added. The right main touches first, the left follows, and the airplane begins to crab left as the prop drag you could not quite equalize does its work.
+
+You are on the brakes. You are on left rudder. You are running out of both. The airplane leaves the pavement on the left side of the runway at 45 knots, rolls across the hundred feet of grass infield, and comes to a stop against the outer taxiway edge sign. The right main has dug in. The prop on the right — imperfectly feathered — has clipped the turf and bent a blade.
+
+Teo is unhurt. You are unhurt. The airplane is hurt.
+
+<div class="debrief">
+<h3>What happened</h3>
+Two errors stacked. The engine was not perfectly secured, which left asymmetric drag on the final. The approach configuration was the wrong one for a single-engine landing, which removed your ability to recover. The geometry of the runway excursion came from an airplane that wanted to go left and a pilot who ran out of rudder authority to say no.
+<h3>ADM analysis</h3>
+Each individual error was recoverable. A clean feather would have taken the yaw out. A partial-flaps approach would have kept enough energy in reserve for the touchdown. Together they formed the chain. Chains are how aviation accidents happen. One link at a time.
+<h3>What good judgment looks like here</h3>
+A single-engine approach in a twin is a discipline: secure the engine completely, fly the approach at Vyse+5 clean until the runway is made, gear late, partial flaps, go-around in reserve until wheels are down. The Baron is a good airplane. Asked to do two unfamiliar things at once, it will not reward the asking.
+<h3>Key takeaway</h3>
+In emergency procedures, completeness is not a nice-to-have. It is the difference between a story and a report.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_GearCollapse
+<<set $pathArray to $pathArray.concat(["Ending: Gear collapse"])>>
+<div class="decision-heading">Ending — Gear Collapse on Rollout</div>
+
+You press the approach late and hot, full flaps and gear down, fighting drag asymmetry the whole way. You arrive at the runway with more speed than you wanted and the airplane lands hard. The nose gear takes a load it was not designed for; on the rollout, at about 60 knots, the nose gear collapses and the airplane grinds onto the fuselage nose. The props — one feathered, one still turning at idle — hit.
+
+Teo is unhurt. You are unhurt. You climb out onto a runway that is now closed, next to an airplane that has two bent propellers and a collapsed nose. The sheriff deputy who rolls up is gentle. The FBO tug operator is not surprised; he has seen this before.
+
+<div class="debrief">
+<h3>What happened</h3>
+The chain: an engine that wasn't attended to early, an engine secure that wasn't clean, and an approach flown full-flaps because it felt safer. Each error alone would have been absorbed. The three together produced a gear collapse and a prop strike.
+<h3>ADM analysis</h3>
+The Baron is a forgiving airplane. It can be flown out of a lot of marginal situations by a pilot who is competent and calm. It cannot save a pilot who arrives at the runway behind the airplane, with drag they did not neutralize and energy they cannot bleed. The runway cannot love you enough to fix that.
+<h3>What good judgment looks like here</h3>
+Every emergency in a twin has a rhythm: identify, verify, secure, fly. You can be slow on any one of them. You cannot be sloppy on all three.
+<h3>Key takeaway</h3>
+The chain is the lesson. Every emergency flown well is an emergency where you broke the chain somewhere.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Crash
+<<set $pathArray to $pathArray.concat(["Ending: Vmc loss of control"])>>
+<div class="decision-heading">Ending — Loss of Control</div>
+
+You are low and slow and single-engine with a prop that never quite made it to feather. On the final turn, with full flaps extending and gear down, you let the airspeed decay below Vyse and into the Vmc band.
+
+The airplane rolls right. You have full left rudder. It is not enough. The left engine, still making climb power, is driving the roll. You reduce the left throttle and push the nose down — textbook recovery for Vmc — and the airplane responds, but you are now a hundred and fifty feet above terrain that does not accommodate an unplanned descent.
+
+The airplane arrives in the field short of the runway. It is survivable, in the sense that both of you are still alive when the first responders arrive. It is a bad day.
+
+<div class="debrief">
+<h3>What happened</h3>
+A chain that was long enough to connect. A mechanical indication attended to too late. An engine secured incompletely, so drag was never fully killed. An approach configuration that removed energy reserves. Then, on final, airspeed that decayed into the region the Baron cannot fly safely with asymmetric thrust.
+<h3>ADM analysis</h3>
+The blue line — Vyse, 105 KIAS in this airframe — is the airspeed a single-engine Baron climbs best at and, in the event of a Vmc incipient, recovers most predictably toward. Letting airspeed decay below blue line on a single-engine approach, with asymmetric thrust still in play because the failed engine wasn't cleanly feathered, is the classic fatal profile for a light twin. The Baron is one of the better-behaved examples of its class. It still cannot be flown below Vmc with power on the live engine.
+<h3>What good judgment looks like here</h3>
+Every multi-engine pilot carries one number into every flight: blue line. Vyse. In this airframe, 105 knots indicated. It is not a guideline. It is the airspeed below which the airplane does not want to be flown when one side is dead. In all other phases you have room. Here, you do not.
+<h3>Key takeaway</h3>
+The second engine is only an asset if you keep the airplane above blue line. Below blue line, the live engine becomes a hazard.
+</div>
+
+<<link "Return to Start" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $altRouteError to false>><<set $fuelStainMissed to false>><<set $propTestError to false>><<set $runupError to false>><<set $briefIncomplete to false>><<set $climbMgmtError to false>><<set $crossfeedMisused to false>><<set $oilSignalLate to false>><<set $featherError to false>><<set $approachError to false>><<set $caughtStain to false>><<set $cleanSecure to false>><<set $stableApproach to false>><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
