@@ -1,0 +1,904 @@
+:: StoryTitle
+The Pink Dot
+
+:: StoryData
+{
+  "ifid": "F1A2B3C4-5D6E-4F78-9A0B-1C2D3E4F5A6B",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Start"
+}
+
+:: StoryInit
+/* Scenario metadata
+   Audience:    General Aviation Pilots
+   Topic:       Special-event VFR arrival / AirVenture Oshkosh / CRM
+                with non-pilot passenger
+   Tone:        Entertainer. Slightly irreverent, light partial-asterisk
+                profanity permitted in character dialogue. No fatal endings.
+   Protagonist: Sam Delgado, 36, 680 hrs TT, owns a 1977 Piper Arrow II
+                (PA-28R-200), IO-360 200hp, retractable gear, constant-
+                speed prop. Second lifetime trip to Oshkosh. First time
+                doing it with a passenger.
+   Passenger:   Marcus "Marc" Kline, 38, Sam's oldest friend. Software
+                PM by day, very much not a pilot. Owns four cameras and
+                is wearing all four of them on lanyards. Has been
+                pestering Sam about AirVenture for five years. Today is
+                the day. He has memorized the phrase "are we there yet"
+                as an ongoing joke.
+   Aircraft:    N442DS, Piper Arrow II. IFR-equipped, GTN 650, G5 AI +
+                G5 HSI, KAP 140 autopilot. All placards current, NOTAM
+                printed and on board.
+   Flight:     KSGF (Springfield-Branson, MO) with a fuel stop at KDBQ
+               (Dubuque, IA) then direct RIPON for the AirVenture
+               arrival to KOSH. 2026, Wednesday of AirVenture week.
+   Teaches:   - Pre-arrival planning for special-event VFR
+              - Reading and flying a 32-page NOTAM
+              - FISK arrival altitudes and speeds (1,800/90 or 2,300/135)
+              - Wing-rock color identification
+              - Dot-assignment landings and simultaneous-ops discipline
+              - CRM with a non-pilot passenger on a one-way radio
+              - Go-around from a special-event arrival
+              - When Fond du Lac is the smarter answer than Oshkosh
+              - Arrow systems in a busy arrival: gear, prop, flaps,
+                airspeeds that matter
+*/
+<<set $badchoices to 0>>
+<<set $overTheTracks to false>>
+<<set $assignedDot to "">>
+<<set $assignedRwy to "">>
+
+:: StoryStylesheet [stylesheet]
+body {
+  background: #f7f2e8;
+  color: #2a2520;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#story {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+#passages {
+  border-left: none;
+  padding: 0;
+}
+.passage {
+  padding: 0;
+}
+a.link-internal, a.macro-link {
+  color: #c2185b;
+  text-decoration: none;
+  border-bottom: 1px dotted #8a123f;
+  font-weight: 600;
+}
+a.link-internal:hover, a.macro-link:hover {
+  color: #fff;
+  background: #c2185b;
+  border-bottom: 1px solid #c2185b;
+}
+.choice-list {
+  margin: 1.2em 0 0.5em 0;
+}
+.choice-list p { margin: 0.6em 0; }
+hr {
+  border: none;
+  border-top: 1px solid #d9ccb6;
+  margin: 1.8em 0;
+}
+.debrief {
+  background: #faf5ec;
+  padding: 1rem 1.3rem;
+  border-left: 3px solid #c2185b;
+  margin-top: 1rem;
+  font-size: 0.98rem;
+}
+.debrief h3 {
+  color: #c2185b;
+  font-size: 1.05rem;
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.04em;
+}
+.restart {
+  margin-top: 2em;
+  font-size: 0.95rem;
+  color: #8a7a5a;
+}
+.atc {
+  font-family: "Courier New", monospace;
+  font-size: 0.98rem;
+  color: #3a2a0a;
+  background: #efe6d1;
+  padding: 0.5em 0.9em;
+  border-left: 2px solid #c2185b;
+  margin: 0.6em 0;
+}
+
+:: Start
+You are Sam Delgado. It is 4:30 AM Wednesday, July 22, 2026, the hangar is cold, your coffee is cold, and Marc is asleep in the passenger seat of your 1977 Piper Arrow II with his cheek pressed against the window.
+
+Marc has been asking to go to Oshkosh since you met him at a college bar in 2011. He said the word "AirVenture" that night and then every year after. You never took him. This year you finally said yes, partly because you turned thirty-six and something clicked, and partly because he threatened to buy his own Southwest tickets and "third-wheel" you.
+
+The 32-page AirVenture NOTAM sits on the glareshield, held flat by a small orange wrench. You have read it. You have read it again. You have, at 11:47 last night, gotten up out of bed to read it a third time. You know you're supposed to be 1,800 MSL at 90 knots up the tracks from RIPON to FISK, or 2,300 MSL at 135 knots for faster aircraft. You know the wing-rock drill. You know about the dots. You have the Chicago sectional on your iPad, ForeFlight tracked and ready, and the NOTAM bookmarked in three different places.
+
+Marc has seen none of this. Marc is here for the vibes.
+
+<div class="atc">KSGF 220953Z 18004KT 10SM SCT025 BKN250 22/19 A3002
+KDBQ 220953Z 22007KT 10SM SCT055 24/18 A3001
+KOSH 220953Z 19006KT 10SM SCT060 BKN200 23/18 A2998
+TAF KOSH 220520Z 2206/2306 19007KT P6SM SCT060 BKN200
+     FM221700 20010G16KT P6SM BKN060</div>
+
+Weather is fine. The front that was going to be a problem is in Ontario now and nobody cares. The plan is: launch at 0500 CDT, fuel stop at Dubuque around 0700, top off, potty break, and be at RIPON by 0900 local — right in the middle of the arrival window but not yet at peak saturation.
+
+Marc snores quietly. You do not wake him. You press the starter. The IO-360 catches, the prop spins into a blurred disc, and Marc opens one eye.
+
+"Are we there yet?" he says.
+
+<div class="choice-list">
+<<link "A. Launch now as planned. KSGF to KDBQ to RIPON to OSH. Straightforward day." "Dec1A">><</link>>
+
+<<link "B. Re-check the KOSH ATIS, NOTAM closures, and PIREPs one more time before you move. You'll feel better with another look." "Dec1B">><</link>>
+
+<<link "C. Skip Dubuque. Full tanks in the Arrow get you almost all the way — you can save forty-five minutes. Direct KSGF to RIPON, land at Oshkosh on the tanks you have." "Dec1C">><</link>>
+
+<<link "D. Wait until 0700 to launch. There's no reason to beat the sun up. Get there mid-day, slide into the arrival stream when things have calmed a bit." "Dec1D">><</link>>
+
+<<link "E. Marc gets a briefing. Before you even move, you walk him through the ENTIRE plan: 'when I'm on 120.7 and the controller says rock your wings, you don't talk, you don't breathe, you don't sneeze.' Full pre-brief, with a printed copy for him." "Dec1E">><</link>>
+</div>
+
+:: Dec1A
+You go. Takeoff roll, rotate, positive rate, gear up, lean for climb. Springfield drops away. Marc is awake now, nose against the window, murmuring "hoooly s***" with a kid's awe as the Missouri morning rolls gold underneath you.
+
+Two hours and forty minutes later, wheels on the pavement at Dubuque. Fuel. Bathroom. Marc buys three donuts and eats all three before you get back in the airplane. You re-check the Oshkosh ATIS. Runway 36L primary. Ceilings broken 6,000, wind 190 at 8. Perfect.
+
+You launch from Dubuque at 0745 local, climb to 3,500, turn northeast, and call flight following with Chicago Center. The Arrow purrs. Marc is photographing clouds.
+
+<<goto "Approaching">>
+
+:: Dec1B
+You sit in the run-up area with the engine at 1,200 RPM, iPad propped on your knee, scrolling the KOSH ATIS one more time. It has not changed in the last six minutes. You check the NOTAM for any last-minute addendum. Nothing. You check the PIREPs along your route. Nothing. You check the FISK frequency on ForeFlight. Nothing.
+
+Marc, who has been fiddling with a camera strap, looks over. "You good?"
+
+"Yeah. Yeah, I'm good."
+
+You release the brakes. Takeoff roll, rotate, positive rate, gear up. You cost yourself six minutes of pre-takeoff and gained a slightly clearer head. Six minutes is six minutes.
+
+<<goto "Approaching">>
+
+:: Dec1C
+You do the fuel math. The Arrow holds 48 gallons useable. At 9.5 gph you have a four-hour-ish range with VFR reserves. KSGF to OSH direct is about 430 nm; at 140 KTAS with a light headwind you're looking at 3:15 to 3:30 enroute. VFR reserves require 30 minutes day. You will land at Oshkosh with approximately 40 minutes of fuel.
+
+Which is legal, and also not a lot of margin for an arrival where holding at Fond du Lac is a real possibility. The NOTAM specifically talks about Fond du Lac as a hold point when Oshkosh saturates.
+
+You decide: no, fuel at Dubuque. You launch anyway.
+
+Or — you could also have decided: screw it, fuel at Dubuque, on plan.
+
+You fuel at Dubuque. It is the right call. Forty-five minutes is forty-five minutes; a tight arrival with 40 minutes of fuel is forty-five minutes of "don't think about the tanks, don't think about the tanks."
+
+<<goto "Approaching">>
+
+:: Dec1D
+You go back into the FBO, buy a second coffee, and wait two hours. Marc falls asleep on the couch. You read a three-month-old copy of Flying Magazine cover to cover. At 0645 you get Marc up, pre-flight, and launch at 0705.
+
+You land at Dubuque at 0930. By the time you fuel, pee, and relaunch, it is 1015. You pick up flight following. You approach RIPON at 1155 local.
+
+This puts you square in the heart of peak arrival saturation. A glance at the FISK frequency on number two tells you the controllers are in full chant — a call every four seconds, the cadence of a rapid-fire auction. You have also let every post-sunrise arrival beat you there.
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "Approaching_Busy">>
+
+:: Dec1E
+You shut the engine down. Marc blinks. "What are we doing?"
+
+"I'm briefing you. Sit tight."
+
+You walk Marc through the whole thing. The NOTAM pages. The railroad tracks. The 1,800-90 rule. The wing-rock drill. "When the controller says 'white and blue Arrow, rock your wings,' I'm going to rock the wings. Don't help. Don't grab anything. Don't say anything until I say."
+
+"What if I have to pee?"
+
+"Hold it from RIPON to OSH. Thirty minutes."
+
+"Sam, you're taking this really seriously."
+
+"Yeah, I am."
+
+Marc nods. Marc is actually a good friend; he gets it when he's told. You re-start, launch at 0512 instead of 0500. You lose twelve minutes. You gain a silent passenger who now understands why the radio will be a one-way street for the last twenty minutes of the flight. Objectively, a deal.
+
+Dubuque goes smoothly. Relaunch, climb, northeast-bound.
+
+<<goto "Approaching">>
+
+:: Approaching
+You are at 3,500 MSL, forty miles south-southwest of RIPON, watching the orange dot on ForeFlight creep toward the magenta line. The Arrow's GTN 650 has the RIPON waypoint loaded. Your number two radio is tuned to 120.7 FISK approach; the speaker is on.
+
+"...blue low-wing over Fisk, rock your wings... good rock, blue low-wing, you're runway 36 Left, green dot, enter left base, follow the red-and-white Cessna..."
+
+"...white high-wing Cessna over Fisk, rock your wings... one more time, white high-wing... that's a rock, Cessna, runway 36 Left, pink dot, left base, follow the blue low-wing..."
+
+It sounds like a radio play written by somebody on amphetamines. Marc is staring at the speaker with his mouth slightly open.
+
+"Dude," he whispers. "Dude, is that what they sound like?"
+
+"Yes."
+
+"This is so cool."
+
+You are six minutes from RIPON. You need to pick an altitude-and-speed combo. The NOTAM says: slower aircraft 1,800 MSL at 90 KIAS; faster aircraft 2,300 MSL at 135 KIAS.
+
+The Arrow will happily cruise at 135. It will also, with a little work, hold 90 — it's just above flap-extension speed and above Vfe for your first notch of flaps, but it is a perfectly coordinated and stable speed for this airplane at this weight.
+
+<div class="choice-list">
+<<link "A. 1,800 MSL at 90 KIAS. The NOTAM's slower-aircraft profile. Gear up, clean, power back, trim, hold 90 over the tracks." "Dec2A">><</link>>
+
+<<link "B. 2,300 MSL at 135 KIAS. The NOTAM's faster-aircraft profile. Stay in cruise config, gear up, clean, hold 135." "Dec2B">><</link>>
+
+<<link "C. 1,800 MSL at 100 KIAS. Close enough to 90 — the Arrow likes 100 better, and you'll still be slower than most of the faster stream." "Dec2C">><</link>>
+
+<<link "D. Drop to 1,800 MSL early, slow to 90 KIAS before RIPON, add a notch of flaps now to help stabilize the slow airspeed." "Dec2D">><</link>>
+</div>
+
+:: Dec2A
+You descend to 1,800 MSL five miles south of RIPON, pull the throttle to 16 inches, and let the Arrow settle to 90 KIAS. Trim in. Gear up. Clean. Hands off the yoke for a moment — she tracks hands-off; she's trimmed beautifully for this.
+
+You cross RIPON on the tracks at 1,800 and 90. The airplane ahead of you — a red low-wing, Mooney maybe — is exactly where it should be, half a mile ahead, slightly higher. The airplane behind you is about a mile back. You are in the conga line and it feels, weirdly, more orderly than you expected.
+
+<<set $overTheTracks to true>>
+<<goto "FiskApproach">>
+
+:: Dec2B
+You climb to 2,300 MSL and set up for 135 KIAS. The Arrow is happy here; this is closer to a cruise profile. Gear up, clean, prop forward a touch for response, mixture set.
+
+You cross RIPON at 2,300 and 135, and you are immediately aware that you're overtaking the line of traffic below you on the lower track. The 1,800-90 stream is a slower, denser ribbon; the 2,300-135 stream is thinner and faster. You are alone up here for the moment.
+
+<<set $overTheTracks to true>>
+<<goto "FiskApproach">>
+
+:: Dec2C
+You descend to 1,800 and slow to 100 KIAS. It feels right in the Arrow — she flies well at 100. It is also ten knots faster than the NOTAM profile. You start to eat up the Mooney in front of you, gaining on him by about a knot and a half per minute.
+
+You are not supposed to overtake on the tracks. You are supposed to match the profile.
+
+<<set $badchoices to $badchoices + 1>>
+<<set $overTheTracks to true>>
+<<goto "FiskApproach_Overtaking">>
+
+:: Dec2D
+You descend early to 1,800, slow through the yellow arc to 90, and reach for the flap handle to add ten degrees. The flap limit speed (Vfe) on the Arrow II is 103 KIAS — you're below that, just. Flaps out.
+
+The airplane settles. 90 KIAS feels beautifully stable in this configuration.
+
+It is also not what the NOTAM says. The NOTAM wants you clean at 90 on the tracks; a dirty configuration is fine over the runway but not recommended for the thirty-mile-plus arrival, and it will cost you a lot of fuel.
+
+You shrug. You're safer at 90 KIAS with flaps out, you figure, than clean and drifting toward a stall buffer.
+
+<<set $overTheTracks to true>>
+<<goto "FiskApproach">>
+
+:: Approaching_Busy
+You are at 3,500 MSL, thirty-five miles out, and the FISK frequency on number two is a non-stop stream. Fifteen calls a minute. The voice of the controller sounds like he's auctioning off real estate. You can hear, over the comms, aircraft being told to 360 on the tracks, aircraft being told to break off and divert to Fond du Lac, aircraft being told to climb 500 feet immediately.
+
+It is noon on a Wednesday in July and everyone on earth has arrived at the same time.
+
+"Sam," Marc says. "Is it usually like this?"
+
+"Not this bad, no."
+
+<div class="choice-list">
+<<link "A. Press on. Join the 1,800-90 stream and take your chances. You're here now." "Dec2_BusyPress">><</link>>
+
+<<link "B. Divert to Fond du Lac (KFLD). Hold on the ground, wait an hour for the rush to soften, re-attack." "Dec2_BusyFLD">><</link>>
+
+<<link "C. Request the 2,300-135 higher/faster stream. You'll be past most of the slower traffic and maybe get sequenced faster." "Dec2_BusyFaster">><</link>>
+
+<<link "D. Hold west of RIPON in a lazy right-hand pattern until you hear the frequency calm down. Burn fuel." "Dec2_BusyHold">><</link>>
+</div>
+
+:: Dec2_BusyPress
+You press on. Descend to 1,800, slow to 90, join the stream. The stream is dense — aircraft half a mile apart, in a ribbon stretching past RIPON. You weave your way into a gap between a Skyhawk and a Bonanza, maintaining 90.
+
+The FISK controller is calling every three seconds. Three seconds between aircraft, at 90 knots, is about 450 feet of separation. That is closer than you have ever flown to another airplane on purpose.
+
+<<goto "FiskApproach_Busy">>
+
+:: Dec2_BusyFLD
+You key the mic on flight following. "Chicago, Arrow four-four-two Delta Sierra, diverting Fond du Lac, would like to cancel flight following and go VFR to KFLD."
+
+"Four-two Delta Sierra, roger, VFR to Fond du Lac, squawk twelve hundred, frequency change approved. Have a good day."
+
+You turn toward KFLD. Marc looks at you. "We're not going to Oshkosh?"
+
+"We are. We're going to the-place-right-next-to-Oshkosh for an hour, have a snack, and try again when the stream thins."
+
+"Okay. Okay, yeah, okay."
+
+Fond du Lac is twenty miles south of OSH. Non-towered; the NOTAM gives specific hold/pattern procedures. You enter the pattern, land, taxi clear, shut down. Marc gets out and takes twenty photos of random airplanes on the ramp.
+
+<div class="choice-list">
+<<link "A. Fuel up, have a sandwich, wait ninety minutes, then relaunch for the FISK arrival when the peak softens." "Dec2_FLD_Relaunch">><</link>>
+
+<<link "B. Just stay at Fond du Lac. EAA has a shuttle that runs KFLD-to-OSH every thirty minutes. Park the Arrow, catch the shuttle, do the show." "Dec2_FLD_Stay">><</link>>
+
+<<link "C. Commit to both — call the shuttle, catch it into OSH for the day, fly the Arrow into Wittman tomorrow morning when it'll be quieter." "Dec2_FLD_Overnight">><</link>>
+</div>
+
+:: Dec2_FLD_Relaunch
+You fuel, eat, wait ninety minutes. At 1320 local, you pre-flight again, launch, approach RIPON at 1405.
+
+The frequency is still busy but no longer manic. There's breathing room in the calls.
+
+<<set $overTheTracks to true>>
+<<goto "FiskApproach">>
+
+:: Dec2_FLD_Stay
+You tie down the Arrow at KFLD, grab your gear out of the baggage area, and walk to the shuttle pickup at the FBO. The shuttle is a coach bus with EAA branding; it leaves every thirty minutes, runs non-stop to the AirVenture gate, and costs nothing. You're at Camp Scholler by 1030.
+
+Marc is beaming. He takes six hundred photographs on day one. You see the arrival from the sidelines — the FISK stream a constant procession of wings above your head, the wing rocks tiny in the distance. You hear the controllers on a fan-boy with a portable scanner, and it's just as bonkers from the ground as it was from the air.
+
+You fly the Arrow back home on Saturday evening from KFLD, untouched by the arrival madness.
+
+<<goto "End_FLD_Stay">>
+
+:: Dec2_FLD_Overnight
+You catch the shuttle into OSH for the day, do the show with Marc, and stay overnight at a friend's hangar in Fond du Lac. Thursday at 0615, with a thin-to-nothing arrival stream, you preflight the Arrow, launch, and fly the FISK arrival in a radio silence so complete you can hear your engine breathe.
+
+The controller says, "White and pink Arrow over Fisk, rock your wings." You rock. "Good rock, 36L, pink dot, taxi behind the yellow tug."
+
+You land on the pink dot at 0647. There are three airplanes ahead of you for the week. You taxi in as the sun comes up over Lake Winnebago.
+
+<<goto "End_Overnight_Relaunch">>
+
+:: Dec2_BusyFaster
+You climb to 2,300, accelerate to 135, and cross RIPON on the higher track. The faster stream is thinner. You have clear air ahead and you can see the FISK waypoint on the GPS. You are committing to a heading, an altitude, and a speed that the NOTAM designates for high-performance aircraft.
+
+The Arrow is not, technically, a high-performance aircraft by the FAR 61.31 definition (it's 200 hp). It is also not slow. It fits the profile in the spirit of the rule.
+
+<<set $overTheTracks to true>>
+<<goto "FiskApproach">>
+
+:: Dec2_BusyHold
+You hold in a lazy right-hand oval west of RIPON, 3,500 MSL, just outside the arrival flow. For twenty-five minutes you burn fuel and watch the FISK frequency. It doesn't slow down much. You check the fuel totalizer: 19 gallons remaining. The arithmetic is getting interesting.
+
+You commit. You descend, slow, and join the stream.
+
+<<set $overTheTracks to true>>
+<<goto "FiskApproach">>
+
+:: FiskApproach
+You are over the railroad tracks, altitude steady, airspeed stable, the line of traffic ahead and behind you resolving itself. Marc has his camera up and is taking photos of the Mooney three-quarters of a mile in front of you.
+
+The FISK controller's voice is in your ears in a steady stream of calls. You have been listening to the pattern for long enough to hear: he calls the aircraft based on color and wing position. He says their position. He tells them to rock their wings. He waits for the rock. He assigns a runway and a dot and a sequence.
+
+Your Arrow is white with a pink-and-blue stripe. You have painted it yourself in the six months after you bought it, because that's who you are. Nobody has ever been confused about it, but "white and pink Arrow" is a vocabulary entry you have not heard the controller use yet this morning.
+
+"...Arrow, white and blue over Fisk, rock your wings..."
+
+You are over the FISK intersection. Your shadow passes over the little Fisk lookout where the controllers stand.
+
+<div class="choice-list">
+<<link "A. That's you — you think. You rock the wings hard, 30° bank each way, clean and quick." "Dec3A">><</link>>
+
+<<link "B. Not you. You have a pink stripe, not blue. Don't rock. Wait for 'white and pink Arrow.'" "Dec3B">><</link>>
+
+<<link "C. Rock the wings just in case. If it was you and you miss the call, you'll be sent around. Better to rock twice than miss a call." "Dec3C">><</link>>
+
+<<link "D. Key the mic. 'FISK, white and PINK Arrow over Fisk, correcting color call.'" "Dec3D">><</link>>
+</div>
+
+:: FiskApproach_Overtaking
+You are on the tracks, 1,800 MSL, 100 KIAS, gaining on the red Mooney ahead of you by about 100 feet per minute. The gap that was half a mile is now a quarter mile, and the controller on FISK has not yet said anything about it.
+
+But you can hear the gear-change in the controller's voice — the tempo has shifted; he's re-sequencing the stream.
+
+"Arrow, white and pink over Fisk, slow to 90, you are overtaking — slow NOW, 90 knots, immediate."
+
+That is you. You pull the throttle, pitch up slightly, let the Arrow decelerate. The Mooney regains distance. The controller clicks the mic twice, which is a small approval.
+
+<<set $assignedDot to "orange">>
+<<set $assignedRwy to "36L">>
+<<goto "DecDot">>
+
+:: FiskApproach_Busy
+You are on the tracks, 1,800 MSL, 90 KIAS, half a mile behind a Skyhawk, half a mile ahead of a Bonanza, and the line behind the Bonanza stretches back to RIPON and beyond. The controller is calling every three seconds.
+
+Marc is silent. He has not said a word in four minutes. He is holding his camera with both hands and not raising it. He understands what the airplane needs from him right now.
+
+"Arrow, white and pink over Fisk, rock your wings."
+
+That is you.
+
+<div class="choice-list">
+<<link "A. Rock hard. 30° each way. Clean and quick. Marc doesn't breathe." "Dec3A">><</link>>
+
+<<link "B. Rock gently — 15° each way. You don't want to scare Marc and you don't want to lose altitude in the rock." "Dec3B_Gentle">><</link>>
+
+<<link "C. Key the mic: 'White and pink Arrow over FISK, rocking wings.' Confirm over the air." "Dec3C_Keymic">><</link>>
+</div>
+
+:: Dec3A
+You rock. Hard left — 30°. Back to level. Hard right — 30°. Back to level.
+
+Altitude holds. Airspeed holds. Marc grips the dashboard but doesn't make a sound.
+
+"White and pink Arrow, good rock. Runway 36 Left, pink dot, left base, follow the blue high-wing."
+
+<<set $assignedDot to "pink">>
+<<set $assignedRwy to "36L">>
+<<goto "DecDot">>
+
+:: Dec3B
+You do not rock. The controller's next transmission comes seven seconds later.
+
+"White and pink Arrow over Fisk, rock your wings, that's you white and pink."
+
+You rock immediately. 30° each way.
+
+"Okay, white and pink Arrow, good rock, runway 36 Left, green dot, left base, follow the red Bonanza."
+
+You lost two seconds of your arrival window by waiting for a perfect color call. The controller used "blue" for whatever reason — probably a glance at your stripe, which in morning light is not obvious. A small thing. You recovered.
+
+<<set $assignedDot to "green">>
+<<set $assignedRwy to "36L">>
+<<goto "DecDot">>
+
+:: Dec3B_Gentle
+You rock 15°. It looks like a stable-turbulence wiggle, not a wing rock.
+
+"Arrow, white and pink over Fisk, rock your wings — that's a confirmation rock, 30° each way, do it again."
+
+You rock again, harder this time.
+
+"Good rock. Runway 36 Left, orange dot, left base, follow the yellow low-wing."
+
+You lost five seconds. Nothing broke.
+
+<<set $assignedDot to "orange">>
+<<set $assignedRwy to "36L">>
+<<goto "DecDot">>
+
+:: Dec3C
+You rock. Hard.
+
+"Uhhh — white and blue Arrow, that's a rock... also white and pink Arrow, uhh — rocking? Let me go to the white and pink next — white and pink Arrow, rock your wings."
+
+The controller is un-ruffled. It happens. You rock again.
+
+"Good rock, white and pink Arrow. Runway 36 Left, green dot, left base, follow the blue high-wing."
+
+You did not cause a problem, but you briefly confused the controller, and you saw the cost — a moment of "who am I looking at" that in a different pattern on a different day could be worse. You are on runway 36L green dot now.
+
+<<set $badchoices to $badchoices + 1>>
+<<set $assignedDot to "green">>
+<<set $assignedRwy to "36L">>
+<<goto "DecDot">>
+
+:: Dec3C_Keymic
+You key the mic and transmit. "White and pink Arrow over FISK, rocking wings."
+
+There is a two-second silence on the frequency. Then:
+
+"White and pink Arrow, FISK is receive-only — do NOT transmit on this frequency. Rock your wings."
+
+Your face burns. You rock. Marc, who was about to ask something, swallows it.
+
+"White and pink Arrow, good rock. Runway 36 Left, orange dot, left base, follow the yellow low-wing. No further transmissions on this frequency."
+
+You will be hearing that inside your head for the rest of the week. The NOTAM is very, very clear. 120.7 FISK is receive-only. You are supposed to rock, not talk. You did both.
+
+<<set $badchoices to $badchoices + 1>>
+<<set $assignedDot to "orange">>
+<<set $assignedRwy to "36L">>
+<<goto "DecDot">>
+
+:: Dec3D
+You key the mic. "FISK, white and PINK Arrow over Fisk, correcting color call — it's pink, not blue."
+
+The radio goes briefly silent, then: "White and pink Arrow, FISK is receive-only — do not transmit. Rock your wings."
+
+Face burns. Wings rock. Marc, smart enough, says nothing.
+
+"Good rock, white and pink Arrow. Runway 36 Left, orange dot, left base, follow the yellow low-wing. No further transmissions on this frequency."
+
+<<set $badchoices to $badchoices + 1>>
+<<set $assignedDot to "orange">>
+<<set $assignedRwy to "36L">>
+<<goto "DecDot">>
+
+:: DecDot
+You have a runway assignment and a dot. The controller has moved on; the next transmission is for the aircraft behind you, who has just rocked his wings and been assigned 36L blue dot, follow you.
+
+Runway 36L at Oshkosh during AirVenture is a painted runway — literal colored dots at specific touchdown zones along its length, spaced so that three airplanes can land simultaneously on the same runway at three different dots. The pink dot is closest to the approach end; green is middle; orange is longest, furthest down. Your job is to land SPECIFICALLY on your dot, not before it and not past it.
+
+<<if $assignedDot eq "pink">>
+Pink is the closest dot to the threshold. That means the shortest approach — you need to aim for a point right after the numbers. You have the least distance to fly from base leg to touchdown.
+<<elseif $assignedDot eq "green">>
+Green is the middle dot. You have an extended descent to aim for a specific point about 1,500 feet down the runway from the threshold. Stable approach is critical — you can't just flare over the numbers, you need to fly it in.
+<<elseif $assignedDot eq "orange">>
+Orange is the longest dot. You will fly a longer descent, aiming for a point about 3,000 feet down the runway. You will cross the threshold at a moderate altitude — around 150 AGL — and continue descending to the dot. Do NOT flare early.
+<</if>>
+
+Marc is back to breathing. "Dude," he whispers. "They said we have a DOT."
+
+"We have a dot."
+
+<div class="choice-list">
+<<link "A. Run the before-landing checklist right now. Gear, prop, mixture, fuel, flaps. Now, before base." "Dec4_Checklist">><</link>>
+
+<<link "B. Fly the airplane first. Gear will come on base. You know the Arrow; you have time." "Dec4_FlyFirst">><</link>>
+
+<<link "C. Ask Marc to read the before-landing checklist out loud. You brief him one time. He responds." "Dec4_Marc">><</link>>
+
+<<link "D. Skip the formal checklist. Get your eyes outside for the pattern — see traffic, see the airport, see your dot." "Dec4_Skip">><</link>>
+</div>
+
+:: Dec4_Checklist
+You run the checklist now. Gear DOWN three greens. Prop FULL forward. Mixture FULL rich. Fuel selector confirmed on RIGHT tank (you switched before RIPON, top tank for landing). Flaps ten degrees.
+
+The gear horn doesn't sound. Three greens. You are configured.
+
+<<goto "Dec5_Pattern">>
+
+:: Dec4_FlyFirst
+You hold altitude and heading. You eyeball the pattern. You see the other airplanes. You know where your dot is on the runway. You'll configure on base.
+
+It is a perfectly reasonable plan. The Arrow can be configured in thirty seconds once you start base.
+
+<<goto "Dec5_Pattern">>
+
+:: Dec4_Marc
+"Marc. Before-landing checklist. It's on the card clipped to my yoke. Read it to me, slowly, and I'll call back."
+
+Marc picks up the card. "Okay. Uh. Fuel selector?"
+
+"Right tank."
+
+"Mixture?"
+
+"Full rich."
+
+"Prop?"
+
+"Full forward."
+
+"Gear?"
+
+"Down — waiting until base for that one."
+
+"Flaps?"
+
+"Ten on base."
+
+"Seat belts?"
+
+"Secure. You too?"
+
+"Yep."
+
+You have just used CRM on a 38-year-old hobbyist photographer. He is beaming.
+
+<<goto "Dec5_Pattern">>
+
+:: Dec4_Skip
+You skip the checklist. You know the Arrow. Gear will go down on base. Flaps come when they come. You need eyes outside for traffic.
+
+Which is defensible. Also sub-optimal. On a busy arrival in a strange pattern with a dot landing, the checklist is the ten seconds you cannot afford to skip.
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "Dec5_Pattern">>
+
+:: Dec5_Pattern
+You enter left base for 36L, descending through 1,300 MSL. Your assigned dot is <<print $assignedDot>>. You can see the runway clearly — a strip of asphalt with brightly-painted spots along its length. You can see <<if $assignedDot eq "pink">>a yellow dot<<elseif $assignedDot eq "green">>a blue dot<<elseif $assignedDot eq "orange">>a pink dot<</if>> painted earlier than yours; you can see <<if $assignedDot eq "pink">>green and orange<<elseif $assignedDot eq "green">>orange<<elseif $assignedDot eq "orange">>the threshold<</if>> farther along.
+
+The blue high-wing you're following is a Piper Cub on floats. A Piper Cub on floats. For some reason. It is slow. It is descending nicely onto the pink dot.
+
+You are closing on him.
+
+<div class="choice-list">
+<<link "A. Slow down. S-turn behind him to widen the gap. Let him touch down and clear before you cross threshold." "Dec5_STurn">><</link>>
+
+<<link "B. Extend your base leg. Fly past the normal base-to-final turn, let him land, then cut in and land behind him with more spacing." "Dec5_Extend">><</link>>
+
+<<link "C. Go around now. Climb out, break off to the east, re-enter the pattern. Conservative." "Dec5_GoAround">><</link>>
+
+<<link "D. Land on your dot. He's on the pink; you're on <<print $assignedDot>>. The whole POINT of the dots is simultaneous ops. Fly your dot." "Dec5_FlyYourDot">><</link>>
+</div>
+
+:: Dec5_STurn
+You S-turn. Right 20°, left 20°, right 20°, left 20°. You scrub enough forward speed to open the gap, while staying in the pattern and being visible to everyone around you.
+
+The Cub hits the pink dot. You are on final for your dot. The spacing is fine.
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "Dec6_Final">>
+
+:: Dec5_Extend
+You extend. You fly past the base turn, giving the Cub a full 10 seconds to touch down. You turn final late; your dot is ahead of you by 1.5 miles instead of 0.8.
+
+Your approach is a little longer than ideal, but stable.
+
+<<goto "Dec6_Final">>
+
+:: Dec5_GoAround
+You add full throttle, pitch for Vy, flaps to ten (you had them at twenty), gear check down. Climb out over the field. The FISK controller (now the OSH tower controller on a different frequency) sees you immediately.
+
+"White and pink Arrow, we see your go-around, turn right 90° eastbound, climb 2,300, we'll re-sequence you. No transmissions required."
+
+You turn right, climb, orbit east of the field. Seven minutes later you're re-sequenced back onto the arrival and re-assigned a dot.
+
+<<goto "Dec6_Final_Rebriefed">>
+
+:: Dec5_FlyYourDot
+You trust the system. You hold your descent. The Cub lands on the pink dot, rolls out, clears to the left. You are on final for the <<print $assignedDot>> dot.
+
+The dots are spaced so this works. You are at 150 AGL over the pink dot as the Cub is turning off, and you still have a long glide to your own dot.
+
+<<goto "Dec6_Final">>
+
+:: Dec6_Final
+You are on final for runway 36L, <<print $assignedDot>> dot. Gear down, flaps thirty. Airspeed 80 KIAS, trimmed. The runway is under you, a red-and-white band of pavement and painted numerals.
+
+<<if $assignedDot eq "pink">>
+The pink dot is immediately after the threshold. You want to cross the numbers at about 50 AGL and flare onto the dot.
+<<elseif $assignedDot eq "green">>
+The green dot is halfway down. You want to cross the threshold at about 150 AGL, keep descending, and flare onto the green spot.
+<<elseif $assignedDot eq "orange">>
+The orange dot is far down the runway. You want to cross the threshold at about 200 AGL, keep descending, and flare onto the orange spot.
+<</if>>
+
+You are slightly <<if $assignedDot eq "pink">>high<<else>>fast<</if>>.
+
+<div class="choice-list">
+<<link "A. Pull power to idle. Let her settle. Flare onto the dot." "Dec7_Settle">><</link>>
+
+<<link "B. Add a little more flap — full flaps if you haven't — to bleed off excess energy." "Dec7_Flaps">><</link>>
+
+<<link "C. Go around. You're not stable. A missed dot is a missed dot; take it around." "Dec7_Missed">><</link>>
+
+<<link "D. Slip. Use a cross-control slip to lose altitude fast without gaining airspeed." "Dec7_Slip">><</link>>
+</div>
+
+:: Dec6_Final_Rebriefed
+You are re-sequenced and on final for runway 36L, a fresh dot assignment — <<print $assignedDot>>. Gear down, flaps thirty, airspeed 80, trimmed. This time you have better spacing.
+
+<div class="choice-list">
+<<link "A. Pull power to idle. Let her settle. Flare onto the dot." "Dec7_Settle">><</link>>
+
+<<link "B. Add full flaps to bleed energy." "Dec7_Flaps">><</link>>
+
+<<link "C. Slip to lose altitude." "Dec7_Slip">><</link>>
+</div>
+
+:: Dec7_Settle
+You pull the throttle all the way to idle. The Arrow settles. She is slightly nose-low, airspeed bleeding through 75 toward 70. You flare at about 10 AGL — a little late, a little firm — and kiss the pavement right on your <<print $assignedDot>> dot.
+
+The mains touch. The nose comes down gently. You brake enough to clear the next exit. Behind you, the controller on the ground frequency is already marshaling the airplane behind you onto his own dot.
+
+You did it. Oshkosh. You're here.
+
+<<if $badchoices gte 2>>
+<<goto "End_TaxiConfusion">>
+<<else>>
+<<goto "End_Good">>
+<</if>>
+
+:: Dec7_Flaps
+You reach for the flap handle and push to full. The Arrow's full-flap configuration is 40 degrees; it adds a lot of drag and a mild nose-down pitch that trims out quickly. You lose the extra energy.
+
+You flare. Main gear touches. A solid, well-executed landing right on your <<print $assignedDot>> dot.
+
+<<if $badchoices gte 3>>
+<<goto "End_NotamPenalty">>
+<<else>>
+<<goto "End_Good">>
+<</if>>
+
+:: Dec7_Missed
+You add throttle. Flaps ten. Positive rate — wait, you don't retract gear in a go-around from base until you've got positive rate established and accelerated. Pitch Vy. Gear check down (stays down). Climb out.
+
+"White and pink Arrow, we see your go-around. Right turn, eastbound, climb 2,300, re-sequence."
+
+You turn right, climb, orbit east. Seven minutes later you're back in line. This time you fly a clean approach, stable, and land on your dot.
+
+<<if $badchoices gte 3>>
+<<goto "End_Humbled">>
+<<else>>
+<<goto "End_Qualified">>
+<</if>>
+
+:: Dec7_Slip
+You cross-control. Right aileron, left rudder. The Arrow slips a bit uncomfortably — retractable-gear Pipers don't love aggressive slips with flaps out, but it works. You dump the excess altitude, level out, neutralize the controls, and flare.
+
+You touch down a little firm but on your <<print $assignedDot>> dot.
+
+Note: Piper's POH for the Arrow II actually advises against slips with full flaps. You had thirty out when you slipped, which is in the gray zone but not prohibited. Something to look up tonight.
+
+<<if $badchoices gte 2>>
+<<goto "End_HardLanding">>
+<<else>>
+<<goto "End_Good">>
+<</if>>
+
+:: End_Good
+You taxi clear of the runway. The orange-jacketed marshallers wave you to the right, then the left, then down a taxiway, then to a grass tie-down spot a quarter mile from the main gate.
+
+You shut down. The silence after 3½ hours of flight is enormous. Marc unfastens his harness, climbs out, stands on the wing walk, and points his camera at a B-17 in the distance.
+
+"Sam. Sam. Look at that."
+
+You look at it. You look at the whole field — acres of airplanes, every shape, every era, every livery. You look at the fact that you flew your little Arrow here and landed on a pink/green/orange painted dot because ATC told you to.
+
+Marc climbs down. "Best day of my life."
+
+"Yeah," you say. "Yeah, me too."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You arrived at Oshkosh. You read the NOTAM, flew the profile, rocked your wings on cue, landed on your dot, and taxied in. Your passenger survived intact and is already planning next year.</p>
+<h3>ADM analysis</h3>
+<p>The AirVenture arrival is a stress test for the standard ADM habits: preparation (the NOTAM), discipline (no transmissions on FISK), spatial awareness (tracks, altitude, spacing), and decision-speed (dot assignment → runway → spacing → flare). The day you read the NOTAM is not the day of the flight. The day you read the NOTAM is three weeks before the flight, because you need the patterns to feel familiar, not novel, when the controller is calling you every three seconds.</p>
+<p>The specific decisions that mattered most on your path: matching the NOTAM profile (1,800 and 90 versus 2,300 and 135) rather than splitting the difference; rocking on your correct color call; running the before-landing checklist before base rather than trying to configure in the pattern; and trusting the dot system — the dots exist because simultaneous ops on a single runway work.</p>
+<h3>What good judgment looks like here</h3>
+<p>Special-event arrivals are not "VFR flying with extra steps." They are a distinct skill, and they reward pilots who treat them as such. The NOTAM is a rulebook, not a suggestion. The one-way radio discipline is the core of the system. Wing rock is a handshake. Dot landings are a procedure. None of this is optional, and none of this is unreasonable; every piece exists because the controllers at Oshkosh are coordinating more arrivals per hour than O'Hare on a bad day.</p>
+<h3>Key takeaway</h3>
+<p>Arrive slow. Fly the tracks. Don't talk on the FISK frequency. Rock when called. Land on your dot. Taxi where they point you. The whole system works if you work the whole system.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $overTheTracks to false>><<set $assignedDot to "">><<set $assignedRwy to "">><</link>>
+</div>
+
+:: End_FLD_Stay
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You landed at Fond du Lac, tied down, caught the EAA shuttle to AirVenture, and spent the week at the show without ever flying into Wittman Regional. The airplane is fine, Marc is delighted, and you will fly the Arrow home from KFLD at the end of the week on a quiet evening with no arrival procedure to worry about.</p>
+<h3>ADM analysis</h3>
+<p>The FISK arrival is the classic AirVenture experience — and it is also an optional one. Pilots who lean on Fond du Lac during peak arrivals are not cheating; they are using the system exactly as the NOTAM intends. KFLD exists, in part, as a pressure-relief valve for OSH. Using it does not diminish the trip. It just means you spent the week at AirVenture as a spectator of arrivals instead of a participant.</p>
+<h3>What good judgment looks like here</h3>
+<p>An approach that is "legal and doable" is not the same as "optimal for your hour count and passenger comfort." A 680-hour pilot with a non-pilot photographer in the right seat, making a second-ever OSH trip, is in a different risk posture than a retired airline captain flying solo in a Bonanza who has been landing at Wittman annually for twenty years. Matching the approach profile to your own hour count is good personal ADM.</p>
+<h3>Key takeaway</h3>
+<p>Fond du Lac is not the B-list. It's a legitimate AirVenture strategy, especially with a non-pilot passenger.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $overTheTracks to false>><<set $assignedDot to "">><<set $assignedRwy to "">><</link>>
+</div>
+
+:: End_Overnight_Relaunch
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You diverted to Fond du Lac, shuttled in for Wednesday's show with Marc, then launched the Arrow into Wittman at dawn Thursday when the FISK stream was a whisper instead of a shout. You got the AirVenture arrival experience AND the AirVenture parking experience, under the best possible conditions for both.</p>
+<h3>ADM analysis</h3>
+<p>This is the AirVenture strategy experienced pilots recommend to first-timers with passengers: skip the peak, arrive at the edges. Dawn Thursday through Friday at OSH has the same NOTAM procedures but with ten-percent of the traffic. You got a textbook arrival because you chose a textbook-friendly time to fly it.</p>
+<h3>What good judgment looks like here</h3>
+<p>Peak arrival is a preference, not an obligation. If you are not confident in your ability to maintain 90 knots and a tight sequence under high-workload radio silence, picking a quieter arrival window is a decision, not a concession.</p>
+<h3>Key takeaway</h3>
+<p>Fly the FISK arrival on your terms. The show goes on whether you arrive at noon Wednesday or dawn Thursday.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $overTheTracks to false>><<set $assignedDot to "">><<set $assignedRwy to "">><</link>>
+</div>
+
+:: End_NotamPenalty
+You taxi to your tie-down spot. Marc is beaming. You are breathing. You land, park, shut down, and spend the next six days at AirVenture having the time of your lives.
+
+Eleven days after the show, a letter arrives from the FAA. The Milwaukee FSDO would like to discuss your arrival into Oshkosh on July 22, 2026. Specifically, the transmissions on 120.7 FISK Approach, which is designated receive-only during AirVenture operations. The letter is not a violation — it is a request for a conversation.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You completed the arrival and had a great week. You also transmitted on a frequency the NOTAM explicitly designates receive-only. The controllers noted it. The NOTAM language exists specifically because a transmission on the FISK frequency can disrupt the calls to dozens of other aircraft in the stream — it is a real safety issue. What you get is a friendly letter. What a different set of circumstances might have produced is a certificate action.</p>
+<h3>ADM analysis</h3>
+<p>The NOTAM procedures for AirVenture are not conventions. They are regulatory requirements for the duration of the event. Transmitting on 120.7 is the single most common procedural error at Oshkosh, and the FSDO treats each one as a teaching moment until it becomes a pattern. The hazardous attitude on display is not "anti-authority" or "macho" — it is habit. In normal operations, pilots transmit to ATC. Unlearning that habit for twenty-five miles of arrival is the work of the NOTAM.</p>
+<h3>What good judgment looks like here</h3>
+<p>Read the NOTAM. Re-read the NOTAM. Practice the discipline of the receive-only frequency before you need it, by monitoring FISK audio recordings online in the days before the trip. Muscle memory is real; build it intentionally.</p>
+<h3>Key takeaway</h3>
+<p>120.7 is receive-only. Full stop. No confirmations, no corrections, no apologies on frequency.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $overTheTracks to false>><<set $assignedDot to "">><<set $assignedRwy to "">><</link>>
+</div>
+
+:: End_TaxiConfusion
+You land on your dot, roll out, clear the runway — and immediately lose track of where the marshallers are directing you. The instruction ("follow the orange vests to the right") overlaps with the instruction from the previous aircraft's marshallers ("continue straight"). You straddle the decision for four seconds. An EAA volunteer with a handheld radio sprints at you, arms windmilling.
+
+You brake. You stop. Somewhere behind you, an airplane that was supposed to be following you is also braking, because you are in the middle of the taxi route with no one sure which way you are going.
+
+The volunteer gets to your wingtip. "Right," he yells. "RIGHT. Follow the guy in the green vest."
+
+You taxi right. You make it to the tie-down. Nothing touches anything. You shut down and sit for a full minute feeling the weight of the near-miss that wasn't.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You landed clean but the taxi-in became a momentary traffic jam because you missed a marshaller cue. Nothing was damaged. Nothing was violated. The day was not ruined. But a ground incursion at AirVenture is the kind of thing that makes the SAFO newsletter, and you know it.</p>
+<h3>ADM analysis</h3>
+<p>AirVenture ground ops are not a cooldown from the flight — they are a continuation of the same high-workload environment at lower altitude. Marshallers use hand signals that may be unfamiliar; taxiways are narrow; aircraft are separated by wingtip-inches in the tie-down grass. The NOTAM covers ground movement too, and watching a good briefing video before the trip is worth more than reading the paper version twice.</p>
+<h3>What good judgment looks like here</h3>
+<p>Pre-brief the taxi in. Know what color vests mean what. Know that if you are ever unsure, stopping is the only right answer — and stopping does not impede ground ops nearly as much as moving in the wrong direction. The volunteers are highly trained for this; trust them, and obey the first signal you see clearly.</p>
+<h3>Key takeaway</h3>
+<p>Ground ops at AirVenture are a skill. Practice the taxi like you practice the arrival.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $overTheTracks to false>><<set $assignedDot to "">><<set $assignedRwy to "">><</link>>
+</div>
+
+:: End_HardLanding
+You flare a beat late. The Arrow's main gear hits firmly — a "hey, you're home" kind of firm, not a "call the mechanic" firm. But you bounced. The second touchdown is lighter. The third, gentler still.
+
+You roll out. The airplane feels fine. The tower does not call you on the ground frequency. You taxi to your tie-down.
+
+At the tie-down, shut down, you climb out and walk around the airplane. The mains look okay. The tires look okay. The prop, you think, is okay. You make a mental note to ask a mechanic at the show to take a glance tomorrow, just to be sure nothing shifted on that first touchdown.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You completed the landing but it was not your finest work. A firm touchdown on a fixed-gear airplane is a character-builder; on a retractable like the Arrow, it's worth a mechanic's look. In the worst case, an undetected hard landing produces hidden damage — spar stress, nose-gear truss cracks — that only shows up weeks later when something fails.</p>
+<h3>ADM analysis</h3>
+<p>A stable approach is not an aesthetic preference, it's a structural requirement. Slipping with significant flaps to save an unstable approach works sometimes. It's also a technique that rewards currency and punishes rust. If you are not sharp on slips with flaps in your specific airplane, a go-around is free, always-available, and Oshkosh-expected.</p>
+<h3>What good judgment looks like here</h3>
+<p>Know your airplane's POH on unusual techniques. The Arrow's flight manual discourages forward slips with full flaps. Being in the gray zone is fine when you are sharp; in a high-workload arrival after a long flight with a nervous passenger is not the day to test a gray-zone technique.</p>
+<h3>Key takeaway</h3>
+<p>Any landing you walk away from is a landing. Any landing that firm at Oshkosh is a mechanic's inspection before you fly home.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $overTheTracks to false>><<set $assignedDot to "">><<set $assignedRwy to "">><</link>>
+</div>
+
+:: End_Humbled
+You taxi clear. You shut down. You sit with both hands on your knees for a solid minute before you reach for the mixture.
+
+Marc looks at you. "You okay?"
+
+"Yeah. Yeah. That was — yeah."
+
+You walk the airplane, tie down, and head to the FBO. Before the evening ends, you pull out a notebook and start writing a list titled "Things I would do differently next time." It is a long list.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You arrived at AirVenture. You landed the airplane. You and Marc are safe. And on the way you stacked up a series of decisions — a missed pre-flight, some cockpit rust, procedural slips on the frequency — that did not, individually, break the trip. Collectively they put you much closer to breaking it than you realized in the moment.</p>
+<h3>ADM analysis</h3>
+<p>This is the outcome the CFI community calls "success with a deficit." No bent metal, no violation letter, nothing to tell your spouse about over dinner — and, still, a flight that the honest after-action reveals was closer to the edge than it looked. The accident chain at events like AirVenture is almost always a chain, not a single link. The pilots who make it through unscathed do not always make it through well.</p>
+<h3>What good judgment looks like here</h3>
+<p>The useful response to a "success with a deficit" flight is neither anxiety nor overcorrection. It is a debrief — written, specific, with calendar-committed follow-ups. What do I drill before the next high-workload arrival? What do I pre-brief with a passenger? What am I rusty on that I lied to myself about? Humbled is the right word. Humbled is a posture, not a shame.</p>
+<h3>Key takeaway</h3>
+<p>If you walk away from a flight thinking "that could have gone worse," write down the specific things you want to do differently — and schedule a follow-up lesson before you forget. The quiet lessons fade fastest.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $overTheTracks to false>><<set $assignedDot to "">><<set $assignedRwy to "">><</link>>
+</div>
+
+:: End_Qualified
+You taxi clear. The marshallers wave you into a parking spot. You shut down. Marc is quieter than he has been all day; the go-around shook him a little, and you are pretty sure you now owe him a beer.
+
+You look at your hand on the mixture knob. It is not shaking, but it is doing the subtle thing hands do when they have just stopped working hard.
+
+"That was intense," Marc says.
+
+"Yeah."
+
+"But we're here."
+
+"Yeah."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You flew a correct go-around from an unstable approach and re-sequenced cleanly. Your dot assignment held, your second approach was stable, and you landed on the correct dot. This is what the go-around is for.</p>
+<h3>ADM analysis</h3>
+<p>Going around at Oshkosh is not a failure. It is a skill. Oshkosh Tower expects and plans for go-arounds; the "right turn eastbound, climb to 2,300" is a canned re-sequence exactly because aircraft routinely need to bail out of an approach. You read the instability on final, made the call before the instability became unfixable, executed the procedure by the book, and came back around for a clean one.</p>
+<h3>What good judgment looks like here</h3>
+<p>The pilots who damage airplanes at Oshkosh are usually the ones who land anyway from a bad approach, not the ones who go around. The event is designed to accommodate missed approaches. The only thing a go-around costs you is seven minutes and some pride, and neither of those is an airplane.</p>
+<h3>Key takeaway</h3>
+<p>A go-around at Oshkosh is a normal maneuver. Practice them in the weeks before you go.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $overTheTracks to false>><<set $assignedDot to "">><<set $assignedRwy to "">><</link>>
+</div>
