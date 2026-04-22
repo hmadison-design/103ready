@@ -1,0 +1,1033 @@
+:: StoryTitle
+The Red X
+
+:: StoryData
+{
+  "ifid": "D4F7A1C3-5B8E-4A2D-9C6F-3E8B1D7A5C4F",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "Start"
+}
+
+:: StoryInit
+/* Scenario metadata
+   Audience:    General Aviation Pilots
+   Topic:       Partial-panel IFR / AHRS failure / diversion ADM
+   Tone:        Professional
+   Protagonist: Dr. Lilia Yu, 46, 1,150 hrs TT, 180 hrs actual IMC,
+                IR current (last approach in actual 5 weeks ago).
+   Passenger:   Consuela "Connie" Yu, 39, Lilia's sister. Non-pilot.
+                Financial advisor in Burlington, WI. Three kids at home.
+   Aircraft:    2015 Cessna 182T Skylane, N735GH. G1000 NXi (single AHRS,
+                GRS 77). GFC 700 autopilot (requires AHRS). Mid-Continent
+                SAM 3500 electric standby attitude indicator (self-
+                contained, battery-backed, no external AHRS). Standby
+                airspeed and altimeter. Whiskey compass. No standby
+                turn coordinator.
+   Flight:     KSTL (St. Louis Lambert) to KBUU (Burlington Muni, WI).
+               IFR. Filed 7,000 MSL direct.
+   Weather:    Stationary warm front across central WI and northern IL.
+               South of the front: marginal-to-good VMC. North:
+               widespread IFR with ceilings at or below approach
+               minimums in patches.
+   Date:       Friday, April 24, 2026. 13:40 local (CDT) at scenario start.
+   Teaches:   - AHRS failure recognition and response on a G1000 NXi
+              - Partial-panel scan on SAM + standby airspeed/altitude +
+                whiskey compass (no TC)
+              - The 1-2-3 alternate rule applied in real time
+              - No-gyro vector phraseology and technique (AIM 5-4-11)
+              - When to declare, when to just "advise" ATC
+              - CRM with a non-pilot passenger under stress
+              - Approach minimums vs ceilings vs visibility
+              - Fuel math after a significant route change
+              - Go-around discipline at DA with a degraded panel
+*/
+<<set $badchoices to 0>>
+<<set $declared to false>>
+<<set $nogyro to false>>
+<<set $divertedTo to "">>
+
+:: StoryStylesheet [stylesheet]
+body {
+  background: #0f1720;
+  color: #d6dee6;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#story {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+#passages {
+  border-left: none;
+  padding: 0;
+}
+.passage {
+  padding: 0;
+}
+a.link-internal, a.macro-link {
+  color: #e6b84a;
+  text-decoration: none;
+  border-bottom: 1px dotted #8a6f2a;
+}
+a.link-internal:hover, a.macro-link:hover {
+  color: #fff4d0;
+  background: #3a2d0a;
+  border-bottom: 1px solid #e6b84a;
+}
+.choice-list {
+  margin: 1.2em 0 0.5em 0;
+}
+.choice-list p { margin: 0.6em 0; }
+hr {
+  border: none;
+  border-top: 1px solid #2c3a4a;
+  margin: 1.8em 0;
+}
+.debrief {
+  background: #141d28;
+  padding: 1rem 1.3rem;
+  border-left: 3px solid #e6b84a;
+  margin-top: 1rem;
+  font-size: 0.98rem;
+}
+.debrief h3 {
+  color: #e6b84a;
+  font-size: 1.05rem;
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.04em;
+}
+.restart {
+  margin-top: 2em;
+  font-size: 0.95rem;
+  color: #8aa0b5;
+}
+.metar {
+  font-family: "Courier New", monospace;
+  font-size: 0.95rem;
+  color: #b8cce4;
+  background: #0a121b;
+  padding: 0.6em 0.9em;
+  border-left: 2px solid #5a6e88;
+  margin: 0.6em 0;
+  white-space: pre-wrap;
+}
+
+:: Start
+You are Dr. Lilia Yu. You are a dentist in Burlington, Wisconsin, a pilot for twelve years, instrument-rated for eight. You have 1,150 hours total time and 180 hours of actual instrument. You fly a 2015 Cessna 182T Skylane, N735GH, that you bought three years ago and learned to love one trip at a time. It has a G1000 NXi panel and a little Mid-Continent SAM standby attitude indicator tucked up in the top-left corner of the panel, a hedge you have never needed.
+
+You are sitting in the FBO at St. Louis Lambert Friday afternoon, finishing the last of a lukewarm coffee. You and your sister Connie flew down to St. Louis on Wednesday evening for a long weekend — the first one the two of you have managed since her third kid was born. Connie has to be home tonight. She has kids' soccer in the morning and a client breakfast at nine. The plan has always been: wheels up around 2 pm CDT Friday, home by 5.
+
+The weather briefing is what has you sitting here an extra ten minutes.
+
+A stationary warm front is draped east-west across central Wisconsin and northern Illinois. South of the front — from here up through about Peoria — it is marginal VFR trending better: broken to scattered 3,500, good visibility, the lid lifting as the afternoon warms. North of the front, from central Illinois up into southern Wisconsin, it is widespread IFR. Current METARs along your route:
+
+<div class="metar">KBUU 241753Z AUTO 09004KT 1SM BR OVC003 08/07 A2998
+KMKE 241753Z 10006KT 1 1/4SM BR OVC003 09/08 A2998
+KUES 241755Z AUTO 10005KT 1 3/4SM BR OVC004 09/08 A2998
+KENW 241753Z 11005KT 2SM BR OVC005 09/08 A2998
+KPWK 241753Z 12004KT 3SM BR OVC007 10/09 A2998
+KDPA 241753Z 13004KT 4SM BR OVC009 10/09 A2998
+KRFD 241753Z 11005KT 1SM BR OVC004 09/07 A2998
+KDKB 241756Z AUTO 10004KT 3/4SM BR OVC002 09/07 A2998</div>
+
+The KBUU TAF was updated forty minutes ago. It forecasts the ceiling lifting to 900 broken by 02Z (9 pm local). Your planned arrival is 17:15 local. Your destination's forecast minima at ETA are the current conditions: 300 overcast, 1 mile.
+
+The ILS RWY 11 at Burlington has minimums of 200 and ½. You are legal. You are, by the numbers, right on the edge of every margin you like to fly.
+
+"What are we doing?" Connie asks, pulling her coat on. "Are we going?"
+
+You look at the briefing one more time.
+
+<div class="choice-list">
+<<link "A. File IFR direct KBUU, no alternate. The destination is forecast above 2,000 and 3 at ETA — wait, no it isn't; current is 300 and 1 and the lift doesn't come until 02Z. I need an alternate. File KMKE as alternate." "Dec1A">><</link>>
+
+<<link "B. File IFR direct KBUU with KDPA (DuPage) as alternate — comfortable ceilings there, well above alternate mins." "Dec1B">><</link>>
+
+<<link "C. File IFR direct KBUU with KPWK (Chicago Executive) as alternate — good ceilings, maintenance on the field." "Dec1C">><</link>>
+
+<<link "D. Delay departure two hours. Let the front lift more before we launch. Push the arrival to near sunset." "Dec1D">><</link>>
+
+<<link "E. Cancel. Rent a car, drive eight hours, get Connie home by dawn." "Dec1E">><</link>>
+</div>
+
+:: Dec1A
+You file direct KBUU, 7,000 MSL, alternate KMKE. Milwaukee is a good airport — big, familiar — and it's close to home.
+
+You walk out to the ramp. Connie pulls her hood up against a gusty crosswind. The 182 is parked on the east side of the FBO, tied down next to a Cirrus. The preflight goes clean. You fire up, pick up your clearance from ground: "Skylane seven-three-five Golf Hotel, cleared to Burlington Municipal via direct, seven thousand, squawk four-two-one-one."
+
+Taxi, runup, takeoff. You climb through a layer of broken cumulus at 3,500, pop into the smooth gold air above, and settle into a steady 130 knots at 7,000. You are in the system, on top, cruising north at cruise power.
+
+Somewhere around forty minutes in, you hear Chicago Center hand you off to the next sector.
+
+You take the handoff. The terrain below is invisible now. The cloud tops have risen to meet you; your wings are in and out of the cirrus-wisp tops. The G1000 is its usual reliable self — the attitude indicator dead-steady, the HSI spinning slowly toward your course, the magenta line ticking off the miles.
+
+Ninety nautical miles south of Burlington, over northern Illinois, you hear a single soft chime. The PFD flashes. A red "X" appears over the attitude indicator. The HSI goes red. "AHRS FAIL" appears in white letters in the CAS window. The GFC 700 autopilot disconnects with a crisp double-beep. The airplane, briefly, does nothing wrong — you were trimmed and balanced — but the instruments are now wrong.
+
+<<goto "AHRSFail">>
+
+:: Dec1B
+You file direct KBUU, 7,000 MSL, alternate KDPA. DuPage is forecast at 900 overcast, 4 miles — comfortably above the 600 and 2 a non-precision approach alternate needs, and well above the 200 and ½ or whatever-half a precision approach alternate needs. DuPage has ILS 10 and ILS 20. You are clean under Part 91.
+
+You walk out to the ramp. Connie pulls her hood up. The preflight is clean. You pick up your clearance, taxi, run up, launch. You climb through a broken layer at 3,500, pop on top, and level at 7,000 in smooth gold afternoon light. The 182 settles at 130 knots, lean-of-peak, burning 11 gph.
+
+Chicago Center hands you off at 40 minutes. You take the handoff. The tops have risen to your altitude now; you're in and out of wisps. The G1000 is its usual reliable self.
+
+Ninety nautical miles south of Burlington, over northern Illinois, a single soft chime. A red "X" over the attitude indicator. The HSI goes red. "AHRS FAIL" in the CAS window. The GFC 700 disconnects with a double-beep. The airplane was trimmed; it does nothing wrong for the moment. The instruments are now wrong.
+
+<<goto "AHRSFail">>
+
+:: Dec1C
+You file direct KBUU, 7,000 MSL, alternate KPWK (Chicago Executive). Executive is forecast 700 overcast, 3 miles — above the 600 and 2 alternate mins for a precision approach, and they have full-service maintenance on the field if you needed it. You like having a backup plan with maintenance on it.
+
+Preflight, clearance, taxi, takeoff, climb, level at 7,000. The 182 is smooth. Connie settles into the right seat with her book. You pass Springfield on the right, then Peoria, then Pontiac. Chicago Center hands you off.
+
+Ninety nautical miles south of Burlington, over northern Illinois, a soft chime. A red "X" over the attitude indicator. HSI red. "AHRS FAIL" in the CAS window. The GFC 700 disconnects with a double-beep. The airplane does nothing wrong for the moment. The instruments are now wrong.
+
+<<goto "AHRSFail">>
+
+:: Dec1D
+"Two hours," you tell Connie. "I want the front to lift a little more. Let's grab lunch."
+
+Connie gives you a long look, then nods. "Okay. Okay. You're the pilot."
+
+You sit in the FBO lounge. You watch the KBUU TAF refresh. At 15:00 CDT, a fresh TAF drops: the ceilings are now forecast to stay at 500 overcast through 03Z, with the lift pushed to 04Z (11 pm local). The 300-overcast layer is more stubborn than the model thought at noon. You have not gained anything by waiting. You have lost two hours.
+
+You look at the clock. 15:40. Original ETA was 17:15; now if you launch at 16:00 it would be 19:00 at Burlington — past sunset, into a forecast that is arguably worse. Connie is on her third coffee.
+
+You file the flight now: direct KBUU, 7,000 MSL, alternate KDPA (still comfortable at 900 and 4). You walk out. The preflight is clean. You launch at 16:05.
+
+By the time you level at 7,000, the sun is a flat orange disk to your left. You are legal IFR-at-night after official sunset at 19:35 or so. Chicago Center hands you off. Ninety nautical miles south of Burlington, a soft chime. A red "X" over the attitude indicator.
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "AHRSFail">>
+
+:: Dec1E
+"I can't," you tell Connie. "The margins are too thin. We're driving."
+
+Connie's shoulders drop a centimeter, and then she nods. "Okay. Yeah. Okay."
+
+You cancel the IFR, put 735GH back on the ramp, call a maintenance hold on the FBO for a pickup Monday, rent a white Toyota, and drive eight hours through Illinois and Wisconsin in deteriorating weather. You hit heavy rain north of Bloomington at 8 pm and fog in Janesville at 11:30 pm. You pull into Burlington at 12:40 am.
+
+Connie is asleep in the passenger seat. You carry her bag in for her, because that's what sisters do.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You never got airborne. You evaluated a marginal-but-legal flight and decided your personal minimums (or your gut) said no. You drove. You got home late, tired, and inconvenienced — but the airplane is fine, your passenger is fine, and you slept in your own bed.</p>
+<h3>ADM analysis</h3>
+<p>This was a conservative go/no-go call on a trip that was legal and doable for a current instrument-rated pilot. It is not obviously the right answer. It is also not obviously the wrong one. On the edge of your personal margins, "no" is always available to you, and "no" is never wrong on its own terms. The interesting question is whether you would have made this call without Connie in the right seat — or with a different destination.</p>
+<h3>What good judgment looks like here</h3>
+<p>The 1-2-3 rule (±1 hour of ETA, 2,000 and 3 for no alternate) was not triggering a no-alternate; the destination was forecast at 300 and 1, so an alternate was required. The regulations allow this flight with a legal alternate. Your personal minimum is the constraint you choose to apply above the FARs, and the legitimacy of that constraint is yours to set.</p>
+<h3>Key takeaway</h3>
+<p>A go-decision that is legal is not automatically wise. A no-decision that is inconvenient is not automatically wrong. The pilot in command's judgment is the last line, and it is a line you are allowed to draw wherever you want.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><</link>>
+</div>
+
+:: AHRSFail
+Your hand goes to the standby attitude indicator, the little square to the top-left of the PFD. The SAM is showing wings level, two degrees nose up, which is exactly what you had trimmed. Airspeed 130 on the PFD airspeed tape — still good; the ADC is alive. Altimeter 7,000. VSI zero.
+
+The attitude display on the PFD is a red X. The HSI is a red X. The turn rate indicator is gone. The little green "HDG" and "TRK" labels are grayed. The magenta course line on the MFD map is still there, still correct — the GPS is fine, and the MFD still has its own ADAHRS feed for map purposes, but the PFD attitude reference is gone.
+
+You remember, dimly, that your G1000 is a single-AHRS installation. There is no reversionary mode that will magically bring it back. What you have is: SAM (attitude, self-contained), standby airspeed (pneumatic), standby altimeter (pneumatic), whiskey compass (magnetic), PFD airspeed and altitude tape (ADC-driven, still valid), GPS position on the MFD, all comms.
+
+You do not have: an attitude indicator on the PFD, a heading indicator anywhere that is not the whiskey compass, a turn coordinator, or a working autopilot.
+
+Chicago Center is still in your ears, talking to somebody else.
+
+Connie, who has been reading a paperback, looks up. "Is that normal?"
+
+<div class="choice-list">
+<<link "A. 'Yeah, just a little glitch. Hang on.' Tell her nothing and focus on the radio." "Dec2A">><</link>>
+
+<<link "B. 'The attitude indicator on the main screen just failed. I have a backup — it's flying. I'm going to talk to ATC.' Tell her what's happening, calmly, specifically." "Dec2B">><</link>>
+
+<<link "C. 'Uh, we might need to divert. Give me a second.' Start scanning the SAM, hand-fly, think, don't radio yet." "Dec2C">><</link>>
+
+<<link "D. Key the mic: 'Chicago Center, Skylane seven-three-five Golf Hotel, lost my primary attitude indicator, partial panel, request.' Radio first, then Connie." "Dec2D">><</link>>
+</div>
+
+:: Dec2A
+You say "Yeah, just a little glitch" without looking at her, because you're scanning the SAM, re-trimming, and trying to think. Connie goes quiet. You pilot the airplane. Your scan is working. The SAM is steady. The magenta line is still tracking to KBUU.
+
+Five minutes later you key the mic. Chicago Center has been calling you twice.
+
+<<goto "Dec3">>
+
+:: Dec2B
+"The attitude indicator on the main screen just failed," you say, and you hear your own voice come out steady. "I have a backup — it's flying fine. I'm going to talk to ATC now and figure out what we're doing."
+
+Connie puts the book down. "Okay. I'm good. Tell me if you need me to do something."
+
+It is remarkable how much this helps. You can feel a bit of tension leave your shoulders.
+
+<<goto "Dec3">>
+
+:: Dec2C
+"Uh, we might need to divert. Give me a second," you say. Connie nods and goes quiet. You scan the SAM. Altitude steady. Airspeed steady. You hand-trim back into a perfect wings-level.
+
+Two minutes pass. Chicago Center has called you once, then again.
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "Dec3">>
+
+:: Dec2D
+You key the mic. "Chicago Center, Skylane seven-three-five Golf Hotel, lost my primary attitude indicator, partial panel, request."
+
+The controller's voice comes back immediately, calm and unhurried. "Five Golf Hotel, Chicago Center, roger. Say your souls on board and fuel remaining."
+
+"Two souls, three hours fuel."
+
+"Five Golf Hotel, understood. Are you declaring an emergency?"
+
+Connie is watching you. You have the SAM in your scan and the whiskey compass rocking gently to your left.
+
+<<goto "Dec3">>
+
+:: Dec3
+Chicago Center is waiting for an answer. The controller asked — whether you cued it or he did — whether you want to declare.
+
+You know the rules. An emergency is "a distress or urgency condition"; the pilot decides. Declaring gets you priority handling, any vector you need, any altitude, any airport. It also triggers paperwork. It does not, by itself, make anything harder; it just makes some things easier.
+
+<div class="choice-list">
+<<link "A. 'Negative emergency at this time, Chicago. Request vectors to the nearest suitable IFR airport. Five Golf Hotel.'" "Dec3A">><</link>>
+
+<<link "B. 'Affirmative, five Golf Hotel declares. Partial panel, request vectors and weather at nearest suitable airports.'" "Dec3B">><</link>>
+
+<<link "C. 'Chicago, five Golf Hotel, minimum fuel, request priority handling.'" "Dec3C">><</link>>
+
+<<link "D. 'Stand by, five Golf Hotel.' Take a breath. Think about whether you want to declare before you answer." "Dec3D">><</link>>
+</div>
+
+:: Dec3A
+"Negative emergency at this time," you say. "Request vectors to the nearest suitable IFR airport."
+
+"Five Golf Hotel, Chicago, roger. Nearest above-minimums weather: DuPage at zero-three-five, thirty miles, niner hundred overcast four. Chicago Executive, zero-five-zero at forty-five miles, seven hundred overcast three. Waukegan, zero-five-five at forty, six hundred overcast two and a half. Rockford, zero-one-zero at thirty-five miles, four hundred overcast one — that one is at ILS minimums. Burlington, three-five-five at fifty-five miles, three hundred overcast one — below the two-mile visibility I'd want you to see but legal approach mins. Advise intentions."
+
+<<goto "Dec4">>
+
+:: Dec3B
+"Affirmative, five Golf Hotel declares emergency. Partial panel. Request vectors and weather at nearest suitable airports."
+
+"Five Golf Hotel, Chicago, roger, copy declared emergency. Say intentions or advise when able. DuPage is your closest above-minimums airport — zero-three-five, thirty miles, niner hundred overcast four. Chicago Executive zero-five-zero at forty-five, seven hundred overcast three. Rockford zero-one-zero at thirty-five, four hundred overcast one, at ILS minimums. Burlington three-five-five at fifty-five, three hundred overcast one."
+
+<<set $declared to true>>
+<<goto "Dec4">>
+
+:: Dec3C
+"Chicago, five Golf Hotel, minimum fuel, request priority handling."
+
+There is a short pause. "Five Golf Hotel, Chicago, confirm minimum fuel — that means you cannot accept undue delay. What are you declaring?"
+
+You realize, as soon as the words leave your mouth, that "minimum fuel" is not a description of your problem. You have three hours of fuel. Your problem is the panel, not the fuel. The phraseology is wrong. Chicago is being polite.
+
+You correct. "Chicago, five Golf Hotel, correction. Lost my attitude indicator, partial panel. Not minimum fuel. Request vectors to nearest suitable airport. Not declaring at this time."
+
+"Five Golf Hotel, Chicago, roger, understood. Stand by." There is a 15-second pause. "Five Golf Hotel, DuPage is zero-three-five at thirty, niner hundred overcast four. Chicago Executive zero-five-zero at forty-five, seven hundred overcast three. Advise intentions."
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "Dec4">>
+
+:: Dec3D
+"Stand by, Chicago." You breathe. You pilot the airplane for ten seconds. The SAM says wings level. The magenta line is tracking. Nothing is urgent in this exact moment — but the fact is your airplane is in IMC with a degraded panel, and if the SAM fails next you will be in real trouble.
+
+You key the mic. "Chicago Center, five Golf Hotel, not declaring at this time, but request priority vectors to nearest above-minimums IFR airport."
+
+"Five Golf Hotel, Chicago, roger. DuPage at zero-three-five, thirty miles, niner hundred overcast four. Chicago Executive zero-five-zero, forty-five miles, seven hundred overcast three. Waukegan zero-five-five, forty miles, six hundred overcast two and a half. Rockford zero-one-zero, thirty-five miles, four hundred overcast one, at ILS mins. Burlington three-five-five, fifty-five miles, three hundred overcast one."
+
+<<goto "Dec4">>
+
+:: Dec4
+The menu is in front of you. You have about ninety minutes of fuel in reach if you needed to get creative, but that is not the constraint. The constraint is: you are partial-panel in IMC, and the longer you stay in IMC the more tired your scan gets, and the worse you fly.
+
+<div class="choice-list">
+<<link "A. 'Chicago, five Golf Hotel, continue Burlington. It is my destination, the ILS 11 is flown. Fifty-five miles.'" "Dec4A">><</link>>
+
+<<link "B. 'Chicago, five Golf Hotel, DuPage KDPA. ILS 10, weather comfortable. Thirty miles.'" "Dec4B">><</link>>
+
+<<link "C. 'Chicago, five Golf Hotel, Chicago Executive KPWK. ILS 16. Seven hundred overcast three. Forty-five miles.'" "Dec4C">><</link>>
+
+<<link "D. 'Chicago, five Golf Hotel, Rockford KRFD. Thirty-five miles, ILS 7.'" "Dec4D">><</link>>
+
+<<link "E. 'Chicago, five Golf Hotel, request vectors southbound back toward VMC. I can get underneath somewhere around Peoria.'" "Dec4E">><</link>>
+</div>
+
+:: Dec4A
+"Chicago, five Golf Hotel, continue Burlington."
+
+"Five Golf Hotel, Chicago, roger. Maintain seven thousand. Expect vectors ILS RWY 11 Burlington."
+
+You begin the slow, deliberate work of flying fifty-five more miles in IMC on a SAM and a whiskey compass. Connie is quiet. You pick up the ATIS on the number two radio.
+
+<<set $divertedTo to "KBUU">>
+<<goto "Dec5_KBUU">>
+
+:: Dec4B
+"Chicago, five Golf Hotel, DuPage."
+
+"Five Golf Hotel, Chicago, roger. Fly heading zero-three-zero, descend and maintain five thousand. Expect vectors ILS RWY 10 DuPage. Contact Chicago Approach one-two-six point seven-five."
+
+Thirty miles. Fifteen minutes, probably less. You ease the nose down, cross-checking the SAM and the altimeter. The airplane descends smoothly. You are still in IMC.
+
+<<set $divertedTo to "KDPA">>
+<<goto "Dec5_KDPA">>
+
+:: Dec4C
+"Chicago, five Golf Hotel, Chicago Executive."
+
+"Five Golf Hotel, Chicago, roger. Fly heading zero-five-zero, descend and maintain five thousand. Expect vectors ILS RWY 16 Chicago Executive. Contact Chicago Approach one-one-niner point zero-five."
+
+Forty-five miles. Twenty minutes. You ease the nose down. Chicago Executive has 24-hour maintenance, which is a consideration, but it is fifteen minutes farther in IMC than DuPage.
+
+<<set $divertedTo to "KPWK">>
+<<set $badchoices to $badchoices + 1>>
+<<goto "Dec5_KPWK">>
+
+:: Dec4D
+"Chicago, five Golf Hotel, Rockford."
+
+"Five Golf Hotel, Chicago, roger, Rockford at your heading three-six-zero for now. Rockford weather is currently four hundred overcast one statute mile, winds one-one-zero at five. That is at ILS minimums. Confirm intentions."
+
+You hesitate. Rockford is at mins. You are partial-panel. The odds of breaking out above DA are good but not guaranteed. You could go-around on partial panel — miss approach, hold, try again — which is doable but adds workload in a scenario where workload management is already the entire problem.
+
+You think about it for five seconds. "Chicago, five Golf Hotel, amend — make it DuPage. KDPA."
+
+"Five Golf Hotel, roger, fly heading zero-three-zero, descend and maintain five thousand. Expect vectors ILS 10 DuPage."
+
+You made a call, reconsidered, and changed it in time. That is fine. Nothing lost.
+
+<<set $divertedTo to "KDPA">>
+<<goto "Dec5_KDPA">>
+
+:: Dec4E
+"Chicago, five Golf Hotel, request vectors southbound. I'd like to break out over VMC and get underneath."
+
+"Five Golf Hotel, Chicago, roger, be advised the nearest VMC is approximately six-five miles south — Peoria reporting scattered three thousand five hundred, ten miles. Fly heading one-eight-zero, maintain seven thousand."
+
+You turn south. The magenta line on the MFD flips backward. Connie looks at you. "We're going back?"
+
+"I'd rather be under visual conditions on this panel," you say. "It's the smart call."
+
+You are not wrong, but you have not saved yourself anything. You are still in IMC, and you will be in IMC for another forty-five minutes at least before you break out. That is forty-five more minutes of partial-panel scan, in a degrading workload situation, with no gyro-stabilized heading indicator.
+
+<<set $divertedTo to "KPIA">>
+<<set $badchoices to $badchoices + 1>>
+<<goto "Dec5_KPIA">>
+
+:: Dec5_KDPA
+Chicago Approach takes you over.
+
+"Skylane seven-three-five Golf Hotel, Chicago Approach, radar contact, descend and maintain three thousand, expect vectors ILS RWY 10 DuPage, altimeter two-niner-niner-eight. I have your partial panel. Are you able to comply with assigned headings, or do you require no-gyro vectors?"
+
+You look at the whiskey compass. It is rocking gently; it reads roughly 030 to 035 on your current heading. Whiskey compasses do everything lazily — they lag, they lead, they sag in turns, they settle out in straight and level. On a small turn they are usable. On a large turn they are a challenge. On an approach vector sequence with three or four turns, they are a real challenge.
+
+Connie is quiet.
+
+<div class="choice-list">
+<<link "A. 'Approach, five Golf Hotel, able normal headings. Continue the vectors.'" "Dec5A_Able">><</link>>
+
+<<link "B. 'Approach, five Golf Hotel, unable reliable headings. Request no-gyro vectors.'" "Dec5B_NoGyro">><</link>>
+
+<<link "C. 'Approach, five Golf Hotel, I can do normal headings but request no-gyro on final intercept.'" "Dec5C_Hybrid">><</link>>
+
+<<link "D. 'Approach, five Golf Hotel, say again?' (You are not sure what no-gyro means.)" "Dec5D_Confused">><</link>>
+</div>
+
+:: Dec5A_Able
+"Approach, five Golf Hotel, able normal headings."
+
+"Five Golf Hotel, roger. Fly heading zero-niner-zero, descend and maintain three thousand."
+
+You begin the turn. Your scan is: SAM, airspeed, altimeter, whiskey compass, SAM, airspeed, altimeter, whiskey compass. The whiskey compass lags badly in the turn — as you turn right through south, the compass reads about forty degrees behind where you actually are, and it oscillates. You steady out wings-level when the compass passes 075 or so and slow-walk it to 090 over the next fifteen seconds. The scan is working, but it is loud in your head.
+
+You can feel that you are building workload you don't need.
+
+<<goto "DecBrief">>
+
+:: Dec5B_NoGyro
+"Approach, five Golf Hotel, unable reliable headings. Request no-gyro vectors."
+
+"Five Golf Hotel, Chicago, roger, no-gyro vectors. Turn left."
+
+You roll left. Wings into a gentle, standard-rate bank on the SAM. You hold the bank.
+
+"Stop turn."
+
+You roll level.
+
+It is remarkably easier. The controller is doing your heading management for you; all you do is hold a coordinated standard-rate turn when he says turn, and hold level when he says stop. Your scan narrows to SAM, airspeed, altimeter. The whiskey compass becomes almost irrelevant for heading — it's just a sanity check.
+
+<<set $nogyro to true>>
+<<goto "DecBrief">>
+
+:: Dec5C_Hybrid
+"Approach, five Golf Hotel, able normal headings, request no-gyro on final intercept."
+
+"Five Golf Hotel, Chicago, roger. Fly heading zero-niner-zero, descend and maintain three thousand."
+
+You begin the turn on normal headings. Your scan is tight — SAM, airspeed, altimeter, whiskey compass. The compass lags. You steady out on about 090 after some back-and-forth.
+
+"Five Golf Hotel, left turn heading three-six-zero."
+
+You turn again. The compass is a mess in the turn. You have to wait for it to settle.
+
+"Five Golf Hotel, right turn heading zero-niner-zero, vectors to final."
+
+By the time you are on what the controller wants as 090, you are working much harder than you need to.
+
+<<goto "DecBrief">>
+
+:: Dec5D_Confused
+"Approach, five Golf Hotel, say again?"
+
+"Five Golf Hotel, Chicago, do you need no-gyro vectors? If your heading indicator is unreliable, I can give you turn instructions by rate — 'turn left,' 'stop turn' — and you just hold a standard-rate turn on your attitude reference until I say stop."
+
+"Five Golf Hotel, affirmative, no-gyro vectors."
+
+"Five Golf Hotel, roger, turn left."
+
+<<set $nogyro to true>>
+<<set $badchoices to $badchoices + 1>>
+<<goto "DecBrief">>
+
+:: Dec5_KBUU
+Chicago Approach takes you over.
+
+"Skylane seven-three-five Golf Hotel, Chicago Approach, radar contact, maintain seven thousand, expect vectors ILS RWY 11 Burlington, altimeter two-niner-niner-eight. I have your partial panel. Are you able to comply with assigned headings, or do you require no-gyro vectors?"
+
+You look at the whiskey compass. It reads about 355. Your destination, Burlington, is at minimums. The weather picture you bought into at departure, the arithmetic that made KBUU legal at all, was that you could shoot the ILS 11 and break out somewhere above 200 AGL.
+
+On a degraded panel, that is a tight number.
+
+<div class="choice-list">
+<<link "A. 'Approach, five Golf Hotel, able normal headings. Continue to Burlington.'" "Dec5A_BUUAble">><</link>>
+
+<<link "B. 'Approach, five Golf Hotel, unable reliable headings. Request no-gyro vectors. Continue to Burlington.'" "Dec5B_BUUNoGyro">><</link>>
+
+<<link "C. 'Approach, five Golf Hotel, amend — divert DuPage KDPA. Better ceilings, shorter exposure.'" "Dec5C_BUUReroute">><</link>>
+
+<<link "D. 'Approach, five Golf Hotel, amend — divert Waukegan KUGN, six hundred overcast two and a half.'" "Dec5D_BUUReroute">><</link>>
+</div>
+
+:: Dec5A_BUUAble
+"Approach, five Golf Hotel, able normal headings. Continue to Burlington."
+
+"Five Golf Hotel, Chicago, roger, fly heading three-five-five, descend and maintain five thousand. Expect vectors ILS 11 Burlington."
+
+You begin the descent. Your scan is SAM, airspeed, altimeter, whiskey compass, SAM, airspeed, altimeter, whiskey compass. The whiskey compass is already lazy. Burlington is fifty-five miles ahead. That is twenty-plus minutes on a SAM.
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "Dec6_KBUU">>
+
+:: Dec5B_BUUNoGyro
+"Approach, five Golf Hotel, unable reliable headings, request no-gyro vectors. Continue Burlington."
+
+"Five Golf Hotel, Chicago, roger, no-gyro, descend and maintain five thousand, turn left."
+
+You roll into a gentle standard-rate left turn. You hold it.
+
+"Stop turn."
+
+You roll level. Your scan narrows to SAM, airspeed, altimeter. The controller is handling your heading.
+
+You have fifty-five miles to go in IMC on a SAM to an at-minimums field. That is a lot of SAM time.
+
+<<set $nogyro to true>>
+<<goto "Dec6_KBUU">>
+
+:: Dec5C_BUUReroute
+"Approach, five Golf Hotel, amend — request DuPage. KDPA. Better ceilings, shorter."
+
+"Five Golf Hotel, Chicago, roger, fly heading zero-three-zero, descend and maintain three thousand. Expect vectors ILS 10 DuPage. I have your partial panel — able normal headings or require no-gyro?"
+
+You look at the whiskey compass.
+
+<div class="choice-list">
+<<link "A. 'Approach, five Golf Hotel, unable reliable headings, request no-gyro vectors.'" "Dec5B_NoGyro_Late">><</link>>
+
+<<link "B. 'Approach, five Golf Hotel, able normal headings.'" "Dec5A_Able_Late">><</link>>
+</div>
+
+:: Dec5B_NoGyro_Late
+"Approach, five Golf Hotel, unable reliable headings, request no-gyro vectors."
+
+"Five Golf Hotel, Chicago, roger, no-gyro, turn right."
+
+You roll right. Hold it. "Stop turn." Roll level.
+
+<<set $nogyro to true>>
+<<set $divertedTo to "KDPA">>
+<<goto "DecBrief">>
+
+:: Dec5A_Able_Late
+"Approach, five Golf Hotel, able normal headings."
+
+"Five Golf Hotel, roger, fly heading zero-three-zero, descend and maintain three thousand."
+
+You begin the turn. Whiskey compass rocking. Scan busy.
+
+<<set $divertedTo to "KDPA">>
+<<goto "DecBrief">>
+
+:: Dec5D_BUUReroute
+"Approach, five Golf Hotel, amend — request Waukegan. KUGN."
+
+"Five Golf Hotel, Chicago, roger, fly heading zero-five-five, descend and maintain four thousand. Expect vectors ILS 23 Waukegan. Waukegan weather: six hundred overcast two and a half miles. Able normal headings or require no-gyro?"
+
+"Approach, five Golf Hotel, no-gyro please."
+
+"Five Golf Hotel, Chicago, roger, no-gyro, turn right."
+
+Waukegan has ceilings 200 feet above the 400 DA on their ILS 23 — comfortable enough, not as much margin as DuPage but more than the destination. Reasonable call.
+
+<<set $nogyro to true>>
+<<set $divertedTo to "KUGN">>
+<<goto "DecBrief">>
+
+:: Dec5_KPWK
+Chicago Approach takes you over.
+
+"Skylane seven-three-five Golf Hotel, Chicago Approach, radar contact, descend and maintain four thousand, expect vectors ILS RWY 16 Chicago Executive, altimeter two-niner-niner-eight. I have your partial panel. Are you able to comply with assigned headings, or do you require no-gyro vectors?"
+
+<div class="choice-list">
+<<link "A. 'Approach, five Golf Hotel, unable reliable headings. Request no-gyro.'" "Dec5B_PWKNoGyro">><</link>>
+
+<<link "B. 'Approach, five Golf Hotel, able normal headings.'" "Dec5A_PWKAble">><</link>>
+</div>
+
+:: Dec5B_PWKNoGyro
+"Approach, five Golf Hotel, unable reliable headings. Request no-gyro."
+
+"Five Golf Hotel, Chicago, roger, no-gyro, turn left."
+
+<<set $nogyro to true>>
+<<goto "DecBrief">>
+
+:: Dec5A_PWKAble
+"Approach, five Golf Hotel, able normal headings."
+
+"Five Golf Hotel, roger, fly heading zero-five-zero, descend and maintain four thousand."
+
+<<goto "DecBrief">>
+
+:: Dec5_KPIA
+Chicago Center hands you off to Peoria Approach. Peoria vectors you southbound for twenty minutes before the cloud tops begin to break up below you. You can see ground — bare fields, a highway — through scattered openings. Peoria is reporting scattered 3,500, visibility 10. You are still at 7,000 but the layer is thinning below you.
+
+"Five Golf Hotel, Peoria, descend at your discretion to three thousand, can you maintain visual?"
+
+"Five Golf Hotel, affirmative, I'd like to cancel IFR at three thousand if able."
+
+You descend. At 3,500 you are clear below, looking at flat central Illinois in afternoon light. The SAM is steady. The whiskey compass is reasonably well-behaved in level flight. You cancel IFR with Peoria and turn toward KPIA for a full-stop.
+
+<<goto "Dec6_KPIA">>
+
+:: DecBrief
+You have the approach to brief. The weather is low; the panel is degraded; the airplane is still flying fine on the SAM, and the controller has handed you a quiet window. You need to get the approach plate in front of you — frequencies, the final approach fix, the minimums, the missed-approach procedure — before you intercept the localizer.
+
+You have options. The G1000 MFD can display the approach chart (GeoRef-enabled) if you use the PROC key to load the approach and the CHART key to pull up the plate. Your iPad, in the kneeboard mount, has ForeFlight running with the plate already pulled up from planning. You have a paper checklist card and a paper approach plate in the door pocket. And you have been flying this approach for years — you know the Burlington ILS 11 and the DuPage ILS 10 both by heart.
+
+<div class="choice-list">
+<<link "A. Pull the approach plate up on the MFD via CHART. Brief from the MFD — one screen, everything you need, eyes in." "Dec6_Brief_MFD">><</link>>
+
+<<link "B. Use the ForeFlight plate on the iPad, kneeboard mount. Large, familiar, you've briefed from it a hundred times." "Dec6_Brief_iPad">><</link>>
+
+<<link "C. Brief from memory. You know this approach. You don't need the plate." "Dec6_Brief_Memory">><</link>>
+
+<<link "D. Ask Connie to hold the paper plate for you. Read the key numbers out loud to yourself as you scan it." "Dec6_Brief_Paper">><</link>>
+</div>
+
+:: Dec6_Brief_MFD
+You press CHART. The MFD displays the approach plate, GeoRef'd to the airport's layout. You read the key numbers aloud, quietly: localizer frequency, FAF, DA, missed approach procedure. You flick back to the engine page, then back to the map, then pull the approach up again.
+
+The MFD is doing a lot of work. It is a lot of screen management on a tired scan.
+
+<<goto "AfterBrief">>
+
+:: Dec6_Brief_iPad
+You drop your eyes to the iPad on the kneeboard. The plate is already there from earlier. You read the key numbers — localizer frequency, FAF, DA, missed approach — aloud, quietly. Your eyes come back up to the SAM. You re-brief once more to be sure. The iPad is where you've always briefed; the routine is muscle memory.
+
+<<goto "AfterBrief">>
+
+:: Dec6_Brief_Memory
+You brief from memory. You know the ILS 10 DuPage. You know the ILS 11 Burlington. The frequencies are right. The DA is right. You run the missed approach procedure in your head.
+
+It is enough. It is also one-sided — if you are wrong about any single number and don't have it in front of you, you will not catch the error.
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "AfterBrief">>
+
+:: Dec6_Brief_Paper
+"Connie," you say, "there's a plastic-laminated paper chart in that pocket on the door, the one with the red tab. Can you pull it out and hold it up where I can see it?"
+
+Connie fishes out the plate. "This one?"
+
+"That's it. Just hold it, right about there. Steady."
+
+You brief it off the paper. Connie keeps it steady. You can keep your head up, instruments in the upper peripheral field, chart in the lower right, the SAM dead-center. It is a remarkably tidy cockpit for a partial-panel approach.
+
+<<goto "AfterBrief">>
+
+:: AfterBrief
+<<if $divertedTo eq "KBUU">>
+You pick up the final vector. You are cleared for the ILS RWY 11 Burlington. Localizer alive, glideslope alive. You are at 200 feet above DA — breakout altitude — and the world is still white outside.
+
+<<goto "Dec7_BUUFinal">>
+<<elseif $divertedTo eq "KUGN">>
+<<goto "Dec6_KUGN">>
+<<elseif $divertedTo eq "KPWK">>
+<<goto "Dec6_KPWK">>
+<<else>>
+<<goto "Dec6_KDPA">>
+<</if>>
+
+:: Dec6_KDPA
+Chicago Approach keeps you turning. Your no-gyro or whiskey-compass-driven headings take you east, then north, then northwest, setting up for the ILS 10 DuPage. The controller is professional, patient, and economical with words.
+
+You brief the approach on the go. ILS RWY 10 DuPage: LOC frequency 110.75, FAF ROMOE at 2,300, DA 876 MSL (268 HAT), missed is climbing left to 3,000 direct CGT VOR. The Garmin flight plan is still loaded, and the MFD still shows the procedure plate's geometry — the map is alive; the PFD attitude is not.
+
+"Five Golf Hotel, fly present heading, descend and maintain two thousand three hundred until established, cleared ILS 10 DuPage. Contact DuPage Tower one-two-zero point niner at the final approach fix."
+
+"Cleared ILS 10, two thousand three hundred until established, five Golf Hotel."
+
+You intercept the localizer with the SAM in your hand. The needle centers. Glideslope alive. You extend the first notch of flaps, adjust power to 18 inches, trim.
+
+Connie has her hand on the armrest, not clutching it, just resting there.
+
+<div class="choice-list">
+<<link "A. 'Connie, I want you to read the before-landing checklist out loud to me. It's on the card clipped to my yoke. Just read each item and I'll call back.'" "Dec7_ConnieCRM">><</link>>
+
+<<link "B. Run the checklist yourself from memory — keep your eyes on instruments." "Dec7_SoloMemory">><</link>>
+
+<<link "C. Pull the checklist card onto your lap and glance down as you go." "Dec7_Glance">><</link>>
+
+<<link "D. Skip a formal checklist — 182T before-landing is fuel selector BOTH, mixture rich, carb heat as needed. You know it." "Dec7_Skip">><</link>>
+</div>
+
+:: Dec6_KBUU
+Chicago Approach keeps you at five thousand as you track north-northwest toward Burlington. The magenta line on the MFD is solid; the SAM is steady. You pick up KBUU's AWOS on the number two: "Burlington Municipal information Bravo, wind one-zero-zero at four, visibility one statute mile, mist, ceiling three hundred overcast, temperature zero-eight, dew point zero-seven, altimeter two-niner-niner-eight. ILS RWY 11 in use."
+
+Three hundred overcast. One mile. The ILS 11 minimums are 200 HAT (DA 979 MSL) and 1 SM visibility. You are looking at break-out at 100 feet above DA with visibility exactly at minimums. That is not a lot of margin on a degraded panel.
+
+"Five Golf Hotel, descend and maintain three thousand. Expect vectors ILS RWY 11 Burlington."
+
+"Three thousand, five Golf Hotel."
+
+You ease the nose down. The scan is holding. Connie is quiet. The whiskey compass, on your current heading of about 355, is rocking within about five degrees either side of where it should be. Not great, not terrible.
+
+<div class="choice-list">
+<<link "A. 'Approach, five Golf Hotel, revised intentions — amend to DuPage KDPA. I don't love at-minimums on this panel. Break out with more margin.'" "Dec6_BUU_to_DPA">><</link>>
+
+<<link "B. Continue to Burlington. You have briefed the approach, you are set up, and the ILS is flown. You are instrument-current and capable." "Dec6_BUU_Continue">><</link>>
+
+<<link "C. 'Approach, five Golf Hotel, request hold at a nearby fix to re-evaluate.'" "Dec6_BUU_Hold">><</link>>
+</div>
+
+:: Dec6_KUGN
+Chicago Approach vectors you east. The Waukegan ILS 23 minimums are 400 DA (HAT 290) and ¾ SM visibility. Weather is reporting 600 overcast and 2.5 — comfortable above DA, comfortable above mins. On a degraded panel with no-gyro vectors, this is workable.
+
+"Five Golf Hotel, descend and maintain two thousand four hundred, cleared ILS 23 Waukegan, contact Waukegan Tower one-two-zero point zero-five."
+
+"Cleared ILS 23, two thousand four hundred, five Golf Hotel."
+
+You are on the SAM, tracking the localizer, glideslope alive. Connie is quiet but her hand is on the armrest.
+
+<div class="choice-list">
+<<link "A. 'Connie, read the before-landing checklist to me, please. It's clipped to my yoke.'" "Dec7_ConnieCRM">><</link>>
+
+<<link "B. Run the checklist yourself from memory." "Dec7_SoloMemory">><</link>>
+
+<<link "C. Pull the checklist card onto your lap." "Dec7_Glance">><</link>>
+
+<<link "D. Skip the formal checklist." "Dec7_Skip">><</link>>
+</div>
+
+:: Dec6_KPWK
+Chicago Approach vectors you. The ILS RWY 16 Chicago Executive minimums are 200 DA (HAT 194) and ½. Weather is 700 overcast 3. You are well above DA, visibility is comfortable. On a degraded panel, this is workable but you have spent more time in IMC than you would have going to DuPage.
+
+"Five Golf Hotel, cleared ILS RWY 16 Chicago Executive, contact tower one-one-niner point niner."
+
+You intercept and ride the localizer. Glideslope alive. You are on the SAM.
+
+<div class="choice-list">
+<<link "A. 'Connie, read the before-landing checklist to me, please.'" "Dec7_ConnieCRM">><</link>>
+
+<<link "B. Run the checklist yourself from memory." "Dec7_SoloMemory">><</link>>
+
+<<link "C. Pull the checklist card onto your lap." "Dec7_Glance">><</link>>
+
+<<link "D. Skip the formal checklist." "Dec7_Skip">><</link>>
+</div>
+
+:: Dec6_BUU_to_DPA
+"Approach, five Golf Hotel, revised intentions — amend to DuPage KDPA. I'd like the better ceiling."
+
+"Five Golf Hotel, roger, fly heading zero-nine-zero, descend and maintain three thousand, expect vectors ILS 10 DuPage."
+
+You begin the turn. It is the correct call even though it is a reversal. The destination was legal but tight; DuPage is easy.
+
+<<set $divertedTo to "KDPA">>
+<<goto "DecBrief">>
+
+:: Dec6_BUU_Continue
+"Continue Burlington, five Golf Hotel."
+
+Approach vectors you the last fifty-five miles. You fly it on the SAM. The workload creeps up slowly, the way cognitive workload does — you don't feel it accumulating, you just notice, after ten minutes, that your shoulders are higher than they were.
+
+<<set $divertedTo to "KBUU">>
+<<goto "DecBrief">>
+
+:: Dec6_BUU_Hold
+"Approach, five Golf Hotel, request hold at a nearby fix to re-evaluate."
+
+"Five Golf Hotel, Chicago, roger. Hold as published at SIKES intersection, left turns, maintain five thousand. Expect further clearance time zero-three-zero-zero Zulu."
+
+You fly to SIKES. You enter the hold. For twelve minutes you fly racetracks in IMC on the SAM while you think. Connie watches you, calm but unreadable.
+
+You make a decision while holding. You ask Approach for DuPage.
+
+<<set $divertedTo to "KDPA">>
+<<goto "DecBrief">>
+
+:: Dec6_KPIA
+You land KPIA. You taxi to the FBO. The 182 sits on the ramp while you deal with a maintenance call — the AHRS failed and needs a component-level look. You are safe. Connie makes phone calls about a rental car. You are going to drive home from Peoria, six hours north through Illinois and southern Wisconsin. Connie will miss breakfast with her client. You will be home sometime after 1 am.
+
+<<goto "End_PIA_Divert">>
+
+:: Dec7_ConnieCRM
+"Connie, I need you to help me. The checklist is clipped to the yoke — that plastic card right there. I want you to read each item out loud, slowly, and I'll call back to you. Can you do that?"
+
+Connie picks up the card. "Okay. Um. Fuel selector."
+
+"Both."
+
+"Mixture."
+
+"Rich."
+
+"Carburetor heat."
+
+"N-A for 182T, we have fuel injection — skip."
+
+"Fuel pump."
+
+"N-A — 182T is gravity-feed, skip."
+
+"Seat belts and harnesses."
+
+"Secure."
+
+"Flaps."
+
+"Ten degrees."
+
+Connie reads them all. You call them back. Your scan stays on the SAM and the localizer and the glideslope, and the checklist runs in parallel without stealing your eyes. CRM just added a second pilot to the cockpit — an untrained one, but the right tool for this exact task.
+
+<<goto "Dec8">>
+
+:: Dec7_SoloMemory
+You run the checklist from memory. Fuel selector both. Mixture rich. Seat belts secure. Flaps ten. You do it all while holding the scan. It works, but your attention flickers to the memory retrieval and back, and you catch the glideslope needle one dot high for a moment before you re-center.
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "Dec8">>
+
+:: Dec7_Glance
+You pull the checklist card onto your right thigh. You glance down every few seconds, reading an item, then back up. Each glance costs you a beat of the instrument scan. Twice, you catch the localizer beginning to drift, correct, re-scan.
+
+It works, but your scan is more expensive than it needs to be.
+
+<<goto "Dec8">>
+
+:: Dec7_Skip
+You skip the formal checklist. You know the 182T. Fuel selector BOTH (it is). Mixture RICH (it is). Seat belts (yours are; you hope Connie's is). Flaps — you bring them to ten. You have the mental model of what a before-landing configuration is for this airplane; you just don't formally verify.
+
+It is fine. It is not best practice. On a degraded panel is exactly when "I know it" becomes expensive.
+
+<<set $badchoices to $badchoices + 1>>
+<<goto "Dec8">>
+
+:: Dec7_BUUFinal
+The ILS 11 at Burlington has DA of 979 MSL — 200 HAT over the airport. At DA, you are supposed to break out or go around. You have been flying the SAM for forty minutes. Your scan is tired. The workload has been unrelenting.
+
+You hit DA. You look up. You can see the strobe of the approach lights — you think. Maybe. There is a moment of grayness, an impression of something below.
+
+<div class="choice-list">
+<<link "A. Continue — you think you see the lights." "Dec8_SeeLights">><</link>>
+
+<<link "B. Go around. You aren't sure. At DA, unsure means go around." "Dec8_GoAround_Hard">><</link>>
+</div>
+
+:: Dec8_SeeLights
+You continue. At 150 feet AGL you get a clearer picture: approach lights, then the runway environment, then the runway itself. You land firm, centerline, full flaps.
+
+You taxi clear. Tower switches you to ground. You sit at the hold-short line for a long minute, not yet ready to taxi. Connie puts a hand on your arm.
+
+"Good job."
+
+You nod. You got away with it. At DA, with a degraded panel, with a tired scan, with a non-pilot passenger, with a destination at the worst weather in the region — you got away with it.
+
+<<set $divertedTo to "KBUU">>
+<<goto "End_KBUU_Landed">>
+
+:: Dec8_GoAround_Hard
+You push full throttle, pitch for Vy, flaps ten, positive rate, climb. Missed approach heading 115, climb to 3,000, direct JANESVILLE VOR — you do it on the SAM, because you briefed it.
+
+Approach catches you. "Five Golf Hotel, missed approach, fly heading one-one-five, climb and maintain three thousand. Say intentions."
+
+"Approach, five Golf Hotel, divert DuPage KDPA."
+
+"Five Golf Hotel, roger, turn right heading zero-niner-zero, climb four thousand."
+
+You turn. You are climbing in IMC on the SAM. Twenty-six miles to DuPage. Forty more minutes of partial panel. You are exhausted.
+
+You make it. DuPage ceilings are 900 and 4; you break out at 700 AGL, see the runway, land long but clean. You shut down on the DuPage ramp. You sit in the seat for a full minute before you can unbuckle.
+
+Connie looks at you. "You okay?"
+
+"Yeah. Yeah. I'm okay."
+
+<<set $divertedTo to "KDPA">>
+<<goto "End_KBUU_Missed_to_KDPA">>
+
+:: Dec8
+You are on the final segment of the ILS. Localizer centered. Glideslope on the dot. Airspeed a stable 85 knots. Power steady. Trim set. You are sinking at 500 fpm through the gray.
+
+At 500 feet above DA, things are still quiet.
+
+At 300 feet above DA, you make yourself look up — just a glance outside — to check for the approach lights.
+
+At 100 feet above DA, you still see nothing but gray. Your scan stays inside.
+
+<div class="choice-list">
+<<link "A. Continue to DA, look up at DA, land if you see the runway environment, go around if you don't." "Dec9_DA_Strict">><</link>>
+
+<<link "B. Add five knots for the degraded panel — keep approach speed at 90 — you want more control authority in case you need a go-around." "Dec9_AddFive">><</link>>
+
+<<link "C. Call the missed now. The panel is degraded, the scan is tired, the prudent thing is a holding pattern and a plan." "Dec9_EarlyMiss">><</link>>
+</div>
+
+:: Dec9_DA_Strict
+You continue. DA comes up. You look up.
+
+<<if $divertedTo eq "KDPA">>
+At DA, you break out at 800 AGL over flat suburban Illinois. The ILS 10 DuPage is straight ahead. You see the approach lights, the runway end identifier lights, and then the pavement. You land clean.
+<<elseif $divertedTo eq "KUGN">>
+At DA, you break out at 400 AGL. You see the approach lights clearly — the five-light rabbit ahead, then the REIL strobes, then the threshold. You land clean on RWY 23.
+<<elseif $divertedTo eq "KPWK">>
+At DA, you break out at 600 AGL. You see the approach lights, the touchdown zone lights, then the runway. You land clean on RWY 16 Chicago Executive.
+<</if>>
+
+You roll out. You taxi clear. You sit, still belted, for ten seconds before you trust yourself to key the mic for ground.
+
+<<goto "End_Good">>
+
+:: Dec9_AddFive
+You add five knots. You are now at 90 KIAS instead of 85 down the glideslope. That is a slightly flatter descent angle and slightly more control authority. It is a defensible choice on a degraded panel in soft weather.
+
+You ride it down. DA. Look up. Same picture as the scenario dictates by where you diverted — clean break-out, runway visible, land. You add a hundred feet to your rollout. Nothing bad happens.
+
+<<goto "End_Good">>
+
+:: Dec9_EarlyMiss
+You key the mic. "Approach, five Golf Hotel, going missed, going around."
+
+"Five Golf Hotel, roger, fly published missed, say intentions."
+
+You climb out on the SAM, run the published missed, think for ninety seconds, and decide to request a hold and a reset.
+
+"Approach, five Golf Hotel, request hold and re-vector for another ILS attempt."
+
+"Five Golf Hotel, roger, hold as published, left turns, expect further clearance two minutes."
+
+You fly a hold. You breathe. You re-brief the approach. You come back in — and this time, you break out comfortably.
+
+You landed on the second attempt. It cost you ten extra minutes of IMC and some fuel. It cost you nothing else.
+
+<<goto "End_Qualified">>
+
+:: End_Good
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p><<if $divertedTo eq "KDPA">>You lost your primary attitude reference in IMC, transitioned to the standby instruments, recognized that your whiskey compass was a poor substitute for an HSI and asked for the tool that solved that problem (no-gyro vectors), diverted to an airport with comfortable ceilings instead of pressing on to an at-minimums destination, used your non-pilot passenger as a checklist resource, and flew a normal ILS to an uneventful landing.<<elseif $divertedTo eq "KUGN">>You lost your primary attitude reference in IMC, managed the transition to standby instruments, selected Waukegan for its comfortable margin above minimums, and flew the ILS to a clean landing.<<elseif $divertedTo eq "KPWK">>You lost your primary attitude reference in IMC, managed the transition to standby instruments, chose Chicago Executive for the comfortable ceilings and maintenance on the field, and flew the ILS to a clean landing.<</if>> You finished with the airplane and passenger intact and a real story about why the SAM and no-gyro are worth every dollar and every minute of practice.</p>
+<h3>ADM analysis</h3>
+<p>The most important decision you made was a small one: you admitted your heading indicator was unreliable and asked for no-gyro vectors. Many instrument-rated pilots would try to muscle the whiskey compass through a vectored approach sequence on pride alone, because asking feels like admitting. It isn't. No-gyro is in the AIM (5-4-11) precisely because the designers understood that on a degraded panel, shedding tasks to ATC is the high-skill move, not the low-skill one.</p>
+<p>Your diversion choice — trading your destination for a better-ceiling airport — was a 1-2-3-rule decision applied in real time. The alternate you filed was there for exactly this. You used it.</p>
+<h3>What good judgment looks like here</h3>
+<p>Partial-panel IMC is the classic instrument training scenario because it forces every core ADM habit: recognize the problem, announce it, gather information, weigh alternatives, make a call, and re-brief. The scenario rewards a pilot who treats the standby instruments as a real system (practice them in VMC twice a year) and who knows the phraseology that ATC already has for this problem. "Request no-gyro vectors" is eight syllables that buy you a reduced workload all the way to minimums.</p>
+<h3>Key takeaway</h3>
+<p>The SAM is not a novelty instrument. The no-gyro vector is not an advanced technique. These are tools built for exactly the day you had. Use them early, and the story ends in a taxi-clear radio call.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><</link>>
+</div>
+
+:: End_Qualified
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You flew a missed approach you didn't technically need, then re-set and flew a clean approach and landed. The airplane is fine. Connie is fine. You burned ten extra minutes of fuel and gained a minute of peace before the second attempt.</p>
+<h3>ADM analysis</h3>
+<p>A conservative miss is never punished in aviation. What you felt on final was the cumulative weight of forty minutes of partial-panel scan and a tired head. The honest call was "I need a reset." You made it. The hold gave you that reset. The second attempt was, from the inside, a completely different experience from the first.</p>
+<h3>What good judgment looks like here</h3>
+<p>Instrument-rated pilots under-use the go-around. It is free. It costs fuel, which is bought with money, which is cheaper than any other resource in the cockpit. If at DA — or before DA — you don't like your scan, the cleanest answer is power up, clean up, climb, re-brief, and try again. The approach does not care that you missed.</p>
+<h3>Key takeaway</h3>
+<p>On a degraded panel, a pre-emptive miss is a skill, not a failure.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><</link>>
+</div>
+
+:: End_KBUU_Landed
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You pressed on to a destination at approach minimums on a degraded panel. You broke out with visibility at or barely above minimums, saw just enough at DA to continue, and landed. The airplane is fine. Connie is fine. You are, by the time you park on the ramp, beginning to feel the weight of the decision you just made.</p>
+<h3>ADM analysis</h3>
+<p>You had four airports on the menu with better ceilings than your destination. You chose the at-minimums destination because it was your destination. That is the macho attitude dressed up as perseverance. Sometimes the destination is what drives the decision; but on a degraded panel, with the same fuel available to you, choosing a 900-and-4 airport over a 300-and-1 airport is not caution — it is competence.</p>
+<h3>What good judgment looks like here</h3>
+<p>The 1-2-3 rule and the personal-minimums principle exist for exactly this situation. Legal minimums assume a fully functional panel. When your panel is degraded, your effective personal minimums should climb to reflect that. The ILS approach was flown well. The choice of which approach to fly was suboptimal.</p>
+<h3>Key takeaway</h3>
+<p>Destination is a preference, not a constraint. On a degraded panel, treat it as a preference.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><</link>>
+</div>
+
+:: End_KBUU_Missed_to_KDPA
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You pressed on to a destination at minimums on a degraded panel, couldn't confirm the runway environment at DA, correctly executed a missed approach, and diverted to a comfortable-weather alternate. The airplane is fine. Connie is fine. You are spent.</p>
+<h3>ADM analysis</h3>
+<p>The decision you got right was the go-around. "Runway environment in sight or miss" is the rule, and the rule works. The decision that put you in the position of needing a go-around from an at-minimums approach on a degraded panel was the earlier one — electing to continue to the destination instead of diverting to DuPage from cruise. That choice cost you forty minutes of IMC scan before you even started the approach.</p>
+<h3>What good judgment looks like here</h3>
+<p>The missed-approach decision was textbook. The diversion decision that preceded it was delayed. In a degraded-panel scenario, the earlier you pivot to a better-weather airport, the less scan you have to do before you're done flying. You did eventually pivot — just late.</p>
+<h3>Key takeaway</h3>
+<p>An earlier diversion is a better diversion. A late one is still a good one.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><</link>>
+</div>
+
+:: End_PIA_Divert
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You chose to fly southbound out of IMC rather than pivot to a closer above-minimums IFR airport. You were still in IMC for another forty-five minutes on a degraded panel before you broke out over central Illinois, canceled IFR, and landed at Peoria. The airplane is fine. Connie is fine. Nobody is home tonight; you are driving from Peoria.</p>
+<h3>ADM analysis</h3>
+<p>The intuition — "get out of IMC" — is a good intuition. The execution bet on the hypothesis that forty-five minutes of partial-panel southbound flying was less workload than fifteen minutes of partial-panel flying into a comfortable-weather airport to the north. That hypothesis was wrong. IMC is IMC; the only variable is how long you spend there.</p>
+<p>Closer above-minimums airports (DuPage, Executive, Waukegan) would have gotten you on the ground sooner with less workload. "VMC" is a mental destination, but the instruments you have do not care whether you are north or south — they care whether you have to scan them for ten more minutes or thirty-five.</p>
+<h3>What good judgment looks like here</h3>
+<p>On a degraded panel in IMC, minimize scan time. That usually means the closest suitable airport, not the closest VMC. Suitable here means above-minimums, ILS preferred, runway long enough, ATC environment manageable.</p>
+<h3>Key takeaway</h3>
+<p>The right answer to "get out of IMC" is often "land, not fly."</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><</link>>
+</div>
