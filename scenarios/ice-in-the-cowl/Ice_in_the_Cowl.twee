@@ -1,0 +1,514 @@
+:: StoryTitle
+Ice in the Cowl
+
+:: StoryData
+{
+  "ifid": "9C00260D-34D6-4D41-ABD3-E347C736CBF0",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "FlightPrep"
+}
+
+:: StoryInit
+/* Scenario metadata
+   Protagonist: Kellea Hargrove, 37, 872 hrs TT, 92 hrs actual IMC, IR current (last actual 4 months ago)
+   Aircraft:   1984 Piper Arrow IV (PA-28RT-201), T-tail, IO-360 200hp, retractable.
+               Not FIKI. Pitot heat only. No deice/anti-ice.
+   Passenger:  Miles Ridley, 10, nephew (sister Anya's son). First time in actual IMC.
+   Route:      KFTT (Jefferson City MO) → KMLE (Millard / Omaha NE), ~270 nm, heading 315°.
+   Date/Time:  Saturday, January 17. Depart KFTT 1300 local (1900Z). Winter stratus, entire column subfreezing.
+   Hazard:     Structural icing in a non-FIKI airplane; mixed PIREPs; passenger-as-information-source error.
+   Design:     Difficulty via ambiguity, incomplete information, plausible-wrong answers, and uncertainty.
+               No choice depends on the user feeling in-cockpit stress. Consequences teach, not tension.
+*/
+<<set $readWeather to false>>
+<<set $readFlightPlan to false>>
+<<set $readAircraft to false>>
+<<set $readMap to false>>
+<<set $pathArray to []>>
+<<set $audioEnabled to false>>
+
+/* Hidden state (never displayed to user) */
+<<set $missedCues to 0>>        /* Subtle cues the user walked past without acting */
+<<set $badchoices to 0>>         /* Classic bad-choice counter */
+<<set $iceAccretion to 1>>       /* 0 = none, 1 = trace, 2 = light, 3 = moderate, 4 = severe */
+<<set $tailIce to 0>>            /* Parallel track for the horizontal stab (T-tail is shadowed from view) */
+<<set $fuelGal to 62>>           /* Usable fuel remaining, gallons */
+<<set $onATCAdvice to false>>    /* True when current altitude/heading was directed by ATC */
+<<set $atisTrusted to "none">>   /* "correct" or "passenger" — set if user accepts passenger-reported ATIS */
+<<set $phase to "cruise">>       /* cruise | descent | approach | final */
+<<set $atcReturn to "Opening">>  /* Where the persistent ATC sidebar returns to */
+<<set $contactedATC to 0>>       /* How many times user pressed the ATC button */
+
+<<run (function() {
+	var tracks = [
+		["engine-smooth", "audio/engine-smooth.mp3"],
+		["engine-rough", "audio/engine-rough.mp3"],
+		["radio-squelch", "audio/radio-squelch.mp3"],
+		["atc-ambience", "audio/atc-ambience.mp3"],
+		["wind-quiet", "audio/wind-quiet.mp3"],
+		["rain-windshield", "audio/rain-windshield.mp3"],
+		["touchdown", "audio/touchdown.mp3"]
+	];
+	try {
+		tracks.forEach(function(t) { SimpleAudio.tracks.add(t[0], t[1]); });
+		State.variables.audioEnabled = true;
+	} catch(e) {
+		State.variables.audioEnabled = false;
+	}
+})()>>
+
+:: StoryScript [script]
+/* Audio one-shot helper */
+window.playOneShot = function(trackId, volume) {
+	if (!State.variables.audioEnabled) return;
+	var track = SimpleAudio.tracks.get(trackId);
+	if (!track) return;
+	track.volume(volume || 1.0);
+	track.play();
+};
+
+/* Audio toggle button — injected on every passage render */
+$(document).on(":passagerender", function(ev) {
+	$("#audio-toggle-btn").remove();
+	var btn = $('<button id="audio-toggle-btn" class="audio-toggle"></button>');
+	var updateLabel = function() {
+		if (State.variables.audioEnabled) btn.text("🔊 Audio On").removeClass("muted");
+		else btn.text("🔇 Audio Off").addClass("muted");
+	};
+	btn.on("click", function() {
+		State.variables.audioEnabled = !State.variables.audioEnabled;
+		if (!State.variables.audioEnabled) {
+			SimpleAudio.tracks.forEach(function(t) { t.stop(); });
+		}
+		updateLabel();
+	});
+	updateLabel();
+	$("body").append(btn);
+});
+
+/* Persistent "Contact ATC" sidebar.
+   Appears on all flight passages that are tagged "scenario" and NOT "ending" and NOT
+   one of the ATC passages themselves. Clicking it records the current passage so the
+   ATC sub-passage can return the user to where they came from after the radio call. */
+$(document).on(":passagerender", function(ev) {
+	$("#contact-atc-btn").remove();
+	var p = ev.passage;
+	if (!p) return;
+	var tags = p.tags || [];
+	var isFlight = tags.indexOf("scenario") >= 0 && tags.indexOf("ending") < 0;
+	var name = p.title || "";
+	if (!isFlight) return;
+	if (name === "ContactATC") return;
+	if (name.indexOf("ATC-") === 0) return;
+
+	var btn = $('<button id="contact-atc-btn" class="contact-atc-btn" title="Call ATC — any time">📻 Contact ATC</button>');
+	btn.on("click", function() {
+		State.variables.atcReturn = name;
+		State.variables.contactedATC = (State.variables.contactedATC || 0) + 1;
+		SugarCube.Engine.play("ContactATC");
+	});
+	$("body").append(btn);
+});
+
+/* OAT gauge helper — renders the cockpit sidebar OAT/IAS/ALT readouts as an always-visible
+   strip. Values are driven by hidden state so consequences can be inferred from what is
+   shown, without the passage body telegraphing which number matters. */
+window.renderCockpitStrip = function() {
+	var s = State.variables;
+	var oat = s.oat != null ? s.oat : "";
+	var alt = s.alt != null ? s.alt : "";
+	var ias = s.ias != null ? s.ias : "";
+	var iceLabel = ["none", "trace", "light", "moderate", "severe"][s.iceAccretion || 0];
+	var html = '<div class="cockpit-strip">'
+		+ '<span class="cs-item"><span class="cs-label">OAT</span> <span class="cs-val">' + oat + '</span></span>'
+		+ '<span class="cs-item"><span class="cs-label">ALT</span> <span class="cs-val">' + alt + '</span></span>'
+		+ '<span class="cs-item"><span class="cs-label">IAS</span> <span class="cs-val">' + ias + '</span></span>'
+		+ '<span class="cs-item cs-ice cs-ice-' + (s.iceAccretion || 0) + '"><span class="cs-label">ICE</span> <span class="cs-val">' + iceLabel + '</span></span>'
+		+ '</div>';
+	return html;
+};
+
+/* Inject cockpit strip on flight passages */
+$(document).on(":passagerender", function(ev) {
+	$("#cockpit-strip-wrap").remove();
+	var p = ev.passage;
+	if (!p) return;
+	var tags = p.tags || [];
+	var isFlight = tags.indexOf("scenario") >= 0 && tags.indexOf("ending") < 0;
+	var name = p.title || "";
+	if (!isFlight) return;
+	if (name === "ContactATC") return;
+	if (name === "Opening") return; /* Opening uses its own embedded instruments */
+	var wrap = $('<div id="cockpit-strip-wrap"></div>').html(window.renderCockpitStrip());
+	$("#story").prepend(wrap);
+});
+
+:: StoryStylesheet [stylesheet]
+body {
+  background-color: #0e1624;
+  color: #e0e0e0;
+}
+
+#story {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 1em;
+  font-size: 1.05em;
+  line-height: 1.65;
+}
+
+a.link-internal {
+  display: inline-block;
+  padding: 0.5em 1.2em;
+  margin: 0.3em 0.2em;
+  background-color: #24324f;
+  color: #c8d8f0;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 1px solid #3a4a6c;
+  transition: background-color 0.2s;
+}
+a.link-internal:hover { background-color: #36507f; }
+
+.scenario-title {
+  font-size: 2em;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 0.2em;
+}
+.scenario-subtitle {
+  font-size: 1.05em;
+  color: #8aa0c0;
+  text-align: center;
+  margin-bottom: 1.5em;
+  font-style: italic;
+}
+
+.preflight-btn {
+  display: inline-block;
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  padding: 10px 20px;
+  margin: 6px 4px;
+  min-width: 230px;
+  text-align: center;
+  color: #e0e0e0;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.preflight-btn:hover { background: #0f3460; color: #ffffff; }
+
+.metar-block, .flight-plan, .aircraft-card {
+  background-color: #0b1828;
+  padding: 1em;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  margin: 0.5em 0;
+  white-space: pre-wrap;
+  font-size: 0.95em;
+}
+
+.airport-table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.9em; }
+.airport-table th, .airport-table td { padding: 6px 10px; border-bottom: 1px solid #2a3a56; text-align: left; }
+.airport-table th { color: #9ab0c8; }
+
+.debrief {
+  border-top: 2px solid #4a5a78;
+  padding-top: 1em;
+  margin-top: 2em;
+  background: rgba(20,28,44,0.5);
+  border-radius: 6px;
+  padding: 1.2em 1.4em;
+}
+
+.chart-disclaimer {
+  font-size: 0.8em;
+  color: #8090a8;
+  border-left: 3px solid #3a4a6c;
+  padding: 6px 12px;
+  margin: 1em 0;
+}
+
+.sectional-container { margin: 1em 0; }
+.sectional-container img {
+  max-width: 100%;
+  border: 1px solid #2a3a56;
+  border-radius: 4px;
+}
+.sectional-label { font-size: 0.85em; color: #8090a8; margin-top: 0.3em; }
+
+.audio-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 6px 12px;
+  background: rgba(36, 50, 79, 0.85);
+  color: #c8d8f0;
+  border: 1px solid #3a4a6c;
+  border-radius: 6px;
+  font-size: 0.85em;
+  cursor: pointer;
+  z-index: 100;
+}
+.audio-toggle.muted { background: rgba(60, 40, 40, 0.85); color: #aa8888; }
+
+.contact-atc-btn {
+  position: fixed;
+  bottom: 14px;
+  right: 14px;
+  padding: 10px 16px;
+  background: rgba(36, 50, 79, 0.92);
+  color: #e8f0ff;
+  border: 1px solid #4a6a8c;
+  border-radius: 8px;
+  font-size: 0.95em;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+}
+.contact-atc-btn:hover { background: rgba(58, 90, 140, 0.95); }
+
+/* Cockpit instrument strip — shown on flight passages */
+.cockpit-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  justify-content: center;
+  background: #07101c;
+  border: 1px solid #2a3a56;
+  border-radius: 6px;
+  padding: 0.6em;
+  margin: 0 0 1.2em 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+}
+.cs-item { padding: 0.2em 0.7em; border-right: 1px solid #223048; }
+.cs-item:last-child { border-right: none; }
+.cs-label { color: #7a8aa8; font-size: 0.8em; letter-spacing: 0.05em; }
+.cs-val { color: #e8f0ff; font-weight: bold; margin-left: 0.4em; }
+.cs-ice-0 .cs-val { color: #9ae0a5; }
+.cs-ice-1 .cs-val { color: #e0d89a; }
+.cs-ice-2 .cs-val { color: #e8b874; }
+.cs-ice-3 .cs-val { color: #e88c5a; }
+.cs-ice-4 .cs-val { color: #e86060; }
+
+/* Main Menu button (injected) */
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block;
+  padding: 0.55em 1.3em;
+  background: #1A3C57;
+  color: #fff !important;
+  border: 1px solid #2E5C82;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+.main-menu-btn:hover, .main-menu-btn:focus { background: #2E5C82; outline: none; }
+
+/* Passenger quotes */
+.pax-quote {
+  background: rgba(40, 58, 80, 0.35);
+  border-left: 3px solid #6080a8;
+  padding: 0.5em 0.9em;
+  margin: 0.8em 0;
+  font-style: italic;
+  color: #c0d0e8;
+}
+.pax-quote::before { content: "— Miles: "; font-style: normal; color: #7a8aa8; font-weight: bold; }
+
+:: FlightPrep [preflight]
+<<set $pathArray to $pathArray.concat(["Preflight — reviewing materials"])>>
+
+<div class="scenario-title">Ice in the Cowl</div>
+<div class="scenario-subtitle">A winter IFR scenario — KFTT to KMLE</div>
+
+It's Saturday, January 17. Just after 12:15 PM local in Jefferson City, Missouri. You're Kellea Hargrove — 37, 872 hours total, instrument rated and current on paper, though your last actual IMC was four months ago, shooting practice approaches with your CFII on a better day than this one.
+
+Your 1984 Piper Arrow IV is fueled, preflighted, and parked on the ramp at Jefferson City Memorial (KFTT). The engine hasn't been started yet. Your nephew Miles — ten years old, your sister Anya's son — is in the FBO with a book about submarines, waiting patiently. He has a youth hockey tournament game at the Ralston Arena in Omaha at 5:30 PM, and Anya is expecting you at KMLE by 3:45 local.
+
+The sky over Jefferson City is a flat, featureless gray. The OAT is 28°F. You've already pulled the wing covers off and checked for frost — none. But the weather between here and Omaha is a different story, and the briefing you pulled an hour ago did not make the decision easy.
+
+<strong>Review your preflight materials before deciding whether and how to go:</strong>
+
+<div class="chart-disclaimer">Charts, weather data, and performance figures in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here — not current publications — as the scenario is designed around them.</div>
+
+<<link '<span class="preflight-btn">Weather Briefing</span>' "Preflight-Weather">><<set $readWeather to true>><</link>>
+<<link '<span class="preflight-btn">Flight Plan & Route</span>' "Preflight-FlightPlan">><<set $readFlightPlan to true>><</link>>
+<<link '<span class="preflight-btn">Aircraft & Performance</span>' "Preflight-Aircraft">><<set $readAircraft to true>><</link>>
+<<link '<span class="preflight-btn">Area Map</span>' "Preflight-Map">><<set $readMap to true>><</link>>
+
+<<if $readWeather and $readFlightPlan and $readAircraft and $readMap>>
+<hr>
+You've reviewed all your materials. Time to decide.
+
+<<link '<span class="preflight-btn">☑ Begin Flight</span>' "Opening">><</link>>
+<<elseif $readWeather or $readFlightPlan or $readAircraft or $readMap>>
+<hr>
+<em>You haven't reviewed everything yet. In the real world, you'd want the full picture before launching into winter IFR. Take your time.</em>
+
+<<link '<span class="preflight-btn">Begin Flight Anyway</span>' "Opening">><</link>>
+<</if>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Weather [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed weather briefing"])>>
+<strong>Standard Briefing — Kansas City AFSS (pulled 1215 local, 1815Z)</strong>
+
+<div class="metar-block">METARs (1755Z)
+
+KFTT 171755Z 03008KT 4SM -SN OVC032 M02/M04 A3005
+KSTJ 171755Z 01010KT 10SM OVC035 M03/M05 A3008
+KMCI 171753Z 35010KT 8SM OVC030 M03/M06 A3010
+KIRK 171755Z 36008KT 8SM OVC040 M02/M04 A3007
+KCBF 171755Z 34012G18KT 5SM OVC026 M04/M06 A3012
+KMLE 171756Z 35010G16KT 6SM OVC028 M04/M07 A3012
+KLNK 171755Z 34014G20KT 7SM OVC030 M05/M08 A3013</div>
+
+<div class="metar-block">TAF KMLE (1715Z)
+
+KMLE 171715Z 1718/1818 35012G20KT 5SM OVC025
+  FM180000 34010KT 4SM -SN OVC020
+  FM180600 33008KT 3SM -SN OVC015
+  TEMPO 1718/1722 3SM -SN BR OVC015</div>
+
+<div class="metar-block">AIRMETs / SIGMETs valid 1700Z-0100Z
+
+AIRMET ZULU for MO IA NE KS: Moderate icing SFC-FL120.
+  Occasional severe icing possible in areas of precipitation.
+  Freezing level: surface to 1,000 MSL (column below freezing
+  entire route).
+
+AIRMET SIERRA for E NE: Ceilings below 1,000 ft possible
+  21Z-01Z.
+
+No convective SIGMETs in effect for route.</div>
+
+<div class="metar-block">PIREPs (last 90 minutes)
+
+UA /OV KMCI /TM 1655 /FL060 /TP C172 /SK OVC /TA M04
+   /IC LGT RIME /RM "light rime LE, accretion slow,
+   descent to 3500 no improvement"
+
+UA /OV KTOP /TM 1630 /FL080 /TP PA31 /SK OVC /TA M12
+   /IC LGT-MOD MIXED /RM "mod mixed climb thru 8000,
+   continued to 10000 still IMC, tops unknown"
+
+No tops reports available for V71 or V14 corridor.</div>
+
+<div class="metar-block">Area Forecast summary
+
+Solid stratus overcast 2,500–4,500 AGL across entire route.
+Tops unknown — no pilot reports above 10,000 in region today.
+Light snow possible in western portions. No convective
+activity. Entire column below freezing from surface to
+FL120.</div>
+
+<p><em>You note: no tops report confirms tops exist. The Navajo climbed through 10,000 still in the goo. And the 172's descent to 3,500 didn't help — which tracks with a column that's subfreezing all the way down.</em></p>
+
+<<link "← Back to preflight" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-FlightPlan [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed flight plan and route"])>>
+<strong>Filed IFR Flight Plan</strong>
+
+<div class="flight-plan">Aircraft:   N4318J  Piper Arrow IV (PA-28RT-201)
+Equipment:  /G  (GPS, no FIKI)
+True AS:    148 KTAS
+Departure:  KFTT   1900Z
+Route:      KFTT DUTRI V71 ANX V14 KMLE
+Altitude:   6,000
+Destination: KMLE
+Alternate:  KCBF (ILS RWY 36)
+Fuel:       4:30
+Souls:      2
+Remarks:    /V VFR ON TOP NOT REQUESTED</div>
+
+<strong>Waypoints and MEA</strong>
+
+<table class="airport-table">
+<tr><th>Segment</th><th>Distance</th><th>MEA</th><th>Notes</th></tr>
+<tr><td>KFTT → DUTRI</td><td>22 nm</td><td>3,000</td><td>Direct SID</td></tr>
+<tr><td>DUTRI → ANX (V71)</td><td>168 nm</td><td>3,500</td><td>Via KSTJ</td></tr>
+<tr><td>ANX → KMLE (V14)</td><td>78 nm</td><td>4,500</td><td>Anoka Iowa VORTAC inbound</td></tr>
+</table>
+
+<strong>Enroute alternates (runways ≥ 5,000 ft, ILS or RNAV)</strong>
+
+<table class="airport-table">
+<tr><th>ID</th><th>Airport</th><th>Approach</th><th>Position relative to route</th></tr>
+<tr><td>KSTJ</td><td>Rosecrans Memorial (St. Joseph MO)</td><td>ILS RWY 35</td><td>On V71, 78 nm NW of KFTT</td></tr>
+<tr><td>KIRK</td><td>Kirksville Regional (MO)</td><td>ILS RWY 36</td><td>32 nm east of route</td></tr>
+<tr><td>KFNB</td><td>Brenner Field (Falls City NE)</td><td>RNAV RWY 32</td><td>18 nm west of V71 near state line</td></tr>
+<tr><td>KCBF</td><td>Council Bluffs (IA)</td><td>ILS RWY 36</td><td>3 nm east of KMLE — filed alternate</td></tr>
+<tr><td>KLNK</td><td>Lincoln (NE)</td><td>ILS RWY 18/36</td><td>42 nm SW of KMLE</td></tr>
+</table>
+
+<strong>KMLE approaches</strong>
+
+<div class="flight-plan">ILS RWY 36     DA 1312 (200 HAT) / 3/4 SM
+RNAV RWY 36    LPV DA 1312 / 3/4 SM
+RNAV RWY 18    LPV DA 1381 / 3/4 SM
+Runway 36:     6,601 ft long, 100 wide, grooved
+Runway 18:     6,601 ft long, same surface</div>
+
+<<link "← Back to preflight" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Aircraft [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed aircraft and performance"])>>
+<strong>N4318J — 1984 Piper Arrow IV (PA-28RT-201)</strong>
+
+<div class="aircraft-card">Powerplant:   Lycoming IO-360-C1C6, 200 hp
+Prop:         Hartzell 2-blade constant-speed, full-fine 2700
+Tail:         T-tail (horizontal stabilator mounted atop vertical fin)
+Gear:         Retractable, manual override lever on floor
+Anti-ice:     Pitot heat. NO FIKI. NO prop/windshield/wing deice.
+Avionics:     Garmin GNS 430W, KX 155 #2, KAP 140 autopilot,
+              KT 76A transponder
+Fuel:         72 US gal usable, typical cruise burn 10 gph
+VNE:          174 KIAS
+VNO:          148 KIAS
+VSO (full flaps):   53 KIAS
+VS1 (clean):  62 KIAS
+Best glide:   82 KIAS @ max gross (clean)
+Vref, dirty:  75 KIAS @ 2,500 lb</div>
+
+<strong>Weight and balance</strong>
+
+<div class="aircraft-card">Empty weight:       1,676 lb
+Pilot (Kellea):       145 lb
+Passenger (Miles):     80 lb
+Baggage (1 rollaboard + hockey bag): 45 lb
+Fuel (62 gal at start of descent): 372 lb
+Total (start of descent):  2,318 lb
+MGW:                2,750 lb  (margin: 432 lb under gross)
+CG: within envelope, mid-range</div>
+
+<strong>Tailplane icing — operational note</strong>
+
+<p>The Arrow IV uses a T-tail configuration. Unlike conventional-tail Piper designs, the horizontal stabilator sits in the undisturbed slipstream above the cabin and is out of sight from both pilot and passenger seats. It collects ice independently of the wing leading edges and cannot be visually inspected from the cockpit. Flap extension in icing conditions can trigger an ice-contaminated tailplane stall (ICTS): a sudden, uncommanded nose-down pitch that requires immediate flap retraction and power reduction to recover. The POH contains no FIKI supplement and no tailplane-ice procedure; the only authority is AD 96-09-16 (notification) and the NTSB's "Roselawn" icing guidance.</p>
+
+<<link "← Back to preflight" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Map [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed area map"])>>
+<strong>Area Map — KFTT to KMLE</strong>
+
+<div class="sectional-container">
+<img src="/scenarios/ice-in-the-cowl/images/area_map.jpg" alt="Route overview map, KFTT to KMLE">
+<div class="sectional-label">Route overview, KFTT → DUTRI → V71 → ANX → V14 → KMLE, approximately 270 nm.</div>
+</div>
+
+<p>The route runs northwest across the relatively flat farmland of northwest Missouri, southwest Iowa, and into Nebraska. Terrain elevation along the route rises gently from around 900 ft MSL at KFTT to approximately 1,100 ft at KMLE. No terrain issues at filed altitude (6,000). MEAs are well below cruise altitude.</p>
+
+<p>Enroute airports with IFR approaches are spaced 25–80 nm apart — <strong>KSTJ (Rosecrans)</strong>, <strong>KIRK (Kirksville)</strong>, <strong>KFNB (Falls City)</strong>, <strong>KLNK (Lincoln)</strong>, and the filed alternate <strong>KCBF (Council Bluffs)</strong>, which shares the Omaha basin with KMLE.</p>
+
+<<link "← Back to preflight" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
