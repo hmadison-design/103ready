@@ -10,16 +10,34 @@ Ice in the Cowl
 }
 
 :: StoryInit
-/* Scenario metadata
-   Protagonist: Kellea Hargrove, 37, 872 hrs TT, 92 hrs actual IMC, IR current (last actual 4 months ago)
-   Aircraft:   1984 Piper Arrow IV (PA-28RT-201), T-tail, IO-360 200hp, retractable.
-               Not FIKI. Pitot heat only. No deice/anti-ice.
-   Passenger:  Miles Ridley, 10, nephew (sister Anya's son). First time in actual IMC.
-   Route:      KFTT (Jefferson City MO) → KMLE (Millard / Omaha NE), ~270 nm, heading 315°.
-   Date/Time:  Saturday, January 17. Depart KFTT 1300 local (1900Z). Winter stratus, entire column subfreezing.
-   Hazard:     Structural icing in a non-FIKI airplane; mixed PIREPs; passenger-as-information-source error.
-   Design:     Difficulty via ambiguity, incomplete information, plausible-wrong answers, and uncertainty.
-               No choice depends on the user feeling in-cockpit stress. Consequences teach, not tension.
+/* SCENARIO TITLE:      Ice in the Cowl
+   AUDIENCE:            General Aviation Pilots
+   TONE:                Professional
+   PRIMARY TOPIC:       Structural icing in a non-FIKI airplane (winter IFR)
+   SECONDARY TOPIC:     Passenger-as-information-source error; tailplane icing (ICTS)
+   AIRCRAFT/EQUIPMENT:  1984 Piper Arrow IV (PA-28RT-201), T-tail, IO-360 200 hp,
+                        retractable. Not FIKI. Pitot heat only. GNS 430W + KX 155.
+   SETTING:             KJEF (Jefferson City MO) to KMLE (Millard / Omaha NE),
+                        ~255 nm via STJ and OVR. Saturday, January 17, midday.
+   WEATHER:             Winter stratus, entire column subfreezing, mixed PIREPs,
+                        tops unknown. Surface wind shift near the destination.
+   ADM THEMES:          Ambiguity, incomplete information, information-source
+                        validation, get-there-itis, continuation bias.
+   HAZARDOUS ATTITUDES: Invulnerability (press on), macho (climb it out),
+                        impulsivity (ICTS mishandling), resignation (wait-it-out).
+   PROTAGONIST:         Kellea Hargrove, 37, 872 hrs TT, 92 hrs actual IMC,
+                        IR current (last actual 4 months ago).
+   PASSENGER:           Miles Ridley, 10, nephew (sister Anya's son). First actual IMC.
+   TOTAL ENDINGS:       12 (2 full/qualified success, 2 qualified-with-scare,
+                        4 delay/diversion/friction, 2 emergency-declared,
+                        2 aircraft damage; zero fatal by design)
+   MIN DECISION DEPTH:  4 story decisions on every path (audit enforces)
+   TIMED DECISIONS:     No
+   ESTIMATED DURATION:  20-30 minutes
+   VERSION:             1.0    LAST REVIEWED: July 2026    REVIEWER: (pending)
+   DESIGN NOTE:         Difficulty via ambiguity, incomplete information,
+                        plausible-wrong answers, and uncertainty. No choice depends
+                        on the user feeling in-cockpit stress. Consequences teach.
 */
 <<set $readWeather to false>>
 <<set $readFlightPlan to false>>
@@ -33,12 +51,36 @@ Ice in the Cowl
 <<set $badchoices to 0>>         /* Classic bad-choice counter */
 <<set $iceAccretion to 1>>       /* 0 = none, 1 = trace, 2 = light, 3 = moderate, 4 = severe */
 <<set $tailIce to 0>>            /* Parallel track for the horizontal stab (T-tail is shadowed from view) */
-<<set $fuelGal to 62>>           /* Usable fuel remaining, gallons */
+<<set $fuelGal to 72>>           /* Usable fuel remaining, gallons (full at engine start) */
 <<set $onATCAdvice to false>>    /* True when current altitude/heading was directed by ATC */
-<<set $atisTrusted to "none">>   /* "correct" or "passenger" — set if user accepts passenger-reported ATIS */
-<<set $phase to "cruise">>       /* cruise | descent | approach | final */
+<<set $atisTrusted to "none">>   /* "passenger", "self", or "atc": whose destination weather the pilot is using */
+<<set $phase to "cruise">>       /* cruise | descent | approach | final | ground */
 <<set $atcReturn to "Opening">>  /* Where the persistent ATC sidebar returns to */
 <<set $contactedATC to 0>>       /* How many times user pressed the ATC button */
+
+/* Cockpit strip readouts (set on every flight passage) */
+<<set $oat to "">>
+<<set $alt to "">>
+<<set $ias to "">>
+
+/* Story state */
+<<set $topsHint to false>>       /* Heard the Caravan tops PIREP from Center */
+<<set $windKnown to false>>      /* Heard the real KMLE surface wind from a reliable source */
+<<set $onTop to false>>          /* Cruising VMC on top */
+<<set $rwy to "">>               /* Runway planned at KMLE: "12" or "30" */
+<<set $flapPlan to "">>          /* "full" | "partial" | "minimal" */
+<<set $buck to false>>           /* ICTS pitch buck encountered */
+<<set $declared to false>>       /* Emergency declared */
+<<set $anyaMode to "">>          /* "call" | "text" at the KSTJ ramp */
+<<set $lateMode to "">>          /* "drive" | "overnight" after waiting at KSTJ */
+<<set $emergTo to "">>           /* Emergency divert target */
+<<set $relaunchPress to false>>  /* Pressed north on the KSTJ relaunch before turning back */
+<<set $pressedSeq to false>><<set $seqMode to "">>     /* Pressed ahead of pattern traffic at KMLE */
+<<set $turnbackFrom to "">>      /* Where the turn toward KSTJ was made */
+<<set $stjArrival to "">>        /* "ils" | "visual" arrival into KSTJ */
+<<set $milesAsked to false>>     /* Miles has asked about the game (one-time quote guard) */
+<<set $fssTried to false>>       /* Tried the FSS outlet already */
+<<set $altAirTried to false>>    /* Pulled the alternate induction air already */
 
 <<run (function() {
 	var tracks = [
@@ -309,6 +351,11 @@ a.link-internal:hover { background-color: #36507f; }
 }
 .main-menu-btn:hover, .main-menu-btn:focus { background: #2E5C82; outline: none; }
 
+/* Choice lists and ending restart block */
+.choice-list { margin: 1.2em 0 0.5em 0; }
+.choice-list p { margin: 0.6em 0; }
+.restart { margin-top: 2em; font-size: 0.95em; color: #8aa0b5; }
+
 /* Passenger quotes */
 .pax-quote {
   background: rgba(40, 58, 80, 0.35);
@@ -321,47 +368,47 @@ a.link-internal:hover { background-color: #36507f; }
 .pax-quote::before { content: "— Miles: "; font-style: normal; color: #7a8aa8; font-weight: bold; }
 
 :: FlightPrep [preflight]
-<<set $pathArray to $pathArray.concat(["Preflight — reviewing materials"])>>
+<<set $pathArray to $pathArray.concat(["Preflight: reviewing materials"])>>
 
 <div class="scenario-title">Ice in the Cowl</div>
-<div class="scenario-subtitle">A winter IFR scenario — KFTT to KMLE</div>
+<div class="scenario-subtitle">A winter IFR scenario: KJEF to KMLE</div>
 
-It's Saturday, January 17. Just after 12:15 PM local in Jefferson City, Missouri. You're Kellea Hargrove — 37, 872 hours total, instrument rated and current on paper, though your last actual IMC was four months ago, shooting practice approaches with your CFII on a better day than this one.
+It's Saturday, January 17. Just after 12:15 PM local in Jefferson City, Missouri. You're Kellea Hargrove: 37 years old, 872 hours total, instrument rated and current on paper, though your last actual IMC was four months ago, shooting practice approaches with your CFII on a better day than this one.
 
-Your 1984 Piper Arrow IV is fueled, preflighted, and parked on the ramp at Jefferson City Memorial (KFTT). The engine hasn't been started yet. Your nephew Miles — ten years old, your sister Anya's son — is in the FBO with a book about submarines, waiting patiently. He has a youth hockey tournament game at the Ralston Arena in Omaha at 5:30 PM, and Anya is expecting you at KMLE by 3:45 local.
+Your 1984 Piper Arrow IV is fueled, preflighted, and parked on the ramp at Jefferson City Memorial (KJEF). The engine hasn't been started yet. Your nephew Miles, ten years old, your sister Anya's son, is in the FBO with a book about submarines, waiting patiently. He has a youth hockey tournament game at a rink on the south side of Omaha at 5:30 PM, and Anya is expecting you at KMLE by 3:45 local.
 
-The sky over Jefferson City is a flat, featureless gray. The OAT is 28°F. You've already pulled the wing covers off and checked for frost — none. But the weather between here and Omaha is a different story, and the briefing you pulled an hour ago did not make the decision easy.
+The sky over Jefferson City is a flat, featureless gray. The OAT is 28°F. You've already pulled the wing covers off and checked for frost. None. But the weather between here and Omaha is a different story, and the briefing you pulled an hour ago did not make the decision easy.
 
 <strong>Review your preflight materials before deciding whether and how to go:</strong>
 
-<div class="chart-disclaimer">Charts, weather data, and performance figures in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here — not current publications — as the scenario is designed around them.</div>
+<div class="chart-disclaimer">Charts, weather data, and performance figures in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here, not current publications, as the scenario is designed around them.</div>
 
-<<link '<span class="preflight-btn">Weather Briefing</span>' "Preflight-Weather">><<set $readWeather to true>><</link>>
-<<link '<span class="preflight-btn">Flight Plan & Route</span>' "Preflight-FlightPlan">><<set $readFlightPlan to true>><</link>>
-<<link '<span class="preflight-btn">Aircraft & Performance</span>' "Preflight-Aircraft">><<set $readAircraft to true>><</link>>
-<<link '<span class="preflight-btn">Area Map</span>' "Preflight-Map">><<set $readMap to true>><</link>>
+<<link "<span class=\"preflight-btn\">Weather Briefing</span>" "Preflight-Weather">><<set $readWeather to true>><</link>>
+<<link "<span class=\"preflight-btn\">Flight Plan & Route</span>" "Preflight-FlightPlan">><<set $readFlightPlan to true>><</link>>
+<<link "<span class=\"preflight-btn\">Aircraft & Performance</span>" "Preflight-Aircraft">><<set $readAircraft to true>><</link>>
+<<link "<span class=\"preflight-btn\">Area Map</span>" "Preflight-Map">><<set $readMap to true>><</link>>
 
 <<if $readWeather and $readFlightPlan and $readAircraft and $readMap>>
 <hr>
 You've reviewed all your materials. Time to decide.
 
-<<link '<span class="preflight-btn">☑ Begin Flight</span>' "Opening">><</link>>
+<<link "<span class=\"preflight-btn\">☑ Begin Flight</span>" "Opening">><</link>>
 <<elseif $readWeather or $readFlightPlan or $readAircraft or $readMap>>
 <hr>
 <em>You haven't reviewed everything yet. In the real world, you'd want the full picture before launching into winter IFR. Take your time.</em>
 
-<<link '<span class="preflight-btn">Begin Flight Anyway</span>' "Opening">><</link>>
+<<link "<span class=\"preflight-btn\">Begin Flight Anyway</span>" "Opening">><</link>>
 <</if>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
 :: Preflight-Weather [preflight]
 <<set $pathArray to $pathArray.concat(["Reviewed weather briefing"])>>
-<strong>Standard Briefing — Kansas City AFSS (pulled 1215 local, 1815Z)</strong>
+<strong>Standard Briefing: Kansas City AFSS (pulled 1215 local, 1815Z)</strong>
 
 <div class="metar-block">METARs (1755Z)
 
-KFTT 171755Z 03008KT 4SM -SN OVC032 M02/M04 A3005
+KJEF 171755Z 03008KT 4SM -SN OVC032 M02/M04 A3005
 KSTJ 171755Z 01010KT 10SM OVC035 M03/M05 A3008
 KMCI 171753Z 35010KT 8SM OVC030 M03/M06 A3010
 KIRK 171755Z 36008KT 8SM OVC040 M02/M04 A3007
@@ -398,17 +445,17 @@ UA /OV KTOP /TM 1630 /FL080 /TP PA31 /SK OVC /TA M12
    /IC LGT-MOD MIXED /RM "mod mixed climb thru 8000,
    continued to 10000 still IMC, tops unknown"
 
-No tops reports available for V71 or V14 corridor.</div>
+No tops reports available for the KJEF-KMLE corridor.</div>
 
 <div class="metar-block">Area Forecast summary
 
-Solid stratus overcast 2,500–4,500 AGL across entire route.
-Tops unknown — no pilot reports above 10,000 in region today.
+Solid stratus overcast 2,500-4,500 AGL across entire route.
+Tops unknown, no pilot reports above 10,000 in region today.
 Light snow possible in western portions. No convective
 activity. Entire column below freezing from surface to
 FL120.</div>
 
-<p><em>You note: no tops report confirms tops exist. The Navajo climbed through 10,000 still in the goo. And the 172's descent to 3,500 didn't help — which tracks with a column that's subfreezing all the way down.</em></p>
+<p><em>You note: no tops report confirms tops exist. The Navajo climbed through 10,000 still in the goo. And the 172's descent to 3,500 didn't help, which tracks with a column that's subfreezing all the way down.</em></p>
 
 <<link "← Back to preflight" "FlightPrep">><</link>>
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
@@ -417,52 +464,67 @@ FL120.</div>
 <<set $pathArray to $pathArray.concat(["Reviewed flight plan and route"])>>
 <strong>Filed IFR Flight Plan</strong>
 
-<div class="flight-plan">Aircraft:   N4318J  Piper Arrow IV (PA-28RT-201)
-Equipment:  /G  (GPS, no FIKI)
-True AS:    148 KTAS
-Departure:  KFTT   1900Z
-Route:      KFTT DUTRI V71 ANX V14 KMLE
-Altitude:   6,000
-Destination: KMLE
-Alternate:  KCBF (ILS RWY 36)
-Fuel:       4:30
-Souls:      2
-Remarks:    /V VFR ON TOP NOT REQUESTED</div>
+<div class="flight-plan">Aircraft:    N4318J  Piper Arrow IV (PA-28RT-201)
+Equipment:   /G  (GPS, no FIKI)
+True AS:     148 KTAS
+Departure:   KJEF   1900Z
+Route:       KJEF DCT STJ DCT OVR DCT KMLE
+Altitude:    6,000
+Destination: KMLE (Millard)
+Alternate:   KCBF (Council Bluffs Muni)
+Time enrte:  1:50
+Fuel:        5:45
+Souls:       2
+Remarks:     NON-FIKI ACFT</div>
 
-<strong>Waypoints and MEA</strong>
-
-<table class="airport-table">
-<tr><th>Segment</th><th>Distance</th><th>MEA</th><th>Notes</th></tr>
-<tr><td>KFTT → DUTRI</td><td>22 nm</td><td>3,000</td><td>Direct SID</td></tr>
-<tr><td>DUTRI → ANX (V71)</td><td>168 nm</td><td>3,500</td><td>Via KSTJ</td></tr>
-<tr><td>ANX → KMLE (V14)</td><td>78 nm</td><td>4,500</td><td>Anoka Iowa VORTAC inbound</td></tr>
-</table>
-
-<strong>Enroute alternates (runways ≥ 5,000 ft, ILS or RNAV)</strong>
+<strong>Route segments and minimum IFR altitudes</strong>
 
 <table class="airport-table">
-<tr><th>ID</th><th>Airport</th><th>Approach</th><th>Position relative to route</th></tr>
-<tr><td>KSTJ</td><td>Rosecrans Memorial (St. Joseph MO)</td><td>ILS RWY 35</td><td>On V71, 78 nm NW of KFTT</td></tr>
-<tr><td>KIRK</td><td>Kirksville Regional (MO)</td><td>ILS RWY 36</td><td>32 nm east of route</td></tr>
-<tr><td>KFNB</td><td>Brenner Field (Falls City NE)</td><td>RNAV RWY 32</td><td>18 nm west of V71 near state line</td></tr>
-<tr><td>KCBF</td><td>Council Bluffs (IA)</td><td>ILS RWY 36</td><td>3 nm east of KMLE — filed alternate</td></tr>
-<tr><td>KLNK</td><td>Lincoln (NE)</td><td>ILS RWY 18/36</td><td>42 nm SW of KMLE</td></tr>
+<tr><th>Segment</th><th>Distance</th><th>Min alt (off-route obstacle clearance)</th><th>Notes</th></tr>
+<tr><td>KJEF → STJ</td><td>146 nm</td><td>3,300</td><td>Direct, flat farmland, gentle river valleys</td></tr>
+<tr><td>STJ → OVR</td><td>92 nm</td><td>3,500</td><td>Crosses the far SE Nebraska / SW Iowa corner</td></tr>
+<tr><td>OVR → KMLE</td><td>17 nm</td><td>3,600</td><td>Omaha VORTAC westbound across the metro</td></tr>
 </table>
 
-<strong>KMLE approaches</strong>
+<p>Total about 255 nm. Filed 6,000 is correct for westbound IFR and sits well above every segment minimum. STJ is the St. Joseph VORTAC on the field at Rosecrans. OVR is the Omaha VORTAC about 17 nm east of Millard.</p>
 
-<div class="flight-plan">ILS RWY 36     DA 1312 (200 HAT) / 3/4 SM
-RNAV RWY 36    LPV DA 1312 / 3/4 SM
-RNAV RWY 18    LPV DA 1381 / 3/4 SM
-Runway 36:     6,601 ft long, 100 wide, grooved
-Runway 18:     6,601 ft long, same surface</div>
+<strong>Alternates considered (instrument approaches verified current)</strong>
 
-<<link "← Back to preflight" "FlightPrep">><</link>>
+<table class="airport-table">
+<tr><th>ID</th><th>Airport</th><th>Approaches</th><th>Runways</th><th>Position relative to route</th></tr>
+<tr><td>KSTJ</td><td>Rosecrans Memorial (St. Joseph MO)</td><td>ILS 35, RNAV 13/17/31/35</td><td>17/35 8,061x150, 13/31 4,797x75</td><td>On the route at STJ, 146 nm out</td></tr>
+<tr><td>KIRK</td><td>Kirksville Regional (MO)</td><td>ILS 36, RNAV 18/36</td><td>18/36 6,005x100, 09/27 turf</td><td>About 70 nm NE of the KJEF-STJ leg, far off-route</td></tr>
+<tr><td>KFNB</td><td>Brenner Field (Falls City NE)</td><td>RNAV 15, RNAV 33</td><td>15/33 3,999x75</td><td>About 21 nm W of the STJ-OVR leg</td></tr>
+<tr><td>KCBF</td><td>Council Bluffs Muni (IA)</td><td>ILS 36, RNAV 14/18/32/36</td><td>18/36 5,500x100, 14/32 3,650x60</td><td>16 nm E of KMLE. Filed alternate</td></tr>
+<tr><td>KLNK</td><td>Lincoln (NE)</td><td>ILS 18 & 36, RNAV to most runways</td><td>18/36 12,901x200, 14/32 8,649x150</td><td>36 nm SW of KMLE</td></tr>
+</table>
+
+<p>One planning note in your own handwriting: KCBF sits in the same weather basin as KMLE, 16 miles across the river. If Millard goes down, Council Bluffs probably goes with it. Lincoln is the different-air option.</p>
+
+<strong>KMLE (Millard) destination data</strong>
+
+<div class="flight-plan">Field elev:  1,051 ft. Single runway 12/30, 3,801 x 75 asphalt.
+RWY 12:      Displaced threshold 212 ft. Landing dist avail 3,588.
+             Final course 123 magnetic. PAPI.
+RWY 30:      Landing dist avail 3,801. Final course 303 magnetic. PAPI.
+Tower:       NONE. CTAF/UNICOM 123.0.
+Weather:     AWOS-3 118.25 (no ATIS).
+Approach:    Omaha Approach 135.875.
+Clnc del:    125.4 (IFR departures call Omaha Approach on 125.4
+             before taking the runway).
+
+RNAV (GPS) RWY 12   LPV DA 1387 (336 AGL) / 1 1/4 SM
+                    LNAV/VNAV DA 1668 (617) / 2 SM
+                    LNAV MDA 1660 (609) / 1 SM
+RNAV (GPS) RWY 30   LNAV MDA 1620 (570 AGL) / 1 SM
+No ILS. Non-standard alternate minimums apply.</div>
+
+<<link "← Back to the preflight desk" "FlightPrep">><</link>>
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
 :: Preflight-Aircraft [preflight]
 <<set $pathArray to $pathArray.concat(["Reviewed aircraft and performance"])>>
-<strong>N4318J — 1984 Piper Arrow IV (PA-28RT-201)</strong>
+<strong>N4318J: 1984 Piper Arrow IV (PA-28RT-201)</strong>
 
 <div class="aircraft-card">Powerplant:   Lycoming IO-360-C1C6, 200 hp
 Prop:         Hartzell 2-blade constant-speed, full-fine 2700
@@ -485,30 +547,1557 @@ Vref, dirty:  75 KIAS @ 2,500 lb</div>
 Pilot (Kellea):       145 lb
 Passenger (Miles):     80 lb
 Baggage (1 rollaboard + hockey bag): 45 lb
-Fuel (62 gal at start of descent): 372 lb
-Total (start of descent):  2,318 lb
-MGW:                2,750 lb  (margin: 432 lb under gross)
-CG: within envelope, mid-range</div>
+Fuel, ramp (72 gal usable, tanks full): 432 lb
+Ramp weight:        2,378 lb
+MGW:                2,750 lb  (372 lb under gross)
+Est. start of descent (54 gal remaining): 2,270 lb
+CG: within envelope, mid-range, both loadings</div>
 
-<strong>Tailplane icing — operational note</strong>
+<strong>Tailplane icing: operational note</strong>
 
 <p>The Arrow IV uses a T-tail configuration. Unlike conventional-tail Piper designs, the horizontal stabilator sits in the undisturbed slipstream above the cabin and is out of sight from both pilot and passenger seats. It collects ice independently of the wing leading edges and cannot be visually inspected from the cockpit. Flap extension in icing conditions can trigger an ice-contaminated tailplane stall (ICTS): a sudden, uncommanded nose-down pitch that requires immediate flap retraction and power reduction to recover. The POH contains no FIKI supplement and no tailplane-ice procedure; the only authority is AD 96-09-16 (notification) and the NTSB's "Roselawn" icing guidance.</p>
 
-<<link "← Back to preflight" "FlightPrep">><</link>>
+<<link "← Back to your planning materials" "FlightPrep">><</link>>
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
 :: Preflight-Map [preflight]
 <<set $pathArray to $pathArray.concat(["Reviewed area map"])>>
-<strong>Area Map — KFTT to KMLE</strong>
+<strong>Area Map: KJEF to KMLE</strong>
 
 <div class="sectional-container">
-<img src="/scenarios/ice-in-the-cowl/images/area_map.jpg" alt="Route overview map, KFTT to KMLE">
-<div class="sectional-label">Route overview, KFTT → DUTRI → V71 → ANX → V14 → KMLE, approximately 270 nm.</div>
+<img src="/scenarios/ice-in-the-cowl/images/area_map.jpg" alt="Route overview map, KJEF to KMLE">
+<div class="sectional-label">Route overview, KJEF → STJ → OVR → KMLE, approximately 255 nm.</div>
 </div>
 
-<p>The route runs northwest across the relatively flat farmland of northwest Missouri, southwest Iowa, and into Nebraska. Terrain elevation along the route rises gently from around 900 ft MSL at KFTT to approximately 1,100 ft at KMLE. No terrain issues at filed altitude (6,000). MEAs are well below cruise altitude.</p>
+<p>The route runs northwest across the flat farmland of central and northwest Missouri to St. Joseph, then up the corner where Nebraska and Iowa meet, and finally west from the Omaha VORTAC across the metro to Millard. Terrain rises gently from about 550 ft MSL at KJEF to about 1,050 ft at KMLE. No terrain issues at the filed 6,000, and the off-route minimum altitudes along the way run 3,300 to 3,600.</p>
 
-<p>Enroute airports with IFR approaches are spaced 25–80 nm apart — <strong>KSTJ (Rosecrans)</strong>, <strong>KIRK (Kirksville)</strong>, <strong>KFNB (Falls City)</strong>, <strong>KLNK (Lincoln)</strong>, and the filed alternate <strong>KCBF (Council Bluffs)</strong>, which shares the Omaha basin with KMLE.</p>
+<p>Airports with instrument approaches sit within reach for most of the trip: <strong>KSTJ (Rosecrans)</strong> on the route itself, <strong>KFNB (Falls City)</strong> about 21 nm west of the second leg, <strong>KLNK (Lincoln)</strong> 36 nm southwest of Millard, and the filed alternate <strong>KCBF (Council Bluffs)</strong>, 16 nm east of Millard in the same weather basin. The thinnest coverage is the middle of the second leg, where Falls City is the only close option.</p>
 
-<<link "← Back to preflight" "FlightPrep">><</link>>
+<<link "← Back to the briefing stack" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Opening [scenario]
+<<set $pathArray to $pathArray.concat(["Airborne: level 6,000, trace rime"])>>
+<<set $phase to "cruise">><<set $atcReturn to "Opening">>
+<<set $oat to "-6 C">><<set $alt to 6000>><<set $ias to 133>>
+<<set $iceAccretion to 1>><<set $tailIce to 1>><<set $fuelGal to 57>>
+<<run playOneShot("engine-smooth", 0.4)>>
+
+Seventy-some minutes in, and the world outside is the same pale nothing it became at four thousand feet on the climbout. You are level at six thousand, in cloud, direct OVR with Millard behind it. The Arrow rides smooth under the KAP 140, ball centered, the GNS 430 counting down miles you cannot see. St. Joseph slid beneath you a quarter hour ago, invisible. About seventy to go.
+
+<<print window.renderCockpitStrip()>>
+
+The details, because details are all this kind of day gives you. The OAT needle sits on minus six. There is a thin white line of rime on each leading edge, and a little knob of frost has grown on the OAT probe like a cotton swab. The airspeed reads 133 indicated. The book, for this power setting, says 137.
+
+Miles is in the right seat with the laminated frequency card you handed him at the runup, promoted to radio officer for the day. He has been quizzing himself on the decimals under his breath. His submarine book sits closed on his lap.
+
+The briefing is still filed in your head. A Skyhawk found what you have now and it accreted slowly. A Navajo found worse in the climb and never found the top. Nobody has reported the tops today. Nobody has reported much of anything.
+
+The frost knob on the probe has a shape now. It didn't twenty minutes ago.
+
+<div class="choice-list">
+<<link "A. You hold what you have. Six thousand, direct OVR, one hundred forty across the ground, forty minutes out." "Cruise_Continue">>
+  <<set $pathArray to $pathArray.concat(["D1: continued at 6,000"])>>
+<</link>>
+
+<<link "B. You ask Center for eight thousand and go looking for the top of this deck." "Cruise_Climb">>
+  <<set $pathArray to $pathArray.concat(["D1: climbed looking for tops"])>>
+<</link>>
+
+<<link "C. You ask for four thousand. Warmer air lives closer to the ground, and the forecast put the bases somewhere between twenty-five hundred and forty-five hundred." "Cruise_Descend">>
+  <<set $pathArray to $pathArray.concat(["D1: descended to 4,000"])>>
+<</link>>
+
+<<link "D. You turn it around. St. Joseph is forty miles behind you, with an ILS, a long runway, and rental cars." "Cruise_Turnback">>
+  <<set $pathArray to $pathArray.concat(["D1: turned back toward KSTJ"])>>
+  <<set $turnbackFrom to "opening">>
+<</link>>
+
+<<link "E. You key up and go shopping for information with Kansas City Center." "ContactATC">>
+  <<set $pathArray to $pathArray.concat(["D1: called Center for information"])>>
+  <<set $atcReturn to "Opening">><<set $contactedATC to $contactedATC + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ContactATC [scenario]
+<<set $pathArray to $pathArray.concat(["Opened the radio menu"])>>
+<<run playOneShot("radio-squelch", 0.3)>>
+
+<<if $phase is "final">>\
+You are inside the final approach fix with the gear out and the runway somewhere ahead in the snow. Whatever a frequency could give you right now would cost attention you are currently spending on airspeed and drift. Aviate first.
+
+<div class="choice-list">
+<<link "You keep your thumb off the push-to-talk and fly the airplane." "ATC-Resume">><</link>>
+</div>
+<<elseif $phase is "ground">>\
+The number one comm is dark and the Arrow is tied down. There is nothing to transmit from a parked airplane. The problems you have left are telephone problems.
+
+<div class="choice-list">
+<<link "You put the handheld back in the flight bag." "ATC-Resume">><</link>>
+</div>
+<<elseif $phase is "turnback" or $phase is "relaunch">>\
+The controller working you already knows your situation and is handling it. Anything routine can ride along with the next call. One transmission, though, changes everything at once.
+
+<div class="choice-list">
+<<link "\"Arrow four three one eight Juliet is declaring an emergency at this time.\"" "ATC-Declare">>
+  <<set $pathArray to $pathArray.concat(["Radio: declared an emergency"])>>
+<</link>>
+</div>
+<<elseif $phase is "descent" or $phase is "approach">>\
+<<if $phase is "approach">>The number one is set to the advisory frequency. Omaha Approach is one flip of the standby away, and they told you to come back if you needed anything.<<else>>Omaha Approach owns you now, and the frequency is quiet enough to work with.<</if>> The push-to-talk waits under your left thumb.
+
+<div class="choice-list">
+<<link "A. \"Omaha Approach, Arrow one eight Juliet, any icing reports on the arrival side?\"" "ATC-Pireps">>
+  <<set $pathArray to $pathArray.concat(["Radio: asked Approach for PIREPs"])>>
+<</link>>
+
+<<link "B. \"Approach, one eight Juliet, request the current Millard weather when able.\"" "ATC-WxKMLE">>
+  <<set $pathArray to $pathArray.concat(["Radio: asked Approach for KMLE weather"])>>
+<</link>>
+
+<<link "C. \"Omaha Approach, Arrow four three one eight Juliet is declaring an emergency.\"" "ATC-Declare">>
+  <<set $pathArray to $pathArray.concat(["Radio: declared an emergency"])>>
+<</link>>
+</div>
+<<else>>\
+Kansas City Center has been a quiet companion for the last half hour: a hand-off, an altimeter setting, a Cirrus checking in somewhere above you. The frequency is there when you want it. The push-to-talk waits under your left thumb.
+
+<div class="choice-list">
+<<link "A. \"Center, Arrow one eight Juliet, any recent PIREPs between St. Joe and Omaha?\"" "ATC-Pireps">>
+  <<set $pathArray to $pathArray.concat(["Radio: asked Center for PIREPs"])>>
+<</link>>
+
+<<link "B. \"Center, one eight Juliet, request lower.\"" "ATC-Lower">>
+  <<set $pathArray to $pathArray.concat(["Radio: requested lower"])>>
+<</link>>
+
+<<link "C. \"Center, one eight Juliet, request higher.\"" "ATC-Higher">>
+  <<set $pathArray to $pathArray.concat(["Radio: requested higher"])>>
+<</link>>
+
+<<link "D. \"Center, one eight Juliet, when able, say the current Millard weather.\"" "ATC-WxKMLE">>
+  <<set $pathArray to $pathArray.concat(["Radio: asked Center for KMLE weather"])>>
+<</link>>
+
+<<link "E. \"Center, one eight Juliet, position and ops normal.\"" "ATC-OpsNormal">>
+  <<set $pathArray to $pathArray.concat(["Radio: ops-normal report"])>>
+<</link>>
+
+<<link "F. \"Center, Arrow four three one eight Juliet, declaring an emergency at this time.\"" "ATC-Declare">>
+  <<set $pathArray to $pathArray.concat(["Radio: declared an emergency"])>>
+<</link>>
+</div>
+<</if>>\
+
+<<if $phase isnot "final" and $phase isnot "ground">>\
+<div class="choice-list">
+<<link "You unkey without transmitting and let the frequency roll on." "ATC-Resume">>
+  <<set $pathArray to $pathArray.concat(["Radio: decided not to transmit"])>>
+<</link>>
+</div>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ATC-Pireps [scenario]
+<<set $pathArray to $pathArray.concat(["Heard the PIREP picture"])>>
+<<if $phase is "descent" or $phase is "approach">>\
+"One eight Juliet, stand by." A beat. "Okay. A Skyhawk into Eppley about twenty minutes ago reported light rime in the descent, out of it passing two thousand six hundred on the north side. That's the newest I have."
+
+You read back a thank-you. Light rime, bases in reach. The same day it has been all day.
+
+<div class="choice-list">
+<<link "You file it next to everything else you know." "ATC-Resume">><</link>>
+</div>
+<<else>>\
+"One eight Juliet, stand by one." The frequency clicks empty for half a minute, and then the controller comes back with the flat delivery of a man reading from a strip.
+
+"One eight Juliet, two reports. A Caravan, about twenty minutes ago, vicinity Pawnee City, west of your route: tops seven thousand five hundred, smooth and clear on top, negative ice above the layer. And the older one, a Navajo out of Topeka, light to moderate mixed in the climb, still IMC passing one zero thousand. That's what I have."
+
+<<set $topsHint to true>>\
+Two airplanes, forty miles apart, describing two different skies. You read back the numbers and write both of them on the kneeboard, one above the other.
+
+<div class="choice-list">
+<<link "Back to the instruments." "ATC-Resume">><</link>>
+</div>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ATC-Lower [scenario]
+<<set $pathArray to $pathArray.concat(["Asked for lower"])>>
+<<if $alt gte 6000>>\
+"One eight Juliet, descend and maintain four thousand, Kansas City altimeter three zero zero niner."
+
+You read it back, ease the power, and let the Arrow sink into whatever lives below.
+
+<<set $onATCAdvice to true>>
+<<goto "Cruise_Descend">>
+<<else>>\
+"One eight Juliet, unable lower at your position. Four thousand is the best I can do until the Omaha handoff."
+
+The number stands. The clouds do not care either way.
+
+<div class="choice-list">
+<<link "Back to it." "ATC-Resume">><</link>>
+</div>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ATC-Higher [scenario]
+<<set $pathArray to $pathArray.concat(["Asked for higher"])>>
+<<if $alt lte 6000>>\
+"One eight Juliet, climb and maintain eight thousand, report reaching."
+
+You read it back and feed in the power.
+
+<<set $onATCAdvice to true>>
+<<goto "Cruise_Climb">>
+<<elseif $alt is 8000 and not $onTop>>\
+"One eight Juliet, climb and maintain one zero thousand, report reaching."
+
+You read it back. The Arrow, heavier than it looks, gathers itself.
+
+<<set $onATCAdvice to true>>
+<<goto "Cruise_Climb_High">>
+<<elseif $onTop>>\
+You look at the sunlit floor of cloud stretching to every horizon and unkey. There is nothing above you but blue. Higher buys nothing today.
+
+<div class="choice-list">
+<<link "You leave the request unsent." "ATC-Resume">><</link>>
+</div>
+<<else>>\
+"One eight Juliet, unable higher on this routing. I'll have descents for you shortly anyway."
+
+The frequency moves on to somebody else.
+
+<div class="choice-list">
+<<link "You let it stand." "ATC-Resume">><</link>>
+</div>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ATC-OpsNormal [scenario]
+<<set $pathArray to $pathArray.concat(["Gave an ops-normal report"])>>
+"One eight Juliet, roger. Say flight conditions?"
+
+"IMC, smooth, <<if $iceAccretion lte 1>>trace rime<<elseif $iceAccretion is 2>>light rime, slow accretion<<else>>light to moderate mixed<</if>>, one eight Juliet."
+
+"Copy. Appreciate the report." Somewhere tonight, a briefer will read your words to a stranger. The frequency goes back to its low murmur, and nothing about your situation has changed except that it is now on the record.
+
+<div class="choice-list">
+<<link "You go back to holding the wings level." "ATC-Resume">><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ATC-WxKMLE [scenario]
+<<set $pathArray to $pathArray.concat(["Got the real KMLE weather from ATC"])>>
+<<if $phase is "approach">>You flip the number one back to Omaha Approach and ask.<<else>>A pause while the controller pulls it up.<</if>>
+
+"One eight Juliet, Millard weather: wind three five zero at one zero, gust one six, visibility five, light snow, ceiling two thousand six hundred overcast, altimeter three zero one two."
+
+You read back the altimeter and copy the rest onto the kneeboard, the wind circled the way you were taught.
+
+<<set $windKnown to true>><<set $atisTrusted to "atc">>
+<div class="choice-list">
+<<link "You return to the airplane and the miles." "ATC-Resume">><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ATC-Declare [scenario]
+<<set $pathArray to $pathArray.concat(["Declared an emergency"])>>
+<<set $declared to true>>
+You say the word, and the frequency changes shape around you.
+
+"Arrow four three one eight Juliet, roger, understand you are declaring an emergency. Say souls on board and fuel remaining."
+
+"Two souls, <<if $fuelGal gte 55>>about five hours<<else>>about four and a half hours<</if>> fuel, one eight Juliet."
+
+"One eight Juliet, copy. Say intentions."
+
+The airplane is still flying. The ice is <<if $iceAccretion lte 1>>a trace on the leading edges<<elseif $iceAccretion is 2>>a white crust building slowly<<else>>real now, ragged and dirty-looking on everything that faces the wind<</if>>. What you have bought with one sentence is the right to ask for anything.
+
+<div class="choice-list">
+<<if $phase is "cruise" or $phase is "turnback" or $phase is "relaunch">>\
+<<link "A. \"One eight Juliet requests vectors direct Rosecrans, the ILS runway three five.\"" "End_Emerg_Enroute">>
+  <<set $pathArray to $pathArray.concat(["Emergency: took vectors to KSTJ"])>>
+  <<set $emergTo to "KSTJ">>
+<</link>>
+
+<<link "B. \"One eight Juliet requests Falls City, the RNAV three three.\" Small, quiet, and into the wind." "End_Emerg_Enroute">>
+  <<set $pathArray to $pathArray.concat(["Emergency: took the RNAV into KFNB"])>>
+  <<set $emergTo to "KFNB">>
+<</link>>
+<<else>>\
+<<link "A. \"One eight Juliet will take priority handling direct Millard, the RNAV three zero.\"" "End_Emerg_Approach">>
+  <<set $pathArray to $pathArray.concat(["Emergency: priority into KMLE"])>>
+  <<set $emergTo to "KMLE">>
+<</link>>
+
+<<link "B. \"One eight Juliet requests Eppley. Long runways, and I'd like the equipment standing by.\"" "End_Emerg_Approach">>
+  <<set $pathArray to $pathArray.concat(["Emergency: diverted to Eppley"])>>
+  <<set $emergTo to "KOMA">>
+<</link>>
+<</if>>\
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ATC-Resume [scenario]
+<<if $atcReturn is "Opening">><<goto "Opening">>
+<<elseif $atcReturn is "Cruise_Continue">><<goto "Cruise_Continue">>
+<<elseif $atcReturn is "Cruise_FSS">><<goto "Cruise_FSS">>
+<<elseif $atcReturn is "Cruise_Climb">><<goto "Cruise_Climb">>
+<<elseif $atcReturn is "Cruise_Climb_Blind">><<goto "Cruise_Climb_Blind">>
+<<elseif $atcReturn is "Cruise_Climb_High">><<goto "Cruise_Climb_High">>
+<<elseif $atcReturn is "Cruise_Climb_Tops">><<goto "Cruise_Climb_Tops">>
+<<elseif $atcReturn is "Descent_Tops">><<goto "Descent_Tops">>
+<<elseif $atcReturn is "Cruise_Descend">><<goto "Cruise_Descend">>
+<<elseif $atcReturn is "Descend_AltAir">><<goto "Descend_AltAir">>
+<<elseif $atcReturn is "Cruise_Turnback">><<goto "Cruise_Turnback">>
+<<elseif $atcReturn is "Approach_KSTJ">><<goto "Approach_KSTJ">>
+<<elseif $atcReturn is "Ground_KSTJ_Ramp">><<goto "Ground_KSTJ_Ramp">>
+<<elseif $atcReturn is "Ground_KSTJ_Options">><<goto "Ground_KSTJ_Options">>
+<<elseif $atcReturn is "Ground_KSTJ_Wait">><<goto "Ground_KSTJ_Wait">>
+<<elseif $atcReturn is "Ground_Relaunch">><<goto "Ground_Relaunch">>
+<<elseif $atcReturn is "Descent_Plan">><<goto "Descent_Plan">>
+<<elseif $atcReturn is "Descent_SelfWx">><<goto "Descent_SelfWx">>
+<<elseif $atcReturn is "Descent_AskATC">><<goto "Descent_AskATC">>
+<<elseif $atcReturn is "Descent_Both">><<goto "Descent_Both">>
+<<elseif $atcReturn is "Descent_Setup12">><<goto "Descent_Setup12">>
+<<elseif $atcReturn is "Descent_Setup30">><<goto "Descent_Setup30">>
+<<elseif $atcReturn is "Approach_Rwy12">><<goto "Approach_Rwy12">>
+<<elseif $atcReturn is "Approach_AskCherokee">><<goto "Approach_AskCherokee">>
+<<elseif $atcReturn is "Approach_Around30">><<goto "Approach_Around30">>
+<<elseif $atcReturn is "Approach_Rwy30">><<goto "Approach_Rwy30">>
+<<elseif $atcReturn is "Final_Rwy12">><<goto "Final_Rwy12">>
+<<elseif $atcReturn is "Final_Rwy12_Land">><<goto "Final_Rwy12_Land">>
+<<elseif $atcReturn is "ICTS_Buck">><<goto "ICTS_Buck">>
+<<elseif $atcReturn is "ICTS_Recover">><<goto "ICTS_Recover">>
+<<elseif $atcReturn is "ICTS_Recover_Land">><<goto "ICTS_Recover_Land">>
+<<elseif $atcReturn is "Final_Rwy30">><<goto "Final_Rwy30">>
+<<elseif $atcReturn is "Final_GoAround">><<goto "Final_GoAround">>
+<<elseif $atcReturn is "Final_Second30">><<goto "Final_Second30">>
+<<else>><<goto "Opening">>
+<</if>>
+
+:: Cruise_Continue [scenario]
+<<set $pathArray to $pathArray.concat(["Cruising 6,000 toward the handoff"])>>
+<<set $phase to "cruise">><<set $atcReturn to "Cruise_Continue">>
+<<set $oat to "-6 C">><<set $alt to 6000>><<set $ias to 128>>
+<<set $iceAccretion to 2>><<set $tailIce to 2>><<set $fuelGal to 54>><<set $onTop to false>>
+
+The miles tick by the way they do in cloud, which is to say invisibly. Snow has started somewhere above you: dry flakes stream up the windshield and are gone without sticking. The white line on the leading edges has become a crust with texture, wider than your thumb. On the OAT probe the frost knob is the size of a marble.
+
+The airspeed reads 128, five knots fewer than the same power setting bought you over St. Joseph.
+
+<<if not $milesAsked>>\
+<div class="pax-quote">"Mom texted me before we took off. Coach wants everybody dressed by quarter to five." A pause, engineered to sound casual. "Are we still gonna make it?"</div>
+
+"We'll see how the next half hour goes," you tell him. He nods like a man accepting terms and goes back to the frequency card.
+
+<<set $milesAsked to true>>\
+<</if>>\
+The GNS says forty-some miles to OVR. Omaha Approach will own you soon after that.
+
+<div class="choice-list">
+<<link "A. You stay the course. Level six, direct OVR, and take the Omaha handoff as it comes." "Descent_Plan">>
+  <<set $pathArray to $pathArray.concat(["D2: held course into the handoff"])>>
+  <<set $missedCues to $missedCues + 1>>
+<</link>>
+
+<<link "B. The deck cannot go up forever. You call Center for eight thousand." "Cruise_Climb">>
+  <<set $pathArray to $pathArray.concat(["D2: asked for 8,000"])>>
+<</link>>
+
+<<link "C. Rosecrans is fifty-some miles behind you, still the best pavement you have passed all day. You call the turn." "Cruise_Turnback">>
+  <<set $pathArray to $pathArray.concat(["D2: turned back for KSTJ"])>>
+  <<set $turnbackFrom to "cruise">>
+<</link>>
+
+<<link "D. You try raising Flight Service on the number two for anything newer than a two-hour-old briefing." "Cruise_FSS">>
+  <<set $pathArray to $pathArray.concat(["D2: tried Flight Service"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_FSS [scenario]
+<<set $pathArray to $pathArray.concat(["FSS call went unanswered"])>>
+<<set $atcReturn to "Cruise_FSS">><<set $fssTried to true>>
+<<set $oat to "-6 C">><<set $alt to 6000>><<set $ias to 128>>
+
+You pull the remote outlet frequency off the low chart and dial it into the KX 155. "Flight Service, Arrow four three one eight Juliet, listening." Nothing. You try again a minute later, and once more after that. On the third call something keys up, squeals like a fax machine, and quits.
+
+Either the outlet is gone, or nobody is home, or the antenna gods have simply voted no. Two or three minutes have passed. The snow keeps streaming. The briefing you have is still the briefing you had.
+
+<div class="choice-list">
+<<link "You put the number two back where it was and return to the problem at hand." "Cruise_Continue">>
+  <<set $pathArray to $pathArray.concat(["Gave up on FSS"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Climb [scenario]
+<<if $topsHint>><<goto "Cruise_Climb_Tops">><<else>><<goto "Cruise_Climb_Blind">><</if>>
+
+:: Cruise_Climb_Blind [scenario]
+<<set $pathArray to $pathArray.concat(["Climbed to 8,000: still IMC"])>>
+<<set $phase to "cruise">><<set $atcReturn to "Cruise_Climb_Blind">>
+<<set $oat to "-11 C">><<set $alt to 8000>><<set $ias to 116>>
+<<set $iceAccretion to 2>><<set $tailIce to 2>><<set $fuelGal to 52>>
+
+Center clears you to eight thousand. The climb starts at five hundred feet a minute and finishes at two-fifty, the Arrow hauling its new white trim up the hill. You watch the altimeter do the last five hundred feet in slow motion.
+
+Eight thousand is the same milk as six. Colder milk: minus eleven now, and the snow is finer up here, more like dust. The rime keeps eating in small bites. Level again, the airspeed settles on 116.
+
+Somewhere below and behind you, a Navajo pilot once said the words "still IMC passing one zero thousand" to a briefer, and they are the only map of this deck anyone has drawn today.
+
+<div class="choice-list">
+<<link "A. You level at eight and ride it to the Omaha handoff. Altitude is options, and you just bought some." "Descent_Plan">>
+  <<set $pathArray to $pathArray.concat(["D3: leveled at 8,000, continued"])>>
+<</link>>
+
+<<link "B. Ten thousand might be the top of this thing. The Navajo quit climbing in somebody else's airplane, somebody else's hour. You ask for one zero thousand." "Cruise_Climb_High">>
+  <<set $pathArray to $pathArray.concat(["D3: kept climbing to 10,000"])>>
+<</link>>
+
+<<link "C. You give the altitude back and carry on toward the Omaha handoff. The experiment cost fifteen minutes and answered one question." "Descent_Plan">>
+  <<set $pathArray to $pathArray.concat(["D3: descended back to 6,000, continued"])>>
+<</link>>
+
+<<link "D. Enough probing. You ask for the one-eighty and point the spinner back at St. Joseph." "Cruise_Turnback">>
+  <<set $pathArray to $pathArray.concat(["D3: turned back from 8,000"])>>
+  <<set $turnbackFrom to "climb">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Climb_High [scenario]
+<<set $pathArray to $pathArray.concat(["Struggled up to 9,800"])>>
+<<set $phase to "cruise">><<set $atcReturn to "Cruise_Climb_High">>
+<<set $oat to "-14 C">><<set $alt to 9800>><<set $ias to 104>>
+<<set $iceAccretion to 3>><<set $tailIce to 2>><<set $fuelGal to 50>>
+
+The last thousand feet come hard. The vertical speed needle sags to ninety feet a minute and the Arrow hangs on its prop at 9,800, two hundred feet short of the clearance, airspeed 104 and soft in the controls. Minus fourteen. The accretion has nearly stopped, because there is almost nothing left up here to freeze, but everything you collected on the way up came with you. The KAP 140 holds pitch in small sawing corrections you can feel through the floor.
+
+Still inside the cloud. The light above is maybe, arguably, a shade brighter. Maybe.
+
+Miles has stopped reading the frequency card.
+
+<div class="choice-list">
+<<link "A. You surrender the altitude to the arrival and carry on: the Omaha handoff will bring you down regardless." "Descent_Plan">>
+  <<set $pathArray to $pathArray.concat(["D4: gave up the climb, continued"])>>
+<</link>>
+
+<<link "B. You take the hint the airplane is giving you, ask for the one-eighty, and start back down toward St. Joseph." "Cruise_Turnback">>
+  <<set $pathArray to $pathArray.concat(["D4: turned back from 9,800"])>>
+  <<set $turnbackFrom to "high">>
+<</link>>
+
+<<link "C. \"Center, Arrow four three one eight Juliet, declaring an emergency at this time.\" The word buys everything." "ATC-Declare">>
+  <<set $pathArray to $pathArray.concat(["D4: declared from 9,800"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Climb_Tops [scenario]
+<<set $pathArray to $pathArray.concat(["Broke out on top at 7,400"])>>
+<<set $phase to "cruise">><<set $atcReturn to "Cruise_Climb_Tops">>
+<<set $oat to "-10 C">><<set $alt to 8000>><<set $ias to 126>>
+<<set $iceAccretion to 1>><<set $tailIce to 1>><<set $fuelGal to 52>><<set $onTop to true>>
+<<run playOneShot("wind-quiet", 0.4)>>
+
+Center clears you to eight thousand. The climb is a grind at first, five hundred a minute decaying toward three, and then at 7,400 the gray thins, goes silver, goes bright, and lets go of the airplane all at once.
+
+Sunshine. A floor of cloud runs flat to every horizon, white as a salt pan, and the sky above it is the hard winter blue you forgot existed an hour ago. You level at eight thousand in air as smooth as poured glass. The Caravan pilot was right, at least here, at least now.
+
+On the leading edges the rime stops growing. In the direct sun it starts, very slowly, to gray and pit at the edges. It will not all leave, but it has stopped arriving.
+
+<div class="pax-quote">Miles leans against his window, headset cord stretched to its limit. "WHOA. It's like Antarctica up here. Can I take a picture for Mom?"</div>
+
+<div class="choice-list">
+<<link "A. You continue for Omaha on top, in the sunshine, and plan the descent through the deck at the far end." "Descent_Tops">>
+  <<set $pathArray to $pathArray.concat(["D3: continued on top toward Omaha"])>>
+<</link>>
+
+<<link "B. The way back to St. Joseph is sunlit now too, and the deck behind you is a known quantity. You turn for home while the getting is good." "Cruise_Turnback">>
+  <<set $pathArray to $pathArray.concat(["D3: turned back on top"])>>
+  <<set $turnbackFrom to "tops">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Descent_Tops [scenario]
+<<set $pathArray to $pathArray.concat(["Planning the descent through the deck"])>>
+<<set $phase to "descent">><<set $atcReturn to "Descent_Tops">>
+<<set $oat to "-10 C">><<set $alt to 8000>><<set $ias to 126>><<set $fuelGal to 49>>
+
+The handoff comes over the last of the sunshine. "Arrow four three one eight Juliet, contact Omaha Approach, one three five point eight seven five." Omaha has the field at Millard reporting IFR and a deck below you that measured four thousand feet thick where you came up through it.
+
+"One eight Juliet, Omaha Approach, expect descent in one five miles, altimeter three zero one two."
+
+The cloud floor slides under the wings, calm as a frozen lake. Everything between here and the runway lives inside it.
+
+<div class="choice-list">
+<<link "A. You take the descent early and gentle: five hundred feet a minute, power carrying you, stabilized long before the approach starts." "Descent_Plan">>
+  <<set $pathArray to $pathArray.concat(["D4: early gentle descent through the deck"])>>
+  <<set $iceAccretion to 2>><<set $tailIce to 2>>
+<</link>>
+
+<<link "B. You keep the sunshine until the last reasonable mile, then trade it for a firm fifteen hundred a minute down through the deck." "Descent_Plan">>
+  <<set $pathArray to $pathArray.concat(["D4: stayed high, steep descent through the deck"])>>
+  <<set $iceAccretion to 1>><<set $tailIce to 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Descend [scenario]
+<<set $pathArray to $pathArray.concat(["Down at 4,000 in the ragged bases"])>>
+<<set $phase to "cruise">><<set $atcReturn to "Cruise_Descend">>
+<<set $oat to "-4 C">><<set $alt to 4000>><<set $ias to 126>>
+<<set $iceAccretion to 2>><<set $tailIce to 2>><<set $fuelGal to 53>><<set $onTop to false>>
+
+Four thousand feet, and the bottom of the deck is ragged here. Twice a minute the world shows itself: a gray-white quilt of section-line farmland, a grain leg, a county road with one truck on it. Then the window closes again.
+
+The OAT recovers to minus four. Warmer. Not warm. What the cloud sheds down here is wetter, and the rime line on the wing has taken on a glassy edge, smoother and clearer than the dry white crust it was growing up high. A bead of ice is forming along the bottom edge of the windshield.
+
+The manifold pressure has sagged half an inch since you leveled.
+
+<div class="choice-list">
+<<link "A. You hold four thousand and continue. The ground keeps almost appearing, and Omaha Approach is twenty minutes ahead." "Descent_Plan">>
+  <<set $pathArray to $pathArray.concat(["D2: held 4,000 to the handoff"])>>
+<</link>>
+
+<<link "B. You take six thousand back. The bases are not low enough to use, and at least six was drier." "Cruise_Continue">>
+  <<set $pathArray to $pathArray.concat(["D2: climbed back to 6,000"])>>
+<</link>>
+
+<<link "C. You have seen what you came down to see. You ask for the turn back to St. Joseph." "Cruise_Turnback">>
+  <<set $pathArray to $pathArray.concat(["D2: turned back from 4,000"])>>
+  <<set $turnbackFrom to "low">>
+<</link>>
+
+<<if not $altAirTried>>\
+<<link "D. That half inch of manifold pressure is bothering you. You reach for the alternate air." "Descend_AltAir">>
+  <<set $pathArray to $pathArray.concat(["D2: pulled the alternate air"])>>
+<</link>>
+<</if>>\
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Descend_AltAir [scenario]
+<<set $pathArray to $pathArray.concat(["Alternate air changed nothing"])>>
+<<set $atcReturn to "Descend_AltAir">><<set $altAirTried to true>>
+<<set $oat to "-4 C">><<set $alt to 4000>><<set $ias to 126>>
+
+You pull the alternate air. The engine note stays exactly where it was. The manifold pressure needle considers the situation and elects not to move. You give it thirty seconds, watching, and then push the control back in.
+
+Whatever the half inch was, it was not induction ice. Probably it was the difference between six thousand feet and four, which you knew, and checked anyway, because checking is free.
+
+The clouds keep doing what clouds do.
+
+<div class="choice-list">
+<<link "You put your hand back on your knee and fly the airplane." "Cruise_Descend">>
+  <<set $pathArray to $pathArray.concat(["Back to the scan at 4,000"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Turnback [scenario]
+<<set $pathArray to $pathArray.concat(["Turned around for St. Joseph"])>>
+<<set $phase to "turnback">><<set $atcReturn to "Cruise_Turnback">>
+<<set _wasAbove to ($alt is 5000 or $alt gt 5000)>>
+<<set $oat to "-5 C">><<set $alt to 5000>>
+<<set $ias to (($iceAccretion gte 3) ? 112 : (($iceAccretion is 2) ? 124 : 130))>>
+<<set $fuelGal to 51>>
+
+"Center, Arrow one eight Juliet, request direct St. Joseph. We're done sampling this stuff."
+
+The controller does not ask why. Nobody who works winter frequencies ever does. "One eight Juliet, cleared direct St. Joseph, <<if _wasAbove>>descend and maintain<<else>>climb and maintain<</if>> five thousand, expect the ILS runway three five. St. Joseph weather: wind zero one zero at one zero, visibility one zero, ceiling three thousand five hundred overcast."
+
+The magenta line swings through the windshield and settles behind you, and the airplane comes around to a course that reads like an apology on the heading bug. <<if $onTop>>The sunshine rides along for a while, the cloud floor scrolling under the wings, and then the deck climbs to meet you as Center starts you down into it, gray closing over the glareshield like water over a stone.<<else>>The same gray attends the turn, indifferent to which way the spinner points. The wind that was slowing you down now pushes. The groundspeed comes up fourteen knots without the airspeed moving at all.<</if>>
+
+Miles watches the HSI swing all the way around before he says anything.
+
+<div class="pax-quote">"Does this mean no hockey?"</div>
+
+"It means we land somewhere with coffee and figure it out," you say. He looks out his window at nothing and nods.
+
+<div class="choice-list">
+<<link "You fly the miles back toward the river and let approach set you up." "Approach_KSTJ">>
+  <<set $pathArray to $pathArray.concat(["Inbound to KSTJ"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_KSTJ [scenario]
+<<set $pathArray to $pathArray.concat(["Set up for Rosecrans"])>>
+<<set $phase to "turnback">><<set $atcReturn to "Approach_KSTJ">>
+<<set $oat to "-4 C">><<set $alt to 3000>>
+<<set $ias to (($iceAccretion gte 3) ? 108 : 118)>>
+<<set $fuelGal to 49>>
+
+Approach steps you down over the river valley. At four thousand the cloud starts coming apart in sheets. Passing thirty-six hundred you fall out the bottom of it into a gray-lit world of snow-dusted fields, the Missouri River bending ahead, and Rosecrans sitting on its flat island of pavement, eight thousand feet of runway with the numbers 35 pointed into a ten-knot wind.
+
+"One eight Juliet, field is at your eleven o'clock and eight miles. Say approach request."
+
+The ice you are carrying is not leaving just because you can see the ground. It rides the leading edges and whatever it rides that you cannot see.
+
+<div class="choice-list">
+<<link "A. \"One eight Juliet requests the ILS three five.\" Needles, numbers, and a stabilized path all the way down, visual or not." "Ground_KSTJ_Ramp">>
+  <<set $pathArray to $pathArray.concat(["Flew the ILS 35 into KSTJ"])>>
+  <<set $stjArrival to "ils">>
+<</link>>
+
+<<link "B. \"One eight Juliet has the field, cancel IFR, we'll come in visually.\" Eight miles of clear air between you and the pavement." "Ground_KSTJ_Ramp">>
+  <<set $pathArray to $pathArray.concat(["Took the visual into KSTJ"])>>
+  <<set $stjArrival to "visual">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_KSTJ_Ramp [scenario]
+<<set $pathArray to $pathArray.concat(["On the ground at KSTJ"])>>
+<<set $phase to "ground">><<set $atcReturn to "Ground_KSTJ_Ramp">>
+<<set $oat to "-3 C">><<set $alt to "GND">><<set $ias to 0>><<set $fuelGal to 48>>
+
+<<if $stjArrival is "ils">>You fly the ILS 35 like the checkride you never stopped taking: needles crossed, ninety knots over the fence for the ice you are wearing, a long flat touchdown with three thousand feet still ahead of you when the mains settle. The runway absorbs all of it without comment.<<else>>You cancel with approach and fly it in visually, a wide stable base over the river, carrying an extra ten knots for the passengers on the wings that don't buy tickets. The flare takes longer than usual. The runway has plenty of opinion left over.<</if>> You taxi in past a row of Guard helicopters to the civil ramp, where a line guy in orange gloves marshals you to a stop in front of Blacksnake Aviation.
+
+He looks at the leading edges while you shut down, and says, "Huh." Then, kindly: "Coffee's fresh."
+
+Inside, your phone catches up with the ground. Anya, eleven minutes ago:
+
+<em>"Warmups at 4:45. You guys close??"</em>
+
+Miles drags his hockey bag through the door like it holds a body. It is 2:50 in the afternoon.
+
+<div class="choice-list">
+<<link "A. You call her. Voice, not text. She should hear this from an actual human being with an actual plan forming." "Ground_KSTJ_Options">>
+  <<set $pathArray to $pathArray.concat(["Called Anya from the FBO"])>>
+  <<set $anyaMode to "call">>
+<</link>>
+
+<<link "B. You text back: \"Weather. Plans changing. Call you in ten.\" Then you go find out what your options actually are before you spend them on the phone." "Ground_KSTJ_Options">>
+  <<set $pathArray to $pathArray.concat(["Texted Anya, gathered facts first"])>>
+  <<set $anyaMode to "text">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_KSTJ_Options [scenario]
+<<set $pathArray to $pathArray.concat(["Weighing the ground options"])>>
+<<set $atcReturn to "Ground_KSTJ_Options">>
+<<set $oat to "-3 C">><<set $alt to "GND">><<set $ias to 0>>
+
+<<if $anyaMode is "call">>She picks up on the first ring. You give it to her straight: ice, a turn-around, an airplane that is done for the day.
+
+A pause with rink noise behind it. "Okay. Okay. So what does that mean? Can you still get him here?" A beat. "The roads here are totally fine, it's just gray out."
+
+From her side of the river, that is a completely reasonable sentence.<<else>>You send the text and work the desk. By the time the phone buzzes with her reply ("ok. hurry?"), you have facts instead of feelings.<</if>>
+
+Here is the board. Blacksnake has an arrangement with a rental outfit in town: a Camry can be at the door in twenty minutes, one-way drop in Omaha, about two hours and ten minutes up I-29. That makes the rink around 5:15. Kansas City International is forty minutes the wrong way, with a 5:40 regional to Omaha, about $340 a seat, landing at 6:40. Or there is the lounge, the weather monitor, and the 2053Z observations, ninety minutes out, which will say whether this system is moving or squatting.
+
+The heated hangar is $40 for the hour, and the line crew is already eyeing your wings.
+
+<div class="choice-list">
+<<link "A. You take the Camry. Wheels are wheels. Hangar the Arrow, sign the papers, drive him to his game." "End_KSTJ_Drive">>
+  <<set $pathArray to $pathArray.concat(["D-ground: rental car north"])>>
+<</link>>
+
+<<link "B. You buy the hangar hour, order the coffee, and wait for the 2053Z weather before spending money on any plan." "Ground_KSTJ_Wait">>
+  <<set $pathArray to $pathArray.concat(["D-ground: waited for new weather"])>>
+<</link>>
+
+<<link "C. You book two seats on the 5:40 out of Kansas City. Let somebody with two turboprops and a dispatcher do the winter flying." "End_KSTJ_Airline">>
+  <<set $pathArray to $pathArray.concat(["D-ground: airline from MCI"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_KSTJ_Wait [scenario]
+<<set $pathArray to $pathArray.concat(["Waited for the 2053Z observations"])>>
+<<set $atcReturn to "Ground_KSTJ_Wait">>
+<<set $oat to "-3 C">><<set $alt to "GND">><<set $ias to 0>>
+
+The Arrow drips itself clean in the heated hangar while Miles works through a bag of popcorn and the FBO's aquarium. You watch the weather monitor the way people watch elevators.
+
+At 2:53 the new observations drop. St. Joseph: wind three six zero at one two, four miles in light snow, twenty-five hundred overcast. Millard: three five zero at one two gusting one eight, three miles, light snow, fifteen hundred overcast. The fresh TAF pushes any improvement past midnight. The system is not moving. It is sitting down to dinner.
+
+It is a few minutes past four now. By car, the game has become a technicality: you would catch the handshake line. The question has quietly changed from the game to tonight.
+
+<div class="pax-quote">Miles reads the monitor over your shoulder, sounding out the code like a second language. "Three five zero at twelve... gusting. That's bad, right?" He looks at his skate bag, then out the window, and doesn't ask anything else.</div>
+
+<div class="choice-list">
+<<link "A. You take the rental north anyway. He sleeps in his own bed, sees his team, and you fetch the Arrow when the sky is done." "End_KSTJ_Scrub2">>
+  <<set $pathArray to $pathArray.concat(["D-ground: drove north late"])>>
+  <<set $lateMode to "drive">>
+<</link>>
+
+<<link "B. Two rooms at the motel by the field. Pancakes at seven, fly the last hundred miles tomorrow behind the system." "End_KSTJ_Scrub2">>
+  <<set $pathArray to $pathArray.concat(["D-ground: overnighted at STJ"])>>
+  <<set $lateMode to "overnight">>
+<</link>>
+
+<<link "C. The airplane is dry, fueled, and fifty-five minutes from Millard. The freezing level has not moved all day. You file and go take another look." "Ground_Relaunch">>
+  <<set $pathArray to $pathArray.concat(["D-ground: relaunched for another look"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_Relaunch [scenario]
+<<set $pathArray to $pathArray.concat(["Relaunched into the evening system"])>>
+<<set $phase to "relaunch">><<set $atcReturn to "Ground_Relaunch">>
+<<set $oat to "-5 C">><<set $alt to 4000>><<set $ias to 118>>
+<<set $iceAccretion to 2>><<set $tailIce to 2>><<set $fuelGal to 46>><<set $onTop to false>>
+
+You file, brief Miles back into his seat, and launch at 4:45 into a sky the color of dishwater going dark. The deck takes you at twenty-eight hundred.
+
+The afternoon's arithmetic does not hold. Snow is steady now, not light, and the windshield bead that took twenty minutes to form at lunchtime is back in four. The white line on the leading edges builds while you watch it, the way frost grows in a time-lapse. By level-off at four thousand the airspeed has already given back ten knots, and the last daylight is going out of the cloud around you like a bulb on a dimmer.
+
+Millard is forty minutes north. St. Joseph is nine minutes behind.
+
+<div class="choice-list">
+<<link "A. You hold the nose northwest. Forty minutes, an RNAV at the end of it, and the two of you sleeping in Omaha." "End_KSTJ_Relaunch_Return">>
+  <<set $pathArray to $pathArray.concat(["Pressed north into the night"])>>
+  <<set $relaunchPress to true>>
+<</link>>
+
+<<link "B. You key up and take the vector back. Nine minutes, an ILS you flew two hours ago, and a lesson you already paid for once today." "End_KSTJ_Relaunch_Return">>
+  <<set $pathArray to $pathArray.concat(["Turned back after one look"])>>
+  <<set $relaunchPress to false>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Descent_Plan [scenario]
+<<set $pathArray to $pathArray.concat(["Omaha arrival: planning the approach"])>>
+<<if $onTop>>\
+The descent clearance comes as the deck swallows the airplane whole: "One eight Juliet, descend and maintain four thousand, Millard altimeter three zero one two."
+<<elseif $alt gt 4000>>\
+Kansas City passes you across the fence. "Arrow four three one eight Juliet, Omaha Approach, descend and maintain four thousand, Millard altimeter three zero one two."
+<<else>>\
+Kansas City passes you across the fence. "Arrow four three one eight Juliet, Omaha Approach, maintain four thousand, Millard altimeter three zero one two."
+<</if>>\
+<<set $phase to "descent">><<set $atcReturn to "Descent_Plan">><<set $onTop to false>>
+<<set $oat to "-4 C">><<set $alt to 4000>>
+<<set $ias to (($iceAccretion gte 3) ? 120 : 130)>>
+<<set $fuelGal to 48>>
+
+Thirty-some miles out. In a few more, approach is going to want a runway out of you. Snow streams past the nav light in the going-gray afternoon, and the field is down there somewhere under twenty-six hundred feet of overcast.
+
+Miles has been busy. He turns to you with the frequency card in one hand and a torn corner of notebook paper in the other, digits stacked crooked and proud.
+
+<div class="pax-quote">"I got the Millard weather! One one eight point nine seven five, like on the card. Wind one eight zero at four. Altimeter three zero one one. I wrote it all down."</div>
+
+He holds the paper out flat on his palm, the way you hold something that matters.
+
+<div class="choice-list">
+<<if $windKnown>>\
+<<link "A. The wind you copied earlier picks the runway. \"Nice work, radio officer,\" you tell him, and brief the RNAV three zero." "Descent_Setup30">>
+  <<set $pathArray to $pathArray.concat(["D-descent: briefed RNAV 30 off the copied wind"])>>
+<</link>>
+
+<<link "B. Gusts move. You spin the number two through the one-minute weather once more before you commit to anything." "Descent_SelfWx">>
+  <<set $pathArray to $pathArray.concat(["D-descent: re-checked the AWOS"])>>
+<</link>>
+<<else>>\
+<<link "A. \"Nice copy, radio officer.\" Wind one-eighty at four is barely wind at all. You brief the RNAV one two: it has the LPV, and the box is already pointed that way." "Descent_Setup12">>
+  <<set $pathArray to $pathArray.concat(["D-descent: took the reported wind, briefed RNAV 12"])>>
+  <<set $atisTrusted to "passenger">><<set $missedCues to $missedCues + 1>>
+<</link>>
+
+<<link "B. You spool through the AWOS loop yourself while you load the box: remarks, the altimeter to the decimal, the whole recording. Habits are habits." "Descent_SelfWx">>
+  <<set $pathArray to $pathArray.concat(["D-descent: listened to the AWOS loop"])>>
+<</link>>
+
+<<link "C. Omaha is a key-click away and reads weather for a living. You ask approach to pass you Millard's numbers." "Descent_AskATC">>
+  <<set $pathArray to $pathArray.concat(["D-descent: asked approach for the numbers"])>>
+<</link>>
+
+<<link "D. The weather has been a moving target all day. You load both approaches, brief both sets of minimums, and let the picture pick the runway closer in." "Descent_Both">>
+  <<set $pathArray to $pathArray.concat(["D-descent: briefed both, deferred the choice"])>>
+<</link>>
+<</if>>\
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Descent_SelfWx [scenario]
+<<set $pathArray to $pathArray.concat(["Heard the AWOS with own ears"])>>
+<<set $phase to "descent">><<set $atcReturn to "Descent_SelfWx">>
+<<set $oat to "-4 C">><<set $alt to 4000>>
+<<set $ias to (($iceAccretion gte 3) ? 120 : 128)>>
+<<set $fuelGal to 47>>
+
+You bring the number two around and let the loop play through the headset.
+
+"Millard Airport automated weather observation, two zero four five Zulu. Wind three five zero at one zero, gusts one six. Visibility five, light snow. Ceiling two thousand six hundred overcast. Temperature minus four, dew point minus seven. Altimeter three zero one two."
+
+You copy it onto the kneeboard and circle the wind. Miles has moved on to drawing a submarine in the margin of his notebook paper, the mission accomplished as far as the right seat is concerned.
+
+<<set $windKnown to true>><<if $atisTrusted isnot "passenger">><<set $atisTrusted to "self">><</if>>
+<div class="choice-list">
+<<link "You set up for what the recording says and call approach with the request." "Descent_Setup30">>
+  <<set $pathArray to $pathArray.concat(["Requested the RNAV 30"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Descent_AskATC [scenario]
+<<set $pathArray to $pathArray.concat(["Approach read the Millard weather"])>>
+<<set $phase to "descent">><<set $atcReturn to "Descent_AskATC">>
+<<set $oat to "-4 C">><<set $alt to 4000>>
+<<set $ias to (($iceAccretion gte 3) ? 120 : 128)>>
+<<set $fuelGal to 47>>
+
+"One eight Juliet, Millard weather: wind three five zero at one zero gusting one six, visibility five in light snow, ceiling two thousand six hundred overcast, altimeter three zero one two."
+
+You read back the altimeter and write the wind down next to Miles's crooked digits, where it sits like a second opinion.
+
+Miles is looking out his window at the gray. The controller moves on to a Lancair with a request.
+
+<<set $windKnown to true>><<set $atisTrusted to "atc">>
+<div class="choice-list">
+<<link "You brief the approach the numbers ask for and key the request." "Descent_Setup30">>
+  <<set $pathArray to $pathArray.concat(["Set up the RNAV 30"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Descent_Both [scenario]
+<<set $pathArray to $pathArray.concat(["Briefed both approaches, then got asked"])>>
+<<set $phase to "descent">><<set $atcReturn to "Descent_Both">>
+<<set $oat to "-4 C">><<set $alt to 4000>>
+<<set $ias to (($iceAccretion gte 3) ? 120 : 128)>>
+<<set $fuelGal to 47>>
+
+You load the RNAV 12 and study its sibling for the other end: LPV to three hundred thirty-six above the ground one way, LNAV to five hundred seventy the other, both fed from fixes east of the field. Two plates, one runway, no tower to pick for you.
+
+Approach does not wait for your process. "One eight Juliet, say approach requested. I'll have a turn for you in three miles."
+
+Miles's paper sits on the console between you. On your kneeboard, the morning METARs you copied at Jefferson City sit under it in your own handwriting.
+
+<div class="choice-list">
+<<link "A. \"RNAV one two for one eight Juliet.\" The reported wind was southerly and light, and twelve carries the LPV." "Descent_Setup12">>
+  <<set $pathArray to $pathArray.concat(["D-descent: chose 12 off the report"])>>
+  <<set $atisTrusted to "passenger">><<set $missedCues to $missedCues + 1>>
+<</link>>
+
+<<link "B. \"RNAV three zero for one eight Juliet.\" Every observation you copied at lunch blew out of the northwest." "Descent_Setup30">>
+  <<set $pathArray to $pathArray.concat(["D-descent: chose 30 off the morning trend"])>>
+<</link>>
+
+<<link "C. \"Approach, one eight Juliet, stand by one.\" Twenty seconds of the one-minute weather buys the answer." "Descent_SelfWx">>
+  <<set $pathArray to $pathArray.concat(["D-descent: made approach wait for the AWOS"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Descent_Setup12 [scenario]
+<<set $pathArray to $pathArray.concat(["Cleared for the RNAV 12"])>>
+<<set $phase to "descent">><<set $atcReturn to "Descent_Setup12">><<set $rwy to "12">>
+<<set $oat to "-4 C">><<set $alt to 3000>>
+<<set $ias to (($iceAccretion gte 3) ? 115 : 122)>>
+<<set $fuelGal to 46>>
+
+"One eight Juliet, roger. Fly heading three four zero, vectors NIMMU, maintain three thousand until established, cleared RNAV runway one two approach Millard. Report cancellation this frequency airborne, or on the ground with clearance delivery."
+
+You read it back and settle into the brief. LPV to a decision altitude of 1,387, three hundred thirty-six above the touchdown zone, a mile and a quarter required and five reported. The ceiling should let you go visual fourteen hundred feet before any of that matters. Missed approach: climb to four thousand direct HOLUL, right turn, two three niner track to LEBYI. The threshold is displaced two hundred twelve feet, and 3,588 of pavement will be yours to use.
+
+Gear speed, flap schedule, and one decision left to make with the airframe carrying what it carries.
+
+<div class="choice-list">
+<<link "A. Full flaps at the fence, on speed at 75, short-field brakes. The displaced threshold already ate two hundred feet, and you will not donate more." "Approach_Rwy12">>
+  <<set $pathArray to $pathArray.concat(["Flap plan: full, on speed"])>>
+  <<set $flapPlan to "full">>
+<</link>>
+
+<<link "B. Flaps 25 and eighty over the fence: a pad for the gusts and for whatever the airframe is wearing." "Approach_Rwy12">>
+  <<set $pathArray to $pathArray.concat(["Flap plan: 25 and a pad"])>>
+  <<set $flapPlan to "partial">>
+<</link>>
+
+<<link "C. Flaps 10 at eighty-five, flown on flat, and let the brakes do the arithmetic." "Approach_Rwy12">>
+  <<set $pathArray to $pathArray.concat(["Flap plan: minimal and fast"])>>
+  <<set $flapPlan to "minimal">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Descent_Setup30 [scenario]
+<<set $pathArray to $pathArray.concat(["Cleared for the RNAV 30"])>>
+<<set $phase to "descent">><<set $atcReturn to "Descent_Setup30">><<set $rwy to "30">>
+<<set $oat to "-4 C">><<set $alt to 3000>>
+<<set $ias to (($iceAccretion gte 3) ? 115 : 122)>>
+<<set $fuelGal to 46>>
+
+"One eight Juliet, roger. Fly heading zero seven zero, vectors KODPE, maintain three thousand until established, cleared RNAV runway three zero approach Millard. Report cancellation this frequency airborne, or on the ground with clearance delivery."
+
+The brief comes together while the vectors walk you east of the field. LNAV only on this end: minimum descent altitude 1,620, five hundred seventy above the ground, a mile required and five reported. The ceiling at twenty-six hundred should hand you the runway two thousand feet before the MDA gets a vote. Missed approach: climb to four thousand direct ICAYI, left turn, one eight seven track to LEBYI. All 3,801 feet of pavement work for you on this end.
+
+<<if $windKnown>>The wind you copied sits circled on the kneeboard: three five zero, gusting. Mostly down the runway, a little off the right.<</if>>
+
+One decision left before the fixes start counting down.
+
+<div class="choice-list">
+<<link "A. Standard arrival: full flaps, 75 over the threshold, down in the first third." "Approach_Rwy30">>
+  <<set $pathArray to $pathArray.concat(["Flap plan: full, standard"])>>
+  <<set $flapPlan to "full">>
+<</link>>
+
+<<link "B. You keep it at flaps 25 and carry eighty, trading a longer float for margin on a gusty afternoon." "Approach_Rwy30">>
+  <<set $pathArray to $pathArray.concat(["Flap plan: 25, extra margin"])>>
+  <<set $flapPlan to "partial">>
+<</link>>
+
+<<link "C. Flaps 10 at eighty-five and fly it on. Days like this make you allergic to slow." "Approach_Rwy30">>
+  <<set $pathArray to $pathArray.concat(["Flap plan: minimal, flown on"])>>
+  <<set $flapPlan to "minimal">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_Rwy12 [scenario]
+<<set $pathArray to $pathArray.concat(["Established inbound for runway 12"])>>
+<<set $phase to "approach">><<set $atcReturn to "Approach_Rwy12">>
+<<set $oat to "-4 C">><<set $alt to 2800>><<set $ias to 110>><<set $fuelGal to 45>>
+
+The vectors deliver you to NIMMU and the box takes over the counting. Somewhere in the descent you fall out of the ragged bottom of the deck into a snow-globe world: five miles of gray visibility, farm grids going white, the city glow of Omaha off the right side of the nose.
+
+"One eight Juliet, radar service terminated, change to advisory frequency approved."
+
+You flip to 123.0 and announce: "Millard traffic, Arrow four three one eight Juliet, seven southeast, straight-in RNAV runway one two, Millard."
+
+Two seconds of silence. Then a voice, unhurried:
+
+"Millard traffic, Cherokee eight four six two whiskey, left downwind, runway three zero, touch and go, Millard."
+
+Two airplanes. One runway. Opposite ends.
+
+<div class="choice-list">
+<<link "A. You restate your position and intentions, clear and early, and continue: straight-in traffic calls it out, pattern traffic works around it." "Final_Rwy12">>
+  <<set $pathArray to $pathArray.concat(["D-approach: continued straight-in 12"])>>
+  <<set $missedCues to $missedCues + 1>>
+<</link>>
+
+<<link "B. \"Cherokee at Millard, Arrow one eight Juliet, say the winds down there?\"" "Approach_AskCherokee">>
+  <<set $pathArray to $pathArray.concat(["D-approach: asked the Cherokee for winds"])>>
+<</link>>
+
+<<link "C. Two airplanes pointed at opposite ends is one too many plans. You flip back to Omaha and re-sequence to match the pattern traffic." "Approach_Around30">>
+  <<set $pathArray to $pathArray.concat(["D-approach: re-sequenced to match traffic"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_AskCherokee [scenario]
+<<set $pathArray to $pathArray.concat(["Cherokee reported the surface wind"])>>
+<<set $phase to "approach">><<set $atcReturn to "Approach_AskCherokee">>
+<<set $oat to "-4 C">><<set $alt to 2400>><<set $ias to 105>><<set $fuelGal to 45>>
+
+"Uh, Cherokee six two whiskey... sock's been standing straight out of the north, gusty down low. We've been earning our keep on base."
+
+A pause, then a second voice, older, dry as toast: "Yeah. Thirty's been the runway all afternoon."
+
+<<set $windKnown to true>>\
+The numbers hang on the frequency. Your glideslope, meanwhile, is alive and centering, and NIMMU is behind you.
+
+<div class="choice-list">
+<<link "A. You flip back to Omaha and take the long way around to the three zero end." "Approach_Around30">>
+  <<set $pathArray to $pathArray.concat(["D-approach: swung around to 30"])>>
+<</link>>
+
+<<link "B. You are established, stabilized, and three minutes from the pavement. You continue for one two and read the picture on final." "Final_Rwy12">>
+  <<set $pathArray to $pathArray.concat(["D-approach: stayed on the 12 approach"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_Around30 [scenario]
+<<set $pathArray to $pathArray.concat(["Re-vectored for the RNAV 30"])>>
+<<set $phase to "approach">><<set $atcReturn to "Approach_Around30">><<set $rwy to "30">>
+<<set $oat to "-4 C">><<set $alt to 3000>><<set $ias to 115>><<set $fuelGal to 44>>
+
+"Omaha Approach, Arrow one eight Juliet, request vectors the RNAV three zero into Millard, we'll join the flow."
+
+"One eight Juliet, roger. Climb and maintain three thousand, fly heading zero six zero, vectors KODPE. Millard weather: wind three five zero at one zero, gust one six."
+
+<<set $windKnown to true>>\
+Eight extra minutes. One more trip through the fixes, the box re-sequenced, the brief re-run for the other set of minimums: LNAV, 1,620, five hundred seventy above the ground. The snow keeps coming sideways across the nose while the vectors walk you around the east side.
+
+<div class="pax-quote">"Are we there yet?" Miles asks, and then, hearing himself, grins. "Sorry. Mom says I'm not allowed to say that in the airplane."</div>
+
+<div class="choice-list">
+<<link "You ride the vectors around and pick up the final course inbound." "Final_Rwy30">>
+  <<set $pathArray to $pathArray.concat(["Established inbound on the 30 approach"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_Rwy30 [scenario]
+<<set $pathArray to $pathArray.concat(["Established inbound for runway 30"])>>
+<<set $phase to "approach">><<set $atcReturn to "Approach_Rwy30">>
+<<set $oat to "-4 C">><<set $alt to 2800>><<set $ias to 110>><<set $fuelGal to 45>>
+
+KODPE, then the fixes counting down. In the descent you drop out of the ragged deck into five miles of snow-lit gray, the farm grids white-seamed below, Omaha a smudge of light off the nose.
+
+"One eight Juliet, radar service terminated, change to advisory frequency approved."
+
+You flip to 123.0. "Millard traffic, Arrow four three one eight Juliet, eight-mile final, RNAV runway three zero, full stop, Millard."
+
+"Millard traffic, Cherokee eight four six two whiskey, left downwind, runway three zero, touch and go. We'll keep an eye out for the straight-in."
+
+Same end, at least. But his downwind and your final are converging on the same piece of pavement about two minutes apart.
+
+<div class="choice-list">
+<<link "A. You slow early and take the number two slot. \"Cherokee six two whiskey, Arrow one eight Juliet, we'll follow you, plenty of gas for it.\"" "Final_Rwy30">>
+  <<set $pathArray to $pathArray.concat(["D-approach: sequenced behind the Cherokee"])>>
+  <<set $seqMode to "follow">>
+<</link>>
+
+<<link "B. A straight-in on an instrument approach has the momentum. \"Cherokee, one eight Juliet is a three-mile final, we'll be clear before your base.\"" "Final_Rwy30">>
+  <<set $pathArray to $pathArray.concat(["D-approach: took the slot ahead"])>>
+  <<set $seqMode to "press">><<set $pressedSeq to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Final_Rwy12 [scenario]
+<<set $pathArray to $pathArray.concat(["Short final, runway 12"])>>
+<<set $phase to "final">><<set $atcReturn to "Final_Rwy12">>
+<<set $oat to "-4 C">><<set $alt to 1600>><<set $ias to 92>><<set $fuelGal to 44>>
+
+Gear down at glideslope intercept, first notch of flaps, the LPV needles crossed in the middle of the screen. The runway materializes out of the snow at four miles, a dark stripe in a white world, PAPI glowing beside the touchdown zone.
+
+<<if $flapPlan is "full">>At four hundred feet you feed in the last notch of flaps.<<if $tailIce gte 2>><<goto "ICTS_Buck">><</if>> The airplane gets draggy and honest about it, the way it is supposed to.<<elseif $flapPlan is "partial">>You hold flaps 25 and the extra eight knots, the trim carrying most of the work.<<else>>Flaps stay at ten. The picture is flat and fast, the runway rising slowly to meet you.<</if>>
+
+The numbers start talking. The 430 reads 111 across the ground. The airspeed needle says 92. The nose is cocked left of the centerline to hold it. At midfield the windsock stands rigid, streaming the same direction you are flying. Snow crosses the runway lights in long flat streaks, left to right. The Cherokee's strobes wink somewhere off your left, riding a downwind for the other end.
+
+Six hundred feet. The touchdown zone is coming up fast, faster than the airspeed says it should.
+
+<div class="choice-list">
+<<link "A. You are twenty seconds from done with this day. You land it." "Final_Rwy12_Land">>
+  <<set $pathArray to $pathArray.concat(["D-final: landed on 12"])>>
+  <<set $missedCues to $missedCues + 1>>
+<</link>>
+
+<<link "B. Power up, pitch up, clean up. You take it around and sort the picture out at altitude." "Final_GoAround">>
+  <<set $pathArray to $pathArray.concat(["D-final: went around off 12"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Final_Rwy12_Land [scenario]
+<<if $flapPlan is "minimal" or $iceAccretion gte 3>><<goto "End_Rwy12_Excursion">><<else>><<goto "End_Rwy12_Stopped">><</if>>
+
+:: ICTS_Buck [scenario]
+<<set $pathArray to $pathArray.concat(["The tail let go at flap extension"])>>
+<<set $phase to "final">><<set $atcReturn to "ICTS_Buck">><<set $buck to true>>
+<<set $oat to "-4 C">><<set $alt to 1450>><<set $ias to 88>>
+<<run playOneShot("engine-rough", 0.5)>>
+
+The flap motor is still running when the yoke goes light in your hands. Light and wrong, like a tool with the handle snapped off. Then the nose lunges down, uncommanded, hard enough to float your charts off the seat, and a buffet comes up through the floor. The floor, not the seat. The runway swings up to fill the windshield.
+
+<<if $rwy is "12">>Four hundred feet below you, the displaced threshold's white arrows point the wrong way at the sky.<<else>>Four hundred feet below, the runway 30 numbers tilt in the glass like a picture knocked crooked on a wall.<</if>> Miles makes a sound that is not a word.
+
+<div class="choice-list">
+<<link "A. You snap the flaps back up a notch and hold firm aft pressure, power steady where it was." "ICTS_Recover">>
+  <<set $pathArray to $pathArray.concat(["Buck: retracted flaps, held aft pressure"])>>
+<</link>>
+
+<<link "B. Stall response, drilled since your first solo: full power, ease the nose down, fly out of it." "End_ICTS_Hard">>
+  <<set $pathArray to $pathArray.concat(["Buck: treated it as a wing stall"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. The pavement is right there. You haul the yoke back and put it down now." "End_ICTS_Hard">>
+  <<set $pathArray to $pathArray.concat(["Buck: hauled it onto the runway"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ICTS_Recover [scenario]
+<<set $pathArray to $pathArray.concat(["Recovered from the tailplane buck"])>>
+<<set $phase to "final">><<set $atcReturn to "ICTS_Recover">>
+<<set $oat to "-4 C">><<set $alt to 1300>><<set $ias to 90>>
+
+The flaps come back to 25 and the airplane changes its mind. The buffet quits. The yoke firms up under your hands, the nose answers aft pressure, and at two hundred fifty feet the Arrow is flying like an Arrow again, fast and flat, your pulse doing most of the buffeting now.
+
+The runway is still there ahead of you. The trim is wrong, the speed is wrong by ten knots, and the day has one more decision in it.
+
+<div class="choice-list">
+<<link "A. It flies. The runway is made. You continue down and put it on with the flaps you have." "ICTS_Recover_Land">>
+  <<set $pathArray to $pathArray.concat(["D-final: landed out of the recovery"])>>
+<</link>>
+
+<<link "B. Nothing on this airframe gets trusted low and slow right now. You take it upstairs and reset." "Final_GoAround">>
+  <<set $pathArray to $pathArray.concat(["D-final: went around after the buck"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: ICTS_Recover_Land [scenario]
+<<if $rwy is "12">><<goto "End_Rwy12_Excursion">><<else>><<goto "End_ICTS_Recovered">><</if>>
+
+:: Final_Rwy30 [scenario]
+<<set $pathArray to $pathArray.concat(["Short final, runway 30"])>>
+<<set $phase to "final">><<set $atcReturn to "Final_Rwy30">>
+<<set $oat to "-4 C">><<set $alt to 1600>><<set $ias to 92>><<set $fuelGal to 43>>
+
+Gear down, first flaps, the stepdowns behind you and the runway growing slowly in the glass, a dark stripe under the PAPI. <<if $seqMode is "press">>The Cherokee widens his downwind without saying anything else about it. The frequency stays polite and goes quiet.<<elseif $seqMode is "follow">>Ahead of you the Cherokee turns base, lands, and rolls through his touch and go, lifting off the far end while you S-turn once to keep the spacing honest.<<else>>"Arrow's in sight, we'll extend," the Cherokee offers, easy about it, and swings his downwind wide to fit you in.<</if>>
+
+<<if $flapPlan is "full">>At four hundred feet you feed in the last notch of flaps.<<if $tailIce gte 2>><<goto "ICTS_Buck">><</if>> The airplane settles into the extra drag without complaint.<<elseif $flapPlan is "partial">>You hold flaps 25 and carry the pad, letting the trim do the arguing.<<else>>Flaps stay at ten, the picture flat, speed alive in your hand.<</if>>
+
+The wind does its work honestly out here. The 430 shows 76 across the ground against an indicated 92. The nose is cocked a few degrees right to hold centerline, and at midfield the sock streams straight at you, fat and rigid, snapping at the gusts. The airplane bumps twice on short final, settles, bumps again.
+
+<div class="choice-list">
+<<link "A. Wings level through the gust, a firm flare, and let it settle. You land." "End_Rwy30_Clean">>
+  <<set $pathArray to $pathArray.concat(["D-final: landed on 30"])>>
+<</link>>
+
+<<link "B. Those gusts have opinions. You take it around and come back at it with fresh eyes." "Final_GoAround">>
+  <<set $pathArray to $pathArray.concat(["D-final: went around off 30"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Final_GoAround [scenario]
+<<set $pathArray to $pathArray.concat(["Missed approach, coming back around"])>>
+<<set $phase to "approach">><<set $atcReturn to "Final_GoAround">>
+<<set $oat to "-4 C">><<set $alt to 4000>><<set $ias to 100>><<set $fuelGal to 42>>
+
+You push everything forward and clean the airplane up in stages, calling it on the CTAF as the runway slides away beneath you. <<if $rwy is "12">>The missed is in the box: climb to four thousand direct HOLUL, then the right turn onto the two three niner track toward LEBYI.<<else>>The missed is in the box: climb to four thousand direct ICAYI, then the left turn onto the one eight seven track toward LEBYI.<</if>> You fly it by the numbers and flip back to Omaha Approach on the climb.
+
+"One eight Juliet, Omaha, radar contact. Say intentions."
+
+"One eight Juliet requests vectors back around for the RNAV three zero, full stop."
+
+"One eight Juliet, roger, fly heading zero six zero, maintain four thousand. Millard weather: wind three five zero at one zero, gust one six."
+
+<<set $windKnown to true>><<set $rwy to "30">>\
+<<if $buck>>You leave the flap lever alone at ten for the ride around and re-trim by feel.<</if>> Miles watches the ground swing away and come back in the haze, quiet, his thumb marking a page in the submarine book he is not reading.
+
+<div class="choice-list">
+<<link "You take the vectors around and pick up the final course a second time." "Final_Second30">>
+  <<set $pathArray to $pathArray.concat(["Vectors for the second approach"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Final_Second30 [scenario]
+<<set $pathArray to $pathArray.concat(["Second approach, runway 30"])>>
+<<set $phase to "final">><<set $atcReturn to "Final_Second30">>
+<<set $oat to "-4 C">><<set $alt to 1500>><<set $ias to 90>><<set $fuelGal to 41>>
+
+KODPE again, the fixes counting down again, the same snow crossing the same runway lights. The pattern has emptied out, and the Cherokee is a pair of strobes on the ramp with its rotating beam winding down. You fly it with flaps 25 and a steady eighty-five, the sock streaming toward you off the nose, the groundspeed reading honest and slow.
+
+Over the fence the gust bumps you once and gives up. The flare takes, the mains touch, the nosewheel follows, and 3,801 feet of Nebraska stops being theoretical.
+
+<div class="choice-list">
+<<link "You roll out, clear the runway, and cancel with clearance delivery." "End_GA_Second">>
+  <<set $pathArray to $pathArray.concat(["Down safe on the second try"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Rwy30_Clean [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: landed runway 30, clean"])>>
+<<run playOneShot("touchdown", 0.5)>>
+
+The gust gives one last shove at fifty feet and then the runway takes the airplane. <<if $flapPlan is "minimal">>The float goes on longer than you would brief to a student, the Arrow surfing its extra speed halfway down before the mains finally accept the deal, and the rollout uses most of what is left.<<else>>The mains touch inside the first third, the nosewheel follows, and the headwind does half the braking for you.<</if>> You clear the runway, call clear on the CTAF, and cancel IFR with Omaha through clearance delivery on 125.4.
+
+The FBO ramp is quiet, snow fining down through the lights. While you tie down, the Arrow drips a little from its leading edges, already forgetting.
+
+Anya's SUV noses through the gate as you finish the second knot. Miles is out the door before you can call him back, hockey bag banging his knees, yelling across the ramp:
+
+"Mom! I did the weather! I found it all by myself!"
+
+Anya looks at you over his head, mouths <em>thank you</em>, and mimes drinking a very large coffee. Warmups are still well over an hour away. You will make them with time to spare.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You flew a non-FIKI single through a subfreezing airmass, kept your exposure survivable, and landed into a gusting headwind on the runway the wind actually favored. <<if $atisTrusted is "self">>You confirmed the destination weather with your own ears before committing to a runway.<<elseif $atisTrusted is "atc">>You had a second source read you the destination weather before committing to a runway.<<elseif $windKnown>>You had the real surface wind in hand before the approach, and you used it.<<else>>You chose runway 30 on the strength of the morning trend, and the trend held. The choice was right. What you never had was confirmation, and the sock on short final was the first source that actually told you.<</if>></p>
+<h3>ADM analysis</h3>
+<p>The quiet trap in this flight was not the ice. It was the report from the right seat: confident, specific, and wrong. The frequency Miles dialed, 118.975, belongs to the Plattsmouth AWOS seventeen miles southeast. Millard's is 118.25, and the two airports sat on opposite sides of a wind shift all afternoon. Nothing about his report sounded wrong, and that is the point: bad data rarely announces itself. It arrives in a voice you trust.<<if $topsHint>> Your other strong move was the PIREP request. The climb that found sunshine at 7,400 looked bold, and it was actually a bet you had already priced with somebody else's report. The same climb without that report was a coin flip into colder air.<</if>><<if $iceAccretion gte 2>> The airspeed decay in cruise was the airframe keeping honest books. You never got to pretend the ice was hypothetical.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Safety-critical information from a single unverified source gets cross-checked, whether the source is a ten-year-old, a fellow pilot, or a controller reading a strip. The cross-check costs twenty seconds: the AWOS loop yourself, a request to approach, or one question to the traffic already in the pattern. On the legality side, an Arrow with no ice protection inside AIRMET Zulu is a conversation with 91.13 waiting to happen, and the wisdom side of that conversation is even less forgiving. Managing exposure, minutes in cloud, was what kept the accretion survivable today.</p>
+<h3>Key takeaway</h3>
+<p>A report you did not verify is a guess wearing a headset. Verify the ones that pick runways.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_GA_Second [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: went around, landed second approach"])>>
+
+You taxi in past the sock, still standing at attention, and shut down on the FBO ramp. For a moment nobody moves. Then Miles exhales like he has been holding it since the missed approach and says, "That was so cool when we went back up."
+
+Out of the mouths of babes. You cancel with clearance delivery, tie down, and walk the wings once<<if $buck>>, and then walk back and stand under the tail for a long minute, looking up at a stabilator you cannot see the top of from anywhere on this ramp without a ladder<</if>>. Anya arrives to collect her son, who begins the story at the go-around and works backward. Warmups are still more than an hour off. You will make them.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You broke off an approach that was not working and bought a second one that did. <<if $buck>>The airplane pitched down uncommanded when the last notch of flaps went out: an ice-contaminated tailplane stall, the T-tail's signature trick. You recovered it with the one response that works, flaps back up, and then made the wiser call: altitude, a reset, and a stabilized approach in a configuration the iced airframe could live with.<<elseif $rwy is "30" and not $windKnown>>The gusts on short final were real, and taking a lap to come back with fresh eyes cost you eight minutes and about a gallon and a half.<<else>>The final-approach picture told the truth the reports had not: groundspeed high against the airspeed, drift the wrong way, a windsock streaming the direction you were landing. You believed the picture instead of the plan.<</if>></p>
+<h3>ADM analysis</h3>
+<p><<if $atisTrusted is "passenger">>The runway decision started with a report from the right seat that was confident, specific, and wrong. The frequency Miles dialed, 118.975, is the Plattsmouth AWOS, seventeen miles southeast and on the other side of the wind shift; Millard broadcasts on 118.25. What matters is not who read the wrong number. What matters is that the last line of defense against bad data, the picture out the windshield, was still open, and you used it.<<else>>The day kept offering small windows for correction, and the one that counted was the last one. A go-around at an untowered field in snow is unglamorous and completely free.<</if>><<if $badchoices gte 2>> There were earlier, cheaper exits than the one you finally took, and the debrief version of you can find them on the path log. The airplane forgives late corrections. It just charges more for them.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Instrument pilots under-use the go-around because it feels like a verdict. It is a tool. Power up, clean up, climb, and the approach resets to zero with nothing lost but minutes.<<if $buck>> On tailplane ice: the recovery is the opposite of a wing stall. Retract the flaps to the previous setting and hold aft pressure. A non-FIKI T-tail that has been in cloud below freezing has an unknown quantity of ice in a place no preflight or cockpit check can see, and partial flaps is the standing insurance.<</if>> The runway environment picture, sock, drift, and groundspeed, outranks every report from every source, including your own plan.</p>
+<h3>Key takeaway</h3>
+<p>The go-around is the cheapest instrument in the airplane. It works on bad weather, bad data, and bad tail ice alike.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Rwy12_Stopped [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: landed runway 12 downwind, stopped"])>>
+<<run playOneShot("touchdown", 0.5)>>
+
+The flare will not end. The Arrow floats in ground effect past the first stripe, past the second, the tailwind carrying it like a package on a belt, and when the mains finally take hold you are deep into the runway with the far end already resolving out of the snow. You brake. The wheels skip on the dusted pavement, grab, skip. The end boards, a road, a fence, all of it grows in the windshield while the airplane makes up its mind, and with maybe three hundred feet remaining the Arrow finally stops being a flying machine.
+
+You sit for a moment with your hands still curled on the yoke. Then you back-taxi past the sock, streaming stiff and proud, pointed exactly the way you landed.
+
+<div class="pax-quote">"That was kinda fast," Miles says, in the specific tone of a kid deciding whether something was awesome or scary.</div>
+
+On the ramp, Anya waves like nothing happened, because from the fence, nothing did. You cancel IFR through clearance delivery and discover your legs are not quite done with the landing yet. The tires have flat spots you will find with a flashlight tonight.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You landed with a ten-knot tailwind gusting sixteen on 3,588 feet of snow-dusted pavement. The groundspeed on short final read about 111 knots against an approach speed in the low nineties: the extra energy had to go somewhere, and it went into runway and brake pads and tire rubber. It very nearly went into the overrun. The margin left over belonged to the gust cycle and the snow depth, neither of which you controlled.</p>
+<h3>ADM analysis</h3>
+<p>The wind report that set up runway 12 came from the Plattsmouth AWOS, 118.975, seventeen miles southeast: Miles dialed a plausible frequency off the card and read you somebody else's weather with total confidence. Millard is 118.25. The morning METARs, the TAF, the neighboring fields, and eventually a Cherokee, a windsock, and your own groundspeed readout all disagreed with him<<if $missedCues gte 3>>, and at least three of those disagreements arrived before the flare, each one a quiet offer of an out<</if>>. Continuation bias did the rest: every mile closer made the plan heavier and the picture easier to argue with. Kinetic energy scales with the square of speed. Landing at 111 across the ground instead of 76 meant more than double the energy to dissipate, on a surface offering less grip than usual.</p>
+<h3>What good judgment looks like here</h3>
+<p>Cross-check any single-source report that picks your runway: the AWOS loop yourself, one question to approach, one question to the traffic. And on final, believe the free instruments. A groundspeed twenty knots fat, drift held with the nose cocked the wrong way, and a sock streaming with you instead of at you are three votes for the same fact. When the picture and the plan disagree, the picture wins, and the go-around is how you cast that ballot.</p>
+<h3>Key takeaway</h3>
+<p>The windsock has no agenda and no frequency to misdial. When it contradicts everything you briefed, it is not the sock that is wrong.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_ICTS_Recovered [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: recovered the buck, landed 30"])>>
+<<run playOneShot("touchdown", 0.5)>>
+
+You fly the last two hundred and fifty feet with your full attention and none of your assumptions. The headwind does what headwinds do: the Arrow crosses the fence at 85 indicated and maybe 60 across the ground, flares long on its flaps-25 wing, and touches down with two-thirds of the runway already spent and the rest of it sufficient. You roll to the end, clear, and cancel.
+
+On the ramp you shut down and sit for a moment while Miles narrates the landing back to you as the greatest thing he has ever survived. Then you borrow the FBO's ladder.
+
+From the top of it you can finally see what the airplane has been carrying: a ridge of gray ice along the stabilator's leading edge, thin as a knife spine, invisible from the ground, invisible from the cockpit, invisible from everywhere except exactly here. You take a picture of it for the same reason Miles takes pictures of submarines.
+
+Anya arrives. The game happens. Miles plays. You watch from the glass with a coffee, doing quiet arithmetic about flap handles.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Extending the last notch of flaps put an ice-contaminated tailplane past its stalling angle: the T-tail buck, an uncommanded pitch down at four hundred feet. You reversed the thing you had just changed, flaps back to 25 with firm aft pressure, and the tail flew again. Then you finished the arrival with a configuration and speed the contaminated airframe could honor. A scare, a landing, and a photograph.</p>
+<h3>ADM analysis</h3>
+<p>The tailplane stall is treacherous because its trigger feels like a routine act and its symptoms impersonate a wing stall while requiring the opposite response. Push and power, the drilled reflex, deepens it. Your recovery worked because you connected effect to cause: the airplane broke when the flaps moved, so the flaps moved back. The deeper setup was written earlier in the flight, in every minute of cloud time the tail spent collecting what you could not see. The Arrow's stabilator lives out of sight from both seats. The preflight materials said as much, and today the airplane repeated it with emphasis.</p>
+<h3>What good judgment looks like here</h3>
+<p>In a non-FIKI airplane that has been carrying ice, land with partial flaps and extra speed, and brief that plan before the approach starts so the moment of extension never arrives. NASA and NTSB guidance after the Roselawn accident boils down to exactly what you flew: if the pitch breaks at flap extension, retract them, hold aft pressure, and be deliberate about power. Runway 30's 3,801 feet into a sixteen-knot gusting headwind gave the fast approach room to work. The same technique aimed downwind would have traded one emergency for another.</p>
+<h3>Key takeaway</h3>
+<p>On an iced T-tail, the flap handle is a flight control for a surface you cannot see. Move it like one.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_ICTS_Hard [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: mishandled the buck, hard arrival"])>>
+
+The nose does not come back. Whatever the elevator is asking for, the iced tailplane cannot deliver it, and the last three hundred feet happen in about four seconds of gray runway swelling in the glass. The Arrow arrives flat and enormously hard, short of the touchdown zone. The main gear takes it, gives, and lets the airplane slide on its belly and one folded leg in a long, loud, strangely slow grind that ends in silence and the ticking of snow.
+
+Fuel off. Mags off. Master off. "Out. Now. Door."
+
+Miles is crying and moving, both at once, which is exactly right. On the frozen grass beside the runway you check him with your hands and your eyes: a split lip where the headset boom caught him, nothing else. Your wrist aches in a way that will need an X-ray and turn out to be a sprain. The airport truck's amber light comes fast up the taxiway, and behind the fence, a silver SUV is stopped at an angle with its driver's door hanging open.
+
+Anya holds Miles for a long time. Then, being your sister, she holds you.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>An ice-contaminated tailplane stalled when the final notch of flaps extended, pitching the airplane down at four hundred feet. The response<<if $pathArray.includes("Buck: treated it as a wing stall")>>, push and power, the wing-stall reflex,<<else>>, hauling it onto the pavement while the runway was still there,<</if>> could not restore lift to a surface flying past its contaminated critical angle, and the airplane struck the surface hard and short. The gear and firewall absorbed what the mistake bought. Seat belts and shoulder straps did their work: a split lip, a sprained wrist, and a very bad afternoon, instead of a very different report.</p>
+<h3>ADM analysis</h3>
+<p>Two chains met at that flap handle. The first was exposure: the tail had been collecting ice all flight, in a location no cockpit check can see, exactly as the preflight materials warned for this T-tail. The second was configuration: full flaps on a contaminated airframe is the specific trigger for ICTS, and the buck's symptoms are engineered by physics to fool a well-trained pilot, buffet and pitch break included. The recovery that works, retracting the flaps you just extended, is counter-instinctive precisely because the instinctive response belongs to a different stall on a different surface.</p>
+<h3>What good judgment looks like here</h3>
+<p>The countermeasure lives upstream of the moment. Iced airframe: partial flaps, extra speed, briefed out loud before the final approach fix so the trigger never gets pulled. If the buck comes anyway, undo the last configuration change and hold aft pressure. The NASA tailplane icing work and the NTSB's Roselawn findings are the canon here, and they exist because this sequence has fooled professional crews, not just weekend Arrows.</p>
+<h3>Key takeaway</h3>
+<p>When an iced airplane breaks at the exact moment you change its configuration, change it back. The tail stalls opposite to the wing, and it grades harder.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KSTJ_Drive [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: drove north, made the game"])>>
+
+The Arrow goes into the heated hangar looking like a wedding cake, and by the time the paperwork is signed the Camry is idling at the door with its heater already trying. Miles rides shotgun with the frequency card still in his jacket pocket, navigator by appointment.
+
+I-29 north is gray and moving. Snow thickens around Rock Port and you slow with it, flashers of a plow blinking somewhere ahead, and then it thins again crossing into Iowa. At 5:12 you pull into a rink parking lot on the south side of Omaha, and Miles is gone before the parking brake sets, bag and all, banging through the lobby doors.
+
+He skates the first shift. Anya finds you at the glass and puts a coffee in your hand without a word. On the ice, number 11 falls down twice and scores once, roughly in that order.
+
+The Arrow sleeps indoors tonight. You will airline back for it Tuesday, or drive, or whatever the sky is selling. The system can keep the deposit.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You met icing in a non-FIKI airplane, gathered what information the day would give<<if $turnbackFrom is "opening">>, and turned around at the first hard look<<elseif $turnbackFrom is "climb" or $turnbackFrom is "high">> including an instructive climb that answered its own question, and turned around with the answer<<elseif $turnbackFrom is "low">> including a look at the bases that settled the matter, and turned around<<else>>, and turned around while turning around was still cheap<</if>>. Then you finished the mission with the tools that fit it: a hangar, a sedan, and an interstate. Miles made his game. The airplane is dry, whole, and someone else's problem until Tuesday.</p>
+<h3>ADM analysis</h3>
+<p>The 180 gets called retreat, and that framing is the hazard. What it bought you today was the entire remaining option set: the hangar, the rental counter, the airline desk, the motel, all of it sitting behind the decision to stop flying. The pilots who lose those options are the ones who spend another thirty minutes negotiating with an AIRMET first. Note also what the drive required: slowing at Rock Port when the snow said so. The judgment that turned the airplane around rode along in the car, which is the whole trick.</p>
+<h3>What good judgment looks like here</h3>
+<p>A non-FIKI airplane inside AIRMET Zulu holds a losing hand the moment accretion starts: 91.13 hovers over the legality, and physics owns the rest. The professional move is exactly what this path shows: convert altitude and time into options early, land with margin, and re-solve the mission on the ground. Trip insurance is a rental car. It has always been a rental car.</p>
+<h3>Key takeaway</h3>
+<p>Turning around early enough looks exactly like good planning. Only late turnarounds look like retreat.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KSTJ_Airline [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: airlined from KCI"])>>
+
+The rental goes south instead of north, forty minutes to Kansas City International with the wipers keeping time. At the gate, Miles presses his forehead to the glass while a truck the color of a wasp sprays the regional jet with green fluid that steams in the cold.
+
+<div class="pax-quote">"Is that so it doesn't get ice like us?"</div>
+
+"Exactly like us," you tell him. "They wash theirs off before it matters."
+
+The flight is twenty-two bumpy minutes in the same overcast you spent the afternoon negotiating with, flown by a crew with heated wings and a dispatcher. Eppley at 6:40. Anya meets you at the bottom of the escalator, and Miles gets the sad math over a slice of airport pizza: final score 4 to 2, his team, without him.
+
+He takes it like a big-leaguer for three full minutes and then not at all. The Arrow spends the week in St. Joseph. The hockey bag never got opened.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You stopped flying while stopping was cheap, then bought the rest of the trip from an operation built for this exact sky: known-ice certification, two pilots, a dispatcher, and a deice truck. It cost real money, a missed game, and one hard conversation with a ten-year-old. Nobody's evening included a windsock.</p>
+<h3>ADM analysis</h3>
+<p>The instinct to grade this ending by the missed game is the trap worth noticing. The go/no-go call and the how-do-we-finish-the-mission call are separate decisions, and you made both on their merits. Between the Camry and the regional jet there was no safety-obvious answer: two hours of thickening snow on an interstate against twenty-two minutes behind a deice truck, with the game reachable only by the road. Reasonable pilots split on it. What matters is that you priced the options honestly instead of letting the scoreboard vote<<if $anyaMode is "call">>, and that Anya heard the reasoning from a voice instead of a text, which is how family stays crew<</if>>.</p>
+<h3>What good judgment looks like here</h3>
+<p>The airlines answer icing with certification, redundancy, and glycol, which is another way of saying money. A personal-airplane mission that collides with an AIRMET can often be completed by simply renting that infrastructure for an evening. The math stings until you price the alternatives honestly: the drive had real winter-road exposure, and the flight you canceled had more.</p>
+<h3>Key takeaway</h3>
+<p>Completing the mission and completing the flight are different jobs. Some days the second one belongs to somebody with a deice truck.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Rwy12_Excursion [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: runway 12 overrun"])>>
+
+The Arrow lands long and fast and out of arguments. You are hard on the brakes by midfield, the wheels skating on the snow-dusted surface, and the far end keeps coming. It happens without drama, which is the strangest part: the pavement simply runs out, the airplane rolls off the end at something like twenty-five knots, and the frozen overrun grabs the nosewheel and folds it under like a bad card. The prop strikes once, twice, and everything stops.
+
+Snow ticks against the windshield. The engine is dead where the impact killed it.
+
+<div class="pax-quote">"Are we okay?" Miles asks, very small. "Aunt Kellea. Are we okay?"</div>
+
+You are. Both of you, completely. You run the securing flow with hands that feel borrowed, and you are standing in the snow helping Miles over the wing when the airport truck arrives with its amber light turning, the Cherokee pilot jogging behind it. Anya's SUV reaches the fence a minute later. She does not wave this time.
+
+The Arrow kneels in the overrun with its tail in the air, and the sock behind it streams stiffly toward the scene of the crime.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A landing with a ten-knot tailwind gusting sixteen, on 3,588 feet of contaminated pavement<<if $buck>>, flown minutes after an ice-contaminated tailplane stall on the same approach<</if>><<if $flapPlan is "minimal">>, carried in flat and fast on minimal flaps<</if>><<if $iceAccretion gte 3>>, with an airframe hauling a real load of ice<</if>>, needed more runway than Nebraska provided. Nobody is hurt. The nose gear, the prop, and the engine (a sudden stoppage means a teardown) are another story, and the word the paperwork will use is "substantial."</p>
+<h3>ADM analysis</h3>
+<p>This ending is a chain, and every link was optional. The wind data came from the wrong airport: Miles dialed 118.975, the Plattsmouth AWOS seventeen miles southeast, instead of Millard's 118.25, and delivered the error with a ten-year-old's pride. The cross-checks (the AWOS yourself, a question to approach, the traffic already using runway 30) went unused. The final-approach picture, groundspeed twenty-plus knots fat, drift, a sock streaming the direction of travel, was the last open window<<if $missedCues gte 3>>, after several earlier ones<</if>>, and the landing continued through it. None of these felt like a decision at the time. That is how chains work: no single link ever does.</p>
+<h3>What good judgment looks like here</h3>
+<p>Verify single-source safety data before it becomes a plan. Re-run the wind math any time the groundspeed and airspeed stop agreeing with the brief. And hold the go-around as a standing option all the way to the pavement: at 111 knots across the ground on a 3,588-foot runway, the miss was not conservative, it was the only version of this arrival with margin in it. The FAA's runway overrun guidance uses a blunt rule of thumb: ten knots of tailwind can add several hundred feet to a light airplane's landing roll before you account for contamination. Today the account came due.</p>
+<h3>Key takeaway</h3>
+<p>Runways do not negotiate. By short final the only power you keep is the power to leave, and it expires at the flare.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KSTJ_Scrub2 [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: waited out the weather at KSTJ"])>>
+
+<<if $lateMode is "drive">>\
+The Camry leaves St. Joseph at 4:20 into a dusk the color of wet newspaper. The interstate is passable and humble: forty-five where it should be seventy, plows working the northbound side, Miles calling out the rink countdown from shotgun. You walk into the lobby at 6:40, to the muffled sound of a horn and a final score.
+
+He catches the last ninety seconds through the glass in his coat, then joins the handshake line in street shoes, which his teammates treat as the most interesting thing to happen all day. There is pizza. There is a mostly happy kid. There is a text from Anya that says simply: <em>good call. all of them.</em>
+
+The Arrow stays warm in a St. Joseph hangar, and Tuesday will sort out the retrieval.
+<<else>>\
+Two rooms at the motel by the field, a vending-machine dinner upgraded by the diner across the road, and a ten-year-old asleep by nine under a painting of a riverboat. In the morning the system is gone east and the sky is the scrubbed blue that follows, sun hard off the snowfields.
+
+You fly the last hundred miles at ten in the morning in air like glass, the Arrow clean and light on its feet, and Anya meets you at Millard with coffee and a boy-sized hug for the boy. The game is a settled statistic: 4 to 2, his team, told to him twice by text and once more at breakfast. He took it hard for one evening and is negotiating for pancakes by the time the story ends.
+<</if>>\
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You paid ninety minutes for better information, and the information came back with a verdict: the system was parked, the evening TAF worse than the afternoon's. <<if $lateMode is "drive">>You took the road, drove to conditions, and salvaged the human part of the mission: a kid with his team on the night it mattered, even without the jersey on.<<else>>You bought the night, and the morning repaid it with the easiest hundred miles of the trip. The game was the cost. The flight home was the refund.<</if>></p>
+<h3>ADM analysis</h3>
+<p>Waiting is a real decision, and it is only a good one when it is a purchase rather than a hope: you waited <em>for</em> something, the 2053Z observations, with a plan for both answers. The trap on days like this is the unpriced wait, another coffee and another radar loop with no trigger attached, while the road option quietly dies of darkness and snowfall. Yours had a trigger, and when it fired you acted on the answer instead of arguing with it<<if $lateMode is "drive">>. Driving at forty-five with the plows was the same discipline that turned the airplane around, wearing different clothes<</if>>.</p>
+<h3>What good judgment looks like here</h3>
+<p>Set a decision time and criteria before you start waiting: "next METAR at the top of the hour. Improvement means option A, anything else means option B." Weather moves at weather speed and does not care about warmup schedules, so the calendar work happens on your side of the equation. And when the answer is no, a night in a motel is one of aviation's great bargains.</p>
+<h3>Key takeaway</h3>
+<p>Wait for information, never for luck. Buy the next observation, decide on it, and move.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KSTJ_Relaunch_Return [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: relaunched, returned to KSTJ"])>>
+
+<<if $relaunchPress>>\
+You give the plan twelve more minutes. In the landing light's cone the snow is a white wall doing eighty, and the leading edges gain more in those twelve minutes than they gained in the first hour this afternoon. The airspeed drifts down through 108 with the power up. The airplane is not arguing. It is presenting evidence.
+
+You take the vector back. The ILS 35 at night, carrying ice, is a different animal than the one you flew in daylight: you keep 95 over the fence, land flat and long on the big runway, and use more of it than you have ever used at once.
+<<else>>\
+One look is one look. You take the vector back before the windshield bead finishes forming, fly a tidy ILS 35 through the last of the daylight, and put the Arrow back on the runway it left twenty-five minutes earlier.
+<</if>>\
+
+The same line guy meets you with the same wands. "Coffee's still fresh," he says, deadpan, and clips the towbar on.
+
+Rooms at the motel by the field. Miles falls asleep mid-sentence describing the takeoff to Anya on the phone. The system squats over Nebraska all night, exactly as advertised.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You relaunched into an airmass you had already measured once, at night, in steadier snow, and the airmass had not changed its answer. <<if $relaunchPress>>Twelve extra minutes northbound bought a faster accretion rate, a ten-knot airspeed decay, and a night ILS flown with ice aboard. The second retreat cost more than the first one had.<<else>>You treated the flight as the probe it was, got your answer inside ten minutes, and came home before the price went up.<</if>> Everyone sleeps in St. Joseph. The airplane is fine.</p>
+<h3>ADM analysis</h3>
+<p>The second launch is a known trap with a name: the decision feels pre-paid. You already did the hard turnaround once, the airplane is dry, the mission is close, and the mind quietly books the trip as owed. But the 2053Z observations and the evening TAF were newer and better information than the afternoon's, and they said worse, not better. Night stacked the deck further: accretion you cannot see, bases you cannot judge, and an outside reference set reduced to a landing light full of snow<<if $relaunchPress>>. The airspeed decay was the airframe filing its report, and twelve minutes was a long time to leave it unread<</if>>.</p>
+<h3>What good judgment looks like here</h3>
+<p>If a second look is worth flying at all, it is flown like a test card: hard turn-back triggers briefed aloud before takeoff (an accretion observation, an airspeed number, a time), and any single trigger ends the experiment. No trigger, no launch. And newer observations outrank older hopes, every time, in both directions.</p>
+<h3>Key takeaway</h3>
+<p>You cannot owe a trip to anybody. Each launch is a fresh decision, priced at tonight's weather, not this afternoon's effort.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Emerg_Enroute [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: declared enroute, landed safe"])>>
+
+The frequency reorganizes itself around your call sign. Altitudes become yours for the asking, headings arrive before you finish wanting them, and a Cirrus somewhere above gets moved without being told why.
+
+<<if $emergTo is "KSTJ">>\
+"One eight Juliet, fly heading one four zero, descend and maintain three thousand, vectors ILS runway three five at Rosecrans. Equipment will be standing by."
+
+The ILS brings you down the river valley with the needles pinned and your breathing slowly rejoining the airplane. Eight thousand feet of runway absorbs the fast approach without effort, and you roll out past a yellow truck with its light bar turning, its crew watching an entirely ordinary landing with professional patience.
+<<else>>\
+"One eight Juliet, Falls City is your one o'clock and two zero miles, cleared direct, the RNAV three three available. Descend at your discretion."
+
+The number two pulls up the Brenner Field weather: wind out of the north, favoring 33. The approach drops you out of the deck over white grain country, a narrow strip growing out of the snow, and you land on 3,999 feet of quiet pavement with nobody watching but a row of hangars. The engine ticks as you shut down. A county sheriff's SUV rolls up a few minutes later, friendly, mostly curious, entirely glad to see two people and an intact airplane.
+<</if>>\
+
+Anya answers on the first ring. You give her the version with the ending first.
+
+That evening, on the controller's request, you call the facility and walk through the flight. The conversation is short, professional, and ends with "glad it worked out." You file the ASRS form anyway, because the form exists for exactly this kind of day.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You said the one word that converts a request into a priority, and the system did what it is built to do: cleared the path, offered every runway, and put <<if $emergTo is "KSTJ">>a long ILS<<else>>the nearest usable approach<</if>> under you. The airplane is undamaged, the passenger is fine, and the total cost was one phone call and one form.</p>
+<h3>ADM analysis</h3>
+<p><<if $iceAccretion gte 3>>The declaration matched the airplane's condition: real accretion, decaying airspeed, and a non-FIKI airframe with no way to shed any of it. That is a distress-adjacent situation by any honest reading, and treating it as one was the professional move, not the dramatic one.<<else>>By the numbers you carried, trace to light accretion, a pilot could argue cheaper tools existed: a 180, a lower altitude, a routine diversion without the word. But the argument against declaring rests entirely on hindsight knowing the ice stayed light. From inside the airplane, in cloud, in a non-FIKI single with the trend uncertain, buying the whole toolbox with one sentence is a defensible trade every time.<</if>> The cultural fear here, paperwork, is mostly folklore: 91.3(b) gives you the deviation authority, 91.3(c) requires a written report only if the Administrator asks, and most such days end exactly as this one did.</p>
+<h3>What good judgment looks like here</h3>
+<p>Declare by trend, not by wreckage. The time to say the word is while the airplane still flies well enough to use the help, and an icing non-FIKI airframe earns it earlier than most emergencies because the situation only compounds. Afterward: land, breathe, call when asked, and file the ASRS report while the details are fresh.</p>
+<h3>Key takeaway</h3>
+<p>An emergency declaration is a tool with a loud handle and a tiny invoice. Pilots who reach for it a little early outlive the folklore.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Emerg_Approach [scenario ending]
+<<set $pathArray to $pathArray.concat(["ENDING: declared in the terminal area, landed safe"])>>
+
+The word goes out and the Omaha terminal area rearranges itself. Somebody gets a delaying vector. Somebody else gets told to expect a different runway. You get whatever you want.
+
+<<if $emergTo is "KMLE">>\
+"One eight Juliet, cleared direct KODPE, cleared RNAV runway three zero approach Millard, the frequency is yours. Airport personnel have been advised."
+
+The approach comes down through the snow with nothing in your way, the fixes counting, the runway rising out of the gray with its PAPI burning. You land into the gusting headwind with room to spare and taxi in past an airport truck idling on the ramp edge, amber light turning patiently.
+<<else>>\
+"One eight Juliet, fly heading three six zero, vectors Eppley, plan the longest runway, equipment will be standing by."
+
+Eppley opens up ahead in the murk, wide and bright and built for airplanes with a hundred seats. You land on more pavement than the Arrow will use in a year, a rank of yellow trucks pacing the rollout from the parallel taxiway, and a tower voice with all the time in the world clears you to the general aviation ramp.
+<</if>>\
+
+Miles watches all of it with enormous eyes and, once the engine stops, delivers his verdict: "That was like a movie."
+
+Anya's SUV finds the right gate twenty minutes later. That evening the facility calls, asks five polite questions, thanks you for good communication, and hangs up. You file the ASRS form with a cup of tea going cold beside the keyboard.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You declared inside the terminal area and used the priority for what it is for: <<if $emergTo is "KMLE">>an uncluttered approach to the destination runway the wind favored, flown without a single competing demand on your attention<<else>>a wide, serviced runway with professional response standing by, traded for a few extra minutes of flying<</if>>. The landing was uneventful, which is the entire point of declaring before things get eventful.</p>
+<h3>ADM analysis</h3>
+<p><<if $iceAccretion gte 3>>With real ice on a non-FIKI airframe in the terminal area, the declaration was well-timed rather than premature: you spent the priority while full control authority remained, which is when it buys the most.<<else>>With the accretion you carried, this was an early declaration, and early is the direction to err. The alternative was juggling sequence, traffic, and an iced airframe all at once. One sentence deleted two of the three.<</if>> <<if $emergTo is "KOMA">>Choosing the big airport over the close one is a legitimate emergency trade: services, width, and length against minutes of exposure. Today the airplane had the minutes to spend.<<else>>Choosing the close field over the big one is a legitimate emergency trade: minimum exposure against maximum services. Today minimum exposure was the better buy.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Declare while the help can still help. State what you need in plain words, take the priority without apologizing for it, and fly the airplane while the system clears furniture out of your way. The follow-up is a conversation and a form: 91.3(c) requires a written report only on request, and the ASRS filing is cheap insurance and good citizenship in one envelope.</p>
+<h3>Key takeaway</h3>
+<p>Priority handling is worth the most while your airplane still flies normally. Spend it then, not later.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $pathArray to []>><<set $missedCues to 0>><<set $badchoices to 0>><<set $iceAccretion to 1>><<set $tailIce to 0>><<set $fuelGal to 72>><<set $onATCAdvice to false>><<set $atisTrusted to "none">><<set $phase to "cruise">><<set $atcReturn to "Opening">><<set $contactedATC to 0>><<set $oat to "">><<set $alt to "">><<set $ias to "">><<set $topsHint to false>><<set $windKnown to false>><<set $onTop to false>><<set $rwy to "">><<set $flapPlan to "">><<set $buck to false>><<set $declared to false>><<set $anyaMode to "">><<set $lateMode to "">><<set $emergTo to "">><<set $relaunchPress to false>><<set $pressedSeq to false>><<set $seqMode to "">><<set $turnbackFrom to "">><<set $stjArrival to "">><<set $milesAsked to false>><<set $fssTried to false>><<set $altAirTried to false>><</link>>
+</div>
+
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
