@@ -1,0 +1,2056 @@
+:: StoryTitle
+Crossfeed
+
+:: StoryData
+{
+  "ifid": "70275269-981D-4791-B1D2-4A02CA8D20FE",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "FlightPrep"
+}
+
+:: StoryInit
+/* SCENARIO TITLE:      Crossfeed
+   AUDIENCE:            General Aviation Pilots (multi-engine)
+   TONE:                Professional
+   PRIMARY TOPIC:       Twin fuel-system management and the self-inflicted
+                        engine failure (starvation, crossfeed logic, the
+                        diagnose-before-you-secure discipline)
+   SECONDARY TOPIC:     Night operations, diagnosis under uncertainty,
+                        divert decisions
+   AIRCRAFT/EQUIPMENT:  1978 Piper PA-34-200T Seneca II, N7462C. Two
+                        counter-rotating turbocharged Continental TSIO-360s,
+                        200 hp/side. 93 gal usable (46.5/side). Per-engine
+                        fuel selectors ON / OFF / X-FEED. Electric boost
+                        pumps. Oil-pressure prop feathering, no unfeathering
+                        accumulators. JPI EDM-760 with fuel totalizer.
+                        Vmc 66 KIAS, Vyse 89 KIAS.
+   SETTING:             KSAT (San Antonio Intl) to KELP (El Paso Intl),
+                        430 nm direct at 10,000. Saturday night in late
+                        March, wheels up about 30 minutes after sunset.
+                        Junction, Sonora, Ozona, Fort Stockton, Pecos, and
+                        a great deal of nothing in between.
+   WEATHER:             Night VMC. New moon. Thickening high cirrus over
+                        the western half of the route masking the stars.
+                        Light surface winds. Westerly winds aloft stronger
+                        than forecast. No icing, no convection.
+   ADM THEMES:          Per-side fuel math vs. total fuel math, habit
+                        pattern disruption, diagnosis before commitment,
+                        sunk-cost continuation, the divert that feels like
+                        going backward.
+   HAZARDOUS ATTITUDES: Macho (fast feathering, pressing to destination),
+                        invulnerability (waving at the re-math),
+                        impulsivity (fuel panel before airplane),
+                        resignation (accepting the sequence, telling no one).
+   TOTAL BRANCHES:      ~22 distinct paths
+   TOTAL ENDINGS:       14 (2 full success, 6 qualified success,
+                        2 friction/social cost, 1 delay/diversion,
+                        1 aircraft damage, 1 off-airport survivable,
+                        1 fatal, reachable only through 4+ consecutive
+                        worst choices)
+   MIN DECISION DEPTH:  4 story decisions on every path (audit enforces)
+   TIMED DECISIONS:     No
+   ESTIMATED DURATION:  20-30 minutes
+   VERSION:             1.0    LAST REVIEWED: July 2026    REVIEWER: (pending)
+   FUEL MATH (design):  Actual at engine start: L 46.5 / R 26.5 usable.
+                        Partner's note claims R "about half," JPI totalizer
+                        set to 74.0. Taxi+runup 0.9/side. Climb (17 min)
+                        4.5/side. Cruise FF: L 10.4, R 11.3 (right runs
+                        rich, on the squawk sheet). Right tank dry at 2:09
+                        elapsed. Left at that moment: 21.7 gal. KELP 140 nm
+                        ahead (61 min), KFST 46 nm behind (22 min with the
+                        wind), KPEQ 24 nm (AWOS OTS, primary rwy closed).
+                        Both engines fed from the left tank burn ~21.7 gph:
+                        land KELP with ~2.7 gal, land KFST with ~14.
+*/
+<<set $pathArray to []>>
+<<set $badchoices to 0>>
+<<set $readWeather to false>>
+<<set $readFlightPlan to false>>
+<<set $readAircraft to false>>
+<<set $readMap to false>>
+<<set $fuelLeft to 46.5>>
+<<set $fuelRight to 26.5>>
+<<set $toppedOff to false>>
+<<set $splashed to false>>
+<<set $waltTexted to false>>
+<<set $d2 to "">>
+<<set $fuelSeen to false>>
+<<set $rightSecured to false>>
+<<set $featherFast to false>>
+<<set $restored to false>>
+<<set $airstart to false>>
+<<set $declared to "none">>
+<<set $crossfeedState to "normal">>
+<<set $inversion to false>>
+<<set $speedScare to false>>
+<<set $headsDown to false>>
+<<set $restumble to false>>
+<<set $doubleScare to false>>
+<<set $divert to "">>
+<<set $seq to "">>
+<<set $waltPlan to "">>
+<<set $ground to "">>
+<<set $backstop to false>>
+<<set $leanChase to false>>
+<<set $mgdSwitch to false>>
+<<set $stab to "">>
+
+:: StoryStylesheet [stylesheet]
+body {
+  background: #0f1720;
+  color: #d6dee6;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#story {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+#passages {
+  border-left: none;
+  padding: 0;
+}
+.passage {
+  padding: 0;
+}
+a.link-internal, a.macro-link {
+  color: #e6b84a;
+  text-decoration: none;
+  border-bottom: 1px dotted #8a6f2a;
+}
+a.link-internal:hover, a.macro-link:hover {
+  color: #fff4d0;
+  background: #3a2d0a;
+  border-bottom: 1px solid #e6b84a;
+}
+.choice-list {
+  margin: 1.2em 0 0.5em 0;
+}
+.choice-list p { margin: 0.6em 0; }
+hr {
+  border: none;
+  border-top: 1px solid #2c3a4a;
+  margin: 1.8em 0;
+}
+.debrief {
+  background: #141d28;
+  padding: 1rem 1.3rem;
+  border-left: 3px solid #e6b84a;
+  margin-top: 1rem;
+  font-size: 0.98rem;
+}
+.debrief h3 {
+  color: #e6b84a;
+  font-size: 1.05rem;
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.04em;
+}
+.restart {
+  margin-top: 2em;
+  font-size: 0.95rem;
+  color: #8aa0b5;
+}
+.metar {
+  font-family: "Courier New", monospace;
+  font-size: 0.95rem;
+  color: #b8cce4;
+  background: #0a121b;
+  padding: 0.6em 0.9em;
+  border-left: 2px solid #5a6e88;
+  margin: 0.6em 0;
+  white-space: pre-wrap;
+}
+.metar-block, .flight-plan, .aircraft-card {
+  font-family: "Courier New", monospace;
+  font-size: 0.95rem;
+  color: #b8cce4;
+  background: #0a121b;
+  padding: 0.8em 1em;
+  border-left: 2px solid #5a6e88;
+  margin: 0.6em 0;
+  white-space: pre-wrap;
+}
+.airport-table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.9em; }
+.airport-table th, .airport-table td { padding: 6px 10px; border-bottom: 1px solid #2c3a4a; text-align: left; }
+.airport-table th { color: #8aa0b5; }
+.scenario-title {
+  font-size: 2em;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 0.2em;
+}
+.scenario-subtitle {
+  font-size: 1.05em;
+  color: #8aa0b5;
+  text-align: center;
+  margin-bottom: 1.5em;
+  font-style: italic;
+}
+.preflight-btn {
+  display: inline-block;
+  background: #16213e;
+  border: 1px solid #2c3a4a;
+  border-radius: 6px;
+  padding: 10px 20px;
+  margin: 6px 4px;
+  min-width: 230px;
+  text-align: center;
+  color: #d6dee6;
+}
+a.link-internal:has(> .preflight-btn) { border-bottom: none; }
+a.link-internal:hover .preflight-btn { background: #24324f; color: #fff4d0; }
+.chart-disclaimer {
+  font-size: 0.8em;
+  color: #8aa0b5;
+  border-left: 3px solid #2c3a4a;
+  padding: 6px 12px;
+  margin: 1em 0;
+}
+.sectional-container { margin: 1em 0; }
+.sectional-container img {
+  max-width: 100%;
+  border: 1px solid #2c3a4a;
+  border-radius: 4px;
+}
+.sectional-label { font-size: 0.85em; color: #8aa0b5; margin-top: 0.3em; }
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block;
+  padding: 0.55em 1.3em;
+  background: #1A3C57;
+  color: #fff !important;
+  border: 1px solid #2E5C82;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+.main-menu-btn:hover, .main-menu-btn:focus { background: #2E5C82; outline: none; }
+.pax-quote {
+  background: rgba(40, 58, 80, 0.35);
+  border-left: 3px solid #6080a8;
+  padding: 0.5em 0.9em;
+  margin: 0.8em 0;
+  font-style: italic;
+  color: #c0d0e8;
+}
+.pax-quote::before { content: "Elena: "; font-style: normal; color: #8aa0b5; font-weight: bold; }
+.decision-heading {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 0.9em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e6b84a;
+  border-top: 1px solid #2c3a4a;
+  padding-top: 0.8em;
+  margin-top: 1.4em;
+}
+
+:: FlightPrep [preflight]
+<<set $pathArray to $pathArray.concat(["Preflight: reviewing materials"])>>
+
+<div class="scenario-title">Crossfeed</div>
+<div class="scenario-subtitle">A night twin scenario: KSAT to KELP</div>
+
+It's Saturday evening in late March. Sunset in San Antonio was 7:41, and the last of it is draining out of the sky west of the field. You're a private pilot, multi and instrument rated, about 700 hours total with 140 of it in twins, and eight months into a three-way partnership on a 1978 Seneca II based at El Paso International. Sixty hours in type. You still grin a little every time you walk up to it.
+
+Tonight is the ride home from your father's seventieth birthday. Your sister Elena is with you, and she has a 6:45 shift in the neonatal ICU tomorrow morning. You told her she'd be in her own bed by eleven, El Paso time. She believed you, because you're you.
+
+Walt, the senior partner, had the airplane in San Antonio this week and airlined home this morning. It's waiting for you on the ramp at Mission Trail Aviation with his note in the fuel log. The flight is 430 nautical miles, almost all of it over the emptiest stretch of Texas there is, at night, under a new moon.
+
+<strong>Review your materials before heading out to the airplane:</strong>
+
+<div class="chart-disclaimer">Charts, weather data, frequencies, and performance figures in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here, not current publications, as the scenario is designed around them.</div>
+
+<<link "<span class=\"preflight-btn\">Weather Briefing</span>" "Preflight-Weather">><<set $readWeather to true>><</link>>
+<<link "<span class=\"preflight-btn\">Flight Plan & Fuel Log</span>" "Preflight-FlightPlan">><<set $readFlightPlan to true>><</link>>
+<<link "<span class=\"preflight-btn\">Aircraft & Systems</span>" "Preflight-Aircraft">><<set $readAircraft to true>><</link>>
+<<link "<span class=\"preflight-btn\">Area Map</span>" "Preflight-Map">><<set $readMap to true>><</link>>
+
+<<if $readWeather and $readFlightPlan and $readAircraft and $readMap>>
+<hr>
+You've been through everything. Elena is finishing a text to her charge nurse. Time to go flying.
+
+<<link "<span class=\"preflight-btn\">☑ Begin Flight</span>" "Ramp_Arrival">><</link>>
+<<elseif $readWeather or $readFlightPlan or $readAircraft or $readMap>>
+<hr>
+<em>You haven't looked at everything yet. The airplane has been in someone else's hands all week, and the route is a long one. Take your time.</em>
+
+<<link "<span class=\"preflight-btn\">Begin Flight Anyway</span>" "Ramp_Arrival">><</link>>
+<</if>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Weather [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed weather briefing"])>>
+<strong>Standard Briefing, self-briefed 1930 CDT (0030Z)</strong>
+
+<p><em>Synopsis:</em> Weak surface ridge over the Hill Country. A shield of high cirrus is spreading east off the upper trough over the Davis Mountains and will thicken over the western half of the route through the night. No convection. No icing below FL180 on the route. Surface winds light everywhere. Winds aloft westerly, strengthening overnight. New moon tonight.</p>
+
+<div class="metar-block">METARs (0053Z)
+
+KSAT 220053Z 14006KT 10SM FEW250 21/12 A3002 RMK AO2 SLP164
+KJCT 220055Z AUTO 15005KT 10SM CLR 19/09 A3003 RMK AO2
+KFST 220055Z AUTO 16007KT 10SM CLR 20/07 A3004 RMK AO2
+KELP 220051Z 12004KT 10SM BKN250 19/06 A3005 RMK AO2 SLP135
+
+KPEQ: no observation available (AWOS out of service, see NOTAMs)</div>
+
+<div class="metar-block">TAFs
+
+KSAT 212320Z 2200/2224 14006KT P6SM SCT250
+  FM221000 16005KT P6SM SCT250
+KELP 212320Z 2200/2224 13005KT P6SM BKN250
+  FM220900 VRB03KT P6SM SCT250</div>
+
+<div class="metar-block">Winds aloft (route, valid 00Z-06Z)
+
+          9,000       12,000
+KSAT-KJCT 2312+08     2418+04
+KFST-KELP 2415+06     2522+02
+
+Plan number at 10,000: about 240 at 15.</div>
+
+<div class="metar-block">NOTAMs (route-relevant)
+
+KPEQ  AWOS-3 OUT OF SERVICE
+KPEQ  RWY 14/32 CLSD (rehabilitation)
+KFST  none
+KELP  none affecting arrivals</div>
+
+<p><em>Your own read: the METARs west of Junction say CLR because the automated stations can't see a cirrus deck at 25,000. It's up there, and it's moving east. Between the new moon and that shield, the western half of this flight will be flown inside a bag. Ceiling and visibility are a non-issue. Light is the issue.</em></p>
+
+<<link "← Back to preflight" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-FlightPlan [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed flight plan and fuel log"])>>
+<strong>Filed IFR Flight Plan</strong>
+
+<div class="flight-plan">Aircraft:    N7462C  Piper PA-34-200T Seneca II
+Equipment:   /G
+True AS:     158 KTAS (65% cruise)
+Departure:   KSAT   0110Z (2010 CDT)
+Route:       KSAT DCT KELP
+Altitude:    10,000
+Destination: KELP (El Paso Intl)
+Alternate:   none required (KELP forecast VFR, 91.169)
+Time enrte:  2:54
+Fuel:        3:42 (74 gal aboard per totalizer, block 20 gph)
+Souls:       2
+Remarks:     PARTNERSHIP ACFT, FUEL LOG NOTE SEE BELOW</div>
+
+<p>Your planning math, written on the kneeboard in the FBO: 74 aboard, 58 to get there at block burn, lands with 16 gallons. That's 48 minutes at cruise. Legal for IFR under 91.167 with room to spare.</p>
+
+<strong>The fuel log</strong>
+
+<p>The last page is Walt's handwriting, dated this morning:</p>
+
+<div class="flight-plan">"Topped the LEFT after my leg Thursday. Right reads right at
+half, should be close. Set the JPI to 74. Gas here is criminal,
+$8.15. Square the rest up at home, it's $5.90 at the co-op.
+Smooth ride home. - W"</div>
+
+<p>So: left tank full at 46.5 usable, verified by eye at the filler neck during your preflight, fuel against the collar. Right tank claimed at about half, which would be 23. The right gauge sits somewhere between three-eighths and a half and moves when you rock the wing. Nothing is visible down the right filler neck but darkness. There is no calibrated dipstick for a Seneca wing, and the JPI totalizer reads what Walt told it: 74.0.</p>
+
+<strong>En-route airports (planning row)</strong>
+
+<table class="airport-table">
+<tr><th>ID</th><th>Airport</th><th>Along route</th><th>Elev</th><th>Runway</th><th>Notes</th></tr>
+<tr><td>KJCT</td><td>Kimble County (Junction)</td><td>89 nm</td><td>1,749</td><td>17/35, 5,004 ft</td><td>CTAF, fuel daytime</td></tr>
+<tr><td>KFST</td><td>Fort Stockton-Pecos County</td><td>245 nm</td><td>3,011</td><td>12/30, 7,508 ft</td><td>ASOS 118.525, CTAF 122.8, 100LL 24-hr self-serve, RNAV 12/30 + VOR 12, unattended after 1700</td></tr>
+<tr><td>KPEQ</td><td>Pecos Municipal</td><td>abeam 282 nm, 22 N</td><td>2,613</td><td>09/27, 5,953 ft open</td><td>AWOS OTS, RWY 14/32 closed (NOTAMs)</td></tr>
+<tr><td>KINK</td><td>Winkler County (Wink)</td><td>abeam 274 nm, 51 N</td><td>2,822</td><td>13/31, 5,003 ft</td><td>Well off route</td></tr>
+<tr><td>KELP</td><td>El Paso Intl</td><td>430 nm</td><td>3,962</td><td>26L 9,025 / 22 12,020 / 26R 5,499</td><td>ATIS 120.0, Tower 118.3, full ILS/RNAV inventory</td></tr>
+</table>
+
+<p>Elena's arithmetic is simpler than yours. Wheels up around 8:10, El Paso gives an hour back at the time-zone line, home by eleven Mountain time, asleep by 11:30, alarm at 5:15. She has already told you twice tonight that you are her favorite airline.</p>
+
+<<link "← Back to the planning table" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Aircraft [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed aircraft and systems"])>>
+<strong>N7462C: 1978 Piper PA-34-200T Seneca II</strong>
+
+<div class="aircraft-card">Powerplants:  Continental TSIO-360-E (left) / LTSIO-360-E (right)
+              200 hp/side, turbocharged, counter-rotating props.
+              No critical engine. Both are critical.
+Props:        2-blade constant speed, full feathering. Feather by
+              pulling the prop lever full aft THROUGH the detent.
+              Centrifugal pins BLOCK feathering below about 800 RPM.
+              NO unfeathering accumulators: in-flight unfeather
+              requires the starter to rotate the engine until oil
+              pressure pulls the blades out of feather.
+Fuel:         93 gal usable (46.5/side). Interconnected cells in
+              each wing act as one tank per side, one filler per
+              side. Electric boost pump each side.
+Selectors:    Each engine has one selector: ON / OFF / X-FEED.
+              ON     = engine feeds from its OWN wing.
+              X-FEED = engine feeds from the OPPOSITE wing.
+              The selector belongs to the ENGINE. Crossfeed points
+              that engine's straw at the other wing, nothing more.
+              Intended use: extended single-engine flight, to burn
+              fuel from the dead engine's side and keep the wings
+              in balance. Takeoff and landing: selectors ON.
+Monitor:      JPI EDM-760 twin engine monitor with fuel flow and
+              totalizer. The totalizer counts total gallons against
+              whatever number you program at startup. It does not
+              know, and cannot know, which tank the fuel is in.
+Speeds:       Vmc 66 KIAS (red radial). Vyse 89 KIAS (blue radial).
+              Single-engine service ceiling 13,400 (the turbos).
+Burn:         About 20-22 gph combined at 65%. Partnership block
+              plan: 20 gph, and it usually comes in a shade under.</div>
+
+<strong>Open squawks (partnership sheet, taped inside the logbook)</strong>
+
+<div class="aircraft-card">1. Right engine fuel flow runs ~0.9 gph higher than left at
+   matched power. Injector service scheduled at annual (April).
+2. Right fuel quantity gauge sticky below 1/2, reads low
+   intermittently. Sender on order.
+3. Autopilot altitude hold hunts +/- 40 ft above 11,000. Live
+   with it.</div>
+
+<strong>Weight and balance tonight</strong>
+
+<div class="aircraft-card">Empty weight:            3,043 lb
+You:                       195 lb
+Elena:                     140 lb
+Bags (two soft, one cake): 55 lb
+Fuel, 74 gal:              444 lb
+Ramp weight:             3,877 lb   (MGW 4,570: 693 under)
+CG within envelope at ramp and at landing weight.
+Full fuel (93 gal) would be 3,991 lb. Also fine.</div>
+
+<<link "← Back to your planning materials" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Map [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed area map"])>>
+<strong>Route overview: KSAT to KELP</strong>
+
+<div class="sectional-container">
+<img src="/scenarios/crossfeed/images/area_map.jpg" alt="Route overview map, San Antonio to El Paso direct, showing Junction, Sonora, Ozona, Fort Stockton, Pecos, and Wink along the route">
+<div class="sectional-label">Route overview: KSAT direct KELP, 430 nm. Junction (89 nm), abeam Sonora (135), abeam Ozona (159), abeam Fort Stockton (245), abeam Pecos (282, 22 north), Wink (274, 51 north), El Paso (430). Terrain rises westbound from 800 ft at San Antonio to nearly 4,000 at El Paso.</div>
+</div>
+
+<strong>Minimum safe altitudes, your planning ladder (westbound)</strong>
+
+<table class="airport-table">
+<tr><th>Segment</th><th>Rough min safe</th><th>Notes</th></tr>
+<tr><td>KSAT → Junction</td><td>4,500</td><td>Hill Country, towers</td></tr>
+<tr><td>Junction → Ozona</td><td>5,500</td><td>Plateau edge, wind farms</td></tr>
+<tr><td>Ozona → Fort Stockton</td><td>6,800</td><td>Mesas south of I-10</td></tr>
+<tr><td>Fort Stockton → KELP</td><td>8,500</td><td>Davis Mountains south, Guadalupes north</td></tr>
+</table>
+
+<p>The route parallels Interstate 10 most of the way, which matters at night, because west of Junction the interstate is close to the only continuous string of light on the ground. Towns are forty minutes apart at highway speed. Ranches out there are measured in sections. Between Ozona and Fort Stockton the chart shows more windmill symbols than town names, and under a new moon with cirrus overhead, the ground will be a rumor.</p>
+
+<p>Filed at 10,000: high enough for the whole ladder, low enough to skip the oxygen conversation.</p>
+
+<<link "← Back to the preflight hub" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_Arrival [scenario]
+<<set $pathArray to $pathArray.concat(["Opening: the ramp at Mission Trail"])>>
+The Seneca sits nose-out on the east ramp with the last orange of the day behind it, and it looks exactly like what it is: the best thing three busy people ever bought together. Your walkaround is done. Oil good both sides, gear pins out, static wicks all present, left filler neck full to the collar. The right filler neck shows you nothing but the smell of avgas and a black hole where fuel might be.
+
+Elena comes down the FBO steps carrying the cake box like it's a patient. "Dad cried twice," she says. "Twice. Don't tell him I told you." She stows the box behind the rear seat with surgical care and settles into the right front like she owns it. She has ridden with you since your student solo days in a rented 152, and she is the only passenger you've ever had who falls asleep during turbulence.
+
+Walt's note is folded into the fuel log on your knee. Right at half, should be close. The right gauge needle sits between three-eighths and a half and stirs when the wind rocks the wing. The JPI says 74.0 aboard, because that's what Walt typed into it. Your kneeboard math says the trip needs 58 with 16 left over.
+
+Inside, Manny at the line desk is apologetic and honest. The Jet A truck has a Falcon and then a King Air, both crews on the clock. "Full top-off, you're waiting forty-five minutes, maybe an hour. I could squirt a quick ten in one side right now before the King Air, if that does anything for you. No self-serve on this side of the field."
+
+Elena checks her phone and says nothing at all about the time.
+
+<div class="decision-heading">Decision: The Fuel Order</div>
+
+<div class="choice-list">
+<<link "A. Top off both sides and wait it out. An hour on the ramp is cheaper than uncertainty over Ozona." "Ramp_Wait">>
+  <<set $pathArray to $pathArray.concat(["D1: chose to wait for a full top-off"])>>
+<</link>>
+
+<<link "B. Take it as it sits. The totalizer says 74, the trip needs 58, and the right gauge is a known liar that reads low. You'll square the burn with crossfeed once you're level." "Ramp_AsIs">>
+  <<set $pathArray to $pathArray.concat(["D1: took the lopsided load as-is"])>>
+<</link>>
+
+<<link "C. Have Manny put the quick ten in the right side now. That covers the claimed shortfall without losing the night to the fuel queue." "Ramp_Splash">>
+  <<set $pathArray to $pathArray.concat(["D1: quick partial fill on the right"])>>
+<</link>>
+
+<<link "D. Call Walt before you decide anything. He fueled it, he can tell you what's actually in the right tank." "Ramp_WaltCall">>
+  <<set $pathArray to $pathArray.concat(["D1: tried to reach Walt first"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_WaltCall [scenario]
+<<set $pathArray to $pathArray.concat(["Called Walt: voicemail"])>>
+<<set $waltTexted to true>>
+Four rings, then Walt's voicemail, which is him saying "It's Walt" followed by a beep with no further instructions. Saturday night. He and Rosa will be at the dance hall in Fabens with his phone in the truck.
+
+You text instead: <em>Quick one. How much is actually in the right tank? Gauge and your note don't quite agree.</em> The message sits there, delivered, unread.
+
+Manny leans out the line shack door and holds up a hand, five fingers spread. Five minutes until the Falcon needs him, and then the offer of a quick splash gets a lot more complicated.
+
+Elena has her seatbelt on already. Through the windshield you can see her reading the checklist pocket like it's a menu.
+
+<div class="decision-heading">Decision: Same Question, Less Time</div>
+
+<div class="choice-list">
+<<link "A. Wait for the full top-off, both sides, however long the queue runs." "Ramp_Wait">>
+  <<set $pathArray to $pathArray.concat(["D1 retry: full top-off after all"])>>
+<</link>>
+
+<<link "B. Go with what's aboard. Walt's note plus the totalizer is two sources against one sticky gauge." "Ramp_AsIs">>
+  <<set $pathArray to $pathArray.concat(["D1 retry: launched with the load as found"])>>
+<</link>>
+
+<<link "C. Flag Manny down for the quick ten gallons in the right before the Falcon takes him." "Ramp_Splash">>
+  <<set $pathArray to $pathArray.concat(["D1 retry: took the quick splash"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_Wait [scenario]
+<<set $pathArray to $pathArray.concat(["Waiting on the fuel queue"])>>
+You tell Manny you'll take the full service, both sides, whenever the truck frees up. He nods like a man who has delivered worse news. "Soon as the King Air's buttoned up. I'll come find you."
+
+The Falcon drinks for twenty minutes. You and Elena sit in the pilot lounge under a muted basketball game. She puts her feet up on her overnight bag and watches you not watch the clock.
+
+"So we're late," she says. "How late is late?"
+
+"Airborne by nine, maybe a little after. Your door around eleven thirty, quarter to twelve."
+
+"Okay." She looks at the game for a while. "You know I'd rather be tired than worried. I can sleep in report. I've done it standing up." A beat. "But if there's a version of this where I'm not tired <em>or</em> worried, I'd take that one."
+
+The King Air taxis up at 8:35 and plugs into Manny's clipboard. Out the window, the avgas truck sits fat and idle in front of it, twenty steps from your airplane.
+
+<div class="decision-heading">Decision: The Wait, Renegotiated</div>
+
+<div class="choice-list">
+<<link "A. Hold your place for the full top-off. The plan is the plan, and it's already paid for in waiting." "Ramp_TopOff">>
+  <<set $pathArray to $pathArray.concat(["Held for the full top-off"])>>
+<</link>>
+
+<<link "B. Downgrade the order: ten quick gallons in the right side now, and you're gone before the King Air is done." "Ramp_Splash">>
+  <<set $pathArray to $pathArray.concat(["Downgraded to a quick splash"])>>
+<</link>>
+
+<<link "C. Cancel the fuel order entirely. The math worked an hour ago and it works now, and the clock is the thing actually moving against you." "Ramp_AsIs">>
+  <<set $pathArray to $pathArray.concat(["Cancelled fuel, went as found"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_TopOff [scenario]
+<<set $pathArray to $pathArray.concat(["Topped off both sides"])>>
+<<set $toppedOff to true>>
+<<set $fuelLeft to 46.5>>
+<<set $fuelRight to 46.5>>
+The truck finishes the King Air at nine and rolls the twenty steps to the Seneca. The right side takes 20.1 gallons. You watch the meter do it and feel the number land somewhere between vindication and annoyance: Walt's "right at half" was off by four gallons in the unhelpful direction, and now it doesn't matter at all. The left side takes 0.4, a polite burp. Ninety-three aboard. You reset the JPI to 93 yourself, and initial the fuel log under Walt's note.
+
+The receipt is $167 of criminal gas and one line of Manny's tidy handwriting. Wheels up at 9:05, thirty-one minutes shy of an hour late, cleared as filed, climbing through a night that has gone fully dark.
+
+<<goto "Climb_Out">>
+
+:: Ramp_AsIs [scenario]
+<<set $pathArray to $pathArray.concat(["Departed with the load as found"])>>
+The logic assembles itself while you walk back out: 74 aboard against 58 burned, a gauge with a documented habit of lying low, and a note from the man who pumped the gas. And the Seneca can move fuel in flight. That's what the crossfeed is for. Once you're level and leaned, you'll run the right engine off the fat left tank for a while and square the whole thing up at altitude, which is a plan, and plans count.
+
+You start both, get the ATIS, and call clearance with the cake secure and Elena's seat reclined one notch. Cleared to El Paso International as filed, ten thousand. Wheels up at 8:12 into the last usable dusk, the Hill Country going gray-blue under the left wing.
+
+<<goto "Climb_Out">>
+
+:: Ramp_Splash [scenario]
+<<set $pathArray to $pathArray.concat(["Quick splash in the right tank"])>>
+<<set $splashed to true>>
+Manny is fast and cheerful about it. The avgas truck grumbles over, and the meter starts spinning into the right wing. At 8.4 gallons the line shack radio calls his name twice, the Falcon crew already walking. "That's gotta be it, boss." He caps the tank, hands you the ticket to sign: 8.4 GAL 100LL. Close enough to the ten you asked for that neither of you says anything about it.
+
+You bump the JPI to 82 to match and note the buy in the log under Walt's line. The gauge needle now sits solidly past half, which proves mostly that needles move when you feed them.
+
+Wheels up at 8:25, cleared as filed, climbing west into a sky with one planet in it and not much else.
+
+<<set $fuelRight to 34.9>>
+<<goto "Climb_Out">>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Climb_Out [scenario]
+<<set $pathArray to $pathArray.concat(["Climbout and level at 10,000"])>>
+The Seneca climbs the way the turbos always make it climb, steady and a little smug about it, thirty-one inches all the way up while the singles you learned in would have been gasping. San Antonio Departure hands you west. The Hill Country goes by underneath as a scatter of ranch lights getting stingier by the mile<<if $toppedOff>>, fully dark now, the last dusk long gone<<else>>, the horizon ahead losing its last deep blue<</if>>.
+
+Level at ten thousand seventeen minutes after the wheels came up. You set 65%, lean both sides to the partnership numbers, and watch the EDM columns settle. Fuel flow left 10.4. Fuel flow right 11.3. The right side runs a hair thirsty at matched power, exactly like the squawk sheet says, for whichever reason the squawk sheet declines to specify.
+
+Houston Center is quiet tonight, working three airplanes you can hear and probably six you can't. Elena tells the story of your father and the toast he tried to give, complete with impressions. Junction's little grid of lights slides under the nose at thirty-nine minutes.
+
+<<if $toppedOff>><<goto "Cruise_D2_Topped">><<elseif $splashed>><<goto "Cruise_D2_Splash">><<else>><<goto "Cruise_D2_AsIs">><</if>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_D2_AsIs [scenario]
+<<set $pathArray to $pathArray.concat(["Cruise: the reroute lands mid-plan"])>>
+The fuel plan has a time on it. At the top of the hour, eight minutes from now, you'll run the right engine off the fat left tank for a while: right selector to X-FEED, boost pump on for the switch, let the heavy side carry both straws until the gauges agree with each other. You've walked through it once on the ground with Walt talking over your shoulder. Tonight will be the first time it matters.
+
+Elena is halfway through the part where your father stood up with the wrong glass when Center keys up.
+
+"November seven four six two Charlie, advise ready to copy amendment to routing."
+
+You copy: cleared to El Paso International via direct Fort Stockton VORTAC, direct. Military airspace active south of the route tonight. You read it back, twist the heading bug a degree, and start rebuilding the flight plan in the GPS while Elena holds the story in the air, patient, one finger raised to mark her place.
+
+The box takes the new routing. The frequency crackles about somebody else's altitude. Your eight minutes have become four, and the checklist flow you were mid-way through is somewhere behind you.
+
+<div class="decision-heading">Decision: The Interruption</div>
+
+<div class="choice-list">
+<<link "A. Run the cruise flow again from the first line. If a checklist got interrupted, it didn't happen." "Cruise_D2A_Restart">>
+  <<set $pathArray to $pathArray.concat(["D2: restarted the flow from the top"])>>
+  <<set $d2 to "restart">><<set $fuelSeen to true>>
+<</link>>
+
+<<link "B. You know where you left off. Finish listening to the story, then pick the flow back up at the fuel step." "Cruise_D2B_Memory">>
+  <<set $pathArray to $pathArray.concat(["D2: trusted memory for the flow"])>>
+  <<set $d2 to "memory">><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. Spin the panel timer to fifteen minutes as a hard reminder for the fuel step, then let the cabin come back." "Cruise_D2C_Timer">>
+  <<set $pathArray to $pathArray.concat(["D2: set a timer for the fuel step"])>>
+  <<set $d2 to "timer">><<set $fuelSeen to true>>
+<</link>>
+
+<<link "D. Ask Elena for a quiet cockpit for a few minutes while you rebuild the picture from scratch." "Cruise_D2D_Quiet">>
+  <<set $pathArray to $pathArray.concat(["D2: asked for a sterile cockpit"])>>
+  <<set $d2 to "quiet">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_D2A_Restart [scenario]
+<<set $pathArray to $pathArray.concat(["Flow restart interrupted again"])>>
+"Hold that thought," you tell Elena, and she pinches the story between two fingers and holds it up like evidence.
+
+Top of the flow. Power set, checked. Mixtures, checked. Cowl flaps trailed. Fuel panel: your eye crosses the gauges, left fat, right needle loafing under half the way it has all evening, and as your hand starts toward the selector the frequency opens up again.
+
+"Six two Charlie, further amendment when ready, direct El Paso now approved, and traffic twelve o'clock, three five miles, opposite direction, a Baron at niner thousand."
+
+Copy, readback, direct El Paso, traffic in sight a minute later as a strobe sliding down the right side. The checklist card has migrated under Elena's water bottle. When you pick the flow back up, it feels finished, the way a task feels finished when you've touched every part of it except one.
+
+<<goto "Cruise_Enroute">>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_D2B_Memory [scenario]
+<<set $pathArray to $pathArray.concat(["Let the story finish first"])>>
+Elena lands the story. It's a good one, and your father comes out of it better than he'd admit. She follows it with another about the cousins, and the night rolls under you at a hundred and thirty-seven across the ground, the box counting down miles to a VOR you no longer need.
+
+The top of the hour arrives while you're laughing, and leaves while you're laughing, and does not send a card.
+
+<<goto "Cruise_Enroute">>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_D2C_Timer [scenario]
+<<set $pathArray to $pathArray.concat(["Timer set, timer silenced"])>>
+You spin the timer to fifteen minutes. As you do it your eye crosses the fuel panel: left fat, right needle loafing along under half, sticky gauge doing sticky gauge things. The plan has a backstop now. You let the cabin come back, and Elena finishes the story with both hands.
+
+The timer goes off at 9:24 into a perfect little pileup. Center calls the handoff, "contact Albuquerque Center, one three five point eight seven five," the air gets a light chop off some invisible seam in the atmosphere, and Elena's water bottle rolls under your seat. You silence the beeper with a knuckle, mid-readback. Two minutes, you tell it.
+
+Albuquerque checks you on. The chop smooths. The bottle is retrieved. The timer, which does not rearm itself, holds its peace all the way to the Davis Mountains.
+
+<<goto "Cruise_Enroute">>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_D2D_Quiet [scenario]
+<<set $pathArray to $pathArray.concat(["Sterile cockpit rebuild"])>>
+"Give me five quiet minutes," you say. "New routing, want to rebuild the picture."
+
+"Say no more." Elena clicks on her book light and is instantly somewhere else. It's a good trick. You suspect the NICU taught it to her.
+
+You rebuild: routing verified against the terrain ladder, Fort Stockton VOR tuned and identified out of pure habit, fuel totalizer glanced, 49 remaining, a few gallons under the plan line, which is about what the climb always costs. You brief yourself on the miss at El Paso like a good instrument pilot. By the time you wave Elena back in, the airplane feels squared away, every corner tucked.
+
+The feeling of having done work is a convincing stand-in for the one piece of work you didn't do. The fuel selectors sit where they've sat since the runup, and nothing about a tidy cockpit says otherwise.
+
+<<goto "Cruise_Enroute">>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Enroute [scenario]
+<<set $pathArray to $pathArray.concat(["The long dark middle"])>>
+<<if $d2 is "timer">>West of Ozona the last of the ground light gives out.<<else>>Somewhere abeam Ozona, Center hands you to Albuquerque, and the last of the ground light gives out.<</if>> The cirrus shield has slid over the top of the world like a lid. No moon behind it. No stars through it. The instrument glow, Elena's book light, and away off the left wingtip the thin beaded string of Interstate 10, trucks forty minutes apart.
+
+<<if $waltTexted>>Your phone, riding in the door pocket, buzzes once against the airframe. Walt, from the dance hall: <em>"Gauge on the right sticks below half, its on the squawk sheet. More in it than it shows. Youre fine. Dance floor calling. W"</em> He types like he flies, no wasted motion. You put the phone back.
+
+<</if>>The EDM does its patient arithmetic. Fuel flow left 10.4, right 11.3. Groundspeed 137 against the 145 you planned, the westerly running eight knots more honest than its forecast. <<if $fuelSeen>>Your eye keeps drifting back to the right fuel needle, which is somewhere in the neighborhood of a quarter, which is the neighborhood it lies about.<<else>>The fuel needles sit where fuel needles sit, and nothing on the panel raises its hand.<</if>> Elena has folded into the seat with her jacket for a pillow, breathing slow.
+
+Two hours and five minutes out of San Antonio. Fort Stockton's little constellation came and went behind the left wing a while ago. Ahead there is nothing to see and a hundred and fifty miles of it.
+
+<div class="choice-list">
+<<link "The miles grind west." "Fail_Onset">>
+  <<set $pathArray to $pathArray.concat(["Approaching the failure point"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Fail_Onset [scenario]
+<<set $pathArray to $pathArray.concat(["Right engine quits, windmilling"])>>
+At two hours nine minutes, the right engine clears its throat.
+
+A surge. A drop. A surge again, the airframe shivering with it. Then a smooth, powerless nothing. The nose slews right. The autopilot cranks the yoke left, holding heading with aileron like it was taught, and the airplane settles into a lazy sideways lean.
+
+Sounds stack up. The left engine drones on alone at a new, naked pitch. Elena comes awake with a sharp breath. "What was that. What is that." Albuquerque is talking to a Southwest flight about ride reports. The right prop is a gray disk in the dark, windmilling, dragging.
+
+The panel, all at once: right manifold pressure down at ambient. Right RPM sagging, prop still turning. Right EGT columns collapsing floor-ward. Right fuel flow needle on zero. Airspeed 122 and unwinding. Altitude ten thousand, starting to wander. The right fuel gauge lies flat on its empty peg, and the left one sits fat above half, and the totalizer glows a self-assured 22.7.
+
+Outside there is one darkness, and it does not care which engine you believe in.
+
+<div class="decision-heading">Decision: The Right Engine</div>
+
+<div class="choice-list">
+<<link "A. Memory items, now, crisp, the way you drilled them: mixtures, props, throttles forward, identify, verify, feather. A windmilling prop is drag and risk at night." "SE_Secured">>
+  <<set $pathArray to $pathArray.concat(["D3: immediate memory items, feathered the right"])>>
+  <<set $rightSecured to true>><<set $featherFast to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. Airplane first. Autopilot off, rudder in, wings level, pitch for the blue side of 100, trim. Then figure out what just happened." "Fail_FlyFirst">>
+  <<set $pathArray to $pathArray.concat(["D3: flew the airplane first"])>>
+<</link>>
+
+<<link "C. Your eyes and right hand go straight for the fuel panel. Flow, selectors, pumps. Engines quit for reasons, and the reasons live down there." "Fail_DiagRush">>
+  <<set $pathArray to $pathArray.concat(["D3: went straight for the fuel panel"])>>
+<</link>>
+
+<<link "D. Key the mic first. Albuquerque can see every airport in Texas, and you want them in the loop while you have ten thousand feet of options." "Fail_RadioFirst">>
+  <<set $pathArray to $pathArray.concat(["D3: called Center first"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Fail_FlyFirst [scenario]
+<<set $pathArray to $pathArray.concat(["Stabilized before troubleshooting"])>>
+Autopilot off with a thumb. Right rudder... no. Left rudder, dead foot right, the lean straightens out. Wings level. You let the nose come down a degree and the airspeed stops unwinding at 104. Trim. Three breaths. The airplane is flying, descending a lazy hundred feet a minute on one engine's power at cruise altitude, and nothing about that is an emergency yet.
+
+"Talk to me," Elena says, very level.
+
+"Right engine quit. Airplane's fine. Give me a minute."
+
+Now the survey, in the order you were taught to read a sick engine: right fuel flow, zero. It was zero before you touched anything. Right EGTs, cold and getting colder. Manifold pressure, ambient. Prop windmilling. That is not a broken engine's signature. Broken engines shake, spike, smoke, seize. This one just stopped eating.
+
+The right fuel gauge is on the peg. The left is fat. The selectors sit where they've been since the runup: both ON, each engine drinking its own wing.
+
+<div class="decision-heading">Decision: Diagnose or Commit</div>
+
+<div class="choice-list">
+<<link "A. Feed it. Right boost pump on, right selector across the gate to X-FEED, and give the windmilling engine the left wing's fuel." "Restart_Crossfeed">>
+  <<set $pathArray to $pathArray.concat(["D4: crossfed the right engine, restart attempt"])>>
+<</link>>
+
+<<link "B. Secure it by the book. Stable flight, then checklist: identify, verify, feather. You can sort out fuel theories with the drag cleaned up." "SE_Secured">>
+  <<set $pathArray to $pathArray.concat(["D4: secured and feathered the right"])>>
+  <<set $rightSecured to true>>
+<</link>>
+
+<<link "C. Tell Albuquerque what you have before you move a single lever. Altitude, options, and a second brain on frequency." "Fail_RadioSecond">>
+  <<set $pathArray to $pathArray.concat(["D4: radioed before touching the panel"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Fail_DiagRush [scenario]
+<<set $pathArray to $pathArray.concat(["Heads-down at the fuel panel"])>>
+Your right hand finds the fuel panel and your head goes down with it. Right fuel flow zero. Right gauge on the peg. Selectors both ON. The story assembles itself fast and ugly: the right tank is dry, or near enough dry that the pickup is drinking air, and there is a fat left tank eight feet from a starving engine.
+
+The airplane, unattended, does what airplanes do. The autopilot holds heading with crossed controls, speed bleeding, a slow sag off altitude. Somewhere in your scan the airspeed says 96. Then 91. The trim starts a low complaint you can feel through the floor.
+
+"Hey." Elena's voice, tighter. "We're leaning."
+
+Blue line is 89. You are two knots above it with your head in the pedestal.
+
+<div class="decision-heading">Decision: The Airplane or the Valve</div>
+
+<div class="choice-list">
+<<link "A. Airplane first, valve second. Push the nose over, kill the autopilot, wings level, speed back. The selector will still be there in ten seconds." "Restart_Crossfeed">>
+  <<set $pathArray to $pathArray.concat(["Recovered speed first, then crossfed"])>>
+  <<set $speedScare to true>>
+<</link>>
+
+<<link "B. You're one motion from fixing the actual problem. Boost pump on, selector across to X-FEED, then clean up the flying." "Restart_Crossfeed">>
+  <<set $pathArray to $pathArray.concat(["Finished the fuel panel heads-down"])>>
+  <<set $headsDown to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Fail_RadioFirst [scenario]
+<<set $pathArray to $pathArray.concat(["Radioed Center at onset"])>>
+"Albuquerque, Seneca seven four six two Charlie, we've lost power on the right engine, ten thousand, troubleshooting."
+
+The reply comes back in the flat, instant calm they save for exactly this. "Seneca seven four six two Charlie, roger. Say souls and fuel remaining."
+
+"Two souls, about an hour of fuel, six two Charlie." The totalizer's number, out of your mouth before you've examined it.
+
+"Six two Charlie, roger. Nearest airports: Fort Stockton, four six miles southeast of your position, field elevation three thousand eleven. Pecos, two four northeast, be advised Pecos weather reporting is out of service. El Paso, one three eight west. Say intentions."
+
+Twenty-five seconds gone. The airplane has spent them drifting: speed 101, a wing that wants to drop, two hundred feet off the altitude. The right prop windmills. The right fuel flow needle, you now notice, is sitting on zero like it's been there a while.
+
+<div class="decision-heading">Decision: Intentions</div>
+
+<div class="choice-list">
+<<link "A. 'Stand by, six two Charlie.' Stabilize, then run the fuel panel: boost on, right selector to X-FEED, feed the engine from the left wing." "Restart_Crossfeed">>
+  <<set $pathArray to $pathArray.concat(["Stabilized, then crossfed the right"])>>
+<</link>>
+
+<<link "B. 'Six two Charlie will secure the engine and advise.' Identify, verify, feather, and take the drag out of the night." "SE_Secured">>
+  <<set $pathArray to $pathArray.concat(["Told Center, then feathered"])>>
+  <<set $rightSecured to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Fail_RadioSecond [scenario]
+<<set $pathArray to $pathArray.concat(["Briefed Center from stable flight"])>>
+"Albuquerque, Seneca seven four six two Charlie, right engine quit at ten thousand, windmilling, airplane's stable, troubleshooting. Two souls."
+
+"Six two Charlie, roger. Nearest airports: Fort Stockton four six southeast, Pecos two four northeast with weather reporting out of service, El Paso one three eight on the nose. Advise intentions when able."
+
+Clean, useful, and thirty seconds spent. The airplane holds 102 where you trimmed it, bleeding a patient hundred feet a minute. The right fuel flow needle hasn't moved off zero. The left tank sits fat. The selectors sit at ON.
+
+<div class="decision-heading">Decision: The Lever or the Detent</div>
+
+<div class="choice-list">
+<<link "A. Right boost pump on, right selector to X-FEED. If it's starvation, the engine tells you inside ten seconds." "Restart_Crossfeed">>
+  <<set $pathArray to $pathArray.concat(["Crossfed after the radio call"])>>
+<</link>>
+
+<<link "B. Feather it and fly the single-engine profile. A relight experiment can wait until you're pointed at a runway." "SE_Secured">>
+  <<set $pathArray to $pathArray.concat(["Feathered after the radio call"])>>
+  <<set $rightSecured to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Restart_Crossfeed [scenario]
+<<set $pathArray to $pathArray.concat(["The right engine relights on crossfeed"])>>
+<<set $restored to true>><<set $crossfeedState to "rightFromLeft">>
+<<if $speedScare>>Nose down, autopilot off, wings level. The speed comes back up through 95 and the trim stops complaining. Then, deliberately, one item at a time:<<elseif $headsDown>>Your hand does it in one motion while the airspeed grinds down through 84, the yoke going mushy, Elena's hand braced flat on the glareshield:<<else>>Deliberately, one item at a time, the way the POH lays it out:<</if>> right boost pump ON. Right selector out of its spring gate, across, into X-FEED. Mixture rich.
+
+One second. Two. Three, and the fuel flow needle lifts off its peg like nothing was ever wrong.
+
+The right engine inhales, fires on four cylinders, then six, surges once against the governor, and settles into sync so smoothly it feels like an apology. EGTs climb their little ladders. Manifold pressure comes home. You walk the throttle up gently, minding the turbo, and the Seneca is a twin again.
+
+<<if $headsDown>>You level the wings and pull the nose up through the recovery, 84 knots and nine thousand five hundred where there used to be ten thousand, heart doing a drum solo.<<else>>Total time from quit to running: under two minutes. Altitude spent: a few hundred feet.<</if>> The right engine is running on the left wing's fuel through the crossfeed. The right tank is a 46.5 gallon bottle of air.
+
+Elena exhales slowly. "Okay," she says. "Okay. That sounded expensive."
+
+<div class="choice-list">
+<<link "Now the arithmetic." "Cruise_D4_Restored">>
+  <<set $pathArray to $pathArray.concat(["Taking stock after the relight"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_D4_Restored [scenario]
+<<set $pathArray to $pathArray.concat(["The restored-engine decision"])>>
+Both engines run. Both of them are drinking from the left tank, through one selector sitting in a detent labeled X-FEED. Everything you have left is on one side of the airplane, and the totalizer says that everything is 22 gallons. The EDM's combined flow reads 21.7 an hour. You can do that division without a pencil: an hour, give or take the descent.
+
+The map does the rest. El Paso, 138 miles ahead into the wind, an hour and a minute of flying plus the arrival. Fort Stockton, 46 miles behind the left shoulder with the wind helping, twenty-some minutes, a 7,500 foot runway, an ASOS, and a self-serve pump you have actually used in daylight. Pecos, 24 miles off the right rear, no weather source tonight and its long runway NOTAMed closed. You cross Pecos off and the map gets simpler.
+
+Elena has her hand loose on the cake box strap. "Do whatever you need to do," she says. "I trust you. You know that." She checks her phone without meaning to. The lock screen says 10:24, and her alarm lives five hours and fifty minutes away.
+
+Albuquerque, softly: "Six two Charlie, say status when able."
+
+<div class="decision-heading">Decision: Restored</div>
+
+<div class="choice-list">
+<<link "A. Turn around. Fort Stockton, fuel in both wings, and El Paso an hour late with the math boring again." "Divert_FST_Turn">>
+  <<set $pathArray to $pathArray.concat(["D5: turned back to Fort Stockton for fuel"])>>
+  <<set $divert to "KFST">>
+<</link>>
+
+<<link "B. Continue to El Paso and say the words: minimum fuel. An hour of fuel for an hour of flying, with the whole system watching your sequence." "Cruise_KELP_Advise">>
+  <<set $pathArray to $pathArray.concat(["D5: continued to KELP, advised minimum fuel"])>>
+  <<set $declared to "min">>
+<</link>>
+
+<<link "C. Continue to El Paso, status normal. The problem was distribution, you found it, you fixed it, and the totalizer math still closes." "Cruise_KELP_Quiet">>
+  <<set $pathArray to $pathArray.concat(["D5: continued to KELP, told no one"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_KELP_Advise [scenario]
+<<set $pathArray to $pathArray.concat(["Minimum fuel westbound"])>>
+"Albuquerque, Seneca seven four six two Charlie. Right engine ran a tank dry, we've restored it on crossfeed. Continuing El Paso, and be advised, six two Charlie is minimum fuel."
+
+"Six two Charlie, roger, minimum fuel. No delay expected on your routing. El Paso altimeter three zero zero five. Advise if your situation upgrades."
+
+<em>Upgrades.</em> Controllers pick their verbs carefully. What you've told the system is: no reserve for surprises, keep the surprises away from me. What you have not told them is that you need the priority of an emergency, because you don't, quite, yet.
+
+The Seneca drones west with both engines sipping from the left wing. You watch the totalizer walk down through 20, through 18, the right gauge dead on its peg, the left gauge starting its own long slide. Elena is quiet in the way of someone doing math they don't like. The lights of El Paso are somewhere behind the curve of the dark.
+
+<div class="decision-heading">Decision: The Fuel Panel</div>
+
+<div class="choice-list">
+<<link "A. Leave the panel exactly as it is, right selector in X-FEED, until the airplane is parked. It's ugly, and it's feeding both engines." "Approach_ELP_Min">>
+  <<set $pathArray to $pathArray.concat(["Left the crossfeed alone to landing"])>>
+<</link>>
+
+<<link "B. Normalize it for the arrival. The landing checklist says selectors ON, and a stable descent is the right time to put the panel back to standard." "Fail_Restumble">>
+  <<set $pathArray to $pathArray.concat(["Moved the right selector back to ON"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Fail_Restumble [scenario]
+<<set $pathArray to $pathArray.concat(["The right engine quits a second time"])>>
+<<set $restumble to true>><<set $badchoices to $badchoices + 1>>
+You reach down and put the right selector back where the placard likes it. ON. The engine keeps running on the fuel already in its lines, which is a sentence with a clock in it.
+
+Forty seconds later the right fuel flow sags. Then the surge, the cough, the yaw, the whole rotten song from an hour ago, and this time you know every note of it. Selector back across to X-FEED. Boost pump. Three seconds that bill by the heartbeat, and the engine inhales and comes back to work.
+
+"What <em>was</em> that," Elena says, both hands flat on her thighs.
+
+"Me," you say, which is the truest thing said on this airplane all night. The placard says ON because ON assumes fuel. The right wing has no fuel. Normal is not a switch position tonight. Normal is wherever the gasoline is.
+
+<<goto "Approach_ELP_Min">>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_ELP_Min [scenario]
+<<set $pathArray to $pathArray.concat(["Arrival at El Paso, priority handling"])>>
+<<if $seq is "confessed">>The frequency changes temperature immediately. "Six two Charlie, understood, cancel the sequence. Fly heading two six five, direct when able, runway two six left, you're number one. Say fuel in minutes." Minutes. You give them fifteen and hope you're sandbagging.<<else>>Approach takes the handoff with your minimum fuel already on the strip. "Seneca six two Charlie, El Paso Approach, no delay tonight, expect the visual two six left, the RNAV Yankee two six left is available if you want the needles." You want the needles. On a black night with one wet wing, you brief it and load it.<</if>>
+
+The descent is the longest arithmetic problem of your life. Totalizer 8.9 starting down<<if $restumble>>, a little less than it would have been before your experiment with the placard<</if>>. The city comes up over the curve all at once, a bowl of amber light with the Franklins a black island in the middle of it. The left gauge is in the last eighth, where every error the gauge ever had lives rent-free.
+
+Tower, 118.3: "Seneca six two Charlie, wind variable at three, runway two six left, cleared to land. Trucks are standing by, courtesy of Approach."
+
+Nine thousand feet of runway you could land across, not just on. The flare happens somewhere over the numbers, the chirp, the rollout, and both engines keep running the whole way to the high-speed, which by the totalizer's opinion was not guaranteed.
+
+<div class="choice-list">
+<<link "Shut down on the FBO ramp and let the night catch up to you." "End_ELP_MinFuel">>
+  <<set $pathArray to $pathArray.concat(["Landed KELP, minimum fuel"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_KELP_Quiet [scenario]
+<<set $pathArray to $pathArray.concat(["Continuing quiet to El Paso"])>>
+"Albuquerque, six two Charlie, we're back to normal ops, continuing El Paso."
+
+"Six two Charlie, roger."
+
+And that's it. The system files you under fine. The frequency moves on to a Lajitas-bound Caravan and somebody's ride report, and nobody between here and the Rio Grande knows that everything keeping this airplane in the air is sloshing in one wing with an hour on the meter.
+
+It was distribution, not quantity. You found it, you fixed it, the engine has run flawlessly since the relight. Declaring things costs conversations, paperwork, maybe a call from a number you don't recognize. The totalizer says the math closes: 22 aboard at the relight, an hour and change of flying. It closes. It just doesn't close with anything left over.
+
+Elena watches the black nothing go by for a while. "How's the gas," she asks, casual as a heart monitor.
+
+"We're fine."
+
+The word sits in the cockpit like a third passenger. West of the Guadalupe shadow the city glow finally lifts over the horizon, and the totalizer walks down through 9 as you start downhill.
+
+<div class="choice-list">
+<<link "Descend into the El Paso arrival and take what the night hands you." "Approach_ELP_Seq">>
+  <<set $pathArray to $pathArray.concat(["Started down into the sequence"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_ELP_Seq [scenario]
+<<set $pathArray to $pathArray.concat(["Sequenced behind the airline traffic"])>>
+Approach is friendly and busy. "Seneca six two Charlie, El Paso Approach, information X-ray current. Fly heading two four zero, vector for sequencing, you're number two following a Boeing seven thirty-seven, ten o'clock, one two miles, runway two six left. Caution wake turbulence."
+
+Number two. The heading takes you south of the field, away from the runway, standard as a Tuesday morning, five extra minutes for spacing behind ninety tons of company traffic. The totalizer says 5.8. The left gauge needle lies against the last hash mark and quivers with the engines. Elena has found the grab handle without looking like she was looking for it.
+
+The system is treating you like a normal airplane, because you told it you were one.
+
+<div class="decision-heading">Decision: Number Two</div>
+
+<div class="choice-list">
+<<link "A. Take the vector and fly the sequence. Five minutes of spacing is what the math has left in it, and asking now means explaining the last hour." "End_ELP_Fumes">>
+  <<set $pathArray to $pathArray.concat(["Accepted the sequence"])>>
+  <<set $seq to "accepted">><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. Say it now, late but out loud: an engine ran a tank dry tonight, everything aboard is in one wing, and six two Charlie needs the runway, not the sequence." "Approach_ELP_Min">>
+  <<set $pathArray to $pathArray.concat(["Confessed late, asked for priority"])>>
+  <<set $seq to "confessed">><<set $declared to "late">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Divert_FST_Turn [scenario]
+<<set $pathArray to $pathArray.concat(["Turned back for Fort Stockton"])>>
+"Albuquerque, Seneca seven four six two Charlie. Right engine ran its tank dry, we've restored it on crossfeed. We're going to turn around and take fuel at Fort Stockton."
+
+"Six two Charlie, roger, cleared direct Fort Stockton, maintain ten thousand, descend at your discretion. Fort Stockton ASOS one one eight point five two five, traffic none observed. Nice quiet night for it."
+
+The turn feels like the wrong direction the whole way around the compass rose, El Paso's promise sliding off the nose, the tailwind picking you up like a conveyor. A hundred and seventy-eight across the ground going east. Twenty minutes to pavement.
+
+"We're going back?" Elena asks, and then hears it. "Backwards but with gas. Okay." She thinks. "I'll text Dee from the ground. Worst case she preps my first kiddo." She looks at the black where the window should be. "You'd rather owe an apology than an explanation. Dad says that."
+
+Dad got it from a flight instructor, but tonight is not the night to fight over the estate.
+
+<div class="choice-list">
+<<link "Set up the descent into a dark airport." "Approach_FST_R">>
+  <<set $pathArray to $pathArray.concat(["Descending eastbound for KFST"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_FST_R [scenario]
+<<set $pathArray to $pathArray.concat(["Black-hole arrival, Fort Stockton"])>>
+The ASOS reads itself to you in its flat robot Texan: wind one six zero at six, visibility one zero, sky clear below one two thousand, altimeter three zero zero four. Runway 12 it is, mostly aligned, light on the nose.
+
+Fort Stockton's beacon shows up first, a lonely white-green metronome, then the town beyond it. You cancel IFR with Albuquerque, who tells you to have a good night in a voice that means it, and you key the mic seven times on 122.8. The runway lights step up out of the dark, two amber rails laid on nothing, MIRL coming off preset-low like the field waking up for you. The PAPI was burning already. Two white, two red, faithful as a dog.
+
+You fly the PAPI like it's carved in stone, because between the last ranch light and the threshold there is no horizon, no texture, no anything, just the black-hole approach every night-flying article warns about, at an airport where the nearest human is asleep two miles away. Crossfeed still feeding the right engine. Boost pumps on. Final at 95, over the lights, chirp, rollout long and lazy on 7,500 feet of asphalt.
+
+You roll to the end, swing around, announce the backtaxi to nobody, and follow your own landing light up the runway to the ramp, where one sodium lamp holds a little dome of orange over the self-serve island.
+
+<div class="choice-list">
+<<link "Shut down at the pumps." "Ground_FST_Pump">>
+  <<set $pathArray to $pathArray.concat(["Shutdown at the self-serve island"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_FST_Pump [scenario]
+<<set $pathArray to $pathArray.concat(["The self-serve saga"])>>
+The props tick down to silence, and the silence out here has a size to it. Gyros winding down. The cooling engines pinging. Somewhere a very long way off, a truck on I-10 changing gears.
+
+Elena climbs down onto the ramp, hugs her elbows, and stands looking at the airplane for a while without saying anything at all. The quiet has a size to it too.
+
+The pump island takes its tribute in order. The partnership debit card declines. It declines again, with feeling, because the card has a nightly limit nobody remembered. Your personal card works. The static cable reel fights you, the ladder is bolted a foot too far from where any Seneca wing has ever been, and the hose weighs what hoses weigh. You put twenty-five a side in, watching the meter's slow wheel, and for the first time tonight both fuel gauges tell the same story.
+
+$332 on the receipt. The pump's printer sounds like it's clearing its throat of ten years of dust.
+
+"Okay," Elena says finally, quietly, from the edge of the light. "That, back there. How bad was that, actually? Scale of one to the things you don't tell Mom."
+
+<div class="choice-list">
+<<link "Tell her straight, then decide what the rest of the night looks like." "Ground_FST_D6">>
+  <<set $pathArray to $pathArray.concat(["The honest ramp conversation"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_FST_D6 [scenario]
+<<set $pathArray to $pathArray.concat(["Go tonight or stay"])>>
+You tell her straight: the tank ran dry because the fuel was loaded crooked and you flew the total instead of the sides. The engine was never broken. The fix took ten seconds. The scary part wasn't the engine, it was how reasonable every step to it felt.
+
+She nods slowly. "Okay." A small laugh with no humor in it. "You're the only person I know who'd fail an exam and then grade it harder than the professor."
+
+Your phone rings. Walt. The group text you sent from the ramp has reached the dance hall. "The note said half," he opens, defensive as a man on one foot. "Gauge said half. I never top the right side, the vent weeps, it's on the list." A pause you don't fill. "I figured you'd fuel to your own numbers anyway. I would've." That one lands, because he's right, and you both know it, and neither of you says so. He offers to cover the gas. You tell him you'll sort the log Monday, all three partners, in person. Priya, from a radiology conference in Denver, contributes three question marks.
+
+It is 11:05. El Paso is fifty-two minutes of flying away, both tanks honest. The Sandstone Inn by the interstate has a room and a 5 a.m. lobby coffee. Elena's alarm goes off at 5:15 either way.
+
+<div class="decision-heading">Decision: Where Tonight Ends</div>
+
+<div class="choice-list">
+<<link "A. Fly it home. You're rested enough, the airplane is fixed and fat with fuel, and Elena wakes up in her own bed with her shift intact." "End_FST_GoAgain">>
+  <<set $pathArray to $pathArray.concat(["D6: flew home the same night"])>>
+  <<set $ground to "go">>
+<</link>>
+
+<<link "B. Call it. Two hours of adrenaline is its own fatigue, and the Sandstone Inn beats discovering the night's third surprise at altitude." "End_FST_Overnight">>
+  <<set $pathArray to $pathArray.concat(["D6: stayed the night in Fort Stockton"])>>
+  <<set $ground to "stay">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_D2_Splash [scenario]
+<<set $pathArray to $pathArray.concat(["Cruise on the splash, rerouted"])>>
+The splash sits in your mental ledger as a solved problem: the note said half, the order said ten, and even the sticky gauge came up past the halfway hash before you taxied. No juggling required tonight. Just fly.
+
+Elena is deep into the story of your father and the wrong glass when Houston Center calls with an amendment: cleared to El Paso International via direct Fort Stockton VORTAC, direct, military airspace active south of the route. You copy it on your leg, read it back, and rebuild the box while she holds the story mid-air with one finger raised.
+
+The new magenta line settles. The frequency moves on. The evening reassembles itself around the interruption the way evenings do, mostly.
+
+<div class="decision-heading">Decision: After the Amendment</div>
+
+<div class="choice-list">
+<<link "A. Run the whole problem again from the top: time, fuel, and burn against the new clearance, before the story resumes." "Cruise_JPI">>
+  <<set $pathArray to $pathArray.concat(["D2: re-ran the numbers after the reroute"])>>
+  <<set $d2 to "smath">><<set $fuelSeen to true>>
+<</link>>
+
+<<link "B. The box has the route and the fuel was solved on the ground. Verify the terrain ladder, then let Elena land the story." "Cruise_JPI">>
+  <<set $pathArray to $pathArray.concat(["D2: verified terrain, resumed the evening"])>>
+  <<set $d2 to "sflow">>
+<</link>>
+
+<<link "C. Ask for a few quiet minutes and rebuild the entire picture, new route, new brief, before anything else happens." "Cruise_JPI">>
+  <<set $pathArray to $pathArray.concat(["D2: quiet cockpit rebuild after reroute"])>>
+  <<set $d2 to "squiet">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_JPI [scenario]
+<<set $pathArray to $pathArray.concat(["The fuel-flow discrepancy at Ozona"])>>
+An hour and forty minutes out, the world has narrowed to the panel glow and one string of interstate lights crawling along off the left wing. Fort Stockton's beacon is just picking itself out of the black, twenty-three miles off the nose. Albuquerque Center has you now.
+
+The EDM has been keeping a quiet ledger all evening, and somewhere over Ozona it becomes impossible not to audit. Right fuel flow: 11.4. Left: 10.4. The plan said ten a side. The squawk sheet says the right side reads high, unclear whether it's the transducer talking or the injectors, service scheduled for April. The right fuel gauge has sagged below three-eighths, which is either the truth or the sticky sender's favorite lie. The totalizer says 41.5 aboard, comfortably on plan, splendidly indifferent to which wing.
+
+<<if $waltTexted>>Your phone buzzes against the door pocket. Walt: <em>"Gauge on the right sticks below half, its on the squawk sheet. More in it than it shows. Youre fine. Dance floor calling. W"</em>
+
+<</if>>Three instruments, a squawk sheet, and a note<<if $waltTexted>>, now with a text message concurring from a dance hall in Fabens<</if>>. If the 11.4 is real burn, the right tank's arithmetic gets thin somewhere around the descent. If it's indication error, everything is fine and it always was. Nothing on the panel volunteers which.
+
+Elena, half asleep: "Why'd the engine sound change?" It didn't. You leaned forward, and the seat creaked, and she noticed. Nurses.
+
+<div class="decision-heading">Decision: The Number That Doesn't Match</div>
+
+<div class="choice-list">
+<<link "A. Believe the ugliest number. If the right side truly burns 11.4, it runs out before the flare, and the lit, sleeping airport twenty miles ahead sells gas. Land at Fort Stockton and know." "Divert_FSTP_Arr">>
+  <<set $pathArray to $pathArray.concat(["D3: believed the worst case, landing FST"])>>
+  <<set $divert to "KFST-precautionary">>
+<</link>>
+
+<<link "B. Watch it. The spread is inside instrument slop, the splash covered the note's gap with gallons to spare, and the totalizer sits dead on plan. Continue, eyes on the right side." "Cruise_West_Splash">>
+  <<set $pathArray to $pathArray.concat(["D3: filed it as gauge slop, continued"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. Split the difference with the system you own: right engine to X-FEED for a while, rest the suspect tank on the fat one, and switch back for the descent." "Cruise_West_Managed">>
+  <<set $pathArray to $pathArray.concat(["D3: crossfed as insurance"])>>
+  <<set $crossfeedState to "insurance">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Divert_FSTP_Arr [scenario]
+<<set $pathArray to $pathArray.concat(["Precautionary stop, Fort Stockton"])>>
+"Albuquerque, Seneca seven four six two Charlie, we'd like to make a precautionary fuel stop at Fort Stockton, request lower."
+
+"Six two Charlie, roger, cleared direct Fort Stockton, descend at your discretion, ASOS one one eight point five two five. Advise cancellation on the ground or in the air."
+
+Both engines run perfectly all the way down, which does nothing at all for your certainty and everything for your options. ASOS calls it wind one six zero at six. You cross over the field at pattern altitude plus a thousand, pick out the runway 12 rails after seven clicks on 122.8 wake the MIRL up, and swing around a left downwind with the PAPI keeping honest score. The landing is the unremarkable kind that never makes anyone's logbook remarks column.
+
+You taxi to the island of sodium light at the pumps and shut down into that enormous West Texas quiet. Elena stretches. "Pit stop?"
+
+"Pit stop. Ten years from now this is either the smartest twenty minutes I ever spent or a story Walt tells at Christmas."
+
+"Can't it be both?"
+
+<div class="choice-list">
+<<link "Put the meter on the question." "Ground_FSTP">>
+  <<set $pathArray to $pathArray.concat(["Fueling at the self-serve, precautionary"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_FSTP [scenario]
+<<set $pathArray to $pathArray.concat(["The meter settles the argument"])>>
+The card reader spits out the partnership debit twice before your personal card buys forgiveness. You drag the hose up the ladder and fill the right side first, watching the meter's little wheels, because the meter is the only instrument on this airport with no opinions.
+
+The right tank takes 34.7 gallons.
+
+Which means it held 11.8 when the wheels touched. Which means the 11.4 fuel flow was real burn, not indication, and the arithmetic you ran at Ozona was the correct one: another hour of "watching it" and the right engine would have gone quiet somewhere in the descent over the darkest dirt in Texas. You stand on the ladder in the sodium light doing the subtraction twice more, because it keeps producing the same number, and the number keeps being worth staring at.
+
+You top the left with 26.3 and cap it. Both gauges, for the first time tonight, agree with a meter.
+
+Elena watches your face. "That's your serious math face. How close was it?"
+
+"Closer than the note said. Not as close as it could've gotten."
+
+<div class="decision-heading">Decision: The Fuel Log</div>
+
+<div class="choice-list">
+<<link "A. Call Walt right now, dance hall or not. The note said half, the meter says otherwise, and the conversation shouldn't age until Monday." "End_FST_Prudent">>
+  <<set $pathArray to $pathArray.concat(["Called Walt from the ramp"])>>
+  <<set $waltPlan to "call">>
+<</link>>
+
+<<link "B. Text the partnership thread the meter numbers, no commentary, and have the conversation Monday with everyone's blood pressure at rest." "End_FST_Prudent">>
+  <<set $pathArray to $pathArray.concat(["Texted the meter numbers to the thread"])>>
+  <<set $waltPlan to "text">>
+<</link>>
+
+<<link "C. Write it in the log the way the log deserves: gallons, by the meter, both sides, dated. Let the numbers make the argument at annual." "End_FST_Prudent">>
+  <<set $pathArray to $pathArray.concat(["Logged the numbers, saved the words"])>>
+  <<set $waltPlan to "log">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_West_Splash [scenario]
+<<set $pathArray to $pathArray.concat(["Watching the right side westbound"])>>
+The right fuel flow holds 11.4 like it's proud of it. The gauge keeps sagging, a needle-width at a time, through territory where the sticky sender has cried wolf before. The totalizer stays serene. Fort Stockton's beacon slides down the left side and gets swallowed by the black, and after it there is nothing out the windshield but the panel's reflection until the earth's curve finally coughs up a smudge of El Paso glow, fifty minutes of nothing later.
+
+Top of descent comes at two hours thirty-six. Approach clears you down and gives you the numbers: information X-ray, wind variable at three, runway two six left. Elena reorganizes herself upright and starts putting her shoes on, one hand braced on the cake box.
+
+Descending through seventy-four hundred, twenty-one miles east of the field, the right engine surges.
+
+Then the cough. The fuel flow needle falls over. The EGTs start their cold slide, the prop windmills, and the Seneca leans right and pulls against the trim, low over the dark shelf of desert east of the mountains with the city lights spread out ahead like an unkept promise. The right gauge lies on its peg. The left sits at a quarter and a bit. Approach is talking to a Southwest flight about a gate.
+
+<div class="decision-heading">Decision: Low, Dark, and Close</div>
+
+<div class="choice-list">
+<<link "A. Fuel starvation, caught in the act: right boost pump on, right selector across to X-FEED, and give it three seconds to come back." "Approach_ELP_Relight">>
+  <<set $pathArray to $pathArray.concat(["D4: crossfed and relit on the arrival"])>>
+<</link>>
+
+<<link "B. No experiments at thirty-four hundred AGL at night: identify, verify, feather, declare, and fly the single-engine arrival you've trained for." "Approach_ELP_ArrOEI">>
+  <<set $pathArray to $pathArray.concat(["D4: feathered on the arrival"])>>
+  <<set $rightSecured to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. Airport first: tell Approach you've lost an engine and want the runway, then work the problem with the path cleared." "Fail_ArrRadio">>
+  <<set $pathArray to $pathArray.concat(["D4: called Approach before troubleshooting"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Fail_ArrRadio [scenario]
+<<set $pathArray to $pathArray.concat(["Told Approach first, arrival failure"])>>
+<<set $seq to "arrTold">>
+"El Paso Approach, Seneca seven four six two Charlie, we've lost power on the right engine, descending through seven thousand, two souls."
+
+The frequency snaps to attention. "Six two Charlie, roger, fly heading two six five, direct the field when able, runway two six left, cleared to land when you get there, equipment will be standing by. Say fuel remaining."
+
+Fifteen seconds, and the path to the airport now belongs to you. The airplane has spent those seconds sagging through sixty-eight hundred with the dead engine dragging, and the panel sits exactly where it sat: right fuel flow zero, right gauge on the peg, left tank holding what the left tank holds, selectors ON.
+
+<div class="decision-heading">Decision: With the Path Cleared</div>
+
+<div class="choice-list">
+<<link "A. Now the fuel panel: right boost on, right selector to X-FEED, three seconds of faith in the diagnosis." "Approach_ELP_Relight">>
+  <<set $pathArray to $pathArray.concat(["Crossfed after clearing the path"])>>
+<</link>>
+
+<<link "B. Now the drill: feather the right, secure it, and take the single-engine arrival with the trucks already rolling." "Approach_ELP_ArrOEI">>
+  <<set $pathArray to $pathArray.concat(["Feathered after clearing the path"])>>
+  <<set $rightSecured to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_ELP_Relight [scenario]
+<<set $pathArray to $pathArray.concat(["Arrival relight on crossfeed"])>>
+<<set $restored to true>><<set $crossfeedState to "rightFromLeft">>
+Boost pump. Selector across the gate to X-FEED. One second, two, three, and the right engine drinks, fires, and hauls itself back into sync with a surge you feel in the rudder pedals. The whole event, from cough to cured, fits inside ninety seconds and one descending mile.
+
+<<if $seq isnot "arrTold">>"Approach, Seneca seven four six two Charlie, we had a fuel starvation event on the right engine, it's restored on crossfeed, requesting straight-in two six left and we'd like the equipment to stand by anyway."
+
+"Six two Charlie, straight-in two six left approved, cleared to land, equipment will be standing by."<<else>>"Approach, six two Charlie, engine's restored, it was fuel starvation, we're back on two engines, continuing straight-in."
+
+"Six two Charlie, roger, cleared to land two six left, equipment's standing by regardless."<</if>>
+
+The rest is fifteen of the most attentive miles of your life. Both engines drink from the left wing. The city rises up around the descent, runway lights blooming out of the amber sprawl, and the mains touch on 26L with the trucks idling along the parallel like patient chaperones.
+
+<div class="choice-list">
+<<link "Roll out, thank everyone, and taxi in with your heart still doing arrivals." "End_ELP_Relight">>
+  <<set $pathArray to $pathArray.concat(["Landed 26L after the arrival relight"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_ELP_ArrOEI [scenario]
+<<set $pathArray to $pathArray.concat(["Single-engine arrival into El Paso"])>>
+Identify: dead foot right. Verify: right throttle, nothing. Feather: the lever back through the detent while the prop still windmills fast enough for the pins to allow it, and the blades knife to a stop against the city glow. Mixture cut, boost off, selector off, and the Seneca steadies into its one-engine lean.
+
+"El Paso Approach, Seneca seven four six two Charlie declaring an emergency, right engine secured and feathered, two souls, three five minutes fuel, landing two six left."
+
+"Six two Charlie, roger, cleared to land runway two six left, wind variable at three, equipment standing by. Anything you need, say the word."
+
+You fly it like the sim session you never quite believed would come due: blue radial, gear when the runway is guaranteed, flaps in two thoughtful installments, a brief to Elena in plain words. The 9,025 feet of runway 26L absorbs the arrival without comment, trucks pacing the rollout, their light bars painting the cowlings red and white.
+
+The feathered engine, a mechanic will confirm tomorrow, is in perfect health. It was just thirsty, eleven point four gallons an hour thirsty, exactly like the little gauge said.
+
+<div class="choice-list">
+<<link "Shut down on the ramp and let the trucks go home." "End_ELP_ArrOEI">>
+  <<set $pathArray to $pathArray.concat(["Landed 26L single-engine"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_West_Managed [scenario]
+<<set $pathArray to $pathArray.concat(["Insurance crossfeed westbound"])>>
+Right boost pump on. Right selector across to X-FEED. The right engine takes its next drink from the left wing without a flicker, and the suspect tank goes into escrow, its gallons frozen wherever the truth of them lies. You'll switch back at the top of descent, run the arrival on standard plumbing, and let the shop settle the injector question in April.
+
+You brief the hook out loud, because it is one: "Right selector back to ON at top of descent." Elena, without opening her eyes: "Want me to remember something? I remember things for twelve hours at a stretch professionally."
+
+"Right selector, top of descent."
+
+"Right selector, top of descent," she repeats, in her taking-report voice, and sleeps.
+
+The Guadalupes pass invisibly north. El Paso's glow lifts over the curve at two hours twenty, and Approach starts you downhill at two thirty-six with information X-ray and the visual to 26L on offer.
+
+<div class="decision-heading">Decision: The Hook</div>
+
+<div class="choice-list">
+<<link "A. Top of descent, so: descent flow now, deliberately, starting with the fuel panel. Right selector back to ON, boost through the switch, then the rest." "End_ELP_Managed">>
+  <<set $pathArray to $pathArray.concat(["Ran the descent flow, caught the hook"])>>
+<</link>>
+
+<<link "B. Approach is already issuing the arrival, so brief and fly first. The flow can run at the bottom of the descent where the workload lives anyway." "Approach_ELP_MgdLate">>
+  <<set $pathArray to $pathArray.concat(["Deferred the flow into the arrival"])>>
+  <<set $mgdSwitch to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_ELP_MgdLate [scenario]
+<<set $pathArray to $pathArray.concat(["The hook nearly forgotten"])>>
+The arrival eats the descent exactly the way arrivals do: a crossing restriction, a traffic call, information X-ray refreshing to Yankee mid-brief, Elena waking up and finding her shoes. The flow waits politely at the bottom of the pile.
+
+It surfaces on five-mile final, at the G of your GUMPS check. Gas. Your eye drops to the pedestal and finds the right selector still sitting in X-FEED, drinking the left wing, right where you parked it an hour ago over the Delaware Basin.
+
+"Right selector," Elena says suddenly, bolt upright. "Top of descent. I owed you that at the top."
+
+Selector to ON, boost pump covering the switch, and the right engine transitions tanks without so much as a hiccup, because tonight, unlike every other configuration of this evening, the tank it just got pointed at actually has fuel in it. Gear down and confirmed. Flaps. The landing is entirely ordinary and does not deserve to be.
+
+<<goto "End_ELP_Managed">>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_D2_Topped [scenario]
+<<set $pathArray to $pathArray.concat(["Cruise with full tanks, rerouted"])>>
+Ninety-three gallons ride behind you in two agreeing wings, and the flight has the settled feel of a problem paid off in cash. The only deficit is time: the clock says you'll be putting Elena's bag on her porch about eleven forty, Mountain, and her alarm does not negotiate.
+
+She's mid-story about your father and the wrong glass when Houston Center calls the amendment: cleared to El Paso International via direct Fort Stockton VORTAC, direct, military airspace active south of the route. You copy, read back, and rebuild the box while she holds her place with one raised finger and impressive patience for someone running on cake and hotel coffee.
+
+The magenta line redraws itself a few degrees north. The night out there stays the same color of nothing.
+
+<div class="decision-heading">Decision: The New Line</div>
+
+<div class="choice-list">
+<<link "A. Walk the new routing against the terrain ladder and your minimum altitudes before the story resumes. New line, new look, every time." "Cruise_JPI_T">>
+  <<set $pathArray to $pathArray.concat(["D2: re-verified terrain on the new line"])>>
+<</link>>
+
+<<link "B. It's a two-degree dogleg over the same dirt. The box has it, Center owns the airspace, and Elena's story has a good part coming." "Cruise_JPI_T">>
+  <<set $pathArray to $pathArray.concat(["D2: accepted the dogleg, resumed the story"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. Quiet cockpit for five minutes: rebuild the route, the ladder, and the descent plan from a clean sheet, then reopen the cabin." "Cruise_JPI_T">>
+  <<set $pathArray to $pathArray.concat(["D2: sterile rebuild on the new line"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_JPI_T [scenario]
+<<set $pathArray to $pathArray.concat(["Elena spots the split columns"])>>
+Somewhere past the Fort Stockton beacon, deep in the black-bag half of Texas, Elena leans over and studies the engine monitor like a chart at the foot of a bed.
+
+"Should those two match?" She taps the glass over the fuel flow columns. Left 10.4, right 11.3. "They've been different all night. I checked when we got in, I check things, it's a whole personality."
+
+She's right, and it's the squawk sheet's line one wearing numbers: right side reads high, indication or actual, injector service in April. With ninety-three gallons aboard it's a curiosity instead of a countdown. It is also, some quiet part of you notes, the exact discrepancy you'd need to understand cold if the tanks were ever less friendly than tonight.
+
+<div class="decision-heading">Decision: The Columns</div>
+
+<div class="choice-list">
+<<link "A. Explain it to her properly, then log the observed split with the date and power setting for Walt and the shop. Data beats adjectives." "Approach_ELP_T">>
+  <<set $pathArray to $pathArray.concat(["D3: explained and logged the FF split"])>>
+<</link>>
+
+<<link "B. Chase the number: lean the right side until the columns agree. Matched flows are tidy, and tidy is professional." "Approach_ELP_T">>
+  <<set $pathArray to $pathArray.concat(["D3: leaned the right side to match"])>>
+  <<set $leanChase to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. 'Gauges do that.' It's squawked, it's scheduled, and tonight it's academic. Back to the story." "Approach_ELP_T">>
+  <<set $pathArray to $pathArray.concat(["D3: waved at the split"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_ELP_T [scenario]
+<<set $pathArray to $pathArray.concat(["The black-bowl arrival"])>>
+<<if $leanChase>>The right side runs leaner and warmer for a while, its EGTs riding higher up their bars than you like, until twenty minutes on a hunch you push the mixture back where the engine wanted it and the columns go back to disagreeing in peace.
+
+<</if>>El Paso announces itself the way it always does from the east: nothing, nothing, nothing, then a whole civilization's worth of amber poured into a bowl between dark mountain shapes. Approach starts you down over the last of the empty, where the ground is a rumor under a cirrus lid, and offers the night's last decision: "Seneca six two Charlie, the visual runway two six left, or I can set you up for the RNAV Yankee two six left, your call."
+
+The field sits at the bottom of the glow with the Franklins standing black behind it. Between you and the runway lie thirty miles of unlit shelf where the only depth cue is faith.
+
+<div class="decision-heading">Decision: The Last Thirty Miles</div>
+
+<div class="choice-list">
+<<link "A. Take the visual straight-in and fly it on raw eyes and the big picture. It's severe clear, and the runway is right there in the bowl." "End_TopOff_Home">>
+  <<set $pathArray to $pathArray.concat(["D4: visual straight-in, eyes only"])>>
+<</link>>
+
+<<link "B. Take the visual, but load the RNAV Yankee two six left behind it and keep the glidepath needle honest all the way down the black." "End_TopOff_Home">>
+  <<set $pathArray to $pathArray.concat(["D4: visual with the RNAV backstop"])>>
+  <<set $backstop to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_TopOff_Home [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: home with boring gauges"])>>
+<<if $backstop>>The needle rides centered down the invisible slope while your eyes fly the lights, each instrument auditing the other, and the black shelf east of the field passes underneath as a solved problem instead of an act of faith.<<else>>You fly it on eyes and experience, and the runway grows in the windshield the way runways do over black ground: slowly, then suspiciously, then all at once. The radar altimeter in your inner ear files one complaint over the dark shelf that your landing light eventually overrules.<</if>> The mains touch 26L at ten past midnight, Central, which the time zone forgives into ten past eleven.
+
+Elena is through her door at 11:40 Mountain. "Fifty-five minutes late," she says, hugging you. "I'll bill you." Then, over her shoulder, "Thank you for the gas. I counted. You made the guy put in every drop."
+
+Sunday afternoon, after her shift, the partnership group chat acquires a photo of the $167 receipt from Mission Trail Aviation, captioned by Walt: <em>"$8.15!! criminal."</em> And a minute later, from Priya: <em>"Cheapest thing anyone bought this weekend."</em> Walt does not reply, which in Walt means yes.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You looked at a fuel load that was legal by the totals and crooked by the sides, and you bought the boring answer: both tanks full, fifty-five minutes surrendered to the truck queue. The rest of the night was what full tanks make it. The reroute was an errand instead of a threat, the fuel-flow split was a logbook entry instead of a countdown, and the one real hazard left standing was the black-hole arrival<<if $backstop>>, which you handled with a needle backing up your eyes<<else>>, which you flew on eyes alone and got away with cleanly<</if>>.</p>
+<h3>ADM analysis</h3>
+<p>The ramp decision is the whole exam. The pressures against topping off were real and humanly sized: a promise to someone you love, a partner's grumbling about gas prices, a gauge with a documented habit of lying low, and a note from the guy who fueled it. Post-flight arithmetic settled what the estimates couldn't: the truck put 20.1 gallons in a tank the note called half-full and the gauge called three-eighths. Three estimates, zero measurements, until the meter voted. <<if $leanChase>>The one wobble was chasing the fuel-flow split with the mixture at night, treating a data question as a knob question. The engine answered by running hot until you put it back.<</if>> <<if $badchoices gte 2>>The reroute beat also cost you a terrain re-check that full tanks let you get away with skipping. Different night, different tanks, that habit bills differently.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Twins run on per-side arithmetic, and the only unimpeachable fuel instrument at a ramp is the meter on the truck. When estimates disagree, buying certainty is almost always cheapest, and 91.103's "all available information" quietly includes information you have to purchase. On the arrival: over unlit terrain at night, a loaded approach behind a visual costs thirty seconds of button pushing and removes the one illusion, the black-hole approach, that kills proficient pilots in clear air.</p>
+<h3>Key takeaway</h3>
+<p>Margin usually looks like a boring receipt and an hour you'll never get back. That's what it's supposed to look like.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $waltPlan to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_FST_Prudent [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the precautionary fuel stop"])>>
+<<if $waltPlan is "call">>Walt answers on the fifth ring with dance-hall behind him, listens to the meter numbers, and goes quiet long enough that you check the connection. "Thirty-four seven," he repeats. "Into the side I called half." A long breath. "Okay. Monday. And hey." A pause with forty years of flying in it. "Good stop."<<elseif $waltPlan is "text">>You send the thread three lines of numbers and no adjectives. Priya replies with a single word: <em>"Yikes."</em> Walt's reply arrives as you're climbing back in: <em>"Noted. Monday. Coffee's on me."</em> For Walt, that's a signed confession.<<else>>You write it in the log under his note, gallons by the meter, both sides, dated and timed. The numbers sit there on the page directly beneath "right at half, should be close," and no commentary you could add would say it better. Monday's meeting will read itself.<</if>>
+
+The second leg is fifty-two minutes of two fat tanks and one quiet cockpit. Elena's door at 12:25 Mountain, an hour and change past the promise, four-something hours before her alarm. She pauses on the step.
+
+"So that's what careful looks like from the inside," she says. "Huh. It mostly looks like gas station snacks." She holds up the jerky she bought from the vending machine at the empty pilot lounge, toasts you with it, and goes inside.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>At Ozona the panel handed you a genuinely mixed picture: a fuel-flow gauge reading thirsty, a quantity gauge with a documented lying habit reading low, a totalizer reading serene, a note saying half, and nothing aboard able to break the tie. You landed at a dark, sleeping airport with both engines running fine, and let a fuel pump's meter settle the argument. It ruled against the comfortable story: 11.8 gallons remained in the right tank, and the "watch it" option had about an hour left in it, with the dry point landing somewhere in the descent.</p>
+<h3>ADM analysis</h3>
+<p>This is the counterintuitive move that looks like weakness and is the whole skill: interrupting a working flight, backwards off the plan, to convert an estimate into a measurement. Every pressure in the cockpit argued against it, all of them social and none of them aerodynamic. The key discrimination you made at Ozona was between instruments with incentives and instruments without: the totalizer repeats whatever it was told at the ramp, the note repeats Walt's optimism, but fuel flow is measured at the engine, and it was the one gauge with no stake in the outcome. You believed the ugliest credible number, which is what that phrase is for.</p>
+<h3>What good judgment looks like here</h3>
+<p>Exactly this. A precautionary landing with both engines running is the cheapest insurance in aviation: twenty minutes, a card swipe, and certainty. The splash in San Antonio treated the note's number. It couldn't treat the note's error, because nobody knew the error's size until a meter measured it. When information conflicts at night over empty country, land where the truth is sold by the gallon.</p>
+<h3>Key takeaway</h3>
+<p>An estimate argued with an estimate all night, and the meter settled it in ninety seconds. Buy the measurement while both propellers still turn.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $waltPlan to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_ELP_Relight [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: relight over the city's doorstep"])>>
+The FBO ramp at midnight has a way of making everything that just happened feel implausible. The Seneca ticks and cools. The fuel truck's meter, summoned for the morning, will eventually report the right tank bone dry and the left holding fourteen, every drop of the evening's remaining fuel in one wing, exactly as you flew it.
+
+Elena doesn't say anything until the seatbelts are off. Then: "At the gas stop in San Antonio. The quick one. Was that this?" You tell her the truth, that tonight will take some arithmetic to answer honestly, and that you intend to do the arithmetic. "Good," she says. "Show me too. I was there for the data collection."
+
+She's home by 12:30, five hours before the alarm, and her text the next afternoon reads: <em>Shift survived. Kiddo #3 says hi. You owe me one boring flight.</em>
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The quick splash in San Antonio bought the right tank about fifty extra minutes, and the flight needed about sixty. The shortfall came due at the worst address on the route: descending, at night, thirty-four hundred feet over the dark shelf east of El Paso. When it came due, you read it correctly in seconds, fed the windmilling engine from the left wing, and had it back before the situation could become one. <<if $seq is "arrTold">>You also put Approach in the loop before troubleshooting, which cleared the path to the runway while you worked.<</if>> The landing was normal. The margins around it were not.</p>
+<h3>ADM analysis</h3>
+<p>Two decisions bracket this ending. At Ozona, the fuel-flow discrepancy offered you the whole answer, 11.4 gallons an hour of it, and "within instrument slop" won because it asked nothing of the schedule. That's continuation bias wearing a lab coat. At the failure, the training held: diagnose before you secure. A pilot who feathers first at 3,400 AGL is committed to a single-engine night arrival; you spent three seconds on the fuel panel instead and got the engine back. The gap between those two versions of you, the one who waved at the number and the one who read the panel cold, is the gap this scenario is about.</p>
+<h3>What good judgment looks like here</h3>
+<p>Partial fills fix notes, not distributions: adding "about ten" to an estimated tank yields an estimated tank. The moment the JPI showed real burn above plan, the honest move was to re-run the dry-point arithmetic and act on the ugly answer while a lit runway sat twenty miles ahead. Failing that, exactly what you did at the surge: boost, crossfeed, three seconds. The engine was never sick. It was never anything but thirsty.</p>
+<h3>Key takeaway</h3>
+<p>A gallon number that doesn't match the plan is a countdown until proven otherwise. Ten gallons of "close enough" moved this failure from a fuel stop to final approach.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $waltPlan to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_ELP_ArrOEI [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: one prop still, one runway used"])>>
+The fire crew chief walks the airplane with you afterward, flashlight tracing the feathered blades, and asks what happened. "Fuel starvation," you say, and watch him relax the particular half-inch that means <em>oh, one of those</em>. He has seen one of those before. Everyone who works a crash truck long enough has.
+
+The mechanic's verdict tomorrow will take four minutes and cost $180: nothing wrong. Tank was dry. The right engine will start on the first blade once it's fed, and idle there sounding faintly embarrassed on everyone's behalf.
+
+Elena waits for the paperwork, watches you sign things, and says, on the drive home, "You went full checklist robot back there. It was weirdly reassuring." A pause. "The part before that, where the gauge argued with the plan for an hour? Less reassuring." She's home by 12:45. The porch light stays on a beat after the door closes, like the house is thinking it over.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The splash-and-estimate fuel plan came up about ten minutes short, and the right engine starved on the arrival. You treated it as an engine failure rather than a fuel problem: identify, verify, feather, declare, and a disciplined single-engine landing on 26L with equipment standing by. The execution from feather to touchdown was solid. The diagnosis window before the feather, three seconds of fuel-panel reading at an altitude that comfortably allowed it, went unused, and a restorable engine crossed the airport fence as a monument.</p>
+<h3>ADM analysis</h3>
+<p>Feathering at 3,400 AGL descending is a defensible reflex and an incomplete one. The signature in front of you, fuel flow at zero, a pegged quantity needle, an opposite tank an eighth from full, spelled starvation, and starvation is the one engine failure that undoes itself in seconds when fuel arrives. The deeper error lived an hour back at Ozona, where a measured 11.4 gallons an hour lost the argument to a schedule. Credit where due: once committed, you flew the single-engine arrival as a commitment, declared without hedging, and never flirted with a go-around.</p>
+<h3>What good judgment looks like here</h3>
+<p>Altitude permitting, diagnose before you secure: boost pump and crossfeed cost five seconds and are fully reversible, while the feather, in an airplane with no unfeathering accumulators, is a decision you keep. And the arithmetic habit upstream is the real fix. A fuel-flow number above plan is a new dry-point calculation, done immediately, believed over the totalizer, acted on while the good options are still twenty miles ahead instead of behind.</p>
+<h3>Key takeaway</h3>
+<p>Diagnose before you secure. A thirsty engine restarts in seconds. A feathered one is a commitment, and at night on an arrival, it's a commitment you make for both of you.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $waltPlan to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_ELP_Managed [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the managed distribution"])>>
+The shutdown flow ends with both fuel selectors sitting at ON, which tonight required actual thought, and the little ritual feels like closing out a chess game you barely remember agreeing to play.
+
+<<if $mgdSwitch>>Elena unbuckles and points at the pedestal. "The thing I remembered on final. That was important, wasn't it. Like, actually."
+
+"It would've been fine tonight. The tank it was pointed at had fuel." You look at the selectors a moment longer. "The last tank it was pointed at didn't. Same lever, same me."<<else>>Elena watches you initial the fuel log and asks what the X-FEED detent actually did tonight. You explain it in one sentence, the selector belongs to the engine and points its straw, and she nods slowly. "So it's an IV line with a stopcock. Why didn't you just say that."<</if>>
+
+Home at 11:55 Mountain, twenty-five minutes over the promise. Sunday's text from the hospital: <em>All kiddos accounted for. Your gas gauge drama better be resolved by Thanksgiving.</em> The shop appointment for the injectors is Tuesday. You made it yourself, before bed.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>At Ozona you split the difference between diverting and hoping: you used the crossfeed for exactly what it is, plumbing that points an engine at the other wing, rested the suspect tank on the fat one for forty minutes, and re-fed it for the arrival. The distribution problem never got a vote. <<if $mgdSwitch>>The plan's one hook, the switch-back, nearly slipped through a busy arrival and surfaced at the GUMPS check on final, harmless only because the tank behind the selector had fuel this time.<<else>>You ran the switch-back at top of descent exactly as briefed, and the hook never got its chance.<</if>> The airplane landed with usable fuel in both wings and a squawk sheet entry that has graduated into a shop appointment.</p>
+<h3>ADM analysis</h3>
+<p>This worked because the mental model was exact. Crossfeed-as-insurance is the same lever that, inverted under stress, has starved good engines in this exact airplane type, and the difference between tool and trap is knowing which engine's straw you're moving and where the fuel actually is. Note the structure of what you built, though: a plan with a required future action, at night, in an arrival environment engineered to eat future actions. <<if $mgdSwitch>>It very nearly did. The catch came from a briefed passenger and a disciplined GUMPS habit, which is to say, from redundancy you'd installed earlier.<<else>>Your top-of-descent flow caught the hook because you put the hook where a flow would find it. That's system design, not luck.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Managing distribution in flight is legitimate systems work when the numbers are run and the model is cold. The comparison worth filing: the fuel stop at Fort Stockton would have solved the same problem with zero hooks and one receipt. In-flight management kept the schedule and carried a dependency; the ground stop spends the schedule and carries none. Knowing which trade you're making, and saying the hook out loud to another human, is what made this version airmanship instead of improvisation.</p>
+<h3>Key takeaway</h3>
+<p>Crossfeed moves fuel burn, never fuel. It's a sharp tool with exactly one correct grip, and every plan built on it carries a hook you must not drop.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $waltPlan to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: SE_Secured [scenario]
+<<set $pathArray to $pathArray.concat(["Right engine feathered and secured"])>>
+<<if $featherFast>>Your hands run the drill the way the drill was built to run. Mixtures up. Props up. Throttles up. Flaps checked, gear checked. Dead foot, dead engine: right. Verify: right throttle to idle, no change in anything. Right prop lever back, back, through the detent into FEATHER, and the windmilling disk out there shudders, slows, and knifes into four still blades. Mixture cut. Boost off. Right selector OFF. Cowl flap closed. Forty seconds, maybe less. Your multi instructor would have applauded.
+
+As your hand comes off the pedestal, your eye finally crosses the gauge it skipped on the way by: right fuel flow. Zero. It was zero before you touched a thing. Wherever that fact wants to go, it files itself under later.<<else>>You work it as a procedure instead of a reflex. Identify: dead foot says right. Verify: right throttle to idle, nothing changes. Feather: the right prop lever back through the detent, and the gray disk out there shudders, slows, and knifes into four still blades. Mixture cut, boost off, right selector OFF, cowl flap closed, trim in.<</if>>
+
+The Seneca settles onto one engine like it read its own brochure. Left engine to max continuous, blue radial plus ten, and the turbo holds what a normally aspirated twin would be trading away: altitude. A slow sag to ninety-six hundred and then the VSI levels. The airplane flies fine. It just flies committed, because there are no unfeathering accumulators on this airplane, and that prop does not come back with a lever.
+
+Albuquerque gets the update: right engine secured and feathered, maintaining ninety-six hundred, two souls.
+
+Elena's voice is careful. "Is it going to stay up?"
+
+"It's built for this. It'll hold altitude all night."
+
+"Okay." A pause. "Then I'm going to sit here and believe you."
+
+<div class="decision-heading">Decision: The Fuel Panel, Secured</div>
+
+<div class="choice-list">
+<<link "A. Leave the plumbing alone. The running engine is drinking from the wing that has all the fuel, and the feathered side's selector is OFF where the flow put it." "SE_D5_Divert">>
+  <<set $pathArray to $pathArray.concat(["Left the fuel panel alone, OEI"])>>
+<</link>>
+
+<<link "B. Single-engine flight is exactly what the crossfeed exists for. Set the good engine up on X-FEED so the system carries it for the long haul." "SE_Scare">>
+  <<set $pathArray to $pathArray.concat(["Moved the good engine's selector to X-FEED"])>>
+  <<set $inversion to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. Try the air start. Starter-assist unfeather, fed through the crossfeed. If it was fuel, you can have the second engine back." "SE_Airstart">>
+  <<set $pathArray to $pathArray.concat(["Attempted the starter-assist unfeather"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: SE_Scare [scenario]
+<<set $pathArray to $pathArray.concat(["The good engine starts to die"])>>
+The left selector comes out of ON, across the gate, into X-FEED. The panel looks more single-engine now, somehow. Configured. Deliberate.
+
+For forty seconds nothing happens, because forty seconds is how long the fuel already in the lines lasts.
+
+Then the left fuel flow needle sags. The engine, the only engine, surges, catches itself, surges again, and the Seneca yaws into the dead side with a motion you feel in your back teeth. The manifold pressure starts down. Elena says your name once, quietly, like she's checking it still works.
+
+The left selector is pointing the left engine's straw at the right wing. The right wing is a bottle of air.
+
+<div class="decision-heading">Decision: Forty Seconds In</div>
+
+<div class="choice-list">
+<<link "A. Read the panel out loud like you wrote it: left selector on X-FEED means left engine drinking the empty wing. Selector back to ON. Boost. Now." "SE_Recovered">>
+  <<set $pathArray to $pathArray.concat(["Caught the inversion, selector back to ON"])>>
+<</link>>
+
+<<link "B. It has to be the pump or something in the line, the selector is set up the way single-engine work wants it. Cycle the boost, work the mixture, coax it." "Glide_Both">>
+  <<set $pathArray to $pathArray.concat(["Troubleshot around the selector while it died"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: SE_Recovered [scenario]
+<<set $pathArray to $pathArray.concat(["The good engine recovers"])>>
+<<set $doubleScare to true>>
+Selector back to ON. Boost pump on. The left engine drinks air for one more endless second, then fuel, and comes back with a surge and a snarl and settles to its work like nothing happened.
+
+Your shirt is stuck to your back. Elena has both hands wrapped around the cake box strap, white-knuckled, protecting the one thing on this airplane she can protect.
+
+The crossfeed valve has exactly one correct mental model, and at 10:30 at night with one engine feathered, you just met the wrong one. The selector belongs to the engine. It points that engine's straw. That is all it has ever done.
+
+"Say something," Elena says.
+
+"The airplane's fine. That one was me. It won't happen again."
+
+She nods, once, and believes you, which is somehow the heaviest thing in the cockpit.
+
+<<goto "SE_D5_Divert">>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: SE_Airstart [scenario]
+<<set $pathArray to $pathArray.concat(["Starter-assist unfeather"])>>
+<<set $airstart to true>><<set $restored to true>><<set $rightSecured to false>><<set $crossfeedState to "rightFromLeft">>
+No accumulators means the starter does the work. You set it up like a surgeon laying out instruments: right selector to X-FEED, drinking the left wing. Right boost pump on. Mixture rich. Prop lever to mid-range. Throttle cracked. Then the starter, held, while the panel lights sag yellow and the alternator on the left engine grunts under the load.
+
+The feathered blades lean, lean, and swing flat. The prop windmills. The starter lets go, the windmill spins up, and the TSIO fires, coughs blue in the dark somewhere behind the cowl, and runs. You warm it gently, a thousand RPM, then bring it into sync, minding the turbo like a kettle.
+
+The whole production costs eight hundred feet, five minutes, most of a battery's dignity, and one long look from Elena, who watched the propeller come back to life the way people watch defibrillators.
+
+Both engines run. Both drink from the left wing, through the one selector in X-FEED. The totalizer says 19.5. El Paso is 128 miles into the wind. Fort Stockton is 52 behind, wind helping. Pecos, 20 off the right rear, still has no weather and no long runway tonight.
+
+<div class="decision-heading">Decision: Second Engine, Second Chance</div>
+
+<div class="choice-list">
+<<link "A. Take the gift and turn around. Fort Stockton, fuel, and the rest of the night gets boring." "Divert_FST_Turn">>
+  <<set $pathArray to $pathArray.concat(["D5: airstart, then turned back for fuel"])>>
+  <<set $divert to "KFST">>
+<</link>>
+
+<<link "B. Press for El Paso with the minimum fuel call made and the system watching over you." "Cruise_KELP_Advise">>
+  <<set $pathArray to $pathArray.concat(["D5: airstart, continued with min fuel advisory"])>>
+  <<set $declared to "min">>
+<</link>>
+
+<<link "C. Press for El Paso without ceremony. Two running engines is a normal airplane." "Cruise_KELP_Quiet">>
+  <<set $pathArray to $pathArray.concat(["D5: airstart, continued quietly"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: SE_D5_Divert [scenario]
+<<set $pathArray to $pathArray.concat(["The single-engine divert decision"])>>
+<<if $doubleScare>>With your heart rate somewhere back near the yellow arc, the<<else>>The<</if>> situation steadies into numbers. One engine, feathered and committed. One engine, strong, fed by the only wing with fuel in it, about twenty gallons, an hour and three quarters at this power. Ninety-six hundred feet over terrain that runs twenty-seven hundred. The panel timer you're not using counts nothing.
+
+El Paso: 134 miles on the nose, into the wind, on one engine. Call it an hour and ten. Airline runways, crash trucks, a tower that never sleeps, and your own bed at the end of it. Fort Stockton: 48 miles behind, wind helping, eighteen minutes and a long straight-in to 7,500 feet of asphalt with nobody on it and a pump that takes cards.
+
+Albuquerque asks the question controllers ask when they're inviting you to say the word: "Six two Charlie, say intentions, and advise if you require assistance."
+
+Elena is looking at the side of your face. "Whatever you're deciding," she says, "decide it like I'm asleep. Don't factor me. I mean it."
+
+<div class="decision-heading">Decision: One Engine, Two Doors</div>
+
+<div class="choice-list">
+<<link "A. Declare the emergency and take the near door: Fort Stockton, eighteen minutes, wind at your back." "Approach_SE_FST">>
+  <<set $pathArray to $pathArray.concat(["D5: declared, diverted Fort Stockton"])>>
+  <<set $declared to "emergency">><<set $divert to "KFST">>
+<</link>>
+
+<<link "B. Declare the emergency and continue to El Paso: the long runway, the equipment, the services, everything a sick airplane could want." "Cruise_SE_West">>
+  <<set $pathArray to $pathArray.concat(["D5: declared, continued OEI to El Paso"])>>
+  <<set $declared to "emergency">><<set $divert to "KELP">>
+<</link>>
+
+<<link "C. Fort Stockton, but no declaration. It's a precautionary landing, not a crisis, and the paperwork can stay in its drawer." "Approach_SE_FST">>
+  <<set $pathArray to $pathArray.concat(["D5: diverted quietly to Fort Stockton"])>>
+  <<set $divert to "KFST">>
+<</link>>
+
+<<link "D. Continue to El Paso as an abnormal, not an emergency. The airplane is stable, the book says she'll hold altitude all night, and declaring changes nothing about the flying." "Cruise_SE_West">>
+  <<set $pathArray to $pathArray.concat(["D5: continued OEI, no declaration"])>>
+  <<set $divert to "KELP">><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_SE_FST [scenario]
+<<set $pathArray to $pathArray.concat(["Single-engine arrival, Fort Stockton"])>>
+<<if $declared is "emergency">>"Six two Charlie, roger, understand declaring emergency, cleared direct Fort Stockton, descend at your discretion. ASOS one one eight point five two five. I'll have the county advised. Souls and fuel?" Two souls. An hour forty of fuel. The county, you both know, is one sheriff's deputy who will drive out and watch your landing light come down the black.<<else>>"Six two Charlie, roger, cleared direct Fort Stockton, descend your discretion, ASOS one one eight point five two five. Advise if you require assistance." The offer hangs there, polite, unused.<</if>>
+
+You keep the altitude in your pocket most of the way, because altitude is the only spare part you have left, and let it out on a long, shallow, planned slide. ASOS: wind one six zero at six, altimeter three zero zero four. Runway 12. Seven clicks on 122.8 and the MIRL steps up out of the desert, two amber rails and a PAPI already burning.
+
+You brief it out loud, mostly for your own ears: "Gear down at the fix. Flaps when the runway's made. This one lands. There is no go-around on one engine at night, so we don't plan one."
+
+Blue radial all the way down final. Two white, two red. Over the threshold at ninety-five, power off, and the Seneca touches down on the left main first, straightens, and rolls out long and easy with one propeller turning and one standing still like a monument to the evening.
+
+<div class="choice-list">
+<<link "Taxi in on one engine and shut down under the sodium light." "End_SE_FST">>
+  <<set $pathArray to $pathArray.concat(["Landed OEI at Fort Stockton"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_SE_West [scenario]
+<<set $pathArray to $pathArray.concat(["The long single-engine hour"])>>
+<<if $declared is "emergency">>The frequency reorganizes itself around you. "Six two Charlie, roger, emergency aircraft, cleared direct El Paso, altitude your discretion. Equipment will be standing by. Advise any change." Somewhere ahead, fire trucks are rolling to positions with your tail number written on a pad.<<else>>"Six two Charlie, roger, direct El Paso, advise any change in status." The system files you where you asked to be filed: unremarkable.<</if>>
+
+An hour and ten on one engine is long division performed in the dark. You hold ninety-six hundred, blue radial plus ten, cowl flap trimmed so the left engine's temperatures sit in the green and stay there. Every ten minutes the totalizer surrenders two more gallons. The feathered prop out the right window catches the instrument glow, four blades of absolute stillness, and you catch yourself checking it the way you'd check on a sleeping child.
+
+Elena talks you across the empty miles about nothing at all, in a voice with a professional calm you recognize from a hundred family emergencies that were never yours before. "Tell me when to worry," she says once.
+
+"Not yet."
+
+"Okay. I'll wait."
+
+The Guadalupes pass somewhere north, invisible. Then the bowl of El Paso light comes over the earth's curve, and Approach turns you loose downhill.
+
+<div class="decision-heading">Decision: The Arrival Geometry</div>
+
+<div class="choice-list">
+<<link "A. Ask for the long, flat, boring setup: a wide turn to a ten-mile final for 26L, gear and flaps on your own schedule." "End_SE_ELP">>
+  <<set $pathArray to $pathArray.concat(["Took the long stabilized final"])>>
+  <<set $stab to "long">>
+<</link>>
+
+<<link "B. Take the short approach Approach offers to beat the inbound airline flow: keep the speed, slot inside, save ten minutes of one-engine exposure." "Approach_SE_High">>
+  <<set $pathArray to $pathArray.concat(["Accepted the tight short approach"])>>
+  <<set $stab to "tight">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_SE_High [scenario]
+<<set $pathArray to $pathArray.concat(["High and hot on short final"])>>
+The short approach saves the ten minutes and spends them all back at once. The turn to final comes tight and close-in, and the Seneca arrives on the glidepath's doorstep high, fast, and unamused: four white lights on the PAPI, a hundred and fifteen knots, one engine at idle and one giving everything, gear down, half flaps, the runway numbers sliding under the nose with 9,025 feet of concrete stretched out beyond them and a 737 somewhere behind you on the arrival.
+
+Tower: "Seneca six two Charlie, wind variable at three, runway two six left, cleared to land."
+
+The float begins. A thousand feet of runway. Two thousand. The airplane is flying itself onto the far half of a very long runway, ugly, long, and absolutely landable.
+
+<div class="decision-heading">Decision: Ugly or Again</div>
+
+<div class="choice-list">
+<<link "A. Put it down. Long is fine on nine thousand feet. Fly it onto the pavement, brake straight, take the ugly." "End_SE_ELP">>
+  <<set $pathArray to $pathArray.concat(["Landed long on 26L"])>>
+  <<set $stab to "tight-landed">>
+<</link>>
+
+<<link "B. Go around and do it properly. One clean circuit, a stabilized final, a landing you'd sign your name to." "End_SE_GoAround">>
+  <<set $pathArray to $pathArray.concat(["Attempted the single-engine go-around"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Glide_Both [scenario]
+<<set $pathArray to $pathArray.concat(["Both engines quiet"])>>
+The boost pump cycles. The mixture goes rich, lean, rich. The left engine takes none of it personally and dies anyway, all the way, the propeller slowing to a windmill, and then the Seneca is a nine-thousand-pound glider with one prop feathered, one prop turning uselessly in the airstream, and a cockpit quiet enough to hear Elena breathing.
+
+The panel keeps its counsel. Left selector: X-FEED. Right selector: OFF. Right tank: empty since 10:21. Left tank: twenty gallons of fuel, sealed away from both engines by two levers set exactly where hands under stress put them.
+
+Ninety-four hundred feet. Terrain twenty-seven hundred. The math offers you about ten miles of glide and one decision at a time. Off the right rear quarter, twenty miles out, the Pecos beacon strobes white-green, tiny and regular. South, the interstate's bead of truck lights. Below, scattered across the black, the orange breath of oilfield flares.
+
+"What do I do," Elena says. Not panicked. Asking for a job.
+
+<div class="decision-heading">Decision: The Glide</div>
+
+<div class="choice-list">
+<<link "A. Fuel panel, out loud, like you're reading it to a student: left selector is on X-FEED, drinking the empty wing. Put it back to ON. Boost. Give it three seconds." "Glide_Relight">>
+  <<set $pathArray to $pathArray.concat(["Read the panel aloud, found the inversion"])>>
+<</link>>
+
+<<link "B. Mayday, and commit to the ground while you own the geometry: the lease road by the nearest flare, into the wind, gear down, lights on." "Glide_Commit">>
+  <<set $pathArray to $pathArray.concat(["Committed to the off-airport landing"])>>
+<</link>>
+
+<<link "C. Stretch for the Pecos beacon. Twenty miles, a real runway, and the wind quartering behind you. Beacons have pulled sicker airplanes home." "Glide_Stretch">>
+  <<set $pathArray to $pathArray.concat(["Stretched the glide for Pecos"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Glide_Relight [scenario]
+<<set $pathArray to $pathArray.concat(["Relight in the glide"])>>
+<<set $doubleScare to true>>
+"Left selector," you say out loud, to the airplane, to Elena, to the examiner who lives in your head, "is on crossfeed. Crossfeed points it at the right wing. The right wing is empty." Your hand moves the lever across the gate to ON. "Boost."
+
+One second. Two. The windmilling left prop drags fuel up the line. Three.
+
+The engine catches with a bang and a snarl, and power comes back into the airframe like blood into a sleeping limb. You let the nose down, buy back the blue radial, and level at eight thousand two hundred with one engine running, one feathered, and roughly nineteen gallons of extremely well-earned humility in the left wing.
+
+Elena lets out a breath that has edges on it. On the frequency, Albuquerque is asking, for the second time, whether six two Charlie reads.
+
+"Six two Charlie's back," you say. "We're back."
+
+<<goto "SE_D5_Divert">>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Glide_Commit [scenario]
+<<set $pathArray to $pathArray.concat(["Mayday and the lease road"])>>
+"Mayday, mayday, mayday, Seneca seven four six two Charlie, dual engine failure, niner thousand, two souls, we are landing on a road."
+
+"Six two Charlie, mayday copied." The controller's voice goes very smooth, the way they train for. "Position copied. Emergency services are being notified. Winds Fort Stockton one six zero at six. Frequency is yours."
+
+You fly the glide like a checkride: ninety knots, the nearest flare off the nose, and beneath it, straightening as you descend, a pale caliche lease road running long and straight toward a well pad, into the wind or near enough. You brief Elena in short sentences. Belt tight. Door cracked on short final. Head down, arms braced. She repeats it all back like a nurse taking a verbal order, word for word, twice.
+
+Five hundred feet. The road holds steady in the landing light, washboard and all. Gear down. You pick the spot between a cattle guard and the dark.
+
+<div class="choice-list">
+<<link "Fly it all the way to the ground." "End_Glide_Road">>
+  <<set $pathArray to $pathArray.concat(["Forced landing, lease road"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Glide_Stretch [scenario]
+<<set $pathArray to $pathArray.concat(["Stretching for the beacon"])>>
+You point the nose at the white-green strobe and tell the airplane it's going to Pecos. Best glide, wind quartering behind, twenty miles to pavement and about ten miles of altitude in the bank. The arithmetic doesn't improve with attention. You give it attention anyway.
+
+The beacon strobes. It does not grow.
+
+Six thousand. The flares crawl past below, each one a road you are choosing not to use, each one further behind. Elena is silent, both hands on the cake box, watching the altimeter because you keep watching it.
+
+Four thousand. The beacon has become two lights, a beacon and something near it, still eight miles out. The ground below has gone from options to mesquite.
+
+Two hundred above the scrub, the landing light finds a road, off the nose, crossing at forty degrees. It is the first road in three miles. It will require a turn.
+
+<div class="choice-list">
+<<link "Make the turn." "End_Fatal">>
+  <<set $pathArray to $pathArray.concat(["The low turn to the road"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_SE_FST [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: OEI landing at Fort Stockton"])>>
+You shut down under the sodium light and the silence comes in like a tide. <<if $declared is "emergency">>Ten minutes later a Pecos County sheriff's truck rolls slowly up the ramp, no lights, and a deputy in a canvas jacket leans out. "Y'all the emergency? Dispatch said watch for a plane with one propeller." He looks at the feathered blades for a while, says "huh," and stays to hold a flashlight while you fuel, which turns out to be the exact assistance the situation required.<<else>>Nobody comes, because nobody knows. The field is yours: one sodium light, one card reader, one airplane with one still propeller, and the entire audible universe consisting of a truck shifting gears out on the interstate.<</if>>
+
+The pumps take your personal card on the second try. Elena stands at the edge of the light with her arms crossed, watching you fuel both wings, saying nothing for a long time. On the phone, Walt listens to the whole story and is quiet for five seconds, which for Walt is a eulogy. "The note said half," he starts, and then stops himself. "Monday. All three of us. I'll bring the coffee."
+
+You do not fly home tonight. The Sandstone Inn has rooms, and tomorrow a mechanic from Odessa will run the right engine on the ground, find nothing wrong with it at all, and charge you $340 to confirm the tank was simply empty.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The right engine starved and quit. You committed to feathering a restorable engine<<if $featherFast>> within the first minute, before any diagnosis<</if>>, which turned a ten-second fuel problem into a genuine single-engine night flight. <<if $doubleScare>>The crossfeed inversion then nearly took the good engine too, and you caught it inside the correction window. <</if>>From there your execution was sound: disciplined single-engine cruise, the near airport over the far one, altitude hoarded, a no-go-around brief said out loud, and a clean OEI landing at a dark field.</p>
+<h3>ADM analysis</h3>
+<p>The pivotal moment was the feather. Identify-verify-feather is drilled until it feels like the whole answer, but the drill exists for an engine that is broken, and this one was thirsty: fuel flow at zero, a dry gauge, a fat tank on the other wing, every sign pointing at starvation for anyone with a spare five seconds to look. Feathering is a committed act in an airplane with no unfeathering accumulators. The macho pull here is subtle, the pride of executing the emergency crisply rather than asking whether it was the right emergency. <<if $declared is "emergency">>Declaring was correct and cost you nothing but a deputy's flashlight, which was a bargain.<<else>>Not declaring cost you nothing tonight, but notice what it was protecting: not the flight, just the story about the flight.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Diagnose before you secure. A windmilling engine that died of starvation restarts in seconds once fuel arrives through the crossfeed, and the ten seconds spent reading fuel flow, gauges, and selector positions are the cheapest insurance in multi-engine flying. Once feathered, everything you did is the model: Vyse discipline, the near door over the familiar one, and treating a single-engine night approach as a one-shot arrival. That last brief, "this one lands," is worth stealing for real life.</p>
+<h3>Key takeaway</h3>
+<p>Feather the engine the diagnosis convicts, not the one the drill is fastest against. In a light twin, the ten-second look is the difference between an anecdote and an emergency.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_SE_ELP [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: OEI landing at El Paso"])>>
+<<if $stab is "long">>The long final is ten minutes of geometry and patience, gear at the fix, flaps when the runway is guaranteed, the PAPI held at two-and-two like it owes you money. The touchdown is so ordinary it's almost disappointing.<<else>>You put it down long and ugly and entirely on purpose, wheels kissing at midfield with a mile of concrete still ahead, brakes steady, nosewheel straight. Nobody scores style points at night on one engine. Rollout complete with pavement to spare.<</if>> <<if $declared is "emergency">>The trucks pace you down the runway edge, lights turning, and peel off when you call it good on the rollout. The tower's "welcome to El Paso" has actual warmth in it.<<else>>The tower, who knew only what you told them, clears the next arrival before you're off the runway. The fire trucks you didn't ask for stay parked, which you notice, and file away to think about later.<</if>>
+
+The feathered prop gets a long look from the FBO line crew. Elena is home by 12:15, five hours before her alarm. At the door she says, "That was the real thing tonight, wasn't it," and when you nod she nods back, once, and goes in without another word, which is how nurses hug.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A starved right engine was feathered rather than diagnosed and restored<<if $doubleScare>>, the crossfeed inversion then briefly threatened the left engine before you caught it<</if>>, and you flew more than an hour of single-engine night cruise to the destination, past a serviceable airport eighteen minutes away. The approach <<if $stab is "long">>was flown on your terms, long and stable, and the landing was routine<<elseif $stab is "tight-landed">>arrived high and hot off the short approach, and you made the correct one-engine call: take the long landing the 9,025-foot runway was built to absorb<<else>>worked out<</if>>. Everyone is fine. The exposure was real.</p>
+<h3>ADM analysis</h3>
+<p>Two decisions carried the risk. The feather converted a restorable engine into a committed single-engine airplane. The continue converted an eighteen-minute problem into a seventy-minute one. The arguments for El Paso were real: equipment, runway, services, home. But single-engine cruise is a state where the next failure has no backup, and minutes of exposure are the currency. <<if $declared is "emergency">>You spent the exposure with the system fully briefed and equipment waiting, which is how that bet should be placed if it must be placed.<<else>>You spent it anonymously, saving yourself a conversation and spending the one resource ATC can't give back: their chance to prepare for you.<</if>> <<if $stab is "tight-landed">>Accepting the slam-dunk approach was the night's last unnecessary bet, and landing long instead of going around was the right way to lose it.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Diagnosis first: fuel flow zero plus a dry gauge plus a fat opposite tank spells starvation, and the crossfeed restores it in seconds. Feathered anyway, the model answer is the near airport, declared, altitude kept high and spent late. And on one engine, the approach is a one-way street: a light twin at nearly 4,000 feet of field elevation, gear out, one windmilling start away from Vmc work in the dark, does not go around. Long landings on long runways are free.</p>
+<h3>Key takeaway</h3>
+<p>On one engine, distance is risk and the go-around does not exist. Fly to the nearest honest runway and land on the first try, ugly if necessary.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_SE_GoAround [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the single-engine go-around"])>>
+Full power on the left engine. Flaps to ten. The nose comes up and the Seneca stops descending, which is not the same as climbing.
+
+Field elevation 3,962. Density altitude tonight around 5,300. One engine giving its whole heart through a turbocharger, one feathered, gear cycling up too slowly, and the airspeed sitting two knots above blue line with the VSI needle trembling on either side of zero. The runway lights slide behind. The dark off the departure end is not empty: it has a localizer antenna platform in it, and beyond that the airport's perimeter ground rising gently toward the boundary.
+
+The airplane settles. Not dramatically. Ten feet a second, the mush of an airplane being asked for a performance that was never in the book at this weight, this altitude, this temperature. You hold blue line because there is nothing else to hold, and the Seneca meets the ground two hundred yards past the runway end, gear half-retracted, sliding on its belly through the dirt in a long, roaring, sparking hiss that ends with one wing low against the perimeter road embankment.
+
+The silence after is total. Elena's voice, shaking, comes from very far away: "Out. We're getting out."
+
+You are both standing in the dirt, whole, unbroken, watching the fire trucks arrive at the airplane you almost flew home, when your phone starts buzzing in your pocket. It's Walt. You don't answer it yet.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>After a starvation failure, a feather, and a long single-engine cruise, the arrival came unraveled: high and hot off a short approach, and instead of accepting a long landing on a 9,025-foot runway, you asked a one-engine Seneca for a go-around at a density altitude near 5,300 feet. The airplane gave you everything it had, which was level flight, briefly, and then it settled off the departure end. The airframe is destroyed. You and Elena walked away, which the energy management on final made possible even as the decision above it did not.</p>
+<h3>ADM analysis</h3>
+<p>The go-around is so deeply trained as the safe harbor that it takes deliberate multi-engine re-education to see when it stops being one. Single-engine, gear out, at altitude and weight, a light twin's "go-around" is a slow-motion arrival to terrain you didn't choose. The decision to accept the slam-dunk approach set the trap, and the perfectionism of "do it properly" sprang it. There was a boring correct answer sitting under the nose the whole time: a mile of unused concrete. The hazardous attitude here isn't recklessness. It's craftsmanship applied to the wrong problem.</p>
+<h3>What good judgment looks like here</h3>
+<p>Brief the single-engine approach as a commitment: this one lands. If the setup is bad, fix it early, refuse the tight geometry, ask for the long final, and if you still arrive high on a long runway, land long. The performance chart, not courage or skill, decides whether a single-engine go-around exists, and at this weight and density altitude it did not. The time to consult that chart is at the top of descent, not in the flare.</p>
+<h3>Key takeaway</h3>
+<p>A single-engine go-around is not a plan. It's a performance claim, and the airplane gets the final vote on whether it's true.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Glide_Road [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the lease road"])>>
+The Seneca arrives on the caliche doing ninety, flares in the landing light's gray cone, and touches down straighter than some of your runway landings. The washboard hammers the gear. A mesquite branch takes the left position light. The cattle guard passes under the nose with feet to spare, and the airplane rolls out and stops in the absolute middle of nowhere, upright, intact except for the nosewheel pant and its dignity, one propeller feathered and the other ticking down to stillness.
+
+The flare a half mile away breathes orange against the dark. Elena unbuckles with careful hands. "Everyone out anyway," she says. "We can admire it from outside."
+
+The oilfield crew truck finds you before the deputy does, two men in flame-resistant coveralls who have clearly decided this is the best night shift of their careers. Albuquerque Center, who watched your primary target stop moving and held their breath, gets a phone call from your cell that begins, "Six two Charlie is on the ground, two souls, zero injuries," and you can hear the sector exhale.
+
+The airplane will leave the lease road in three weeks, on a truck, missing its wings temporarily and its right tank's mystery permanently: the recovery crew will drain 19.6 gallons out of the left wing.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A starved engine was feathered instead of diagnosed. The crossfeed inversion then pointed the good engine at the empty tank, and troubleshooting focused everywhere except the selector until the left engine died too. Gliding, you made the decision that saved the night: mayday, commit early to a reachable lit surface, and fly a disciplined forced landing. The airplane is damaged and recoverable. You and Elena are unhurt. Nineteen point six gallons of fuel rode to the ground with you, sealed off by two lever positions.</p>
+<h3>ADM analysis</h3>
+<p>Three links forged this chain: feathering before diagnosing, inverting the crossfeed's logic under stress, and troubleshooting the boost pump while the selector sat wrong. Each was reasonable-feeling in the moment, and that is the lesson: the crossfeed valve has exactly one correct mental model, the selector belongs to the engine and points that engine's straw, and any fuzzier version of it will fail you precisely when you're too loaded to re-derive it. The decision that broke the chain deserves equal attention: committing to the road while altitude still bought geometry, instead of gambling the remaining glide on a distant beacon. That choice is why this debrief is being read in the second person.</p>
+<h3>What good judgment looks like here</h3>
+<p>Ten seconds of fuel-panel diagnosis at the first failure ends this story at Fort Stockton with a gas receipt. Failing that, the panel read aloud in the glide, selector by selector, restores the left engine with thousands of feet to spare. Failing that, exactly what you did: pick the surface early, into the wind, lit if the night offers it, and fly the airplane all the way through the arrival. A survivable off-airport landing is not a failure of airmanship. It's the system working with its last layer.</p>
+<h3>Key takeaway</h3>
+<p>When an engine dies with fuel on board, the selectors are guilty until proven innocent. Read them out loud, exactly as they sit, before you touch anything else.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Fatal [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the turn"])>>
+The road crosses the nose at forty degrees, two hundred feet down. The bank goes in, and then a little more, because the road is passing faster than the turn is coming around. The airspeed is at best glide, which was never meant to hold a steepening turn this close to the ground.
+
+The stall horn sounds once.
+
+The NTSB preliminary report is four paragraphs. It notes the dark night conditions, the fuel found in the left wing tank, the left fuel selector discovered in the crossfeed position, the right selector off, and the impact consistent with an aerodynamic stall in a left turn at low altitude. It reads, as these reports read, like weather: no villains, no adjectives, two fatalities, a familiar sequence laid out in the past tense for the pilots who will read it over coffee and think, quietly, that they would have caught it at the ramp.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Every link connected. A lopsided fuel load accepted against a sticky gauge. A management plan dissolved by ordinary interruptions. A restorable engine feathered without diagnosis. The crossfeed inverted under stress, the good engine starved, the troubleshooting aimed at pumps instead of selectors. Then the glide was spent on a beacon twenty miles away instead of a surface ten minutes below, and the last two hundred feet were asked to hold a steepening turn that no best-glide speed can pay for. The airplane hit the ground flying-adjacent, in a stall, at night, with nineteen usable gallons aboard.</p>
+<h3>ADM analysis</h3>
+<p>No single decision here was exotic. Each one has been made by real pilots in real airplanes, and each was recoverable right up to the last. The pattern underneath them is continuation under stress: at every fork, the option that avoided admitting the situation, turning around, declaring, landing short, landing on dirt, felt like the strong choice. The beacon stretch is the purest form of it, trading a certain, survivable landing for a possible, perfect one. Fuel starvation accidents in twins almost never kill in the first act. They kill in the fourth, when the altitude is gone and the mental model still hasn't been corrected.</p>
+<h3>What good judgment looks like here</h3>
+<p>Any of four moves ends this story safely: per-side fuel math at the ramp, a ten-second diagnosis before the feather, the selector read aloud when the second engine faltered, or the early commit to the lease road with the mayday out and the geometry owned. The forced landing you accept at three thousand feet is nearly always survivable. The airport you almost reach is not.</p>
+<h3>Key takeaway</h3>
+<p>Never trade a landing you can make for one you might. The last link in a fuel-starvation chain is almost always a low-altitude turn toward hope.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_FST_GoAgain [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: refueled and flew home"])>>
+The second leg is the most boring fifty-two minutes of flying you have ever been grateful for. Both gauges agree all the way down their arcs. The crossfeed selector sits at ON like it never heard of tonight. El Paso rises out of the desert right on schedule, and the tower clears you to land on the first call.
+
+Elena's door at 12:20, Mountain time. An hour and twenty past the promise. She hugs you in the driveway, holds it one extra beat, and says, "Next time I'm asking what the gauges say <em>before</em> we leave the party."
+
+At 2:40 the next afternoon, after her shift, she texts: <em>Kiddo #3 came off CPAP today. Also I told the whole pod my brother turned the airplane around for gas like a responsible adult. They were disappointed it wasn't a better story.</em>
+
+It was exactly the story you wanted it to be, by the width of one selector detent.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The right engine quit from fuel starvation two hours and nine minutes into the flight, because the airplane left San Antonio with 46.5 gallons in one wing and 26.5 in the other, and the planning was done against the total. <<if $headsDown>>You went to the fuel panel with the airplane untended and let the speed decay nearly to blue line before recovering, but you<<else>>You<</if>> diagnosed a windmilling engine before committing to anything irreversible, restored it with crossfeed in seconds, ran the arithmetic honestly, and traded a reachable destination for a boring one. Then you finished the trip with fuel in both wings.</p>
+<h3>ADM analysis</h3>
+<p>Two decisions defined this outcome. The first was accepting the lopsided load with a plan to manage it aloft<<if $d2 is "memory">>, a plan that then dissolved into a rerouted clearance and a good story from the right seat<<else>>, a plan the night dismantled one interruption at a time despite your countermeasures<</if>>. That is how fuel starvation actually happens: not as recklessness, but as a reasonable-sounding plan plus a normal amount of disruption. The second was the turnback. With both engines running again, continuing felt natural and Fort Stockton felt like defeat. You weighed an hour of fuel against an hour and five of flying and refused the coin flip. That is the counterintuitive move this scenario exists to teach: landing short, backwards, at a dark field, while everything worked.</p>
+<h3>What good judgment looks like here</h3>
+<p>Twins demand per-side fuel math. A totalizer answers "how much," never "where," and 91.167 is satisfied by numbers that can still starve an engine if they're all in one wing. When an engine quits at cruise with fuel flow at zero and a fat tank on the other side, the high-skill move is the boring one: boost pump, crossfeed, ten seconds of patience. Feathering is for engines that are broken, not engines that are thirsty. And when the math gets thin, the nearest honest fuel beats the nearest familiar runway.</p>
+<h3>Key takeaway</h3>
+<p>The second engine doubles the systems knowledge required, not the safety margin. Fuel you cannot reach the runway with is measured per side, per hour, per honest number, and never by wishing.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_FST_Overnight [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: overnight in Fort Stockton"])>>
+The Sandstone Inn has two rooms, thin towels, and a lobby that smells like fifty years of coffee. Elena calls the unit at 5:00 a.m. and gets Dee, who has already juggled the assignment board. "Take the back half," Dee says. "Your brother did the right thing. Tell him the nurses said so."
+
+You fly home at 6:30 into a tangerine sunrise, the desert soft and harmless-looking in the low light, both gauges agreeing. Elena watches out the window the whole way and doesn't sleep. On the El Paso ramp she stands by the wing for a second, pats the cowling of the right engine twice, the way she'd pat a large dog that bit someone once, and goes to work eleven hours after she meant to be in bed.
+
+Walt is at the hangar Monday with tacos and a laminated card he made at an office store: <em>FUEL LOG ENTRIES: GALLONS PER SIDE, BY THE METER, NO ADJECTIVES.</em> It's the closest he'll come to an apology, and honestly, it's a good card.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Fuel starvation stopped the right engine over the empty middle of Texas. You restored it with crossfeed, diverted back to Fort Stockton, refueled, and then made one more good decision that cost something: you refused to fly the last leg on top of two hours of adrenaline. Elena missed the start of her shift. The mission finished a day frayed, and everyone aboard finished it rested and alive.</p>
+<h3>ADM analysis</h3>
+<p>The chain that mattered ran through the fuel desk in San Antonio, where a totalizer number and a partner's adjective outvoted a gauge that was telling the truth. Everything after the engine quit was recovery, and the recovery was sound: diagnosis before commitment, an honest re-math, a turnback that felt like defeat and wasn't. The overnight call is the quiet star. The IMSAFE checklist doesn't have a box for "just relit an engine over a black desert," but stress is the S, and you scored it honestly when the pressure to redeem the night was at its peak.</p>
+<h3>What good judgment looks like here</h3>
+<p>Exactly this, one ramp decision earlier. The realistic cost of that ramp decision was never a crash. It was this: a covered shift, a colleague juggling a NICU board at 5 a.m., a sister who trusts you slightly differently now, and a partnership meeting with laminated cards. Most fuel-planning errors send the bill here, to the people around the pilot, and the bill is real even when the airplane is fine.</p>
+<h3>Key takeaway</h3>
+<p>The shortcut taken at the fuel pump always sends an invoice. The only thing decided later, in the air, is who pays it and in what currency.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_ELP_MinFuel [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: landed KELP on minimum fuel"])>>
+The fuel truck meets you at the FBO because Approach asked it to. The fueler sticks the nozzle in the left wing, then the right, and watches the meter spin past ninety gallons into a ninety-three-gallon system. He doesn't say anything. He writes the number on the ticket in careful block digits, the way people write numbers they intend to tell someone about later.
+
+Elena is home by 11:40 Mountain, an hour behind the promise, five hours ahead of her alarm. She hugs you at the door. "Thank you for the part where you told them," she says. "The rest we're going to talk about after I sleep."
+
+<<if $declared is "late">>Approach's parting words are still in your ear from the handoff: "Good outcome, six two Charlie. Sooner's better, next time." Nothing on paper. Just a sentence you'll be rehearing on quiet legs for years.<<else>>You sit in the parked car a minute doing the arithmetic one last time. Sixty-one minutes flown. About fifty-eight aboard when you chose it. The difference between this ending and a very different one was a number smaller than the gauge error.<</if>>
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>After the relight you continued to El Paso with roughly 22 gallons aboard, all of it in the left wing, feeding both engines through the crossfeed. <<if $declared is "late">>You told no one until the arrival sequence made the corner of the box visible, then told the truth late and got priority immediately.<<else>>You told the system the truth in the two words built for it, minimum fuel, and the system kept the path clear.<</if>> <<if $restumble>>You also returned the right selector to ON on the way in, re-starved the engine from a placard reflex, and re-learned the crossfeed model with a second relight.<</if>> You landed with about three gallons: fifteen minutes of flying, none of it in the tank the placard prefers.</p>
+<h3>ADM analysis</h3>
+<p>The pivotal decision was continuing at all. An hour of fuel against an hour and five of night flying is not a margin, it's a wager where the counterparty is the wind. Fort Stockton, twenty-two minutes behind you with a working pump, was the honest answer, and the pull of the destination, the schedule, and the already-late promise is exactly the shape of get-there-itis in its natural habitat. What you did right within the wager mattered: announcing minimum fuel converts you from an anonymous target into a known problem, and controllers protect known problems. <<if $declared is "late">>Late honesty beat silence by exactly the margin of that final vector.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Minimum fuel (AIM 5-5-15) is an advisory, not a declaration: it buys no priority, only the promise of no unnecessary delay. If the plan needs priority to work, the word is emergency, and 91.3 hands you the airplane and the authority in the same sentence. Better still is the version where neither word is needed because the airplane went where the fuel math was fat instead of where the hangar was. <<if $restumble>>And the panel lesson: "normal" switch positions assume normal fuel. With a dry right tank, X-FEED was the correct landing configuration, whatever the laminated checklist says about ON.<</if>></p>
+<h3>Key takeaway</h3>
+<p>Minimum fuel is a fact you announce, not a plan you fly to. When the destination needs everything to go right, the destination is wrong.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_ELP_Fumes [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: fumes and a tow bar"])>>
+The 737 lands. You follow it down final at a respectful distance, the totalizer reading a number you stop looking at, and the touchdown on 26L is the sweetest of your life for reasons nobody else on the frequency knows.
+
+Then, on the turnoff, the left engine stumbles, catches, stumbles again, and dies. The right one, drinking through the crossfeed from the same nearly empty wing, follows it eleven seconds later. The Seneca coasts to a stop with its nose over the taxiway centerline, every annunciator you own lit up, in the sudden ringing silence of an airplane that has spent its last gallon taxiing.
+
+"Six two Charlie, tower, say intentions." You have none. Intentions require fuel. The follow-me truck comes, then the tug, then the paperwork clipboard of the airport operations officer, who is polite in the way of a man writing everything down. Tower asks you to call the facility when you're settled. The call is professional, and long, and ends with a suggestion that you may hear from the Flight Standards District Office, which you do, Monday, in a voicemail with a government cadence to it.
+
+Elena waits through all of it. On the drive home she finally says, "You told me we were fine." She isn't angry. It's worse. She's recalibrating.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You continued to El Paso on roughly 22 gallons in one wing and told no one anything. The system, believing you were an ordinary airplane, handled you ordinarily: a sequencing vector behind airline traffic that spent your last honest minutes. The airplane ran out of fuel on the taxiway, eleven seconds at a time, in front of the tower, the operations office, and your sister. Five minutes earlier that same arithmetic would have run out on final.</p>
+<h3>ADM analysis</h3>
+<p>The load-bearing decision wasn't at the ramp in San Antonio. It was the radio call after the relight, where "back to normal ops" traded safety for image. The attitude underneath it is a quiet blend of invulnerability and reputation-guarding: declaring means explaining, explaining means the story exists. So the story got written by the fuel system instead. Accepting the sequence vector was the same decision made a second time with less fuel. Everything the tower and the FSDO now want to discuss was purchasable, an hour earlier, for two words.</p>
+<h3>What good judgment looks like here</h3>
+<p>An IFR pilot who loses and restores an engine has safety-of-flight information, and 91.183(c) expects it on frequency. Minimum fuel (AIM 5-5-15) exists precisely so the sequence bends around the airplane that needs it. Controllers reroute heavies for Senecas that speak up, and the paperwork for an honest precautionary handling is a fraction of the file that gets opened when both props stop on a Class C taxiway. The airplane is undamaged. The margin that produced that outcome was luck, spent at the rate of eleven seconds per engine.</p>
+<h3>Key takeaway</h3>
+<p>The system can only protect the airplane you tell it you're flying. Silence bought you a sequence, a tow bar, and a phone number.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readMap to false>><<set $fuelLeft to 46.5>><<set $fuelRight to 26.5>><<set $toppedOff to false>><<set $splashed to false>><<set $waltTexted to false>><<set $d2 to "">><<set $fuelSeen to false>><<set $rightSecured to false>><<set $featherFast to false>><<set $restored to false>><<set $airstart to false>><<set $declared to "none">><<set $crossfeedState to "normal">><<set $inversion to false>><<set $speedScare to false>><<set $headsDown to false>><<set $restumble to false>><<set $doubleScare to false>><<set $divert to "">><<set $seq to "">><<set $ground to "">><<set $backstop to false>><<set $leanChase to false>><<set $mgdSwitch to false>><<set $stab to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>

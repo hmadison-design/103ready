@@ -59,7 +59,7 @@ HARD_BANNED_WORDS = [
     "thought-provoking", "unparalleled", "unwavering", "whimsical",
     "ever-evolving", "state-of-the-art", "game-changing", "game-changer",
     # Guardrails 1c nouns
-    "tapestry", "realm", "testament", "beacon", "myriad", "liminal",
+    "tapestry", "realm", "testament", "myriad", "liminal",
     "kaleidoscope", "paradigm", "nexus", "catalyst", "symphony",
     "sentinel", "intricacies", "underpinnings", "synergy",
     "synergistically", "roadmap", "linchpin", "plethora", "stakeholders",
@@ -75,7 +75,7 @@ HARD_BANNED_WORDS = [
 WARN_WORDS = [
     # Legitimate in some aviation contexts; verify each use is literal,
     # not buzzword. ("wiring harness" fine; "harness the power" not.)
-    "harness", "harnessed", "navigate", "navigating", "dynamic",
+    "beacon", "harness", "harnessed", "navigate", "navigating", "dynamic",
     "dynamics", "comprehensive", "intricate", "profound", "profoundly",
     "daunting", "elevate", "elevated", "embrace", "embraced", "weave",
     "woven", "journey", "ecosystem", "landscape", "quest", "endeavor",
@@ -96,7 +96,7 @@ BANNED_PHRASES = [
     "let's dive", "let's delve", "let's explore", "let's unpack",
     "let's break this down", "here's the thing", "the best part?",
     "here's the kicker", "here's where it gets interesting",
-    "but here's the truth", "the truth is", "let's face it",
+    "but here's the truth",
     "in today's", "now more than ever", "fast-paced world",
     "when it comes to", "cannot be overstated", "since the dawn of time",
     "whether you're a beginner", "i hope this helps", "great question",
@@ -120,6 +120,13 @@ NEUTRAL_PATTERNS = [
 
 NEGATION_PATTERN = re.compile(
     r"\bisn'?t (?:just |about |merely |only )?[^.;:!?]{2,40}[,;] (?:it'?s|it is)\b", re.I)
+
+# Discourse-marker fillers banned only in sentence-start position (so that
+# literal uses like "where the truth is sold by the gallon" survive).
+SENTENCE_START_PHRASES = [
+    re.compile(r"(?:^|[.!?\"']\s+)the truth is[,:]?\s", re.I),
+    re.compile(r"(?:^|[.!?\"']\s+)let'?s face it[,:]?\s", re.I),
+]
 NOT_BECAUSE_PATTERN = re.compile(r"\bnot because\b[^.;:!?]{2,60}\bbut because\b", re.I)
 
 EM_DASH = "—"
@@ -222,6 +229,9 @@ def lint_file(path):
         for p, rx in PHRASE_RES.items():
             if rx.search(low):
                 problems.append(("ERROR", i, "banned phrase: '%s'" % p))
+        for rx in SENTENCE_START_PHRASES:
+            if rx.search(scan):
+                problems.append(("ERROR", i, "banned discourse-marker phrase at sentence start"))
 
         if not in_debrief and not in_ending_passage:
             for rx, msg in NEUTRAL_PATTERNS:

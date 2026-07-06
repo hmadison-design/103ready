@@ -1,0 +1,1641 @@
+:: StoryTitle
+The Good Engine
+
+:: StoryData
+{
+  "ifid": "DDBE9A6A-18D5-457B-AD07-CD3E6DD74731",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "FlightPrep"
+}
+
+:: StoryInit
+/* SCENARIO TITLE:      The Good Engine
+   AUDIENCE:            General Aviation Pilots (multi-engine)
+   TONE:                Professional
+   PRIMARY TOPIC:       The single-engine arrival: destination selection, energy
+                        and configuration discipline, and the commit gate, in an
+                        airplane whose OEI go-around is marginal to imaginary.
+   SECONDARY TOPIC:     Drift-down planning over ridges, declaring for priority,
+                        passenger pressure against diverting.
+   AIRCRAFT/EQUIPMENT:  1966 Piper PA-30 Twin Comanche B, N8331Y. Lycoming
+                        IO-320-B1A, 160 hp per side, non-turbo. Full-feathering
+                        Hartzell props, no unfeathering accumulators. Panel
+                        placarded in MPH. Vmc 90 MPH (78 kt). Vyse 105 MPH
+                        (91 kt). SE service ceiling at today's weight about
+                        6,600 density altitude. Gross 3,600 lb, today 3,250 lb.
+   SETTING:             KLEX (Lexington KY) to KLWB (Greenbrier Valley WV),
+                        about 200 nm. Friday, October 16, mid-afternoon. Story
+                        opens over southern West Virginia, LEFT engine already
+                        secured and feathered, 15 minutes after shutdown.
+   WEATHER:             Broken deck bases about 5,500 MSL with ragged holes,
+                        tops about 7,000 with taller swells, patchy ridgetop
+                        obscuration east, haze in the valleys, light wind aloft,
+                        valley surface winds nearly calm.
+   ADM THEMES:          Destination selection OEI, commit-gate discipline,
+                        declaring for priority, energy management, restart
+                        temptation, passenger pressure, conflicting weather.
+   HAZARDOUS ATTITUDES: Macho (press to destination, refuse priority),
+                        invulnerability (restart as insurance), impulsivity
+                        (panic go-around), resignation (hold and burn altitude).
+   PROTAGONIST:         Curt Weaver, 41, commercial ASEL/AMEL, 850 hrs TT,
+                        180 multi, co-owner of the airplane.
+   PASSENGER:           Dev Malhotra, 38, brother-in-law. Non-pilot.
+   TOTAL ENDINGS:       13 (1 full success, 3 qualified success,
+                        2 qualified-with-scare, 2 friction/social cost,
+                        2 delay/diversion, 2 aircraft damage (gear-up,
+                        overrun), 1 fatal, reachable only through a chain
+                        of the worst available choices)
+   MIN DECISION DEPTH:  4 story decisions on every path (audit enforces)
+   TIMED DECISIONS:     No
+   ESTIMATED DURATION:  20-30 minutes
+   VERSION:             1.0    LAST REVIEWED: July 2026    REVIEWER: (pending)
+   DESIGN NOTE:         The engine failure is over before the story starts. The
+                        drill here is the arrival: where the good engine takes
+                        you, and whether you ever need the go-around you do not
+                        have. Airports, runways, elevations, and frequencies are
+                        real and verified. Weather is fictional but coherent.
+*/
+<<set $readWeather to false>>
+<<set $readAircraft to false>>
+<<set $readChart to false>>
+<<set $readFields to false>>
+<<set $pathArray to []>>
+<<set $badchoices to 0>>
+<<set $declared to "none">>
+<<set $dest to "">>
+<<set $held to false>>
+<<set $routing to "">>
+<<set $popup to false>>
+<<set $restartTried to false>>
+<<set $shopCalled to false>>
+<<set $gateBriefed to false>>
+<<set $gearDown to false>>
+<<set $config to "">>
+<<set $altNow to 7500>>
+<<set $swingBack to false>>
+<<set $bkwTouch to "">>
+<<set $atisPulled to false>>
+<<set $groundPlan to "">>
+
+:: StoryStylesheet [stylesheet]
+body {
+  background: #0f1720;
+  color: #d6dee6;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#story {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+#passages {
+  border-left: none;
+  padding: 0;
+}
+.passage {
+  padding: 0;
+}
+a.link-internal, a.macro-link {
+  color: #e6b84a;
+  text-decoration: none;
+  border-bottom: 1px dotted #8a6f2a;
+}
+a.link-internal:hover, a.macro-link:hover {
+  color: #fff4d0;
+  background: #3a2d0a;
+  border-bottom: 1px solid #e6b84a;
+}
+.choice-list {
+  margin: 1.2em 0 0.5em 0;
+}
+.choice-list p { margin: 0.6em 0; }
+hr {
+  border: none;
+  border-top: 1px solid #2c3a4a;
+  margin: 1.8em 0;
+}
+.debrief {
+  background: #141d28;
+  padding: 1rem 1.3rem;
+  border-left: 3px solid #e6b84a;
+  margin-top: 1rem;
+  font-size: 0.98rem;
+}
+.debrief h3 {
+  color: #e6b84a;
+  font-size: 1.05rem;
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.04em;
+}
+.restart {
+  margin-top: 2em;
+  font-size: 0.95rem;
+  color: #8aa0b5;
+}
+.metar {
+  font-family: "Courier New", monospace;
+  font-size: 0.95rem;
+  color: #b8cce4;
+  background: #0a121b;
+  padding: 0.6em 0.9em;
+  border-left: 2px solid #5a6e88;
+  margin: 0.6em 0;
+  white-space: pre-wrap;
+}
+.metar-block, .flight-plan, .aircraft-card {
+  font-family: "Courier New", monospace;
+  font-size: 0.95rem;
+  color: #b8cce4;
+  background: #0a121b;
+  padding: 0.6em 0.9em;
+  border-left: 2px solid #5a6e88;
+  margin: 0.6em 0;
+  white-space: pre-wrap;
+}
+.scenario-title {
+  font-size: 2em;
+  color: #fff4d0;
+  text-align: center;
+  margin-bottom: 0.2em;
+}
+.scenario-subtitle {
+  font-size: 1.05em;
+  color: #8aa0b5;
+  text-align: center;
+  margin-bottom: 1.5em;
+  font-style: italic;
+}
+.preflight-btn {
+  display: inline-block;
+  background: #141d28;
+  border: 1px solid #2c3a4a;
+  border-radius: 6px;
+  padding: 10px 20px;
+  margin: 6px 4px;
+  min-width: 230px;
+  text-align: center;
+  color: #e6b84a;
+}
+.preflight-btn:hover { background: #1c2937; }
+.airport-table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.9em; }
+.airport-table th, .airport-table td { padding: 6px 10px; border-bottom: 1px solid #2c3a4a; text-align: left; }
+.airport-table th { color: #8aa0b5; }
+.chart-disclaimer {
+  font-size: 0.8em;
+  color: #8aa0b5;
+  border-left: 3px solid #2c3a4a;
+  padding: 6px 12px;
+  margin: 1em 0;
+}
+.sectional-container { margin: 1em 0; }
+.sectional-container img {
+  max-width: 100%;
+  border: 1px solid #2c3a4a;
+  border-radius: 4px;
+}
+.sectional-label { font-size: 0.85em; color: #8aa0b5; margin-top: 0.3em; }
+.pax-quote {
+  border-left: 3px solid #5a6e88;
+  padding: 4px 14px;
+  margin: 0.8em 0;
+  color: #c8d4e0;
+  font-style: italic;
+}
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block;
+  padding: 0.55em 1.3em;
+  background: #1A3C57;
+  color: #fff !important;
+  border: 1px solid #2E5C82;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.95em;
+  letter-spacing: 0.03em;
+}
+.main-menu-btn:hover, .main-menu-btn:focus { background: #2E5C82; outline: none; }
+
+:: FlightPrep [preflight]
+<<set $pathArray to $pathArray.concat(["Stable minute: reviewing what you know"])>>
+
+<div class="scenario-title">The Good Engine</div>
+<div class="scenario-subtitle">A single-engine arrival: somewhere over southern West Virginia</div>
+
+The left propeller is a stopped blade-on-edge silhouette, and it has been for fifteen minutes.
+
+You are Curt Weaver, 850 hours, commercial, 180 of those hours in twins, and this one is a third yours: a 1966 Twin Comanche B, N8331Y, panel still placarded in miles per hour the way Piper delivered it. You and your brother-in-law Dev left Lexington an hour ago for a golf weekend at Greenbrier Valley. Over the Coal River country the left engine's oil pressure sagged, the oil temp climbed after it, and a fine brown mist began painting the left cowl. You ran the drill the way you were taught: identify, verify, feather, secure. The airplane never scared you. It just got quieter and started asking harder questions.
+
+Now you are level-ish at 7,500, trimmed, ball a half-width toward the good engine, a whisper of bank into the running side. The airplane is drifting down maybe fifty feet a minute. Indy Center knows you are out here on flight following. Dev is watching the dead propeller the way people watch a snake.
+
+You have one stable, trimmed minute before you commit to anything. Use it. The kneeboard, the seat pocket, and the iPad hold everything you know.
+
+<div class="chart-disclaimer">Charts, weather data, and performance figures in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here, not current publications, as the scenario is designed around them.</div>
+
+<<link "<span class=\"preflight-btn\">Weather Picture</span>" "Preflight-Weather">><<set $readWeather to true>><</link>>
+<<link "<span class=\"preflight-btn\">The Airplane, One Engine</span>" "Preflight-Aircraft">><<set $readAircraft to true>><</link>>
+<<link "<span class=\"preflight-btn\">The Chart</span>" "Preflight-Chart">><<set $readChart to true>><</link>>
+<<link "<span class=\"preflight-btn\">The Field Guide</span>" "Preflight-Fields">><<set $readFields to true>><</link>>
+
+<<if $readWeather and $readAircraft and $readChart and $readFields>>
+<hr>
+You know what you know. The rest you will find out the old way.
+
+<<link "<span class=\"preflight-btn\">&#9744; Back to the airplane</span>" "Opening">><</link>>
+<<elseif $readWeather or $readAircraft or $readChart or $readFields>>
+<hr>
+<em>You have not looked at everything yet. The minute is yours, and it is the cheapest minute you will get all day.</em>
+
+<<link "<span class=\"preflight-btn\">Back to the airplane anyway</span>" "Opening">><</link>>
+<</if>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Weather [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed the weather picture"])>>
+<strong>What the sky is doing (kneeboard notes plus what you can see)</strong>
+
+You are on top of a broken deck. Bases along the route are running about 5,500 MSL, tops about 7,000, with taller swells you have been brushing through, sun then gray then sun. There are holes, ragged and honest ones, more of them behind you than ahead. East, toward the higher ridges, the bases sag and sit on the crests in patches. Below the deck the valleys carry afternoon haze.
+
+<div class="metar-block">KCRW 161854Z 04006KT 10SM SCT049 BKN070 22/11 A3011
+    (Charleston hourly. 4,900 scattered is 5,800 MSL over that plateau.)
+
+KBKW 161954Z AUTO 19004KT 7SM BKN030 21/10 A3011
+    (Beckley ASOS on 121.55. 3,000 broken is 5,500 MSL up there.)
+
+KLWB 161953Z 00000KT 8SM FEW025 BKN032 21/09 A3012
+    (Greenbrier ATIS on 121.4. Calm. Bases about 5,500 MSL.
+     ILS runway 4 in use. Taxiway Alpha closed between A1 and A3,
+     back-taxi required for runway 4 departures.)</div>
+
+<div class="metar-block">PIREP, relayed by Indy Center twenty minutes ago:
+
+UA /OV BKW 090015 /TM 1935 /FL065 /TP BE36 /SK BKN055 TOP 070
+   /RM RAGGED BASES E OF MEADOW RIVER, RDG TOPS OBSCD IN PATCHES</div>
+
+The Bonanza pilot's ridge report and the Greenbrier ATIS do not quite tell the same story. Calm and 8 miles at the field, gray shoulders on the hills between here and there. Both can be true at once. That is the trouble with valleys.
+
+Winds aloft are light, maybe 240 at 12 up here. Nothing about the air is violent. The whole picture is soft edges, which would be a compliment on any other afternoon.
+
+<<link "&#8592; Back to the stable minute" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Aircraft [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed the OEI performance card"])>>
+<strong>N8331Y, one engine: the card in the seat pocket</strong>
+
+Gwen Statler, the senior partner in the airplane, typed this card on an actual typewriter years ago and re-verifies it every annual. You have flown these numbers in practice. Today they stop being practice.
+
+<div class="aircraft-card">PA-30 TWIN COMANCHE B  N8331Y   ONE ENGINE INOPERATIVE
+Panel placarded MPH.  Gross 3,600 lb.  Today approx 3,250 lb.
+
+Vmc (red radial)             90 MPH   (78 kt)
+Vyse (blue line)            105 MPH   (91 kt)
+Gear extend limit           150 MPH
+Flaps limit                 125 MPH
+
+SE service ceiling, today   approx 6,600 DENSITY altitude
+  On this warm afternoon that is about 5,800 indicated.
+  The airplane will stop climbing there. Period.
+
+SE rate of climb, clean, feathered, exactly 105 MPH:
+  near sea level, today's weight      approx 350 fpm
+  at 5,800 indicated                  approx zero
+  at Beckley's density altitude       approx 150 fpm
+Gear down: subtract about 250 fpm.
+Full flaps: subtract about 300 more.
+Gear plus full flaps, full throttle: you are descending.
+
+OEI approach: fly 105 MPH to short final, 95 over the fence,
+approach flaps only until landing assured. Below about 400 AGL
+with gear down, you are landing. There is no go-around.
+
+Props: full-feathering, NO unfeathering accumulators.
+Restart means starter, fuel, and a working oil system. If a
+sick engine quits turning below about 800 RPM, the stop pins
+hold the blades FLAT. A windmilling unfeathered prop costs
+more than the gear and flaps together.
+
+Fuel: mains better than half, aux untouched. Three hours plus.
+Fuel is the one thing today is not about.</div>
+
+The left engine is feathered and secure, mixture cut, cowl flap closed, fuel off, mags off. The right engine is running sweet at 24 squared, temps in the green, and you have caught yourself listening to it the way you would listen to a baby monitor.
+
+<<link "&#8592; Back to the trimmed airplane" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Chart [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed the chart"])>>
+<strong>The chart (iPad, sectional layer)</strong>
+
+<div class="sectional-container">
+<img src="/scenarios/the-good-engine/images/area_map.jpg" alt="Route overview map, southern West Virginia, showing present position west of Beckley with KCRW, KBKW, and KLWB">
+<div class="sectional-label">Present position over the Coal River country, about 17 nm west-northwest of Beckley. KCRW 29 nm northwest. KBKW 17 nm ahead-right. KLWB 50 nm east.</div>
+</div>
+
+The ground under you is dissected plateau: ridge, hollow, ridge, hollow, twenty-five hundred to thirty-three hundred on the crests, creeks at the bottoms, nothing flat that is not a strip mine bench or a school parking lot. Eastbound toward Greenbrier Valley the crests step up, thirty-four to thirty-six hundred along your line, with the New River Gorge cut through the middle of it and the forty-three-hundred-foot knobs around Cold Knob standing north of your course. The valley floors that matter, New River and Greenbrier, run about two thousand to twenty-four hundred.
+
+Northwest toward Charleston the numbers go the other way, crests easing down toward the Kanawha River, which sits near six hundred. The airport there does not sit in the valley. It sits on a hilltop they cut flat in 1947, with real drop-offs at the ends.
+
+Your OEI ceiling, about 5,800 indicated today, clears every rock in this state. What it does not clear is the cloud deck, whose bases start at 5,500. The airplane's floor for the day is inside that deck. Staying visual means picking where to come down, and doing it while the holes are still holes.
+
+Interstate 64 threads the low ground east through Beckley toward Lewisburg, floors near two thousand, crests a shade over three thousand. It is the one line on the chart with pavement, clearings, and cell coverage the whole way.
+
+<<link "&#8592; Back to the panel" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Fields [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed the field guide"])>>
+<strong>The field guide (your own trip notes, plus the chart supplement)</strong>
+
+<table class="airport-table">
+<tr><th>Field</th><th>Distance</th><th>Elev</th><th>Runways</th><th>What it is</th></tr>
+<tr><td>KCRW Charleston Yeager</td><td>29 nm NW, over your left shoulder</td><td>947</td><td>5/23, 6,715 x 150 (6,215 landing)</td><td>Class C. Tower 125.7, ATIS 127.6, Charleston Approach 119.2. ILS both ends. ARFF fire crews on the field. Airline maintenance nearby. Hilltop plateau, drop-offs at both ends, EMAS bed at the southwest end.</td></tr>
+<tr><td>KBKW Beckley</td><td>17 nm, ahead and right</td><td>2,504</td><td>1/19, 6,750 x 150 and 10/28, 5,001 x 100</td><td>Non-towered, CTAF 123.0, ASOS 121.55. Charleston Approach works it on 125.4. ILS to 19. County crash truck. Field sits a half-mile up: density altitude this afternoon about 3,800.</td></tr>
+<tr><td>KLWB Greenbrier Valley</td><td>50 nm E, the destination</td><td>2,302</td><td>4/22, 7,003 x 150</td><td>Tower 118.9 (open to 7 pm), ATIS 121.4, Washington Center 134.4 for arrival. ILS to 4. ARFF on the field. Valley airport, softest weather of the three. Your rental car and the hotel confirmation are both waiting there.</td></tr>
+</table>
+
+Lexington, behind you, is 150 miles of the same plateau you just crossed. Nobody is going back to Lexington.
+
+Dev's tee time is 8:40 tomorrow morning. He has mentioned it twice, both times gently, and he paid for the foursome months ago. His sister, your wife, told you at the door: bring him back tired and happy.
+
+<<link "&#8592; Back to the flight deck" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Opening [scenario]
+<<set $pathArray to $pathArray.concat(["Back in the airplane, deciding where"])>>
+The minute is over. The airplane spends it drifting down forty feet, and the deck below slides by, gray backs of clouds with sun in the gaps.
+
+Center's voice, when it comes, is the same one that has been working you since the handoff. "Twin Comanche eight-three-three-one Yankee, Indy Center, say intentions when able. Altitude your discretion, advise any altitude change."
+
+Dev shifts in the right seat. He has been quiet since the feather, which for Dev is a geological event. When he finally talks, it comes out reasonable, which is the hard kind.
+
+<div class="pax-quote">"So, the car's at Lewisburg. The hotel's at Lewisburg. And you said this thing flies fine on one, right? That's the whole reason it has two." A beat. "I'm not pushing. I'm asking what you're thinking."</div>
+
+What you are thinking: Beckley is seventeen miles, nine minutes, and a half-mile up in the sky where your one engine breathes thin. Charleston is twenty-nine miles the wrong direction, a left turn over your shoulder, big and towered with fire trucks and an ILS, on a hilltop with the last real ridge line of the day between you and it. Lewisburg is fifty miles and twenty-seven minutes of ridge crossings east, the longest runway of the three, the calmest air, and everything you own on the ground. The good engine runs sweet. The deck under you is still broken, and the holes are still holes.
+
+<div class="choice-list">
+<<link "A. Turn for Charleston. Fire trucks, a tower, an ILS, and services. It costs the golf weekend and one more ridge line, and it is the biggest margin on the menu." "Route_CRW_Turn">>
+  <<set $pathArray to $pathArray.concat(["D1: chose Charleston"])>>
+  <<set $dest to "KCRW">>
+<</link>>
+
+<<link "B. Take Beckley. Nine minutes and it is over. High field, thin air, but 6,750 feet of runway you could practically glide to from here." "Route_BKW_Turn">>
+  <<set $pathArray to $pathArray.concat(["D1: chose Beckley"])>>
+  <<set $dest to "KBKW">>
+<</link>>
+
+<<link "C. Continue to Lewisburg. The airplane is stable, the destination weather is the softest, the runway is the longest, and the plan on the ground is already built." "Route_LWB_Press">>
+  <<set $pathArray to $pathArray.concat(["D1: continued to Lewisburg"])>>
+  <<set $dest to "KLWB">>
+<</link>>
+
+<<link "D. Hold here and think. Circle over the last good hole, keep it trimmed, and buy one more lap of information before choosing." "Hold_Ring">>
+  <<set $pathArray to $pathArray.concat(["D1: held to think"])>>
+  <<set $held to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Hold_Ring [scenario]
+<<set $pathArray to $pathArray.concat(["Held over the hole, one lap"])>>
+<<set $altNow to 7100>>
+"Center, three-one Yankee, we're going to hold present position a few minutes while we sort our destination."
+
+"Three-one Yankee, roger, advise."
+
+You fly one wide, flat circle around the hole, shallow bank, never more than fifteen degrees, always toward the good engine. It costs four minutes and four hundred feet. That is the honest exchange rate: thinking time is altitude, and the drift-down does not pause for it.
+
+The lap buys you this much: the hole under you holds its shape, the deck to the east looks the same ragged gray it looked before, and the Beckley ASOS says on the second listen exactly what it said on the first. Dev watches you fly the circle and says nothing at all, which is its own kind of commentary.
+
+Nothing has changed except the altimeter. The menu is the same menu. It will not improve with age.
+
+<div class="choice-list">
+<<link "A. Charleston it is. Left turn, twenty-nine miles, the full-service answer." "Route_CRW_Turn">>
+  <<set $pathArray to $pathArray.concat(["D1b: Charleston after the hold"])>>
+  <<set $dest to "KCRW">>
+<</link>>
+
+<<link "B. Beckley, nine minutes ahead. Done circling." "Route_BKW_Turn">>
+  <<set $pathArray to $pathArray.concat(["D1b: Beckley after the hold"])>>
+  <<set $dest to "KBKW">>
+<</link>>
+
+<<link "C. Press east for Lewisburg with four hundred feet less in the bank." "Route_LWB_Press">>
+  <<set $pathArray to $pathArray.concat(["D1b: Lewisburg after the hold"])>>
+  <<set $dest to "KLWB">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Route_CRW_Turn [scenario]
+<<set $pathArray to $pathArray.concat(["Turned northwest for Charleston"])>>
+"Center, three-one Yankee, we'll take Charleston Yeager."
+
+"Three-one Yankee, roger. Contact Charleston Approach, one-one-niner point two."
+
+You make the turn a lazy one, fifteen degrees of bank, letting the nose walk around to the northwest. The dead engine rides on the inside of the turn like a passenger who has stopped paying for gas. Rolling out, the sun is ahead of you now, and the deck runs to the horizon with the plateau's shadows showing through the gaps.
+
+Twenty-nine miles. Sixteen minutes, more or less. One more line of high ground between here and the Kanawha, and then the hilltop with the fire trucks on it.
+
+Charleston Approach answers on the first call, a woman's voice, unhurried. "Twin Comanche eight-three-three-one Yankee, Charleston Approach, radar contact two-six miles southeast of the airport. Say souls, fuel, and the nature of your engine trouble."
+
+Two souls. Three hours plus. The nature of the trouble is a feathered prop and a painted cowl. What you say next decides what kind of arrival this is.
+
+<div class="choice-list">
+<<link "A. Declare it. 'Approach, three-one Yankee is declaring an emergency. Left engine secured and feathered, airplane under control, request the ILS runway 5 and the equipment standing by.'" "Declare_CRW_Emerg">>
+  <<set $pathArray to $pathArray.concat(["D2: declared emergency with Charleston"])>>
+  <<set $declared to "emergency">>
+<</link>>
+
+<<link "B. Keep it administrative. 'Approach, three-one Yankee, precautionary shutdown on the left engine. Airplane's stable, no assistance required, we'd just like to land Charleston.'" "Declare_CRW_Soft">>
+  <<set $pathArray to $pathArray.concat(["D2: called it precautionary"])>>
+  <<set $declared to "advisory">>
+<</link>>
+
+<<link "C. Minimize it. 'Approach, three-one Yankee, we're doing fine, just a precaution. Request straight to the field.' The last thing this day needs is a circus." "Declare_CRW_Quiet">>
+  <<set $pathArray to $pathArray.concat(["D2: minimized it to approach"])>>
+  <<set $declared to "none">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Declare_CRW_Emerg [scenario]
+<<set $pathArray to $pathArray.concat(["Emergency in the system, Charleston"])>>
+"Three-one Yankee, roger, copy declared emergency, left engine secured. Equipment will be standing by. Plan ILS runway 5, vectors when you're closer, altitude your discretion above four thousand. Anything you need, say the word."
+
+That is the whole transaction. Ten seconds. Nobody gasped. Somewhere below, a crash crew is pulling on gear and rolling to a taxiway to wait for you, which is what they are for and where they would rather be than the ready room.
+
+Dev looks over. "Emergency? I thought you said we were okay."
+
+"We are okay. That word gets us the runway, the priority, and the trucks. It's free."
+
+"Huh," Dev says, and sits with it. "Weirdly, that makes me feel better."
+
+The frequency stays quiet around you. A regional jet checks in and is told, without drama, to expect one turn in the hold. You have become the main character of Charleston's afternoon, and the fee for that is a phone number you might have to call later.
+
+<<goto "Route_CRW_Wx">>
+
+:: Declare_CRW_Soft [scenario]
+<<set $pathArray to $pathArray.concat(["Precautionary, no priority asked"])>>
+"Three-one Yankee, roger, precautionary shutdown, understood. Report the airport in sight or advise if you'd like the approach. Altitude your discretion above four thousand."
+
+Businesslike, both directions. You have told the truth and asked for nothing special. The system files you where you filed yourself: a single-engine twin, doing fine, working inbound like anybody else.
+
+Dev watches the dead propeller for a while.
+
+<div class="pax-quote">"So is this, like, a thing that happens? Twin guys just... land on one and it's Tuesday?"</div>
+
+"It's a thing the airplane is built to do. It's not a thing anybody does casually."
+
+"Right," he says, in the tone of a man filing that answer next to the tee time he has not mentioned in eleven minutes.
+
+<<goto "Route_CRW_Wx">>
+
+:: Declare_CRW_Quiet [scenario]
+<<set $pathArray to $pathArray.concat(["Kept it small on frequency"])>>
+"Three-one Yankee, roger. Proceed inbound, report the airport in sight. Advise if anything changes."
+
+The controller's voice carries a half-second pause before "roger," the sound of a professional deciding not to push. Center told her about the feather during the handoff. You have told her it is nothing. The gap between those two stories now belongs to her, and she has left it politely alone.
+
+The frequency moves on. A Cherokee gets a squawk. Somebody asks for the RNAV to a field you have never heard of. You are, officially, unremarkable, which is what you asked to be.
+
+Dev stretches his legs into the footwell. "They didn't sound very worried about us."
+
+"That was sort of the idea."
+
+He nods slowly, the way he nods at golf advice he intends to ignore.
+
+<<goto "Route_CRW_Wx">>
+
+:: Route_CRW_Wx [scenario]
+<<set $pathArray to $pathArray.concat(["The Charleston weather question"])>>
+Ten miles along, approach passes the numbers. "Three-one Yankee, Charleston weather, the one-eight-five-four observation: wind zero-four-zero at six, visibility one-zero, four thousand nine hundred scattered, broken seven thousand. Altimeter three-zero-one-one."
+
+Four thousand nine hundred scattered. Off the hilltop, that puts the layer near fifty-eight hundred on your altimeter, thin and polite. Then you flip the number two radio to the ATIS, 127.6, and information Sierra says something different: special observation, one-nine-three-eight zulu, wind zero-four-zero at seven, visibility five in haze, ceiling two thousand eight hundred broken. That layer is new, a low gray lid forming over the plateau itself, under the deck you already knew about.
+
+<<set $atisPulled to true>>
+One of those pictures is an hour old. One is twelve minutes old. They do not agree, and the ridge line ahead is where you spend your last easy altitude either way.
+
+Ahead and left, a hole in the main deck shows you the Kanawha bending silver through the haze, six hundred feet of valley floor with a city in it, and gray shoulders where the plateau steps up to meet the airport.
+
+<div class="choice-list">
+<<link "A. Take the instrument answer. 'Approach, three-one Yankee requests a pop-up IFR clearance and the ILS runway 5.' Own glidepath, own numbers, no scud arithmetic." "Route_CRW_ILS">>
+  <<set $pathArray to $pathArray.concat(["D3: pop-up IFR, ILS 5"])>>
+  <<set $popup to true>>
+  <<set $routing to "ils">>
+<</link>>
+
+<<link "B. Believe the special. Descend through the hole now, while it is a hole, and come up the Kanawha underneath everything, visual the whole way." "Route_CRW_Visual">>
+  <<set $pathArray to $pathArray.concat(["D3: down the hole, up the valley"])>>
+  <<set $routing to "visual">>
+<</link>>
+
+<<link "C. Believe the hourly. Hold your altitude, ride direct over the last ridge, and plan a visual descent over the field where the layer is 'scattered.'" "Route_CRW_High">>
+  <<set $pathArray to $pathArray.concat(["D3: stayed high on the hourly"])>>
+  <<set $routing to "high">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Route_CRW_High [scenario]
+<<set $pathArray to $pathArray.concat(["Over the top on an old number"])>>
+You hold what altitude the airplane still has, six thousand nine hundred and drifting, and ride the direct line across the last high ground. The main deck slides under you, and through the early gaps the plateau looks reasonable, hazy but open.
+
+Then the gaps stop cooperating. Over the rising ground short of the airport, the "scattered" from the hourly is running solid and gray, and beneath it, in the one good look you get, there is a second, lower film with hills poking through. The special was the honest one. It usually is. It is also now beneath you, both layers of it, and the field is nine miles ahead under all of that.
+
+"Three-one Yankee, Charleston, current weather now ceiling two thousand seven hundred broken, visibility five, haze. Say intentions."
+
+Dev has found the grab handle without drama, one hand resting on it like he always sits that way.
+
+<div class="choice-list">
+<<link "A. Ask for the clearance now. 'Approach, three-one Yankee requests the pop-up and vectors, ILS runway 5.' The rail exists for exactly this." "Route_CRW_ILS">>
+  <<set $pathArray to $pathArray.concat(["D3b: pop-up from on top"])>>
+  <<set $popup to true>>
+<</link>>
+
+<<link "B. Turn back to the hole eight miles behind you, descend visual through it, and come up the river valley beneath the layers." "Route_CRW_Visual">>
+  <<set $pathArray to $pathArray.concat(["D3b: back to the hole, under the layers"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Route_CRW_ILS [scenario]
+<<set $pathArray to $pathArray.concat(["Cleared for the ILS 5"])>>
+<<set $routing to "ils">>
+"Three-one Yankee is cleared to the Charleston Yeager airport via radar vectors, maintain five thousand, squawk four-six-five-two. Fly heading three-four-zero, vectors ILS runway 5 final approach course."
+
+You read it back, and the clearance settles over the cockpit like a checklist somebody else is running. Headings arrive. Altitudes arrive. You fly the one engine and the two needles and let the vectors do the geometry. The descent to five thousand brushes you through the upper deck's bases, then a bright shelf of hazy clear air between layers, the good engine steady at 24 squared, and then the lower gray lid rises to meet you as approach turns you onto the localizer, and the world becomes a course needle, a glideslope, and a number: 105.
+
+"Three-one Yankee, four from the marker, maintain five thousand until established, cleared ILS runway 5 approach."
+
+Time to decide how this airplane is dressed when it comes downstairs. The card in the seat pocket has opinions. So does the part of you that wants options.
+
+<div class="choice-list">
+<<link "A. Fly the card and say it out loud. 'Dev, here's the deal: gear comes down at glideslope intercept, approach flaps only, and below four hundred feet we are landing no matter what appears. Nobody touches anything after that.'" "Gate_CRW">>
+  <<set $pathArray to $pathArray.concat(["D4: briefed the gate, gear at intercept"])>>
+  <<set $gateBriefed to true>>
+  <<set $config to "briefed">>
+<</link>>
+
+<<link "B. Put the wheels down now, four miles early. Get the drag over with, get trimmed, and ride a stable, committed sled down the wire." "Gate_CRW">>
+  <<set $pathArray to $pathArray.concat(["D4: gear early, committed sled"])>>
+  <<set $gearDown to true>>
+  <<set $config to "early">>
+<</link>>
+
+<<link "C. Keep it clean down the glideslope. Every foot per minute stays in your pocket until the runway is made, then gear and flaps together at the bottom." "Gate_CRW">>
+  <<set $pathArray to $pathArray.concat(["D4: clean to the bottom"])>>
+  <<set $config to "late">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Route_CRW_Visual [scenario]
+<<set $pathArray to $pathArray.concat(["Under the layers, up the Kanawha"])>>
+<<if $routing is "high">>You wheel back east to the hole you passed, and it is still there, smaller than it looked with nine miles of optimism behind it. The descent through it is a spiral you fly deliberately, shallow bank toward the good engine, and the deck closes over the sun as you settle beneath.<<else>>The hole takes you the way holes should be taken: promptly, while they exist. You spiral down through it in two easy turns, bank shallow, everything trimmed.<</if>><<set $routing to "visual">> At three thousand you are under the main deck, and the second layer the special reported hangs ahead in the haze like smoke over the plateau, ragged, with hills wearing pieces of it.
+
+The Kanawha gives you a floor of six hundred feet and a highway of bends to follow. You come up the valley at twenty-six hundred, hill country unrolling below and beside you, barges on the water, the haze turning everything the color of weak tea. The airport is on the plateau above the far bank, lights coming on in the murk.
+
+"Three-one Yankee, Charleston, radar shows you up the river. Runway 5, plan straight-in from the southwest, report the runway. The special has visibility five in haze."
+
+The runway will appear late in this. Everything appears late in haze. The question is what the airplane is wearing when it does.
+
+<div class="choice-list">
+<<link "A. Brief the bottom line to Dev now: wheels at three-mile final, approach flaps, and past four hundred feet this airplane lands on that hilltop, period, whatever else shows up." "Gate_CRW">>
+  <<set $pathArray to $pathArray.concat(["D4: gate briefed up the river"])>>
+  <<set $gateBriefed to true>>
+  <<set $config to "briefed">>
+<</link>>
+
+<<link "B. Gear down here over the river, miles early. Drag now, stability now, and the last five minutes get flown on rails." "Gate_CRW">>
+  <<set $pathArray to $pathArray.concat(["D4: wheels down over the river"])>>
+  <<set $gearDown to true>>
+  <<set $config to "early">>
+<</link>>
+
+<<link "C. Stay slick in the haze. If that runway shows up ugly, you want climb in your pocket, so nothing hangs out until you can see pavement." "Gate_CRW">>
+  <<set $pathArray to $pathArray.concat(["D4: slick in the haze"])>>
+  <<set $config to "late">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Gate_CRW [scenario]
+<<set $pathArray to $pathArray.concat(["Final approach, runway 5"])>>
+<<if $routing is "visual">>The runway materializes out of the tea-colored haze at four miles, a wet-looking gray ribbon on top of its hill, approach lights strobing.<<else>>The needles hold center, and at thirty-six hundred the bases of the lower lid let you go. The hilltop sits ahead through six miles of haze, runway lights on, the plateau falling away on every side of it.<</if>> <<if $config is "early">>The gear has been down for miles, the airplane settled into its draggy, honest descent, trimmed hands-light.<<elseif $config is "briefed">>At your briefed point the gear comes down, three green, approach flaps set, and the airplane sags onto the new trim you already had waiting.<<else>>The airplane is still clean, still quick, the runway growing while the checklist waits in your lap.<</if>>
+
+Tower now. "Twin Comanche three-one Yankee, Charleston Tower, <<if $declared is "emergency">>runway 5, cleared to land, wind two-two-zero at eight, equipment is standing by at Bravo. The runway is yours.<<else>>runway 5, cleared to land, wind now two-two-zero at eight.<</if>>"
+
+Two-two-zero. The wind has swung around behind you, eight knots on the tail for runway 5.
+
+<<if $declared is "emergency">>
+<div class="choice-list">
+<<link "Fly it down. One-oh-five to short final, 95 over the fence, sixty-two hundred feet of uphill-facing pavement and a tailwind you already did the math on." "Final_CRW_Land">>
+  <<set $pathArray to $pathArray.concat(["Landed with the trucks watching"])>>
+<</link>>
+</div>
+<<else>>
+"Three-one Yankee, if you'd like, runway 23 is available, wind would favor it. Your call."
+
+An offer, floated politely, a thousand feet above a hilltop. Runway 23 means breaking off left, swinging around the north side, and rebuilding this approach from a low, tight base in haze. Runway 5 means eight knots of tailwind and sixty-two hundred feet of landing distance that you have already briefed once.
+
+<div class="choice-list">
+<<link "A. 'Three-one Yankee will keep runway 5.' The tailwind costs a few hundred feet you have. The swing costs a stabilized approach you will not get back." "Final_CRW_Land">>
+  <<set $pathArray to $pathArray.concat(["D5: kept 5 with the tailwind"])>>
+<</link>>
+
+<<link "B. 'Three-one Yankee, we'll take 23.' Eight on the nose beats eight on the tail, and it is one turn around the hill to get it." "Gate_CRW_Swing">>
+  <<set $pathArray to $pathArray.concat(["D5: took the late swing to 23"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+<</if>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Gate_CRW_Swing [scenario]
+<<set $pathArray to $pathArray.concat(["Breaking off for runway 23"])>>
+"Three-one Yankee, roger, break off left when able, make left traffic runway 23, report midfield downwind."
+
+The break-off is a left turn, which puts the dead engine on the inside, low over the falling ground north of the hill. <<if $config is "early" or $config is "briefed">>You suck the gear back up for the reposition, because dragging wheels around this circuit at pattern altitude costs climb you do not own.<<else>>The airplane is still clean, at least, which was the one mercy of your plan.<</if>> The airspeed wants to sag every time your eyes leave it, and your eyes keep leaving it, because the runway is over there, the hill is under here, the haze has eaten the horizon, and the flow you briefed for a straight-in belongs to an approach that no longer exists.
+
+Midfield downwind arrives fast at 120 miles an hour of groundspeed. Everything now has to happen in ninety seconds: gear, flaps, props, the turn, the trim, the callouts, on one engine, out of a bank.
+
+<div class="choice-list">
+<<link "A. Call the ugly early. 'Tower, three-one Yankee, unable this circuit, we'd like to come back around for runway 5.' Roll out, climb what you can, rebuild the straight-in." "Final_CRW_Land">>
+  <<set $pathArray to $pathArray.concat(["D6: bailed out of the swing, back to 5"])>>
+  <<set $swingBack to true>>
+<</link>>
+
+<<link "B. Finish what you started. Base turn now, run the flow in the bank, and put it on 23 into the wind like you said you would." "End_CRW_GearUp">>
+  <<set $pathArray to $pathArray.concat(["D6: pressed the swing, flow in the bank"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Final_CRW_Land [scenario]
+<<set $pathArray to $pathArray.concat(["Touchdown, Charleston"])>>
+<<if $swingBack>>Tower takes your surrender without ceremony. "Three-one Yankee, roger, fly runway heading two-three-zero until clear of the pattern, left turn back for a five-mile final runway 5, cleared to land, wind two-two-zero at eight." The rebuild costs four minutes and a lap of shallow, patient turns. The second straight-in is the approach the first one should have stayed: needle-straight, gear confirmed down, three green, approach flaps, trimmed.<<else>><<if $config is "late">>You run the bottom-of-the-hill flow on short final: gear down, three green counted out loud, approach flaps, trim, all of it stacked into the last mile with the runway swelling in the windshield. Your hands are quick and the airplane accepts it, this time, at the price of a final approach that feels like changing clothes in a phone booth.<<else>>The last mile is almost quiet. Gear confirmed, three green, approach flaps, trim. The tailwind flattens the picture and hurries the fence at you, exactly the way you briefed it.<</if>><</if>>
+
+You cross the threshold at 95 with the tail wind pushing, touch down long-ish and firm, and let it roll. Sixty-two hundred feet absorbs all of it with room left over. Off at the far taxiway, the ground drops away beyond the fence into gray air, a reminder that this runway is a tabletop.
+
+<<if $declared is "emergency">>The trucks fall in behind you, lights turning, and follow you to the ramp like a small parade. A firefighter in a silver suit gives you a thumbs-up as you shut down, and you return it with a hand that is steadier than you expected.<<else>>The tower hands you to ground, ground hands you to the FBO, and the airport goes back to its afternoon as if nothing at all just landed on one engine.<</if>>
+
+Dev exhales through his cheeks as the good engine spins down. "Okay," he says. "Okay. That was interesting."
+
+<<goto "Ground_CRW_Ramp">>
+
+:: Ground_CRW_Ramp [scenario]
+<<set $pathArray to $pathArray.concat(["On the ramp at Charleston"])>>
+The line crew chocks the wheels, and the airplane becomes what it will be for a while: a project. Oil streaks the left cowl from spinner to hinge line, brown and thin. It is 5:05 pm. Lewisburg, the hotel, the rental car, and an 8:40 tee time sit a hundred and ten road miles east.
+
+Dev stands under the dead engine with his hands in his jacket pockets, looking up at the painted cowl, and says nothing about golf. Out loud.
+
+<div class="pax-quote">"Whatever you need to do, man. Seriously." A pause long enough to hear the fuel truck idling. "The counter in there says they have cars."</div>
+
+Your phone holds two numbers that matter tonight: Gwen Statler, senior partner, and Merle Haskins, the A&P who has kept this airplane honest for nine years.
+
+<div class="choice-list">
+<<link "A. Grab the rental now, tonight, and drive the two hours east. The airplane is safe, the weekend is salvageable, and the calls can happen from the road." "End_CRW_WeekendDrive">>
+  <<set $pathArray to $pathArray.concat(["D6: rented the car, saved the weekend"])>>
+  <<set $groundPlan to "drive">>
+<</link>>
+
+<<link "B. Fold the weekend. Book two airline seats home tomorrow, walk Dev to the terminal restaurant, and start the engine paperwork tonight with a clear head." "End_CRW_WeekendDead">>
+  <<set $pathArray to $pathArray.concat(["D6: folded the weekend at Charleston"])>>
+  <<set $groundPlan to "off">>
+<</link>>
+
+<<link "C. Calls first, decisions second. Get Merle and Gwen on the phone before you promise anybody anything, including Dev." "Ground_CRW_Shop">>
+  <<set $pathArray to $pathArray.concat(["D6: called the partnership first"])>>
+  <<set $groundPlan to "shop">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_CRW_Shop [scenario]
+<<set $pathArray to $pathArray.concat(["Merle and Gwen on the phone"])>>
+Merle picks up on the second ring, and you can hear a ballgame behind him go quiet. You describe it plainly: pressure sag, temp climb, mist on the cowl, secured and feathered, flown to a runway.
+
+"Well," Merle says, "you did the part right that kills people when they do it wrong." A pause with wrenches in it. "Mist off the case like that, could be the governor line, could be a cooler hose, could be a case seal. Nobody runs that engine again until the filter's cut open and I've had a light inside the cowl. Not to taxi it. Not to try it. You hear me saying that?"
+
+Gwen, conferenced in from her kitchen, is quieter and quicker. "Airplane's insured, hangar space is cheap, and Charleston has a real shop. The airplane is now the least important thing in your weekend, Curt. How's Dev?"
+
+"Wants to be golfing."
+
+"Then the partnership's official position," Gwen says, "is go find him a car."
+
+<div class="choice-list">
+<<link "A. Do exactly that. Sign the airplane into the Charleston shop's care, take the rental east tonight, and let the professionals own the cowl." "End_CRW_Balanced">>
+  <<set $pathArray to $pathArray.concat(["D7: left it with the shop, drove east"])>>
+  <<set $groundPlan to "shop-leave">>
+<</link>>
+
+<<link "B. Push once. 'Merle, if it's just the hose, could you overnight the parts? I could ferry it home Sunday and we'd save the shop bill.' See what he says." "End_CRW_WeekendDead">>
+  <<set $pathArray to $pathArray.concat(["D7: pushed for the quick fix"])>>
+  <<set $groundPlan to "push">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_CRW_WeekendDrive [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: drove east from Charleston"])>>
+The rental is a gray crossover that smells like pine trees and somebody's cigarette from 2019. By 6:20 you are eastbound on the interstate with Dev running the playlist, and by 8:30 you are checking into the hotel in Lewisburg, where the desk clerk asks how the flight was and Dev says, "Educational," before you can open your mouth.
+
+You call Gwen from the parking lot. She listens to the whole thing and says, "You landed a one-engine airplane at a two-engine airport. That's the right direction to round." Merle texts a list of things the Charleston shop should photograph before anyone touches the cowl.
+
+The tee time survives. Dev plays terribly and blames the mountain air. Sunday night you drive the rental home and leave the airplane where the fire trucks live.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You chose the airport with the most margin instead of the one with the most convenience: a tower, an ILS, crash rescue, and 6,215 feet of landing distance, at the cost of twenty-nine miles flown away from your weekend. The arrival worked<<if $swingBack>>, though the late swing toward runway 23 briefly turned a stabilized straight-in into a low, busy circuit before you called it off and rebuilt the approach<</if>>, the airplane is intact, and the golf happened anyway. Two hours of interstate bought back what the diversion spent.</p>
+<h3>ADM analysis</h3>
+<p>The core trade at your first decision was margin against mission, and you paid for margin. Notice that the mission mostly survived anyway: diversions rarely kill weekends, just itineraries. <<if $declared is "emergency">>Declaring was the quiet star of this flight. It cost one word and a possible phone call, and it bought a sterile runway, priority handling, and trucks you did not need. Insurance you do not use is not waste.<<elseif $declared is "advisory">>Calling it "precautionary" was honest and modest, and it worked. Worth noticing what it left unclaimed: priority handling and equipment standing by were both available for one more word, at zero operational cost.<<else>>Minimizing the situation on frequency kept the circus away, and today the margin held anyway. The system can only protect what it knows about, and you told it there was nothing to protect. Had the good engine coughed on final, the difference between "doing fine" and a declared emergency would have been measured in fire-truck minutes.<</if>><<if $swingBack>> Abandoning the runway-change circuit mid-swing was the recovery that mattered: an unstabilized reposition on one engine is a solved problem only if you refuse to finish it.<</if>><<if $held>> The opening hold cost four hundred feet and bought you nothing you did not already know. Altitude spent thinking is still spent.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>On one engine, airport selection is a margin calculation: runway length, approach structure, services, terrain, and weather, weighed against exposure time. Charleston won on every axis but distance and direction. The eight-knot tailwind at the bottom was the price of a stabilized final, and 6,215 feet absorbed it with room to spare. That is the arithmetic working the way it should: decided before short final, not during it.</p>
+<h3>Key takeaway</h3>
+<p>The good engine takes you exactly as far as your planning deserves. Today it deserved fire trucks it never needed and a runway with room to be wrong.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_CRW_WeekendDead [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the weekend dies at Charleston"])>>
+<<if $groundPlan is "push">>Merle lets your question sit for two full seconds. "Curt. The filter could be full of bearing. You want to ferry a maybe over those same ridges on Sunday to save a shop bill on an airplane you own a third of?" Nobody says anything. Gwen does not have to. "Yeah," you say. "Okay. Forget I asked." Merle's voice goes friendly again. "Asked and answered. That's how it's supposed to work."
+
+By the time the calls end it is past seven, the rental counter is closed, and the honest version of the weekend has quietly expired.<<else>>You make the calls, book the seats, and walk Dev to the terminal restaurant, where the menu is laminated and the beer is cold enough to forgive a lot.<</if>> Dev raises his glass at dinner in the airport restaurant and says, entirely without irony, "To the pilot." He means it. He also checks the tee-time cancellation window on his phone under the table, and you both pretend you did not see it.
+
+The trip home Saturday goes the long way around, through Charlotte, and eats most of the day. The drive to return Dev's clubs to his garage is quieter than any leg of it. In the car his sister calls, and Dev says, "No, it was fine, Curt was a machine," and the silence afterward, where the golf stories were supposed to go, is the loudest thing in the car.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You flew a secured-engine airplane to the highest-margin airport in reach, landed it without drama, and then let the weekend go<<if $groundPlan is "push">> after testing, out loud, whether the airplane could be hurried back into service. Your mechanic said no, and the asking cost you nothing but the evening<</if>>. Nobody is hurt. The airplane is whole. A foursome in White Sulphur Springs played as a threesome, and your brother-in-law was gracious about it, which somehow makes it worse.</p>
+<h3>ADM analysis</h3>
+<p>This is what a correct decision costs, and it is worth staring at, because this bill, not a bent airplane, is the usual price of good judgment. The pressure Dev applied was real precisely because it was kind: no tantrum to resist, just a good man being disappointed quietly. <<if $declared is "emergency">>In the air you claimed every resource on the shelf, and the arrival showed it.<<elseif $declared is "advisory">>In the air you told the truth and asked for nothing, a common and workable middle road that leaves the system's best help unclaimed.<<else>>In the air you kept the situation smaller than it was, and the margins held anyway. They usually do. The habit is the hazard, not the day.<</if>><<if $groundPlan is "push">> The ferry-flight question was the invulnerability attitude wearing a bookkeeper's visor: the same pilot who diverted correctly at altitude nearly talked himself into a maybe-engine over the same ridges to save money. Asking in front of Gwen and Merle is what made it safe to ask at all.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Take the outcome apart honestly: engine failure, controlled arrival, zero damage, one canceled recreation. That is a categorical win. The social cost is real, and the discipline is to let it be a cost instead of a debt: no makeup flight flown on a schedule, no maybe-engine ferried to make it up to anybody. Log it, debrief it, buy the man his greens fees next month.</p>
+<h3>Key takeaway</h3>
+<p>Sometimes the whole cost of doing it right is a quiet car ride. Pay it. The alternative bills arrive in a different currency.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_CRW_Balanced [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: shop, partnership, weekend, in that order"])>>
+By 6:40 the airplane is signed into the shop's care, photographed from six angles, and tucked behind a King Air with its cowl already loosened. By 6:55 you are eastbound in the rental with Dev running the map and Gwen's last line still in your ear: "Airplanes are the easy part of a partnership, Curt. This was the other part, done right."
+
+The drive is one hundred and ten miles of ridgelines going purple in the dusk. Dev talks the whole way, decompressing, and somewhere past Rainelle he says, "You know what got me? How boring you made it. It was the scariest boring thing I've ever done." You make the tee time with a full night's sleep in between.
+
+Monday the filter tells its story: a failed fitting at the oil cooler line, caught before it could pump the sump overboard, and a case that never ran dry. Six weeks and one overhauled line later, you and Gwen fly commercial to Charleston and bring N8331Y home together.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You landed at the margin airport, and then flew the ground portion with the same discipline: mechanic and partner consulted before promises were made, airplane surrendered to a qualified shop, weekend recovered by highway. The engine's story turned out to be a repairable oil line, which nobody could have known from the cockpit, which is exactly why nobody tried to know it from the cockpit.</p>
+<h3>ADM analysis</h3>
+<p>The calls-first choice looks small and is not. Pilots stranded at diversion airports make their worst decisions in the first hour, alone, with a phone full of expectations. You put two more brains between yourself and the airplane before deciding anything, and the decision that came back was calmer than the one you would have made solo. <<if $declared is "emergency">>Same pattern in the air: you claimed the system's full help early and let professionals stand around being unnecessary.<<elseif $declared is "advisory">>It rhymes with your radio work: honest, modest, and functional, though the full-priority option was there for the taking.<<else>>It contrasts with your radio work, where you kept the system at arm's length. On the ground you reached for help freely. Worth asking why the cockpit version of you was prouder.<</if>><<if $held>> The early orbit to think cost four hundred feet for information you already had. The better version of that instinct is what you did on the ramp: think with other people, on the ground, where thinking is free.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>A co-owned airplane makes every emergency a partnership event. The sequence that works is the one you flew: secure the people, secure the airplane, then bring in the mechanic and the partners before commitments. 14 CFR 91.3 makes the pilot in command final authority in flight. On the ramp, authority is best spent gathering opinions, and a good A&P saying "nobody runs it until the filter is open" is the sound of the system working.</p>
+<h3>Key takeaway</h3>
+<p>The emergency does not end at the chocks. It ends when the airplane is in the right hands and the people are where they belong.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Route_BKW_Turn [scenario]
+<<set $pathArray to $pathArray.concat(["Committed to Beckley"])>>
+"Center, three-one Yankee, we'll put it into Beckley."
+
+"Three-one Yankee, roger. Contact Charleston Approach on one-two-five point four, they work the Beckley area. Good afternoon."
+
+The heading change is barely a change, ten degrees of right dogleg, and the plateau ahead begins its long step up toward the field that sits on top of it. Nine minutes. The ASOS on 121.55 says again what it said before: wind one-niner-zero at four, three thousand broken, twenty-one degrees. Runway 19, then. Sixty-seven fifty feet of it, up where the air is worth about thirty-eight hundred feet of density altitude this afternoon.
+
+Charleston Approach has your story from Center before you finish the call sign. "Twin Comanche eight-three-three-one Yankee, Charleston Approach, radar contact two-zero southwest of Beckley. Understand the left engine is secured. Say intentions for the arrival."
+
+The frequency waits. Dev waits. The field guide's line about the county crash truck floats up from somewhere.
+
+<div class="choice-list">
+<<link "A. Make it official. 'Approach, three-one Yankee declares an emergency, single engine, landing Beckley. Request you advise the field.' Let the county roll its truck for nothing." "Declare_BKW_Emerg">>
+  <<set $pathArray to $pathArray.concat(["D2: declared inbound to Beckley"])>>
+  <<set $declared to "emergency">>
+<</link>>
+
+<<link "B. State it plainly, claim nothing. 'Approach, three-one Yankee, precautionary single-engine landing at Beckley, no assistance required, we'll cancel with the field in sight.'" "Declare_BKW_Soft">>
+  <<set $pathArray to $pathArray.concat(["D2: plain statement, no priority"])>>
+  <<set $declared to "advisory">>
+<</link>>
+
+<<link "C. Wrap it up early. 'Approach, three-one Yankee, field's almost made, cancel radar services, we'll switch to the CTAF.' Nine minutes out, nothing left to coordinate." "Declare_BKW_Quiet">>
+  <<set $pathArray to $pathArray.concat(["D2: canceled services early"])>>
+  <<set $declared to "none">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Declare_BKW_Emerg [scenario]
+<<set $pathArray to $pathArray.concat(["Beckley knows you are coming"])>>
+"Three-one Yankee, roger, copy declared emergency. Airport management is being advised, equipment will be standing by. Altitude your discretion, cleared into the Beckley area, advise switching to the CTAF."
+
+Somewhere on that hilltop a pager is going off in a county garage, and a man who was mowing the infield an hour ago is pulling on turnout gear. You will apologize to exactly nobody for that.
+
+Dev processes the word the way passengers do.
+
+<div class="pax-quote">"Emergency. Okay. Is there something you're not telling me, or is this a paperwork thing?"</div>
+
+"It's a they-get-ready-so-we-don't-have-to-be-lucky thing."
+
+"Great," Dev says. "Love not being lucky." He tightens his belt a notch, casually, like a man adjusting a watch.
+
+<<goto "Drift_BKW_Plan">>
+
+:: Declare_BKW_Soft [scenario]
+<<set $pathArray to $pathArray.concat(["Plain statement, working inbound"])>>
+"Three-one Yankee, roger, understood, no assistance. Report the field in sight, advise the frequency change."
+
+Clean and done. Approach goes back to a pair of Navy trainers working the high blocks, and you go back to the descent math. The tape now holds the facts and nothing extra: single engine, landing Beckley, needs nothing.
+
+The dead propeller sits on the edge of your vision like a clock with no hands.
+
+<div class="pax-quote">"So who's, like, expecting us down there?" Dev asks. "Airport-wise."</div>
+
+"Whoever's on the radio at the FBO, and anybody in the pattern listening."
+
+"Huh," he says, looking at the big green hilltop growing in the windshield. "Feels kind of do-it-yourself."
+
+"Non-towered field. It is."
+
+<<goto "Drift_BKW_Plan">>
+
+:: Declare_BKW_Quiet [scenario]
+<<set $pathArray to $pathArray.concat(["Off radar services, nine minutes out"])>>
+"Three-one Yankee, radar services terminated, squawk VFR, frequency change approved. Good day."
+
+And that fast, the sky gets private. The transponder goes to 1200, the number two radio goes to 123.0, and the only people who know a single-engine twin is inbound to Beckley are the two of them in it. The CTAF carries somebody's long, chatty position report from a field forty miles away, then quiet.
+
+The field guide said the ILS runway 19 brings airliner-sized commuters in here. What it did not list is who answers the unicom at ten of six on a Friday, or how fast a county crash truck rolls when nobody has told it to.
+
+Dev looks at the silent radio, then at you.
+
+<div class="pax-quote">"That's it? We just... show up?"</div>
+
+"We announce in the blind and land. Standard stuff."
+
+"Standard," Dev repeats, the word doing a lot of work.
+
+<<goto "Drift_BKW_Plan">>
+
+:: Drift_BKW_Plan [scenario]
+<<set $pathArray to $pathArray.concat(["The Beckley descent problem"])>>
+Here is the geometry nobody briefs for a field they were never landing at: you are near seventy-one hundred, give or take, nine miles from a runway whose pattern altitude is thirty-five hundred. Call it thirty-six hundred feet to lose, one engine to lose it with, and the good news and bad news are the same news: this airplane does not want to come down any faster than it wants to go up.
+
+The deck is broken over the plateau, bases fifty-five hundred, with a working hole just left of the nose and another behind you. Under it, haze, and the plateau's shoulders carrying rags of cloud to the northeast.
+
+<div class="choice-list">
+<<link "A. Keep everything until the field is under you. Cross overhead high, then spiral down over the runway in shallow turns, field made the entire time, and join the pattern from the top." "Approach_BKW_Spiral">>
+  <<set $pathArray to $pathArray.concat(["D3: overhead spiral, field made throughout"])>>
+  <<set $routing to "spiral">>
+<</link>>
+
+<<link "B. Start down through the hole now and fly it like an arrival: a long, shallow, planned descent to a five-mile straight-in for 19, stable and flat, no circus over the field." "Approach_BKW_Base">>
+  <<set $pathArray to $pathArray.concat(["D3: planned descent to the straight-in"])>>
+  <<set $routing to "base">>
+<</link>>
+
+<<link "C. Get underneath and stay visual with the ground: duck down through the near hole to thirty-five hundred and run the last miles under the deck with the field lights ahead." "Approach_BKW_Low">>
+  <<set $pathArray to $pathArray.concat(["D3: ducked under early"])>>
+  <<set $routing to "low">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_BKW_Low [scenario]
+<<set $pathArray to $pathArray.concat(["Under the deck, over the plateau"])>>
+The hole takes you down in two turns, and at thirty-five hundred you level beneath the deck into a different world: brown-gray haze, ridge shoulders sliding past at eye level a mile off either wing, and the bases a few hundred feet up running ragged, dropping streamers that touch the higher ground to the northeast. The field should be eight miles at your one o'clock. What you can see is six miles of murk with power lines in it somewhere.
+
+Beckley's plateau rises to meet its airport. So does everything else up here. Your altimeter says thirty-five hundred. The crests under you say thirty-two, thirty-three. The math between those numbers is your entire margin, and it is doing nothing but shrinking as the ground stairs up toward the field.
+
+Behind your left shoulder, the hole you came through is still there, still open, going gold at its edges.
+
+<div class="choice-list">
+<<link "A. Climb back up through it while it exists. Take the thousand feet back, cross the field high, and trade this hallway for a spiral with the runway captive beneath you." "Approach_BKW_Spiral">>
+  <<set $pathArray to $pathArray.concat(["D3b: climbed back, took the overhead"])>>
+<</link>>
+
+<<link "B. Hold what you have. Six more miles of hallway, then the runway lights. The airplane is level, the engine is smooth, and climbing on one is expensive." "Approach_BKW_Base">>
+  <<set $pathArray to $pathArray.concat(["D3b: pressed the low hallway"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_BKW_Spiral [scenario]
+<<set $pathArray to $pathArray.concat(["Overhead Beckley, spiraling down"])>>
+<<if $routing is "low">>The climb back costs what climbs cost today: three minutes of full throttle and 105 on the nose to buy back a thousand feet of daylight. You arrive over the field at forty-five hundred, under the deck but on top of the problem, the runway captive beneath you.<<set $routing to "spiral">><<else>>You cross the field a thousand above the deck's bases with the runway framed in a gap, and by the third turn you are through the gap and under the gray, the plateau's haze flattening the light.<</if>> You announce your intentions on the CTAF<<if $declared is "emergency">>, where the unicom answers immediately: the truck is out, the pattern is clear, winds calm to four knots<</if>>, and start the wheel: shallow left spirals, twenty degrees of bank, the runway turning slowly under the spinner like a display model. Nothing about this is fast. That is its whole virtue. If the good engine so much as clears its throat, you are gliding distance from sixty-seven fifty feet of pavement the entire way down.
+
+Two aircraft self-announce and stay clear, a Cub somewhere in the grass-strip distance and a King Air holding its start. Time to dress the airplane.
+
+<div class="choice-list">
+<<link "A. Say the gate out loud on the downwind: 'Gear abeam the numbers, approach flaps on base, and once we're below four hundred feet we land on that runway no matter what.' Dev nods like it's a putt line." "Gate_BKW">>
+  <<set $pathArray to $pathArray.concat(["D4: gate briefed in the spiral"])>>
+  <<set $gateBriefed to true>>
+  <<set $config to "briefed">>
+<</link>>
+
+<<link "B. Drop the wheels here in the spiral, high over the field, and let the drag fly the descent for you. Committed iron, calm hands, nothing left to do at the bottom but flaps." "Gate_BKW">>
+  <<set $pathArray to $pathArray.concat(["D4: gear down in the spiral"])>>
+  <<set $gearDown to true>>
+  <<set $config to "early">>
+<</link>>
+
+<<link "C. Spiral clean and keep the climb in reserve. Wheels and flaps can all come at the end, once the runway is absolutely yours." "Gate_BKW">>
+  <<set $pathArray to $pathArray.concat(["D4: clean spiral, config at the bottom"])>>
+  <<set $config to "late">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_BKW_Base [scenario]
+<<set $pathArray to $pathArray.concat(["The long straight-in to 19"])>>
+<<if $routing is "low">>The last six miles of hallway go by at 120 miles an hour of nothing happening, which you count as a win and file under things not to do twice. The field's rotating light shows first, then the runway, pale against the plateau.<<else>>The descent works the way planned descents work: three hundred feet a minute, power easing back an inch at a time, the hole passing you through with a mile to spare on each side. You roll out of the dogleg at four thousand five hundred, seven miles north of the field, and the runway appears out of the haze exactly where the nav said it would be.<</if>> You announce the straight-in on the CTAF, five miles, single engine, landing 19<<if $declared is "emergency">>, and the unicom comes back with winds calm to four and the truck standing by the midfield turnoff<</if>>.
+
+A straight-in on one engine is a conveyor belt: no base turn to misjudge, no bank to bleed speed in, just a runway getting bigger at a rate you control with two levers and a trim wheel. <<if $routing is "low">>The PAPI shows red over white, and against the stepped-up ground even on-slope reads low to the eye.<<else>>The PAPI shows white-white from here. High. By design, for now.<</if>>
+
+<div class="choice-list">
+<<link "A. Brief the bottom before the bottom arrives: 'Wheels at three miles, approach flaps at two, and under four hundred feet this is a landing, full stop, whatever we see or hear.' Out loud, so it's real." "Gate_BKW">>
+  <<set $pathArray to $pathArray.concat(["D4: gate briefed on the straight-in"])>>
+  <<set $gateBriefed to true>>
+  <<set $config to "briefed">>
+<</link>>
+
+<<link "B. Gear down at five miles, now, and turn the straight-in into a long stabilized sled: draggy, slow, settled, with the trim doing most of the flying." "Gate_BKW">>
+  <<set $pathArray to $pathArray.concat(["D4: wheels at five miles"])>>
+  <<set $gearDown to true>>
+  <<set $config to "early">>
+<</link>>
+
+<<link "C. Hold the airplane slick down the wire. If the engine hiccups you want altitude and speed, so the gear waits until the runway can catch you." "Gate_BKW">>
+  <<set $pathArray to $pathArray.concat(["D4: slick down the wire"])>>
+  <<set $config to "late">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Gate_BKW [scenario]
+<<set $pathArray to $pathArray.concat(["Short final 19, the thin-air picture"])>>
+<<if $routing is "spiral">>The wheel unwinds into a tidy left pattern, downwind, base, and the rollout onto final at eight hundred feet.<<else>>The conveyor belt delivers you to a three-mile final at a thousand feet over the stepped-up ground.<</if>> <<if $config is "early">>The gear has been hanging in the wind for minutes, the airplane draped on it, speed nailed by trim.<<elseif $config is "briefed">>The gear travels at your briefed mark, three green, approach flaps on schedule, and the airplane settles into the picture you promised it.<<else>>The airplane is still slick, still eager, carrying its speed like change it wants to spend later.<</if>>
+
+And here is the thing the card told you about and the eye refuses to believe: the picture is fast. Not the airspeed needle, which sits obediently at 105. The world. At thirty-eight hundred feet of density altitude the true airspeed is up, the trees stream by underneath at a sea-level 115's pace, and every instinct you tuned at a 950-foot Kentucky airport says too hot, too flat, fix it.
+
+<div class="pax-quote">"We're coming in kinda quick, right?" Dev says, very casually, hand finding the door armrest. "That's a thing you meant to do."</div>
+
+The ASOS repeats: wind one-niner-zero at four. The PAPI holds two red, two white.
+
+<div class="choice-list">
+<<link "A. Believe the needle, not the scenery. 105 indicated to short final, 95 over the fence, and let the ground hurry all it wants." "Ground_BKW">>
+  <<set $pathArray to $pathArray.concat(["D5: flew the card numbers"])>>
+  <<set $bkwTouch to "numbers">>
+<</link>>
+
+<<link "B. Fix the picture. Squeeze the power back and slow the world down to the speed your eyes were trained on." "Ground_BKW">>
+  <<set $pathArray to $pathArray.concat(["D5: chopped power to fix the picture"])>>
+  <<set $bkwTouch to "firm">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. Split the difference with insurance: carry an extra ten, 115 down final. Speed is climb you don't have to buy later if the good engine sneezes." "Final_BKW_Float">>
+  <<set $pathArray to $pathArray.concat(["D5: carried ten extra for insurance"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Final_BKW_Float [scenario]
+<<set $pathArray to $pathArray.concat(["Floating in ground effect, runway 19"])>>
+The extra ten comes over the fence with you, and thin air is a poor place to park it. The flare turns into a hover-taxi at head height: the numbers go by, the first centerline stripes go by, the thousand-foot markers go by, and the Twin Comanche skates on ground effect like a check the airport refuses to cash. A half-mile of runway is behind you before the mains are close to the pavement, and the far fence has started doing arithmetic of its own.
+
+<<if $gateBriefed>>The gate you briefed is back there at four hundred feet, already spent, already honored. What is left is the landing distance problem, growing.<<else>>Nobody set a line for this. The airplane floats, the runway spends itself, and the deciding gets done here, in ground effect, at 110 miles an hour.<</if>>
+
+<div class="choice-list">
+<<link "A. Fly it on, now, straight ahead. Accept the long touchdown, put the mains down firmly, and brake with the whole rest of the runway budgeted for stopping." "End_BKW_LongStop">>
+  <<set $pathArray to $pathArray.concat(["D6: put it down long, braked straight"])>>
+<</link>>
+
+<<link "B. Reject it. Throttle to the wall, flaps coming up, gear up, and make the one engine carry you around the pattern for another try." "End_BKW_Scrape">>
+  <<set $pathArray to $pathArray.concat(["D6: rejected from the float"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. Force the issue. Push it onto the pavement here and stand on the brakes: this ends on this runway, on this pass, with authority." "End_BKW_Overrun">>
+  <<set $pathArray to $pathArray.concat(["D6: forced it on and stood on the brakes"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_BKW [scenario]
+<<set $pathArray to $pathArray.concat(["Down and rolling at Beckley"])>>
+<<if $bkwTouch is "firm">>The power comes back, the picture obediently slows, and the sink rate arrives a second later like the fine print. The PAPI blinks red-red-red, you feed the power back in with your heart in the lever, and the airplane arrives on the numbers firm enough to make Dev grunt: a plant, not a crunch, wheels rolling, done.<<else>>The needle stays at 105, the scenery streams, and the flare happens where flares happen: over the numbers, power off, nose rising into ground effect, the mains kissing on inside the first six hundred feet. The rollout is a long, cheap exhale.<</if>> Sixty-seven fifty feet of runway forgives everything it was asked to forgive today, which turns out to be not much.
+
+<<if $declared is "emergency">>The county truck pulls alongside as you slow, and its driver, sixty if he is a day, gives you the unhurried nod of a man pleased to be bored. You shut down on the ramp with the truck's shadow across the cowl.<<else>>You make the midfield turnoff without drama and roll to a ramp where nobody knows to be impressed. The wind sock hangs at half-past limp.<</if>> The left cowl's oil streaks have gone brown and dull, like something that happened to somebody else.
+
+Dev is quiet until the props stop. Then, reverently: "That was the most boring emergency I've ever been in." A beat. "Don't tell me how close the margins were. Actually, tell me at the hotel bar."
+
+It is 4:25. Lewisburg's golf, hotel, and rental car sit an hour east by road, and the whole evening still exists.
+
+<div class="choice-list">
+<<link "A. Move now while the adrenaline is still useful: airport courtesy shuttle to the rental counter in town, calls to Merle and Gwen from the road, dinner in Lewisburg by seven." "End_BKW_Saved">>
+  <<set $pathArray to $pathArray.concat(["D6: rolled straight into the drive east"])>>
+  <<set $groundPlan to "drive">>
+<</link>>
+
+<<link "B. Stop moving on purpose. Get a room in Beckley tonight, do the calls and the logbook slowly, and drive over at dawn. You have been flying on borrowed focus since the feather." "End_BKW_Slow">>
+  <<set $pathArray to $pathArray.concat(["D6: overnighted in Beckley on purpose"])>>
+  <<set $groundPlan to "rest">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Route_LWB_Press [scenario]
+<<set $pathArray to $pathArray.concat(["Pressing east for Lewisburg"])>>
+"Center, three-one Yankee, we're going to continue to Greenbrier Valley."
+
+A beat of frequency silence, the length of a controller looking at a data block. "Three-one Yankee, roger. That's five-zero miles east. Washington Center owns the Greenbrier arrival, expect a handoff in about two-five miles. Say altitude intentions."
+
+"Three-one Yankee will drift down out of <<if $held>>seven thousand one hundred<<else>>seven thousand five hundred<</if>>, best we can hold."
+
+Dev does not pump his fist, exactly, but the seat leather creaks with suppressed approval. Ahead, the deck runs east in long gray shoals, and where the high country steps up toward Sewell Mountain the cloud shoulders lean down onto the crests the way the Bonanza pilot said they did. Fifty miles. Twenty-seven minutes of the good engine not changing its mind.
+
+There is one more piece of business with Indy before the miles start going by, and it is the piece that decides who is waiting for you at the other end.
+
+<div class="choice-list">
+<<link "A. Put the word in the system now. 'Center, three-one Yankee is declaring an emergency for the arrival, single engine, Greenbrier Valley. Request the tower be advised and equipment standing by.'" "Declare_LWB_Emerg">>
+  <<set $pathArray to $pathArray.concat(["D2: declared for the Lewisburg arrival"])>>
+  <<set $declared to "emergency">>
+<</link>>
+
+<<link "B. Give them the facts and no label. 'Center, three-one Yankee, be advised this is a precautionary single-engine operation, airplane stable, no assistance needed at Greenbrier.'" "Declare_LWB_Soft">>
+  <<set $pathArray to $pathArray.concat(["D2: facts, no label"])>>
+  <<set $declared to "advisory">>
+<</link>>
+
+<<link "C. Simplify the last hour of your day. 'Center, three-one Yankee, we're VFR direct Lewisburg, we'll cancel advisories here. Thanks for the help.' The airplane is stable, and the tower will get a normal call at ten miles." "Declare_LWB_Quiet">>
+  <<set $pathArray to $pathArray.concat(["D2: canceled advisories, going it alone"])>>
+  <<set $declared to "none">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Declare_LWB_Emerg [scenario]
+<<set $pathArray to $pathArray.concat(["The word is in the system"])>>
+"Three-one Yankee, roger, copy declared emergency, single engine, Greenbrier Valley. Coordination's already started, Lewisburg Tower will have equipment standing by. Squawk four-six-six-one, altitude your discretion, and expect Washington Center on one-three-four point four in two-zero miles. We'll pass everything along."
+
+The machinery of it is oddly comforting: three facilities passing a folder east ahead of you, so that everywhere you arrive, you are already expected.
+
+Dev turns the word over. "Emergency, though. It felt so calm in here."
+
+"It is calm in here. That's partly what the word buys. Everybody down the line gets ready, so the calm doesn't have to be luck."
+
+<div class="pax-quote">"And the golf?" he asks, and immediately holds up a hand. "Withdrawn. Landing first, golf second. But for the record, I heard 'Greenbrier Valley' in that transmission and my heart soared."</div>
+
+The deck slides beneath. The drift-down has you at seven thousand and change, the tops brushing by close below like the backs of whales.
+
+<<goto "Route_LWB_Ridge">>
+
+:: Declare_LWB_Soft [scenario]
+<<set $pathArray to $pathArray.concat(["Facts filed, label declined"])>>
+"Three-one Yankee, roger, understood, precautionary single-engine, no assistance. Washington Center in two-zero miles on one-three-four point four, they'll have your information."
+
+Accurate, unadorned, and in the record. Whether "your information" arrives at a small contract tower as an alert or as a remark in a data block is now a question of other people's afternoons.
+
+Dev has relaxed by degrees since the turn east was not a turn at all.
+
+<div class="pax-quote">"Okay, real talk," he says. "On a scale of shrug to ambulance, where are we? Because you sound like a man ordering coffee, and the propeller situation suggests otherwise."</div>
+
+"We're at 'airplane works fine on one, and I plan to keep proving it for twenty-five more minutes.'"
+
+"I can live with that math," Dev says, and reclines his seat one civilized notch.
+
+<<goto "Route_LWB_Ridge">>
+
+:: Declare_LWB_Quiet [scenario]
+<<set $pathArray to $pathArray.concat(["Advisories canceled, sky gone private"])>>
+"Three-one Yankee, radar services terminated, squawk VFR. Good luck with the airplane."
+
+Good luck with the airplane. The frequency clicks off into static and the cockpit is suddenly a very small, very quiet room fifty miles from its destination. The transponder window reads 1200. Nobody east of here knows you exist yet, which this afternoon you have decided is a feature.
+
+Dev looks at the radios like a man whose phone just lost bars in a parking garage.
+
+<div class="pax-quote">"So we're off the grid now? That's a normal move? I'm not second-guessing, I'm calibrating."</div>
+
+"The tower at Lewisburg gets a call at ten miles, same as any Friday."
+
+"Sure," Dev says. "Any Friday." He looks out at the stopped propeller, and does not say the rest of the sentence, which is its own kind of loud.
+
+<<goto "Route_LWB_Ridge">>
+
+:: Route_LWB_Ridge [scenario]
+<<set $pathArray to $pathArray.concat(["The fifty-mile question"])>>
+The chart problem, stated plainly: fifty miles of stepped-up country between here and a valley runway. The direct line rides over crests of thirty-four to thirty-six hundred, wearing patches of cloud where the deck's bases sag onto them. The deck itself runs bases fifty-five hundred, tops seven thousand, broken, with honest gaps over the low ground and fewer over the high. Your altitude floor for the day, fifty-eight hundred indicated, lives inside that deck. Sooner or later the airplane is going down through it somewhere: the choosing is whether that happens on your schedule or the drift-down's.
+
+South of the crests, Interstate 64 threads the long way around through Beckley's shoulder and the Meadow River low ground, floors near two thousand, crests a shade past three, adding eight miles and a paved out the whole way.
+
+And there is a third geometry, the one that ignores the holes entirely: Washington Center, a clearance, and the ILS to runway 4 waiting at the far end like a handrail bolted to the valley.
+
+<div class="choice-list">
+<<link "A. Fly the direct line and bank the altitude. Stay at seven thousand over the top of everything as long as the airplane holds it, and spend the height on the Greenbrier side where the ATIS says there are gaps." "Drift_LWB_Direct">>
+  <<set $pathArray to $pathArray.concat(["D3: direct, altitude banked on top"])>>
+  <<set $routing to "direct">>
+<</link>>
+
+<<link "B. Take the low road. Descend through the gap ahead while it is generous, pick up the interstate, and ride the valley corridor east with pavement and clearings under you the whole way." "Drift_LWB_Valley">>
+  <<set $pathArray to $pathArray.concat(["D3: the interstate corridor"])>>
+  <<set $routing to "valley">>
+<</link>>
+
+<<link "C. Ask Washington Center for a pop-up IFR clearance and fly the ILS 4. Trade the visual problem for a structure problem: needles, altitudes, and fifteen minutes inside the gray on one engine." "Route_LWB_Popup">>
+  <<set $pathArray to $pathArray.concat(["D3: pop-up, the handrail"])>>
+  <<set $routing to "popup">>
+  <<set $popup to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Drift_LWB_Direct [scenario]
+<<set $pathArray to $pathArray.concat(["On top, eastbound, watching gauges"])>>
+On top is beautiful, which nobody put on the risk ledger. The deck pours east under the wings, gray-white with sun caught in the gaps, and the crests show through as dark islands with cloud snagged on their east sides. The New River Gorge passes as a shadowed trench in a hole, half a mile of air with a green river at the bottom. The good engine hums at full throttle just to hold a hundred-foot-a-minute sink. Six thousand nine hundred.
+
+Your eyes do their circuit, and on the fourth or fifth lap they stall on the dead engine's gauges. Oil temperature: back in the green, cooling toward ambient. CHTs: cold. And the oil pressure needle sits just barely off its peg, a hair's width, where a dead engine's should read zero-zero-zero. A sender fed by nothing, or a gauge with an opinion. It is exactly enough to let a tired mind build a sentence like: maybe the pressure reading was the whole problem, and it never lost a drop.
+
+The cowl says otherwise. You watched the mist paint it. But the needle sits there, a hair off the peg, offering.
+
+<div class="choice-list">
+<<link "A. Close the ledger. Two symptoms agreed before the shutdown, pressure falling and temperature climbing, and the oil on the cowl is physical fact. It stays feathered to the chocks." "Approach_LWB_Setup">>
+  <<set $pathArray to $pathArray.concat(["D4: kept it feathered on the evidence"])>>
+<</link>>
+
+<<link "B. Buy an expert. 'Center, three-one Yankee, request you relay a question to our mechanic by landline when able.' Let Merle rule on the needle before you're low." "Approach_LWB_Setup">>
+  <<set $pathArray to $pathArray.concat(["D4: asked for the landline relay"])>>
+  <<set $shopCalled to true>>
+<</link>>
+
+<<link "C. Run the airstart while there's altitude to spend. If it holds pressure, you arrive with two engines and this whole conversation was insurance. If it doesn't, you feather it again and have lost nothing." "Route_LWB_Restart">>
+  <<set $pathArray to $pathArray.concat(["D4: tried the airstart, high"])>>
+  <<set $restartTried to true>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Drift_LWB_Valley [scenario]
+<<set $pathArray to $pathArray.concat(["Down the gap, onto the low road"])>>
+The gap is generous and you spend it deliberately: power back an inch, 105 on the nose, a long spiraling slide through sunlight and then shadow, and the world reassembles itself underneath as hollows and hayfields and the four-lane running east. You level at four thousand eight hundred under a ceiling of gray backs. The interstate unrolls ahead, trucks crawling it, a guaranteed clearing with rest stops every time the terrain pinches.
+
+It is lower here. Warmer. The good engine's job got easier and so did the glide math, four hundred feet a mile to something flat and paved, the whole way east.
+
+Dev has been studying the dead engine's gauges with the fascination of a man reading someone else's medical chart.
+
+<div class="pax-quote">"Hey, so, the oil one's back in the normal zone," he says, tapping the glass gently. "And the pressure one's not on zero. It's a little off zero." He looks up. "You said it flies fine on one. Would it fly finer on one and a half? Like, could you spin it back up just for the landing part? Backup engine. Belt and suspenders."</div>
+
+It is a completely reasonable question from inside his head. The temperature gauge is cooling because the engine is dead. The pressure needle floats a hair high because senders lie at zero. And the cowl is still wearing a quart of the argument.
+
+<div class="choice-list">
+<<link "A. Answer him with the ledger: the mist on the cowl is oil that left, and an engine that lost its oil is a grenade with a loose pin. 'It stays off, bud. The landing works fine on one.'" "Approach_LWB_Setup">>
+  <<set $pathArray to $pathArray.concat(["D4: talked Dev through the evidence"])>>
+<</link>>
+
+<<link "B. Put the question to a professional. Key up and ask Center to patch the question through to Merle's shop phone, and let the man with the wrenches make the call." "Approach_LWB_Setup">>
+  <<set $pathArray to $pathArray.concat(["D4: patched the question to the shop"])>>
+  <<set $shopCalled to true>>
+<</link>>
+
+<<link "C. Try it his way, carefully. Set up the airstart at altitude over the widest stretch of valley: if pressure holds, you land with a spare. First sign of trouble, it goes back to feather." "Route_LWB_Restart">>
+  <<set $pathArray to $pathArray.concat(["D4: airstart over the valley"])>>
+  <<set $restartTried to true>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Route_LWB_Restart [scenario]
+<<set $pathArray to $pathArray.concat(["The airstart"])>>
+You brief it like a maneuver, because it is one. Fuel on. Mixture set. Mags hot. Prop control forward out of the feather detent, and the starter grinds the cold blades around until the airflow catches them.
+
+The engine lights on the third blade and for nine seconds it is the sweetest sound in West Virginia: both tachometers alive, the airframe's old two-engine hum restored, the pressure needle climbing to mid-green like nothing ever happened. Dev actually laughs.
+
+Then the needle stops climbing. Sags. The temperature moves the wrong way with a purpose it did not have before, and a smell arrives, hot metal and varnish, and then the sound: a knock, deep and irregular, like a fist on the firewall from the far side. The airplane shudders with each one.
+
+Mixture cut. Prop control back through the detent. The RPM decays through twelve hundred, through a thousand, and the blades hang there, flat and windmilling, dragging like a parachute while the stop-pin arithmetic runs somewhere inside the hub. Two seconds. Four. The nose wants to walk left and down. At what must be eight hundred and one RPM the blades finally twist, slab-sided, and stand at feather.
+
+The altimeter has paid five hundred feet for the experiment. The needle sits on its peg now, honest at last.
+
+<div class="choice-list">
+<<link "Continue east. The engine is secured again, the airplane is retrimmed, and the arrival is still out there waiting to be flown." "Approach_LWB_Setup">>
+  <<set $pathArray to $pathArray.concat(["Re-secured, five hundred feet poorer"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Route_LWB_Popup [scenario]
+<<set $pathArray to $pathArray.concat(["Inside the gray, on the rail"])>>
+Washington Center takes the request without ceremony. "Twin Comanche eight-three-three-one Yankee, cleared to the Greenbrier Valley airport via direct, maintain six thousand, squawk four-six-six-four. Expect the ILS runway 4 approach.<<if $declared is "emergency">> Equipment is standing by at Lewisburg.<</if>>"
+
+Six thousand puts you inside the deck, and the deck takes you without a bump. The world goes pearl-gray and stays that way, and your universe contracts to the panel: attitude, altitude, the magenta line, the good engine's steady numbers, the ball a half-width out where you parked it. Hand-flying, one engine, solid IMC. It is the highest-workload air you have been in all year, and it is also completely orderly: no holes to hunt, no crests to clear by eyeball, just headings and the promise of a glideslope.
+
+Fifteen minutes of it. The approach loads clean, the localizer wakes up, and Center turns you onto the final approach course with the particular gentleness controllers save for airplanes that have said the quiet part out loud.
+
+"Three-one Yankee, four from the marker, cleared ILS runway 4 approach, contact Lewisburg Tower one-one-eight point niner."
+
+Time to dress it. In the gray, the card's numbers are the only scenery.
+
+<div class="choice-list">
+<<link "A. Brief the gate onto the glideslope: 'Gear at intercept, approach flaps at a dot high, and below four hundred feet we land whatever we see when we break out.' Say it to Dev like a checklist item." "Gate_LWB">>
+  <<set $pathArray to $pathArray.concat(["D4: gate briefed inside the gray"])>>
+  <<set $gateBriefed to true>>
+  <<set $config to "briefed">>
+<</link>>
+
+<<link "B. Wheels down here, level in the gray, a mile before intercept. Stable early, trimmed early, and the glideslope gets a finished airplane." "Gate_LWB">>
+  <<set $pathArray to $pathArray.concat(["D4: configured before the needles"])>>
+  <<set $gearDown to true>>
+  <<set $config to "early">>
+<</link>>
+
+<<link "C. Ride the glideslope clean and quick. Break out first, see the runway, then configure with the valley in sight and altitude still in hand." "Gate_LWB">>
+  <<set $pathArray to $pathArray.concat(["D4: clean until the breakout"])>>
+  <<set $config to "late">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_LWB_Setup [scenario]
+<<set $pathArray to $pathArray.concat(["The Greenbrier Valley opens"])>>
+<<if $shopCalled>><<if $declared is "none">>Raising Center again after waving them off costs one small swallow of pride and a minute of frequency hunting. They take the request anyway, because that is what they do. <</if>>The relay comes back in Center's borrowed words a few minutes after you ask: "Three-one Yankee, your mechanic says, and I'm reading this: if it lost its oil, it's done, leave it feathered, he'll see you Monday." A four-minute round trip for a second opinion that matches the cowl's. The needle keeps its hair-width lie and you stop consulting it.<</if>><<if $routing is "direct">>The high country pays out its last crests<<if $restartTried>>, with you riding five hundred feet closer to them than the plan intended,<</if>> and the Greenbrier side arrives on schedule: the deck's gaps widen over the valley the way the ATIS promised, and you spend the banked altitude in a long, deliberate slide through the widest of them, sun, then shadow, then the valley floor's quilt of pasture. The airport shows itself at twelve miles, a pale stripe on the valley's far side.<<else>>The interstate does its quiet, faithful work<<if $restartTried>>, and the five hundred feet the airstart spent stays spent,<</if>> and eventually gives way to the Meadow River flats and then the wide green trough of the Greenbrier Valley. You ride the low road all the way in, and the airport's stripe appears ahead-left at ten miles, exactly where the chart said to look.<</if>>
+
+The ATIS on 121.4 has not changed its mind: wind calm, few at two thousand five hundred, broken three thousand two hundred, ILS runway 4 in use, taxiway Alpha closed between Alpha-1 and Alpha-3, back-taxi required for runway 4 departures.
+
+"Lewisburg Tower, Twin Comanche eight-three-three-one Yankee, ten west, inbound full stop<<if $declared is "emergency">>." The reply is immediate: "Three-one Yankee, Lewisburg Tower, we've been expecting you, equipment is standing by. Report five-mile final runway 4, wind calm."<<elseif $declared is "advisory">>, single engine, no assistance required." "Three-one Yankee, Lewisburg Tower, roger, report five-mile final runway 4, wind calm."<<else>>." "Three-one Yankee, Lewisburg Tower, report five-mile final runway 4, wind calm." An ordinary Friday voice, working an ordinary Friday.<</if>>
+
+Five miles of flat valley air between you and the pavement. Time to dress the airplane, and to decide what kind of bottom this approach has.
+
+<div class="choice-list">
+<<link "A. Build the gate out loud: wheels at the five-mile call, approach flaps at three, and past four hundred feet the airplane lands on runway 4 regardless of what the day invents next." "Gate_LWB">>
+  <<set $pathArray to $pathArray.concat(["D5: the gate, spoken and set"])>>
+  <<set $gateBriefed to true>>
+  <<set $config to "briefed">>
+<</link>>
+
+<<link "B. Configure now, ten miles out over the flat valley: gear down, trimmed, done, and fly the world's longest stabilized final at walking pace." "Gate_LWB">>
+  <<set $pathArray to $pathArray.concat(["D5: configured across the valley"])>>
+  <<set $gearDown to true>>
+  <<set $config to "early">>
+<</link>>
+
+<<link "C. Keep the airplane slick across the valley and save every option: the wheels can come out on short final once the runway is a certainty instead of a plan." "Gate_LWB">>
+  <<set $pathArray to $pathArray.concat(["D5: slick across the valley"])>>
+  <<set $config to "late">>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Gate_LWB [scenario]
+<<set $pathArray to $pathArray.concat(["Final approach, runway 4"])>>
+<<if $routing is "popup">>The bases let you go at fifty-four hundred, ten miles out on the rail, and the valley opens beneath the gray like a curtain going up: pasture, fence lines, the town beyond the field, and the runway dead ahead on the localizer, approach lights leading in.<<elseif $routing is "valley">>The dogleg onto final is ten degrees of bank, no more, and the runway settles under the nose at five miles, the MALSR winking at the far end of a straight green mile.<<else>>The slide through the gaps delivers you onto a long final with height to spare, bled off in one shallow S over the valley floor, and the runway steadies in the windshield at five miles.<</if>> <<if $config is "early">>The gear has been down for miles now, the airplane draped on it and settled into its trim.<<elseif $config is "briefed">>At your briefed marks the wheels travel and lock, three green, approach flaps set, the airplane sagging onto numbers you already had waiting in the trim.<<else>>The airplane is still clean, carrying its speed and its options down the wire toward a runway growing wider.<</if>>
+
+"Three-one Yankee, five-mile final runway 4."
+
+<<if $declared is "emergency">>"Three-one Yankee, runway 4, cleared to land, wind calm. Equipment's holding at Alpha-1. Skyhawk holding short will wait for you."
+
+And there it is, the whole apparatus of the word you spent forty miles ago: a sterile runway, a white-and-yellow truck idling at the first turnoff, and a Skyhawk at the ramp whose Friday just got three minutes longer and no worse. The MALSR leads in across the last fence line. One-oh-five to short final. Ninety-five over the fence. The card's numbers, one at a time, in order.
+
+<div class="choice-list">
+<<link "Fly it to the pavement. The runway is yours because you asked for it to be." "End_LWB_Textbook">>
+  <<set $pathArray to $pathArray.concat(["Landed on a runway held open"])>>
+<</link>>
+</div>
+<<else>>"Three-one Yankee, runway 4, cleared to land, wind calm. Skyhawk six-four-six-romeo-whiskey, runway 4 at Alpha-3, back-taxi to the threshold, no delay, traffic's a twin on five-mile final."
+
+You watch it happen in miniature ahead: a white high-wing trundles from the ramp onto the runway's midpoint and begins back-taxiing toward you, toward the threshold, at the speed of a careful man in a rented airplane. A mile ticks by. Another. The Skyhawk does not hurry, because Skyhawks never do, and the geometry starts to fold in on itself: he is on your runway, nose-to-nose with your final, and you are inside two miles at four hundred feet with the gate<<if $gateBriefed>> you briefed<</if>> arriving now.
+
+"Three-one Yankee, go around. I say again, go around, traffic on the runway."
+
+The instruction every pilot obeys by reflex, arriving at the exact altitude where this airplane's book says the maneuver does not exist.
+
+<div class="choice-list">
+<<link "A. Refuse it with the truth. 'Unable, three-one Yankee is single engine, we are landing 4, we'll put it down long beyond the Skyhawk. Have him hold position.'" "End_LWB_Confession">>
+  <<set $pathArray to $pathArray.concat(["D6: unable, landing long, the confession"])>>
+<</link>>
+
+<<link "B. Comply the survivable way. Power up smooth, wings level, nothing left hanging in the wind, and climb straight ahead up the valley at whatever trickle the airplane offers." "End_LWB_Lap">>
+  <<set $pathArray to $pathArray.concat(["D6: the shallow lap, everything clean first"])>>
+<</link>>
+
+<<if $declared is "none" and not $gateBriefed and ($restartTried or $config is "late")>>
+<<link "C. Comply right now, the reflex way: full throttle, pitch up, and bank away left from the runway and the Skyhawk, the standard go-around you have flown a thousand times." "End_LWB_VmcRoll">>
+  <<set $pathArray to $pathArray.concat(["D6: the reflex go-around, breaking left"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+<</if>>
+</div>
+<</if>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_LWB_Textbook [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the runway held open"])>>
+The landing is the least interesting thing that happens all day, which was the entire point of everything you said on the radio. Ninety-five over the fence, mains on inside the first six hundred feet, a rollout long enough to make the open turnoff without a single hard thing happening. The truck paces you down the parallel grass and peels off when you clear. The Skyhawk departs behind you while you taxi in, its pilot's "thanks for the patience" on frequency answered by tower's dry "he had the right of way in about nine different ways."
+
+The trucks do not get used. The tower closes at seven like always. Dev stands on the ramp under the dead engine, looks at the oil-painted cowl for a long moment, and hands you your headset bag.
+
+<div class="pax-quote">"I'm going to tell everyone it was terrifying," he says. "The truth makes you sound too good."</div>
+
+Merle takes the call mid-dinner and talks you through securing the airplane for the weekend. Gwen's only note: "You declared? Good. Cheapest word in aviation." The Greenbrier Valley shop will open the cowl Monday. The tee time happens, unhurried, and on Sunday night, driving the rental home with Dev asleep in the passenger seat, you pass a hilltop far to the west with a rotating light on it and feel exactly nothing dramatic at all.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You flew a secured-engine airplane fifty miles to its planned destination and landed on a runway the system was holding open for you, because forty miles earlier you spent one word making sure it would be. The Skyhawk that could have complicated short final spent three extra minutes holding, the trucks idled unneeded, and the arrival was an anticlimax<<if $restartTried>>, even counting the airstart experiment en route<</if>>. In this business, anticlimax is the trophy.</p>
+<h3>ADM analysis</h3>
+<p>The pivotal decision was declaring while everything felt stable. It feels theatrical, and it is exactly backward to think so: the time to buy priority is while you can still fly a trimmed airplane and speak in complete sentences. The declaration did its quietest, most important work at five-mile final, where a runway incursion never got the chance to be born.<<if $gateBriefed>> The commit gate you briefed out loud made the bottom of the approach a procedure instead of a debate.<<elseif $config is "early">> Configuring early made the last miles a settled, stable sled, a defensible cousin of the briefed gate.<<else>> Worth an honest note: you flew the bottom without ever fixing a commit point, and the day simply declined to test it.<</if>><<if $restartTried>> The airstart deserves its own paragraph: two pre-shutdown symptoms plus oil on the cowl was a closed case, and reopening it cost five hundred feet, a knock you will hear for years, and a feather cycle that nearly lost the race to the stop pins. The arrival succeeded despite that bet, not because of it.<<elseif $shopCalled>> The landline relay to your mechanic was four minutes spent confirming what the cowl already said. Cheap confirmation, honestly bought, and it kept the temptation shut.<</if>><<if $held>> The opening orbit cost four hundred feet to learn nothing new. File it under tuition.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Exactly this shape: destination selection made on margins, priority claimed early and without embarrassment, a commit gate established while the airplane was high, and card speeds flown to the fence. 14 CFR 91.3(b) hands you the authority. AIM 6-1-2 spells out what declaring buys. The paperwork almost never comes, and when it does, it is a form, not a hearing.</p>
+<h3>Key takeaway</h3>
+<p>The folk line says the good engine takes you to the scene of the crash. It took you to a runway held open and a tee time, because that is what the planning deserved.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_LWB_Confession [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: unable, landing long"])>>
+"Unable, three-one Yankee is single engine, we are landing 4, we'll put it down long beyond the Skyhawk. Have him hold position."
+
+One second of tower silence, the longest of your day. Then the frequency snaps into a different gear: "Skyhawk six-romeo-whiskey, hold position, exit onto the grass clear of the centerline, do it now. Three-one Yankee, runway 4, cleared to land, land long approved, wind calm."
+
+The Skyhawk waddles right, nosewheel into the turf, and stops with its wingtip well clear. You shift your aim point a third of the way down seven thousand and three feet of runway<<if $config is "late">>, run the gear and flaps down in a compressed, ugly, effective rush,<</if>> and fly the card's numbers to a touchdown abeam the parked Skyhawk, whose pilot watches you go by from ten feet away like a man watching a train he almost stepped in front of. Thirty-five hundred feet remain. You use half.
+
+Taxiing in, tower says, quietly, "Three-one Yankee, be advised, we'd have held everybody if we'd known." That one rides home with you. The golf happens. The story Dev tells has a hero in it. The version you tell yourself has a pilot who made the right call at four hundred feet that was available at seven thousand.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A back-taxiing Skyhawk met your short final because the tower sequenced a normal Friday around an airplane it did not know was abnormal. Ordered to go around at the exact altitude where your airplane has no go-around, you refused with the truth, claimed the runway, and landed long past the conflict. Assertive, correct, and safe<<if $gateBriefed>>, and precisely what your briefed gate said would happen below four hundred feet<</if>>. Also entirely avoidable.</p>
+<h3>ADM analysis</h3>
+<p>"Unable" is the most underused word in the pilot vocabulary, and you used it at the moment of maximum need, under direct instruction, with company on the runway. That is the hard version of the skill and you had it. The analysis has to walk one step further back, though: the conflict existed because the system was working from the wrong picture. <<if $declared is "advisory">>You had told the machine "single engine, no assistance," and the machine heard "normal airplane, mild footnote." Precautionary language transfers facts. It does not transfer operational meaning. Only priority does that, and priority has one word.<<else>>You had told the machine nothing at all. The tower cleared a back-taxi in front of what it believed was an ordinary twin, because you had spent forty miles making sure that is what it believed.<</if>><<if $restartTried>> The airstart gamble en route rattled you without changing the airplane, and its real cost shows here: you arrived at the gate with less composure in the bank.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Below the gate, this was flown correctly: land, long if needed, and make the radio serve the landing instead of the reverse. 14 CFR 91.3(a) makes you the final authority, and 91.123(b) yields to exactly that authority in an emergency. The better flight declares at altitude, gets the sterile runway, and never meets the Skyhawk at all. The good flight, failing that, does what you did.</p>
+<h3>Key takeaway</h3>
+<p>"Unable" saved the arrival. "Declaring an emergency," said forty miles earlier, would have made "unable" unnecessary.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_LWB_Lap [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the lap at treetop trickle"])>>
+Power up smooth, and the discipline holds: wings level first, <<if $config is "late">>nothing hanging out to clean because nothing ever went out, the one accidental mercy of your plan,<<else>>the gear grinding up through its seven-second transit, approach flap bleeding away in stages where it was out, the runway sliding by underneath,<</if>> and the nose held to a number instead of a feeling. The Twin Comanche does not climb so much as decline to descend. The valley floor falls gently away northeast and you follow it at a hundred feet a minute, fence lines passing close enough to count wire.
+
+It takes three miles to buy eight hundred feet. The turn back is a wide, flat, patient thing, bank metered in single degrees, and the whole time Dev says nothing and the good engine says everything, full throttle, temperatures walking uphill in the yellow arc's neighborhood. By the time you roll out on final the second time, the Skyhawk is a dot climbing away to the south and the runway is empty and enormous.
+
+The second landing is card-perfect and completely silent inside the airplane. On the ramp, Dev finally speaks. "That circle we did." He picks his words. "We didn't have a lot extra just then, did we."
+
+"No," you say, because he has earned the honest answer.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Instructed to go around below your commit altitude, you complied, and you complied in the only survivable configuration this airplane offers: wings level, cleaned up, blue line, straight up a falling valley floor. It bought a hundred feet a minute and needed nearly all of it. One shallow lap later you landed on an empty runway. The margin between this ending and a very different one was technique, weight, terrain, and nothing else.</p>
+<h3>ADM analysis</h3>
+<p>Two decisions collided at four hundred feet. <<if $gateBriefed>>You had briefed the gate, out loud, correctly: below four hundred, landing, period. Then a voice with authority said "go around" and the gate dissolved. That is the authority gradient working against you: tower instructions feel like law, and in an emergency they are advice from someone who cannot feel your rudder pedal. The briefed answer was "unable."<<else>>No commit gate ever got briefed, so when the instruction came there was no pre-made answer to hold onto, and compliance filled the vacuum. Gates exist precisely so that this moment is a recitation instead of a decision.<</if>> The redeeming judgment was HOW you complied: no bank until clean, nose to a number, the valley's falling floor chosen over the reflex left turn. That discipline is why this debrief exists in this tense.<<if $restartTried>> The earlier airstart, which bought a knock and five hundred feet of nothing, also meant you flew this lap with an adrenaline debt already on the books.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>The card's arithmetic was published before takeoff: gear and flaps cost more feet per minute than the airplane has to give. A single-engine go-around below four hundred feet in a PA-30 is a maneuver you audit, not fly. The complete answer to "go around" from inside the gate is "unable, landing." The tower cannot see your performance chart. You are the only person on the frequency who has read it.</p>
+<h3>Key takeaway</h3>
+<p>You survived the maneuver the numbers vote against. Do not let the survival file itself as evidence that it works.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_LWB_VmcRoll [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: eleven seconds"])>>
+Full throttle. Nose up. Left bank, away from the runway, the go-around flown the way a thousand two-engine go-arounds trained your hands to fly it.
+
+The right engine delivers everything it has, and all of it is yaw. The nose swings left into the dead engine, the bank you commanded helps it, and the airspeed, which was 96, becomes 91, then 88<<if $config is "late">> as the gear you rushed out on short final drags at full extension<</if>>. The rudder reaches its stop. At three hundred feet above the Greenbrier Valley the left wing stops flying, and the roll that follows is smooth, unhurried, and past vertical in under two seconds.
+
+The Twin Comanche strikes the pasture short of the airport fence eleven seconds after the words "go around." There is no fire. The ELT does its work, and the county equipment that nobody asked to stand by arrives in six minutes, which on this evening is five and a half minutes more than the difference would have needed.
+
+The NTSB writes it up in the spare language reserved for the most documented accident sequence in twin-engine aviation: loss of directional control following an attempted single-engine go-around, bank toward the inoperative engine, airspeed below Vmc. The report does not mention the tee time, the rental car, or how reasonable every mile of the afternoon felt from inside it.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>An airplane that had flown fifty stable miles on one engine was destroyed in eleven seconds, not by the failure, but by the arrival. A go-around was attempted below four hundred feet with full power on the right engine, a pitch-up, and a bank into the dead engine. Airspeed fell through Vmc, directional control was lost, and no altitude existed in which to recover. This is the Vmc roll, and at pattern altitude it is unsurvivable nearly every time it occurs.</p>
+<h3>ADM analysis</h3>
+<p>No single decision did this. Four did, in a row, each one narrowing what the next could fix. First, canceling advisories fifty miles out: the tower sequenced a Skyhawk into your final because you had made yourself ordinary, so the go-around instruction got issued at all. <<if $restartTried>>Second, the airstart: reopening a closed case against the physical evidence, which spent five hundred feet and, more expensively, your composure.<</if>> <<if $config is "late">>Then the clean-to-the-bottom energy plan, which meant the final approach was a rush of configuration instead of a stabilized procedure, and left the airplane dirty, slow, and mid-transition at the worst moment.<</if>> Then the absence of any briefed commit gate, so "go around" arrived with no pre-decided answer standing in its way. And last, the reflex itself: the two-engine go-around, flown by hands that were never given a different plan to hold. The instruction from the tower was legal to refuse. "Unable" was one word away, and the survivable compliance, wings level, clean first, straight ahead, was also sitting there. Impulsivity took the controls because nothing had been briefed to stop it.</p>
+<h3>What good judgment looks like here</h3>
+<p>Three defenses existed, any one of which ends this story on a ramp. Declare, and the runway is sterile. Brief the gate, and below four hundred feet "go around" is answered with "unable, landing." And if a go-around must happen anyway, the only version this airplane sells is wings level at blue line, cleaned up, straight ahead, never a bank toward the feathered side. Vmc is not a certification abstraction. It is 90 miles per hour, painted red, eighteen inches from where your eyes were pointed.</p>
+<h3>Key takeaway</h3>
+<p>The good engine took this airplane exactly as far as the planning deserved. It did not have to end at the scene of the folk saying. It never does.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_BKW_Saved [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: Beckley, then the hour east"])>>
+The shuttle driver has opinions about the interstate and shares all of them. By 5:30 you have a rental, by 5:45 Merle has heard the whole story twice ("you did the flying part fine, now don't touch it"), and Gwen has already reached the Beckley shop by some partner telepathy of her own. The airplane will get its cowl opened Monday by people with a parts account.
+
+The drive east is an hour of gold light on ridgelines. Dev calls his golf buddies from the passenger seat and tells the story with hand gestures you can hear. Dinner in Lewisburg happens. The 8:40 tee time happens. On fourteen, Dev three-putts and announces that his playing partner landed on one engine yesterday, so nobody gets to complain about anything.
+
+Sunday evening, driving home, you pass the Beckley exit and both of you look right, toward the hilltop, without saying anything.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You took the nearest suitable runway, managed a high-density-altitude arrival on one engine, and landed with nothing bent and nothing owed. <<if $bkwTouch is "firm">>The picture-fixing power reduction on final bought a sink rate you then had to buy back, and the arrival was firm because of it.<<else>>You flew the indicated numbers and let the scenery hurry, which is precisely the discipline thin air demands.<</if>> The weekend lost an evening hour and kept everything else.</p>
+<h3>ADM analysis</h3>
+<p>Beckley's case at your first decision was proximity, and proximity is a powerful, legitimate argument with one engine running. Its price tag was elevation: a field a half-mile up, where your single-engine climb budget was thinnest. You paid the price knowingly and it held. <<if $routing is "spiral">>The overhead spiral kept the runway in glide range the whole descent, the most conservative geometry available, bought at the cost of a few extra minutes aloft.<<elseif $routing is "low">>The straight-in you flew was the conveyor-belt arrival this airplane wanted, though the low hallway that got you there put a thousand-foot ceiling on your options for six long miles.<<else>>The planned, flat straight-in was the conveyor-belt arrival this airplane wanted: no base turn, no bank, no surprises.<</if>> <<if $declared is "emergency">>Declaring rolled one county truck and cost one word. It was standing at midfield being unnecessary, which is the correct place for it.<<elseif $declared is "advisory">>Your plain statement to approach kept the record honest without claiming priority. Workable, and one word short of the full service.<<else>>Canceling radar services nine minutes early saved you nothing and spent your only high cover. Had the good engine faltered in the descent, the first anyone would have heard of it was an ELT.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Closest field is a fine answer when the field is suitable, and suitability at altitude means doing density-altitude arithmetic before final, not during the flare. The card's numbers, indicated airspeed flown faithfully, protect against the eye's sea-level calibration. Fifteen minutes of stable, trimmed OEI cruise is cheap. A rushed descent to a thin-air runway is where that cheapness gets spent.</p>
+<h3>Key takeaway</h3>
+<p>Fly the needle in thin air. The scenery is lying to you at exactly the moment you most want to believe it.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_BKW_Slow [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: overnight in Beckley on purpose"])>>
+The hotel by the interstate has a room, a diner attached, and a parking lot view of the hill you just landed on. You do the calls slowly over coffee: Merle first ("smart, staying put, you'd be amazed how many guys wreck a car the same night they save an airplane"), then Gwen, then the logbook entry, written in a hand that gets steadier with each line.
+
+Dev misses the Friday steak dinner his buddies drove in for, and takes it like a champ, which is to say he mentions it only twice. At dawn you drive the hour east through fog pooled in the hollows, and Dev makes the 8:40 tee time with twenty minutes and one gas-station biscuit to spare. He plays the front nine like a man who slept badly and the back nine like a man glad to be anywhere.
+
+The airplane waits on the Beckley ramp, tied down, cowl streaks going chalky, patient as furniture.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You landed at the nearest suitable field and then made an unfashionable call: you stopped moving. The adrenaline bill from an engine failure and a single-engine arrival got paid in a Beckley hotel instead of on a dusk mountain highway. It cost your brother-in-law a steak dinner and cost you nothing that shows on any inspection.</p>
+<h3>ADM analysis</h3>
+<p>Post-event fatigue is the least-briefed threat in an emergency, because it arrives after the emergency is officially over. The pilot who feathers an engine, flies a thin-air approach, and shuts down clean is spent in ways that do not show up until a curve does. Recognizing that, out loud, with a disappointed passenger in earshot, is the same discipline as the feather drill: identify, verify, secure. <<if $bkwTouch is "firm">>The one wobble in the flying was chasing the sea-level picture with power on final, which traded airspeed discipline for a sink rate and a firm arrival.<<else>>The flying itself held the card's numbers all the way down, thin-air picture and all.<</if>> <<if $declared is "emergency">>In the air you took the full service, one word, one county truck, zero regrets.<<elseif $declared is "advisory">>On the radio you told the truth and claimed nothing, a serviceable middle road.<<else>>On the radio you went dark nine minutes early, which cost nothing today and is the kind of habit that costs everything eventually.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>IMSAFE applies after the airplane is tied down, too. Fatigue and stress are two of its six letters, and both were maxed. The trade you made, a dinner for a rested driver on mountain roads, is the same trade you made at altitude, a weekend's convenience for margin. Consistency between the cockpit version of you and the parking-lot version is the actual skill.</p>
+<h3>Key takeaway</h3>
+<p>The emergency is not over when the props stop. It is over when the adrenaline is, and that runs on its own clock.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_BKW_LongStop [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: long touchdown, hot brakes"])>>
+You put it on the pavement mains-first, twenty-eight hundred feet in, and go to work. Brakes in firm, steady squeezes, nose held straight, the far fence growing at a rate you will remember longer than you would like. The Twin Comanche stops with about eight hundred feet of asphalt left, brakes ticking and stinking, tires flat-spotted just enough to make Merle sigh next week.
+
+You sit at the turnoff for a moment before taxiing. Dev looks at the remaining runway, then back down the long stretch behind, doing his own version of the math.
+
+<div class="pax-quote">"So that white fence back there," he says. "Was that ever, like, a participant in this?"</div>
+
+"It was interested," you say, and taxi in. The evening survives: rental car, the drive east, a late dinner, the tee time. But you eat that night with the far fence still in your peripheral vision, and when Dev tells the story to his buddies he calls it "the water-ski landing," and you let him, because it costs less than explaining that the extra ten miles an hour was a gift you gave yourself.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Ten miles an hour of "insurance" speed became a half-mile of float in thin air, and the landing that followed consumed nearly all of a 6,750-foot runway. You accepted the long touchdown, braked with discipline, and stopped with hundreds, not thousands, of feet in reserve. No damage beyond tire wear and brake heat. No margin left, either.</p>
+<h3>ADM analysis</h3>
+<p>The extra speed was the invulnerability attitude speaking fluent aerodynamics: it sounded like conservatism and behaved like risk. On one engine, airspeed above the card's number is not stored climb, it is stored float, payable at the far end where the fence lives. Density altitude then compounded it: at thirty-eight hundred feet, the same indicated speed carries more true speed and more energy into the flare. Once floating, your best remaining choice was exactly the one you made: put it down and use every foot deliberately, rather than gamble on a go-around the performance card had already priced at approximately nothing.<<if $gateBriefed>> Note that the gate you briefed protected the approach but said nothing about touchdown energy. A complete brief has both: a commit altitude and a speed at the fence.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>OEI approach speed discipline is the whole ballgame in a light twin: Vyse to short final, the card's fence speed over the fence, no gratuities. If a landing is going long, the decision point is at the gate, high, where a reject still exists as a maneuver, not in ground effect where physics has repossessed it. You flew the recovery well. The lesson lives one decision earlier.</p>
+<h3>Key takeaway</h3>
+<p>Extra airspeed on one engine is not insurance. It is a loan, and the far fence is the collection agent.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_BKW_Scrape [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the go-around that barely was"])>>
+Throttle to the stop. Flaps up in stages. Gear handle up, and the transit takes its seven seconds while the airplane decides what it thinks of all this. What it thinks is: not much. The nose comes up and the climb does not come with it. You accelerate in ground effect the length of the remaining runway, cross the far fence at fifty feet with the stall horn tasting the air, and the ground beyond keeps sinking away toward a creek hollow, which is the only reason the picture works at all.
+
+One fifty a minute. Maybe. The trees on the far rise slide beneath at a distance you will not repeat out loud. It takes four miles to claw back to pattern altitude, one wide flat left turn at a bank angle you meter like medicine, and the second approach is a different religion: 105 to the fence, not a mile an hour more. The landing is almost sarcastic in its normalcy.
+
+On the ramp, neither of you speaks for a moment. Dev finally exhales. "Okay. The boring one. Do the boring one every time."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A float born of extra approach speed ended in a low-altitude single-engine go-around, the exact maneuver the performance card prices at roughly zero feet per minute once the gear and flaps join in. It succeeded by a margin measured in treetops: light weight, falling terrain past the fence, a straight-ahead climbout with no bank, and luck arranged in your favor. The second approach, flown at card speeds, was uneventful.</p>
+<h3>ADM analysis</h3>
+<p>Two errors stacked. The first was carrying ten extra miles an hour down final as "insurance," which converted directly into float. The second was rejecting from inside ground effect, where a single-engine go-around in a PA-30 at thirty-eight hundred density altitude is a test flight, not a procedure. The honest options at that point were a long, disciplined touchdown or the one you chose, and only one of them keeps the outcome in your hands. Impulsivity supplied the vote: the float felt wrong, so full power felt like taking charge.<<if $gateBriefed>> The gate you briefed on the way down was honored right up until it mattered most. A commit gate that dissolves in the flare was a hope, not a gate.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Below the gate, in this airplane, on one engine, the landing is the answer even when it is a long one: 6,750 feet forgives a half-mile float. The go-around decision belongs at altitude, where the card says the maneuver still exists. And the prevention is upstream of all of it: fly Vyse, cross the fence at the card's speed, and the float never gets born.</p>
+<h3>Key takeaway</h3>
+<p>You briefed that there is no go-around below the gate. The airplane meant it even if you didn't.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_BKW_Overrun [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: off the end at Beckley"])>>
+You push it on. The mains touch at 110 with three thousand feet already spent, the nosewheel slams down a heartbeat later, and you stand on the brakes hard enough to feel the anti-nothing this 1966 airplane was built with: tires howl, the airplane squirms, rubber gives up its grip in stuttering chirps. The numbers do not work and you watch them not work, all the way to the end, where the Twin Comanche leaves the pavement at fifteen knots, rumbles through the mowed overrun, and stops when the nose gear finds soft earth and folds with a sound like a dropped toolbox.
+
+The props were stopped or nearly so. The belly is whole. You and Dev climb out into grass to the sound of the county truck starting its roll somewhere behind the FBO, invited or not.
+
+Dev looks back at the runway, all sixty-seven hundred and fifty feet of it, lying there used up. "We had all of that," he says, not unkindly. "And we used all of that."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Extra approach speed floated the airplane a half-mile down a 6,750-foot runway, and instead of accepting the float's verdict with a disciplined long landing or rejecting at altitude where a reject still existed, you forced the airplane onto the pavement hot and trusted the brakes to fix it. They could not. The airplane went off the end at low speed, folded its nose gear in the overrun, and turned an inconvenience into an incident: an NTSB 830 conversation, an insurance claim, and a Twin Comanche on jacks until spring.</p>
+<h3>ADM analysis</h3>
+<p>Three decisions in a row leaned the same direction. Ten extra miles an hour for "insurance." A float accepted without a plan. Then force applied as a substitute for the plan: nosewheel down, brakes to the floor, the macho attitude's signature move of ending the situation by insisting. Energy does not respond to insistence. The genuinely bitter note is that the long landing was sitting right there: touch at twenty-eight hundred feet with card speeds and the rollout works, barely but honestly.<<if $declared is "none">> And having gone quietly off everyone's radar earlier, you got to explain from a field phone what nobody was standing by to see.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Landing distance problems are solved at the fence, with speed, or not at all. The stabilized-approach habit exists precisely for this: on speed at the gate or the approach ends there, at altitude, as a decision instead of an event. Once floating in ground effect on one engine, the remaining skill is acceptance: put it down straight, brake to the physics, and let the runway be as long as it is.</p>
+<h3>Key takeaway</h3>
+<p>The runway was never too short. The airplane was too fast, and it was too fast because you asked it to be.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_CRW_GearUp [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: gear-up on runway 23"])>>
+You keep the bank in and run the flow from memory, in the turn, on one engine, eyes jumping between the airspeed, the runway, and the hillside. Props forward. Flaps first notch. The base turn tightens. Tower says something about a wind check. Final assembles itself at the last moment, high and then suddenly not, and the round-out feels strange, quiet, floaty, and the part of your brain that keeps score offers its note a half-second before the belly touches: <<if $config is "early" or $config is "briefed">>you put the wheels down once today, on the straight-in, and took them back up for the swing. They never came down again.<<else>>in ninety seconds of turning flow, the gear handle is the item that never got its turn.<</if>>
+
+The airplane lands on its keel with a long, grinding hush, both props curling, and slides eight hundred feet along runway 23's centerline before it stops, straight, level, and eleven inches shorter than it woke up. You and Dev step out onto the wing without a scratch between you. The trucks arrive in ninety seconds either way. It is very quiet on the hilltop, except for the crash truck's light bar ticking around and around.
+
+Dev stands on the runway looking at the propeller tips. "We're okay," he says, testing it. "We're okay."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>An offer of a better wind became an unstabilized, low-altitude reposition flown on one engine, and the before-landing flow, already displaced once by the runway change, lost its most important item. The airplane touched down gear-up on runway 23 and slid to a stop. Two people walked away from a bent airplane that flew perfectly the entire time.</p>
+<h3>ADM analysis</h3>
+<p>The chain is short and common. First, a late runway change accepted at eleven hundred feet, trading a briefed, stabilized final for a tight circuit in haze. Second, the decision to finish the circuit after it turned busy, when a bailout to the straight-in was still on the table and had been offered by your own instincts. The gear was not forgotten by carelessness. It was displaced by workload that was optional, purchased seconds earlier, at retail. That is impulsivity in its Sunday clothes: the offer sounded like a favor, so it was accepted like an instruction.<<if $declared is "none">> Underneath it, the same pilot who minimized the emergency on frequency accepted extra workload to fly a "normal" arrival. The airplane was never normal today. Handling it normally was the error with the paint on it.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>A tower's runway offer is a question, and "unable, we'll keep 5" is a complete answer. Eight knots of tailwind on 6,215 feet of runway was a solved problem the moment you briefed it. When a change does get accepted, the flow starts over from the top, out loud, wings level, and any approach that cannot be stabilized by short final gets abandoned early, which on one engine means it gets abandoned high. The gear-up landing itself was, mechanically, well flown. That is the epitaph of most gear-up landings.</p>
+<h3>Key takeaway</h3>
+<p>Late runway changes are workload wearing a gift bow. On one engine, decline the gift, or pay for it with a restarted checklist and altitude you may not have.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $readWeather to false>><<set $readAircraft to false>><<set $readChart to false>><<set $readFields to false>><<set $pathArray to []>><<set $badchoices to 0>><<set $declared to "none">><<set $dest to "">><<set $held to false>><<set $routing to "">><<set $popup to false>><<set $restartTried to false>><<set $shopCalled to false>><<set $gateBriefed to false>><<set $gearDown to false>><<set $config to "">><<set $altNow to 7500>><<set $swingBack to false>><<set $bkwTouch to "">><<set $atisPulled to false>><<set $groundPlan to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>

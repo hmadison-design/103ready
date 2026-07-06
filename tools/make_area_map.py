@@ -48,6 +48,35 @@ ROUTES = {
         ],
         "airway_labels": [],
     },
+    "crossfeed": {
+        "title": "KSAT to KELP, 430 nm direct along the I-10 corridor",
+        "path": [
+            ("KSAT", 29.5340, -98.4691, "airport"),
+            ("KELP", 31.8073, -106.3764, "airport", -60, 8),
+        ],
+        "extras": [
+            ("KJCT", 30.5111, -99.7629, "alternate"),
+            ("Sonora", 30.57, -100.65, "fix", -14, -16),
+            ("Ozona", 30.71, -101.20, "fix", -12, -16),
+            ("KFST", 30.9152, -102.9128, "alternate"),
+            ("KPEQ", 31.3824, -103.5107, "alternate"),
+            ("KINK", 31.7798, -103.2017, "alternate"),
+        ],
+        "airway_labels": [],
+    },
+    "the-good-engine": {
+        "title": "KLEX to KLWB, engine secured over southern West Virginia",
+        "path": [
+            ("KLEX", 38.0367, -84.6086, "airport"),
+            ("present position", 37.90, -81.45, "fix", -50, -18),
+            ("KLWB", 37.8583, -80.3995, "airport", -18, 12),
+        ],
+        "extras": [
+            ("KCRW", 38.3760, -81.5929, "alternate"),
+            ("KBKW", 37.7873, -81.1242, "alternate", 8, -14),
+        ],
+        "airway_labels": [],
+    },
 }
 
 
