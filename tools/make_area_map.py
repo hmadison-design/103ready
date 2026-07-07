@@ -64,6 +64,20 @@ ROUTES = {
         ],
         "airway_labels": [],
     },
+    "within-limits": {
+        "title": "E38 to KHYI, 273 nm, the high empty country first",
+        "path": [
+            ("E38", 30.3842, -103.6836, "airport"),
+            ("KHYI", 29.8927, -97.8630, "airport", -20, 12),
+        ],
+        "extras": [
+            ("KMRF", 30.3710, -104.0177, "alternate", -46, -16),
+            ("KFST", 30.9152, -102.9128, "alternate"),
+            ("KOZA", 30.7352, -101.2022, "alternate"),
+            ("KJCT", 30.5111, -99.7629, "alternate"),
+        ],
+        "airway_labels": [],
+    },
     "the-good-engine": {
         "title": "KLEX to KLWB, engine secured over southern West Virginia",
         "path": [

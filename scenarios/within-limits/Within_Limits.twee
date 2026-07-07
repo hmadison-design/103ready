@@ -1,0 +1,1541 @@
+:: StoryTitle
+Within Limits
+
+:: StoryData
+{
+  "ifid": "804A7958-43A9-462D-B7CC-ADF345205DD3",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "FlightPrep"
+}
+
+:: StoryInit
+/* Scenario metadata
+   SCENARIO TITLE:      Within Limits
+   AUDIENCE:            Pilot (GA, 500-1,000 hr; protagonist ~640 TT, PPL/IR)
+   TONE:                Professional
+   PRIMARY TOPIC:       Passenger pressure from an intelligent non-pilot;
+                        PIC authority when the argument cannot be won on debate points
+   SECONDARY TOPIC:     Ambiguous mechanical evidence (magneto discrepancy);
+                        diagnosis vs. rationalization; outcome bias
+   AIRCRAFT/EQUIPMENT:  1999 Piper Saratoga II HP (PA-32R-301), N429TC.
+                        Lycoming IO-540-K1G5 300 hp, dual Slick magnetos,
+                        102 gal usable, Garmin 430W + KX 155, KAP 150 autopilot.
+   SETTING:             Alpine-Casparis Muni (E38), Alpine TX, elev 4,514.
+                        Sunday afternoon in June, hot. Fuel stop on the way home
+                        from a Big Bend hiking weekend. Field unattended Sundays.
+                        Home: San Marcos Regional (KHYI), 273 nm ENE.
+   WEATHER:             Severe clear, hot, light wind. Density altitude ~7,600.
+                        The weather is not the problem.
+   ADM THEMES:          External pressure, PIC authority, unproven diagnosis,
+                        the difference between "within limits" and "understood,"
+                        outcome bias, evidence-buying (test flight, delay)
+   HAZARDOUS ATTITUDES: Impulsivity (launch now), macho (argue and win),
+                        resignation (he's smarter, he's probably right),
+                        invulnerability (it cleared, we're fine)
+   TOTAL DECISIONS:     Branching; every path passes 4+ decision points
+   TOTAL ENDINGS:       11 (success x3, qualified x2, friction x2,
+                        delay/diversion x3, aircraft damage x1, fatal x0)
+   MIN DECISION DEPTH:  4
+   TIMED DECISIONS:     No
+   ESTIMATED DURATION:  20-30 minutes
+   VERSION:             1.0
+   LAST REVIEWED:       2026-07-06
+   REVIEWER:            Claude (initial draft) / Harvey Madison (pending)
+
+   Facts verified against FAA/AirNav data June 2026 cycle: E38 elevation
+   4,514.4; runways 1/19 6002x75 (fair) and 5/23 5018x60 (good); CTAF/UNICOM
+   122.8; AWOS-3 119.025; unattended Sundays; self-serve 100LL 24 hr;
+   ABQ Center via Fort Stockton RCAG 135.875; MRF VOR/DME 115.9 r059/15;
+   RNAV (GPS) 19 and 23; ODKAE ONE obstacle DP; special takeoff minimums.
+   KOZA 16/34 6003x75. KJCT 17/35 5004x75. KFST 12/30 7508x100.
+   KHYI towered, ATIS 120.825, tower 126.825.
+*/
+<<set $pathArray to []>>
+<<set $badchoices to 0>>
+<<set $readWeather to false>>
+<<set $readFlightPlan to false>>
+<<set $readAircraft to false>>
+<<set $readField to false>>
+<<set $methodical to false>>   /* compared both mags deliberately at D1 */
+<<set $vmNote to false>>       /* left Werner a voicemail */
+<<set $vmReply to false>>      /* his text arrived (timing varies by path) */
+<<set $plugPulled to false>>   /* pulled and inspected a bottom plug */
+<<set $tested to false>>       /* flew the pattern test profile */
+<<set $testShowedDrop to false>>
+<<set $delayed to false>>      /* waited out the heat before launching */
+<<set $heatSoak to false>>     /* launched hot: the fault's favorite weather */
+<<set $missBegan to false>>    /* the right mag started arcing en route */
+<<set $routing to "">>         /* "direct", "corridor", "overhead" */
+<<set $stretched to false>>    /* tried to stretch past the last good option */
+<<set $isolated to false>>     /* identified it with an in-flight mag check */
+<<set $singleMag to false>>    /* elected to run on the left mag */
+<<set $divert to "">>          /* "", "KOZA", "KFST", "E38", "KJCT" */
+<<set $pressOn to 0>>          /* times a divert was declined after the miss */
+<<set $grantSaw to false>>     /* Grant witnessed the recurrence himself */
+
+:: StoryStylesheet [stylesheet]
+body {
+  background: #0f1720;
+  color: #d6dee6;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#story {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+#passages { border-left: none; padding: 0; }
+.passage { padding: 0; }
+a.link-internal, a.macro-link {
+  color: #e6b84a;
+  text-decoration: none;
+  border-bottom: 1px dotted #8a6f2a;
+}
+a.link-internal:hover, a.macro-link:hover {
+  color: #fff4d0;
+  background: #3a2d0a;
+  border-bottom: 1px solid #e6b84a;
+}
+.choice-list { margin: 1.2em 0 0.5em 0; }
+.choice-list p { margin: 0.6em 0; }
+hr { border: none; border-top: 1px solid #2c3a4a; margin: 1.8em 0; }
+.debrief {
+  background: #141d28;
+  padding: 1rem 1.3rem;
+  border-left: 3px solid #e6b84a;
+  margin-top: 1rem;
+  font-size: 0.98rem;
+}
+.debrief h3 {
+  color: #e6b84a;
+  font-size: 1.05rem;
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.04em;
+}
+.restart { margin-top: 2em; font-size: 0.95rem; color: #8aa0b5; }
+.metar-block, .flight-plan, .aircraft-card {
+  font-family: "Courier New", monospace;
+  font-size: 0.95rem;
+  color: #b8cce4;
+  background: #0a121b;
+  padding: 0.6em 0.9em;
+  border-left: 2px solid #5a6e88;
+  margin: 0.6em 0;
+  white-space: pre-wrap;
+}
+.airport-table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.9em; }
+.airport-table th, .airport-table td { padding: 6px 10px; border-bottom: 1px solid #2a3a56; text-align: left; }
+.airport-table th { color: #9ab0c8; }
+.scenario-title { font-size: 2em; color: #ffffff; text-align: center; margin-bottom: 0.2em; }
+.scenario-subtitle {
+  font-size: 1.05em; color: #8aa0c0; text-align: center;
+  margin-bottom: 1.5em; font-style: italic;
+}
+.preflight-btn {
+  display: inline-block;
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  padding: 10px 20px;
+  margin: 6px 4px;
+  min-width: 230px;
+  text-align: center;
+  color: #e0e0e0;
+  text-decoration: none;
+}
+.preflight-btn:hover { background: #0f3460; color: #ffffff; }
+.chart-disclaimer {
+  font-size: 0.8em; color: #8090a8;
+  border-left: 3px solid #3a4a6c;
+  padding: 6px 12px; margin: 1em 0;
+}
+.sectional-container { margin: 1em 0; }
+.sectional-container img { max-width: 100%; border: 1px solid #2a3a56; border-radius: 4px; }
+.sectional-label { font-size: 0.85em; color: #8090a8; margin-top: 0.3em; }
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block; padding: 0.55em 1.3em;
+  background: #1A3C57; color: #fff !important;
+  border: 1px solid #2E5C82; border-radius: 4px;
+  text-decoration: none; font-size: 0.95em; letter-spacing: 0.03em;
+}
+.main-menu-btn:hover, .main-menu-btn:focus { background: #2E5C82; outline: none; }
+.pax-quote {
+  background: rgba(40, 58, 80, 0.35);
+  border-left: 3px solid #6080a8;
+  padding: 0.5em 0.9em;
+  margin: 0.8em 0;
+  font-style: italic;
+  color: #c0d0e8;
+}
+.pax-quote::before { content: "Grant: "; font-style: normal; color: #7a8aa8; font-weight: bold; }
+.text-msg {
+  background: rgba(46, 66, 52, 0.35);
+  border-left: 3px solid #6a9a78;
+  padding: 0.5em 0.9em;
+  margin: 0.8em 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 0.95em;
+  color: #c8dcc8;
+}
+
+:: FlightPrep [preflight]
+<<set $pathArray to $pathArray.concat(["Preflight: reviewing materials at Alpine"])>>
+
+<div class="scenario-title">Within Limits</div>
+<div class="scenario-subtitle">A fuel stop at Alpine, a number in the book, and a man who argues for a living</div>
+
+Sunday afternoon, mid-June, Alpine, Texas. You are on the ramp at Alpine-Casparis Municipal (E38), 4,514 feet above sea level and a comfortable hundred degrees in the shade of the wing. The Saratoga's tanks are full because you just made them that way at the self-serve pump, the credit card reader working on the third try. Your logbook says 640 hours. Your back says most of them were this weekend, on the trails of the Chisos Basin.
+
+In the right seat, currently standing in the only shade on the ramp, is Grant Sokol: your brother-in-law, fifty-two, an appellate lawyer with a win rate that gets written about. Three days of hiking have left him sunburned and cheerful. Tomorrow morning at eight he has a deposition in San Antonio he has been preparing for a month. Home is San Marcos Regional, 273 nautical miles east-northeast, about an hour and fifty in this airplane. It is 4:40 in the afternoon. Official sunset is 8:52.
+
+The field is deserted the way small high-desert fields get on summer Sundays. The city office is dark. The wind sock hangs at a diagonal, thinking about it.
+
+You still have the run-up ahead of you. Review your materials, then go fly the airplane.
+
+<div class="chart-disclaimer">Charts, weather data, and performance figures in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here, not current publications, as the scenario is designed around them.</div>
+
+<<link "<span class=\"preflight-btn\">Weather &amp; Daylight</span>" "Preflight-Weather">><<set $readWeather to true>><</link>>
+<<link "<span class=\"preflight-btn\">Route &amp; Terrain</span>" "Preflight-FlightPlan">><<set $readFlightPlan to true>><</link>>
+<<link "<span class=\"preflight-btn\">Aircraft &amp; Run-up Limits</span>" "Preflight-Aircraft">><<set $readAircraft to true>><</link>>
+<<link "<span class=\"preflight-btn\">Field Guide: Alpine &amp; Outs</span>" "Preflight-Field">><<set $readField to true>><</link>>
+
+<<if $readWeather and $readFlightPlan and $readAircraft and $readField>>
+<hr>
+You've seen what there is to see. The airplane is waiting.
+
+<<link "<span class=\"preflight-btn\">☑ Start Up and Taxi</span>" "Opening">><</link>>
+<<elseif $readWeather or $readFlightPlan or $readAircraft or $readField>>
+<hr>
+<em>There's more on the clipboard if you want it. Nobody is timing you except the sun.</em>
+
+<<link "<span class=\"preflight-btn\">Start Up and Taxi Anyway</span>" "Opening">><</link>>
+<</if>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Weather [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed weather and daylight"])>>
+<strong>Weather: not the problem today</strong>
+
+<div class="metar-block">E38 (AWOS-3, 119.025) 142150Z AUTO 19007KT 30SM CLR 38/M01 A3009
+KMRF 142150Z AUTO 20010KT 10SM CLR 36/M02 A3008
+KFST 142153Z AUTO 17008KT 10SM CLR 39/03 A3007
+KOZA 142155Z AUTO 16006KT 10SM CLR 37/06 A3006
+KHYI 142153Z 16009KT 10SM SCT045 35/17 A3004</div>
+
+<div class="metar-block">TAF KHYI 142130Z 1422/1524 16010KT P6SM SCT050
+  FM150300 15007KT P6SM FEW250
+  FM151500 16008KT P6SM SCT040</div>
+
+<strong>Winds aloft (FT, 2200Z issuance)</strong>
+
+<div class="metar-block">          6000    9000    12000
+MRF area  1908    2012    2215
+JCT area  1710    1812    2014</div>
+
+<strong>Daylight math</strong>
+
+<p>Sunset 8:52 PM local. End of civil twilight 9:19. Wheels-up at 5:15 puts you on the ground at San Marcos around 7:10 with the sun still up the whole way. Every hour of delay slides the last part of the flight closer to the dark, and the last part of the flight is the easy part; it's the first hundred miles, over the emptiest country, that you'd rather not do late.</p>
+
+<p>Density altitude at Alpine right now: about 7,600 feet. The airplane knows it even if the field elevation sign doesn't say so.</p>
+
+<<link "← Back to preflight" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-FlightPlan [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed route and terrain"])>>
+<strong>The trip home: E38 to KHYI, 273 nm</strong>
+
+<div class="sectional-container">
+<img src="/scenarios/within-limits/images/area_map.jpg" alt="Route overview map, Alpine to San Marcos, showing Fort Stockton, Ozona, Junction, and the high country east of Alpine">
+<div class="sectional-label">Route overview: E38 direct KHYI. High, empty country for the first hundred miles, then the land steps down toward the Hill Country.</div>
+</div>
+
+<div class="flight-plan">Aircraft:    N429TC  Saratoga II HP (PA-32R-301)
+Route:       E38 DCT KHYI (VFR, flight following from ABQ Center)
+Cruise:      9,500 east / 158 KTAS / about 16 gph
+Time:        1+50 at forecast winds
+Fuel:        102 gal usable at engine start (topped at Alpine)
+Souls:       2</div>
+
+<strong>The terrain ladder, westbound highs to eastbound lows</strong>
+
+<table class="airport-table">
+<tr><th>Segment</th><th>Rough min safe</th><th>What's under you</th></tr>
+<tr><td>E38 → Marathon</td><td>8,000</td><td>Altuda Pass, the Glass Mountains shoulder, nothing paved</td></tr>
+<tr><td>Marathon → Sanderson</td><td>7,000</td><td>Ranch country, canyons cutting toward the Rio Grande</td></tr>
+<tr><td>Sanderson → Ozona</td><td>6,000</td><td>Mesas, wind farms, US 90 wandering somewhere south</td></tr>
+<tr><td>Ozona → Junction → KHYI</td><td>4,500</td><td>The land relents; I-10, towns, options</td></tr>
+</table>
+
+<p>The shape of this route is worth saying out loud: the highest, emptiest, most option-poor flying is the first forty minutes. If the airplane has something to say, you would rather hear it over Junction than over Altuda Pass. Airports with real runways between here and home: Fort Stockton (51 nm north of the early route), Ozona (on the route, 150 out), Junction (on the route, 200 out). Between Alpine and Ozona, mostly what you have is the memory of airports.</p>
+
+<<link "← Back to the clipboard" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Aircraft [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed aircraft and run-up limits"])>>
+<strong>N429TC: 1999 Saratoga II HP</strong>
+
+<div class="aircraft-card">Powerplant:  Lycoming IO-540-K1G5, 300 hp, fuel injected
+Ignition:    Dual Slick magnetos, new-to-you (overhauled at
+             annual 14 months / 210 hours ago)
+Prop:        Hartzell 3-blade constant speed
+Fuel:        102 gal usable, 2 tanks
+Avionics:    GNS 430W, KX 155, KAP 150 autopilot, JPI EDM-730
+Vno:         149 KIAS   Vne: 191 KIAS
+Vso:         60 KIAS    Best glide: 92 KIAS @ 3,200 lb</div>
+
+<strong>The run-up numbers (POH, and what they mean)</strong>
+
+<div class="aircraft-card">Magneto check @ 2,000 RPM:
+  Max drop on either mag:        175 RPM
+  Max difference between mags:    50 RPM</div>
+
+<p>Two things the numbers don't say. First, the mag check is a redundancy check, not a health certificate: you are proving each system can carry the engine alone, because someday one of them may have to. Second, a drop that <em>clears</em> after aggressive leaning is consistent with a fouled spark plug burning itself clean. It is also consistent with an ignition fault that behaves when it feels like behaving. The run-up can tell you the numbers. It cannot tell you which story you're in.</p>
+
+<p>High-elevation footnote: at 7,600 density altitude, full-rich taxi is a plug-fouling machine. Lean for taxi here or pay for it at the run-up pad. Everybody who flies the mountain West learns this once.</p>
+
+<<link "← Back to the ramp" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Field [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed field guide"])>>
+<strong>Alpine-Casparis Municipal (E38), elevation 4,514</strong>
+
+<table class="airport-table">
+<tr><th>Item</th><th>Fact</th></tr>
+<tr><td>Runways</td><td>1/19, 6,002 x 75, asphalt, fair. 5/23, 5,018 x 60, good.</td></tr>
+<tr><td>CTAF/UNICOM</td><td>122.8</td></tr>
+<tr><td>AWOS-3</td><td>119.025</td></tr>
+<tr><td>Center</td><td>Albuquerque Center 135.875 (Fort Stockton RCAG) for flight following and pop-ups</td></tr>
+<tr><td>Attendance</td><td>Weekdays and Saturdays. Unattended Sundays and holidays.</td></tr>
+<tr><td>Fuel</td><td>100LL self-serve, 24 hours, card reader of moody disposition</td></tr>
+<tr><td>Maintenance</td><td>Airframe and powerplant shops on the field, closed today. Nearest open option: Monday morning, here or Fort Stockton.</td></tr>
+<tr><td>Instrument</td><td>RNAV (GPS) 19 and 23. ODKAE ONE obstacle departure. Special takeoff minimums apply: the terrain is real.</td></tr>
+</table>
+
+<strong>The outs, if you need one later</strong>
+
+<table class="airport-table">
+<tr><th>Field</th><th>Where</th><th>What's there</th></tr>
+<tr><td>KFST Fort Stockton</td><td>51 nm NE of Alpine, north of the early route</td><td>12/30, 7,508 ft. AWOS. Self-serve. Nobody home Sunday night.</td></tr>
+<tr><td>KOZA Ozona</td><td>On route, about 150 out</td><td>16/34, 6,003 ft. Quiet. A courtesy car rumor.</td></tr>
+<tr><td>KJCT Junction</td><td>On route, about 200 out</td><td>17/35, 5,004 ft. I-10 next door.</td></tr>
+<tr><td>KMRF Marfa</td><td>17 nm west (wrong direction)</td><td>Long runways, glider ops, also Sunday-quiet</td></tr>
+</table>
+
+<p>Town: two miles. One motel with vacancies in June, a couple more if you're flexible. A one-lot rental car outfit that answers the phone about half the time on weekends. Sul Ross State University up the hill, a good diner, and a sky at night that explains why the observatory is one county over.</p>
+
+<<link "← Back to the rest of it" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Opening [scenario]
+<<set $pathArray to $pathArray.concat(["Run-up: right mag drops 240, rough"])>>
+
+The IO-540 lights on the second blade and settles into its big-bore idle, that lazy freight-train sound that made you buy this airplane instead of something sensible. Grant folds himself into the right seat, finds the belt buckle on the first try now, sets his phone to silent, and rests a legal pad against his knee out of what you can only assume is habit.
+
+You lean the mixture for the taxi because the field guide is right and everybody does learn it once. Run-up pad, runway 19, nose into what little wind there is. Flows, checklist, trim, controls. Prop cycle: clean. Then the mags.
+
+Left mag: drop of 70, smooth as a sewing machine.
+
+Right mag: the tach gives up 240 RPM and the engine shakes like a dog coming out of a lake. It is not subtle. Grant's pen stops moving.
+
+Back to both. Smooth again, like nothing happened. The book says 175 maximum drop, 50 maximum split. You are 65 over the first number and 170 over the second, and the roughness wasn't a number at all.
+
+<div class="pax-quote">"Everything okay over there? That felt like a thing."</div>
+
+The AWOS keeps murmuring about the temperature on the second radio. The sock at midfield lifts, considers, drops.
+
+<div class="choice-list">
+<<link "A. You run the fouled-plug drill: 2,000 RPM, lean it hard for a minute, let the heat scour the plugs, then recheck the mags." "Runup_Burnoff">>
+  <<set $pathArray to $pathArray.concat(["D1: ran the lean burn-off drill"])>>
+<</link>>
+
+<<link "B. You run the same check again, unchanged. Maybe it was a one-time thing." "Runup_Again">>
+  <<set $pathArray to $pathArray.concat(["D1: reran the check as-is"])>>
+<</link>>
+
+<<link "C. You work the problem methodically first: both mags individually, twice each, watching the JPI for which cylinders go quiet, before you change anything." "Runup_Compare">>
+  <<set $pathArray to $pathArray.concat(["D1: compared both mags on the JPI"])>>
+  <<set $methodical to true>>
+<</link>>
+
+<<link "D. You taxi back to the tie-downs and shut down. Whatever this is, you'd rather think about it without paying fuel for the privilege." "Runup_Shutdown">>
+  <<set $pathArray to $pathArray.concat(["D1: taxied back and shut down"])>>
+<</link>>
+
+<<link "E. There's an A&P's cell number on the maintenance hangar door. You saw it at the fuel pump, and you idle down and call it right from the pad." "Runup_CallAP">>
+  <<set $pathArray to $pathArray.concat(["D1: called the A&P number from the pad"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Runup_Again [scenario]
+<<set $pathArray to $pathArray.concat(["Reran the check unchanged: 235, still rough"])>>
+
+Same power, same switch, same thumb. The right mag gives back 235 this time, with the same shudder through the airframe, the same ragged edge in the exhaust note. Back on both, and the engine is all reassurance again, which is somehow less reassuring.
+
+Two data points, both bad, neither explained. The fuel you burned finding that out was not large. The information was not large either.
+
+<div class="pax-quote">"Is that the same thing it did before? It sounded like the same thing."</div>
+
+<div class="choice-list">
+<<link "A. Now you run the fouled-plug drill: lean it aggressively at 2,000 for a minute and recheck." "Runup_Burnoff">>
+  <<set $pathArray to $pathArray.concat(["Then ran the burn-off drill"])>>
+<</link>>
+
+<<link "B. You taxi back and shut down. The run-up pad is a bad conference room." "Runup_Shutdown">>
+  <<set $pathArray to $pathArray.concat(["Then shut down to think"])>>
+<</link>>
+
+<<link "C. You call the A&P number from the maintenance hangar door, engine idling." "Runup_CallAP">>
+  <<set $pathArray to $pathArray.concat(["Then called the A&P"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Runup_Compare [scenario]
+<<set $pathArray to $pathArray.concat(["JPI comparison: right mag drops EGT on 3 and 5"])>>
+
+You give it the discipline you'd want from yourself on a checkride. Left mag alone: every EGT bar on the JPI rises evenly, the drop is 70, the engine hums. Right mag alone: cylinders three and five go cold on the display, the drop is 240, and the shake is the engine trying to run around two dead holes.
+
+That's not nothing. On the right mag, the plugs it fires in three and five aren't lighting. Fouling would explain it. So would a harness problem on those leads. So would a magneto that is beginning to die from the inside, arcing where it shouldn't, worse when it's hot. The JPI can tell you where. It cannot tell you why.
+
+<div class="pax-quote">"You've got that look Leah gets doing the taxes. What are we learning?"</div>
+
+<div class="choice-list">
+<<link "A. You run the lean burn-off drill and recheck. If it's fouling, this cures it, and the JPI will confirm the cure." "Runup_Burnoff">>
+  <<set $pathArray to $pathArray.concat(["Then ran the burn-off drill"])>>
+<</link>>
+
+<<link "B. You shut down at the tie-downs. You have a diagnosis-shaped hole and a phone." "Runup_Shutdown">>
+  <<set $pathArray to $pathArray.concat(["Then shut down to think"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Runup_CallAP [scenario]
+<<set $pathArray to $pathArray.concat(["Called the A&P: voicemail"])>>
+<<set $vmNote to true>>
+
+The number rings four times through your headset and goes to a voicemail greeting recorded by a man who clearly resents voicemail. At the tone you describe it: Saratoga, right mag, 240 drop with roughness, high DA, leaned taxi, does it sound like fouling or should you worry. You leave your number twice.
+
+It is Sunday in Alpine. The greeting did not promise anything, and neither did the silence after you hung up.
+
+<div class="pax-quote">"Sunday. Even the good ones fish on Sunday."</div>
+
+<div class="choice-list">
+<<link "A. You run the lean burn-off drill while you wait: 2,000 RPM, lean hard, a minute of heat, recheck." "Runup_Burnoff">>
+  <<set $pathArray to $pathArray.concat(["Then ran the burn-off drill"])>>
+<</link>>
+
+<<link "B. You taxi back and shut down to wait for the callback in the shade." "Runup_Shutdown">>
+  <<set $pathArray to $pathArray.concat(["Then shut down to wait"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Runup_Burnoff [scenario]
+<<set $pathArray to $pathArray.concat(["Burn-off drill: recheck shows 120 drop, smooth"])>>
+
+At the pad you set 2,000 RPM and pull the mixture back until the engine complains, then a whisker richer. You hold it there while the EGTs climb and the desert shimmer boils off the cowling, sixty long seconds of heat doing what heat does to lead deposits. Grant watches the tach the way he probably watches a witness.
+
+Mixture back to where it belongs. Mag check.
+
+Left: 70, smooth. Right: 120, and smooth. <<if $methodical>>On the JPI, three and five stay lit this time, their bars dropping evenly with the rest.<</if>> The split is 50 on the nose. The book allows 175 and 50. You are, by the numbers, within limits.
+
+Ninety seconds ago this engine shook like a wet dog on one of its two ignition systems. Right now it would pass any checkride in the country. Both of those things are true, and only one of them fits in a logbook remark.
+
+<<link "Both of you heard it. Time to decide what it means." "Decide_Hub">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Runup_Shutdown [scenario]
+<<set $pathArray to $pathArray.concat(["Shut down at the tie-downs to think"])>>
+
+You taxi back, swing the tail around out of everyone's way (there is no one), and pull the mixture. The prop clunks to a stop and the big engine ticks as it cools, which out here it will take its time doing. The silence afterward is enormous. Somewhere a windmill creaks.
+
+Grant climbs out when you do, stretches his back, and leans against the strut on the shady side with the posture of a man deliberately not saying anything yet. On the ramp, heat comes up through your shoe soles. The maintenance hangar is padlocked. The city office window says CLOSED in stick-on letters. Sunday.
+
+What you know: the right mag dropped 240 with real roughness<<if $methodical>>, and the JPI says cylinders three and five are the ones going dark on it<</if>>. What you don't know is why.
+
+<div class="choice-list">
+<<if not $vmNote>>\
+<<link "A. You call the A&P number from the maintenance hangar door and leave the whole story on his voicemail." "Ground_VMWait">>
+  <<set $pathArray to $pathArray.concat(["Called the A&P from the ramp"])>>
+  <<set $vmNote to true>>
+<</link>>
+<</if>>\
+<<link "B. You get the cowl access open and pull a bottom plug from a right-mag cylinder yourself. You carry the wrench for a reason." "Ground_PlugPull">>
+  <<set $pathArray to $pathArray.concat(["Pulled a plug to look"])>>
+<</link>>
+
+<<link "C. You restart, taxi out, and run the lean burn-off drill: if it's fouling, a minute of heat should prove it." "Runup_Burnoff">>
+  <<set $pathArray to $pathArray.concat(["Restarted and ran the burn-off drill"])>>
+<</link>>
+
+<<link "D. You call it. Tonight the airplane sleeps here, and Monday a mechanic looks at it. Everything else is logistics." "Ground_Overnight_Decide">>
+  <<set $pathArray to $pathArray.concat(["Decided to stay the night"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_VMWait [scenario]
+<<set $pathArray to $pathArray.concat(["Voicemail left; waiting in the shade"])>>
+
+Four rings, the resentful greeting, the tone. You give it to him clean: Saratoga, right mag, 240 and rough, leaned taxi, high DA, fouling or worry. Number, twice.
+
+Then you stand in the wing's shade with Grant and wait for a callback that does not come. Ten minutes. The AWOS says the temperature dropped one degree, which out here counts as weather.
+
+<div class="pax-quote">"While we wait for a stranger to not call back: walk me through it. What are the possible causes, and what does each one do to us?"</div>
+
+It's a fair question, asked the way he asks everything, and answering it out loud organizes your own head whether you want it to or not: fouling, cured by heat and proven by a recheck; a bad plug or harness lead, intermittent by nature; a magneto beginning to break down internally, which likes heat, hides at idle, and does not care what the book number is.
+
+<div class="choice-list">
+<<link "A. You restart and run the burn-off drill. Whatever else is true, that experiment is free and its result means something." "Runup_Burnoff">>
+  <<set $pathArray to $pathArray.concat(["Ran the burn-off drill after the wait"])>>
+<</link>>
+
+<<link "B. You pull a bottom plug from a right-mag cylinder and look with your own eyes." "Ground_PlugPull">>
+  <<set $pathArray to $pathArray.concat(["Pulled a plug after the wait"])>>
+<</link>>
+
+<<link "C. You make the overnight call now, while the decision still belongs entirely to you." "Ground_Overnight_Decide">>
+  <<set $pathArray to $pathArray.concat(["Chose the overnight from the ramp"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_PlugPull [scenario]
+<<set $pathArray to $pathArray.concat(["Pulled a bottom plug: it looks ordinary"])>>
+<<set $plugPulled to true>>
+
+Cowl access open, a burned knuckle you'll notice tomorrow, and the bottom plug from number five comes out into your palm. You hold it up in the good desert light while Grant peers over your shoulder like the world's best-paid apprentice.
+
+It looks like a spark plug. Tan-gray around the insulator, electrodes worn but honest, one small bead of lead you can flick off with a thumbnail. Not the caked, bridged, fouled monster that would have closed the case. Not pristine either. A plug you'd photograph for no jury on earth.
+
+<div class="pax-quote">"For the record, I have no idea what I'm looking at. But you were hoping it would look worse, weren't you? Worse would have been an answer."</div>
+
+He's exactly right, which is becoming a theme. A fouled plug proves fouling. An ordinary plug proves nothing in either direction: the fouling could be on the other plug this mag fires in that cylinder, or in number three, or the problem could never have been fouling at all.
+
+You torque it back in, safety the lead, close up.
+
+<div class="choice-list">
+<<link "A. You restart and run the burn-off drill. The recheck numbers still mean what they mean." "Runup_Burnoff">>
+  <<set $pathArray to $pathArray.concat(["Ran the drill after the plug inspection"])>>
+<</link>>
+
+<<link "B. You've seen enough ambiguity for one Sunday. Overnight, and a mechanic Monday." "Ground_Overnight_Decide">>
+  <<set $pathArray to $pathArray.concat(["Overnight after the plug inspection"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Decide_Hub [scenario]
+<<set $pathArray to $pathArray.concat(["The argument at the run-up pad"])>>
+
+You idle there with the engine warm and legal and the sun leaning west. Grant has been composing quietly, and now he delivers, in the reasonable register that has undone better-prepared people than you.
+
+<div class="pax-quote">"Let me lay out the case, and then I'll shut up, because you're the pilot and I'm cargo with opinions. One: your handbook publishes a limit. One-seventy-five, fifty split. You're at one-twenty and fifty. Inside the book, on both counts. Two: you ran the exact procedure for a fouled plug, and the result behaved exactly the way the fouling story predicts. <<if $plugPulled>>Three: you pulled a plug looking for the villain and found a plug. If the evidence for staying were strong, finding it wouldn't be this hard. <</if>>You leaned the taxi at seven thousand six hundred feet of density altitude; you told me yourself that's the classic setup. And the practical side: it's a hundred degrees, this field is closed, the mechanic is voicemail, home is under two hours away in daylight the whole way, and I'm in front of a federal judge at eight."</div>
+
+<div class="pax-quote">"So here's my actual question, and I mean it as a question. What observation would change your mind that we haven't already made? Because if the answer is 'none, but I'm uneasy,' I'd want to know how many flights you've launched feeling uneasy about weather that turned out fine. I'm not asking you to skip a step. I'm asking whether there's a step left."</div>
+
+He turns his palms up: your witness. The engine idles, warm and smooth and within limits, and offers no testimony either way.
+
+The honest inventory: the numbers are legal. The diagnosis is unproven. The route's worst stretch comes first, the engine is heat-soaked, and the fault, if there is a fault, showed itself exactly once and only when things were hot.
+
+<div class="choice-list">
+<<link "A. The numbers are the numbers. You take runway 19 now, while the whole flight fits in daylight." "Launch_Hot">>
+  <<set $pathArray to $pathArray.concat(["D2: launched immediately, heat-soaked"])>>
+  <<set $heatSoak to true>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. There is a step left: you fly it. One lap of a test profile overhead the field, gear down runway made, watching that mag under real load before you bet the empty country on it." "Test_Profile">>
+  <<set $pathArray to $pathArray.concat(["D2: flew a test profile overhead first"])>>
+  <<set $tested to true>>
+<</link>>
+
+<<if not $plugPulled>>\
+<<link "C. You shut down and pull a bottom plug from a right-mag cylinder. Physical evidence beats inference." "Ground_PlugPull">>
+  <<set $pathArray to $pathArray.concat(["D2: shut down to pull a plug"])>>
+<</link>>
+<</if>>\
+<<link "D. You park it in the shade for ninety minutes. Cooler air, cooler engine, a recheck when the sun quits fighting, and still enough twilight to get home." "Delay_Cooldown">>
+  <<set $pathArray to $pathArray.concat(["D2: waited out the heat"])>>
+  <<set $delayed to true>>
+<</link>>
+
+<<link "E. You call it here: the airplane stays, a mechanic sees it Monday, and tonight you buy your brother-in-law dinner in Alpine." "Ground_Overnight_Decide">>
+  <<set $pathArray to $pathArray.concat(["D2: chose the overnight"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Delay_Cooldown [scenario]
+<<set $pathArray to $pathArray.concat(["Waited 90 minutes for the cool"])>>
+
+You shut down at the tie-downs and declare a recess. Grant takes it better than his calendar does: he sets up his deposition notes on the pilot lounge's one card table (the door code is on the door frame, small-field style) and works while you drink vending-machine water and watch the shadows get long.
+
+<<if $vmNote and not $vmReply>>\
+<<set $vmReply to true>>\
+At 6:20 your phone buzzes. Not a call: a text, from the A&P's number.
+
+<div class="text-msg">Heard vm. If it cleared after a hard lean burnoff its prob plug fouling, that field eats plugs in summer. But a 240 with real shake and a 50 split after, I'd want that mag on a bench before too many more hot starts. Heat brings that kind of thing out. Cant get there till tues am. Yr call.</div>
+
+Grant reads it over your shoulder, twice, and for once says nothing while he thinks.
+
+<div class="pax-quote">"Well. He agrees with both of us. That's the least helpful document I've seen all year."</div>
+<</if>>\
+By 6:45 the AWOS has surrendered eight degrees and the light has gone amber. The engine cowl is cool enough to rest a hand on. A recheck now is a recheck of a cold, rested engine in kinder air: it tells you about this minute, not about the minute you'll be over Altuda Pass at full power.
+
+Wheels-up by 7:00 puts you home at 8:50, official sunset 8:52, twilight to 9:19. The margin fits, if nothing asks it not to.
+
+<div class="choice-list">
+<<link "A. Runup once more, and if it's clean, you go: cooler engine, cooler air, softer light, same book." "Launch_Cooled">>
+  <<set $pathArray to $pathArray.concat(["D3: launched after the cool-down"])>>
+<</link>>
+
+<<link "B. Runup once more, and even if it's clean, you fly the test profile overhead before setting out. Twilight math be damned." "Test_Profile">>
+  <<set $pathArray to $pathArray.concat(["D3: test profile even after cooling"])>>
+  <<set $tested to true>>
+<</link>>
+
+<<link "C. The cool-down changed the temperature, not the diagnosis. Overnight, mechanic Monday." "Ground_Overnight_Decide">>
+  <<set $pathArray to $pathArray.concat(["D3: overnight after the cool-down"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Launch_Hot [scenario]
+<<set $pathArray to $pathArray.concat(["Departed runway 19 at 5:15, engine heat-soaked"])>>
+
+You brief it like you mean it: runway 19, left turn on course, and if anything sounds like anything below a thousand feet you are landing on whatever is left in front of you. Grant nods once, all business now that the verdict is in.
+
+The density altitude makes the takeoff roll a long story with a slow ending. N429TC finally flies at the six-hundred-foot markers you never normally meet, and the climb is the mountain-west special: a thousand-horse engine's sound with a lawn-chair rate. The oil temp sits high and thinks about sitting higher. Nothing misses. Nothing shakes. The right mag keeps whatever opinions it has to itself.
+
+At 8,500 the town slides behind the nose and the country opens up ahead: the Glass Mountains' brown shoulders, the two-lane to Marathon, and after that the kind of emptiness that makes the fuel gauges feel personal.
+
+<<link "You pick your line east and settle in for the climb to 9,500." "Climb_Out">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Launch_Cooled [scenario]
+<<set $pathArray to $pathArray.concat(["Departed at 7:00 after the cool-down, runup clean"])>>
+
+The recheck comes back clean twice: 70 left, 95 right, split of 25, smooth both ways. A cold engine in kind air, telling you about this minute.
+
+Runway 19 in the amber light, and the airplane flies like the evening was built for it: the DA has surrendered a thousand feet, the climb is honest, the oil temp behaves. Alpine shrinks behind you into its bowl of hills. Grant watches the desert go gold and, for the first time since the run-up pad, lets the legal pad sleep.
+
+<div class="pax-quote">"For what it's worth, waiting was a version of rigor too. I bill by the hour; I understand paying for certainty."</div>
+
+Sunset is 8:52. Home around 8:50, twilight in your pocket. The numbers all fit, provided every one of them holds.
+
+<<link "You climb to 9,500 and take up the line for home." "Climb_Out">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Climb_Out [scenario]
+<<set $pathArray to $pathArray.concat(["Routing decision leaving Alpine"])>>
+
+Passing through 9,000 with the trim earning its keep, the routing question is still yours to answer. The GPS's magenta line runs direct: over the Altuda saddle, north of Marathon, then the long empty diagonal to Ozona. Shortest, highest, loneliest. The alternative bends the first half north to ride the I-10 corridor past Fort Stockton: twenty-five extra miles that keep a seven-thousand-foot runway and a paved road inside gliding conversation for the worst stretch. <<if not $delayed and not $tested>>There's a third shape, too: a climbing circle overhead the field first, ten minutes of full-power scrutiny with a runway directly below, before committing to any line at all.<</if>>
+
+<<if $delayed>>The light is amber going on copper, and the extra miles would spend twilight you counted as margin.<<else>>The sun is high enough that time is the cheapest thing on board.<</if>>
+
+<div class="pax-quote">"I'll pretend I didn't see the shorter one if you pretend the judge won't notice eight-oh-five."</div>
+
+He says it lightly. It lands the way everything he says lands.
+
+<div class="choice-list">
+<<link "A. Direct. It's why you bought a fast airplane, and the numbers passed." "Cruise_Entry">>
+  <<set $pathArray to $pathArray.concat(["Routing: direct over the high country"])>>
+  <<set $routing to "direct">>
+<</link>>
+
+<<link "B. The corridor. You bend north for I-10 and Fort Stockton and buy outs with minutes." "Cruise_Entry">>
+  <<set $pathArray to $pathArray.concat(["Routing: I-10 corridor via Fort Stockton"])>>
+  <<set $routing to "corridor">>
+<</link>>
+
+<<if not $delayed and not $tested>>\
+<<link "C. Overhead first. You spiral up over the field and give the engine ten minutes at full power with a runway under you before you go anywhere." "Climb_Overhead">>
+  <<set $pathArray to $pathArray.concat(["Routing: full-power scrutiny overhead first"])>>
+  <<set $routing to "overhead">>
+<</link>>
+<</if>>\
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Climb_Overhead [scenario]
+<<set $pathArray to $pathArray.concat(["Climbing circles overhead E38 at full power"])>>
+<<set $tested to true>>
+
+You tell Grant the plan in one sentence and he answers with a lawyer's favorite word: "Noted." The Saratoga carves a wide climbing circle over the field, full power, mixture where the JPI likes it, the runway rotating slowly below like a held breath.
+
+Six minutes in, passing 10,200, the engine stumbles.
+
+Not a cough: a stagger, three or four cycles of it, the airframe buzzing with misfire, the JPI's three and five bars flickering like bad neon. Then it smooths, as if embarrassed. Ten seconds of honesty from somewhere under the cowl.
+
+<<set $missBegan to true>><<set $grantSaw to true>>\
+<div class="pax-quote">"Okay. I heard that one with my own ears. Case dismissed."</div>
+
+The field is directly below you. Every option in the world, and all of them downhill.
+
+<div class="choice-list">
+<<link "A. You pull the power back to a gentle cruise setting and spiral down to land at Alpine. The airplane just testified." "Ground_AfterCatch">>
+  <<set $pathArray to $pathArray.concat(["Landed back at E38 after the stumble"])>>
+  <<set $divert to "E38">>
+<</link>>
+
+<<link "B. Fort Stockton is 51 miles, and it's where the nearest open shop will be Monday. You could reposition it there now, gently, while the daylight is deep." "Reposition_KFST">>
+  <<set $pathArray to $pathArray.concat(["Repositioned to KFST after the stumble"])>>
+  <<set $divert to "KFST">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Test_Profile [scenario]
+<<set $pathArray to $pathArray.concat(["Flying the test profile overhead E38"])>>
+
+You brief it to Grant as a flight with a runway attached: up over the field, full power in the climb to nine and a half, three minutes of sustained cruise power, a mag isolation at altitude with the field made, and only then a decision about the empty country. He listens, asks one question ("What would failing look like?"), and writes your answer on the legal pad like an exhibit.
+
+Runway 19, the long high-DA roll, and the climbing circles begin. The field turns beneath the wing. Full power, temps high but legal, the JPI steady.
+
+<<if $delayed>>\
+The evening engine gives you nothing to see. The climb is clean, the sustained power is clean, and the isolation at 9,500 shows the left at its usual 70-equivalent and the right holding smooth, three and five lit and even. Ten minutes of interrogation, no confession.
+<<link "The profile is flown and the witness held up. Decision time, overhead the field." "Decide_AfterTest">><</link>>
+<<else>>\
+Seven minutes in, at sustained cruise power with the temps at their afternoon worst, the engine staggers: a run of misfire you feel in the rudder pedals, the JPI's three and five bars sagging and flickering, four long seconds, then smooth as if nothing. On the isolation check that follows, the right mag alone is rough enough that your hand goes back to BOTH without asking your brain.
+<<set $missBegan to true>><<set $grantSaw to true>><<set $testShowedDrop to true>>\
+
+<div class="pax-quote">"I saw the little bars do it. You don't have to say anything. I retract the whole argument."</div>
+
+The field is right below, patient as ever.
+<div class="choice-list">
+<<link "A. You spiral down and land at Alpine. The test did its one job." "Ground_AfterCatch">>
+  <<set $pathArray to $pathArray.concat(["Landed back at E38 after the test caught it"])>>
+  <<set $divert to "E38">>
+<</link>>
+
+<<link "B. You point it at Fort Stockton, 51 gentle miles, where the shop is. Reposition now, while the fault is a stagger and not a promise." "Reposition_KFST">>
+  <<set $pathArray to $pathArray.concat(["Repositioned to KFST after the test caught it"])>>
+  <<set $divert to "KFST">>
+<</link>>
+</div>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Decide_AfterTest [scenario]
+<<set $pathArray to $pathArray.concat(["Test flown clean; deciding overhead the field"])>>
+
+You level the wings overhead Alpine with the test flown and the engine's slate clean. This is what buying evidence looks like when the evidence cooperates: ten minutes of fuel, a small ache in your neck from watching the JPI, and an engine that did everything right under exactly the loads you were worried about.
+
+<div class="pax-quote">"For the record, counselor: you tested it, it passed, and I watched. Whatever you decide next, that was the right ten minutes."</div>
+
+The line home waits. So does the option nobody would blame you for.
+
+<div class="choice-list">
+<<link "A. You set course from here, direct, 9,500, home before the light goes." "Cruise_Entry">>
+  <<set $pathArray to $pathArray.concat(["Set course for home off the clean test"])>>
+  <<set $routing to "direct">>
+<</link>>
+
+<<link "B. You ride the I-10 corridor anyway. The test bought confidence, not certainty, and the outs are cheap." "Cruise_Entry">>
+  <<set $pathArray to $pathArray.concat(["Corridor routing even after the clean test"])>>
+  <<set $routing to "corridor">>
+<</link>>
+
+<<link "C. You land back and keep the airplane here for the mechanic anyway. The test was for the mechanic's benefit, not the flight's." "Ground_Overnight_Decide">>
+  <<set $pathArray to $pathArray.concat(["Landed back; overnight despite the clean test"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Entry [scenario]
+<<set $pathArray to $pathArray.concat(["Established in cruise eastbound"])>>
+
+<<if $routing is "corridor">>Level 9,500 on the northern bend, Fort Stockton's grid crawling up under the left wing in its own good time, I-10's bead of trucks keeping you company off the nose. The extra miles ride along quietly, the way insurance does.<<else>>Level 9,500 on the direct line, the Altuda saddle sliding under and the last paved road for a while going with it. The country below is the color of an old saddle and about as soft.<</if>> Fuel where it should be, JPI bars even, the autopilot holding the line while you keep the engine company with your ears.
+
+<<if $delayed or ($tested and not $missBegan)>>\
+<<link "The miles start coming off the total." "Cruise_Smooth">><</link>>
+<<else>>\
+<<link "The miles start coming off the total." "Cruise_Miss">><</link>>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Smooth [scenario]
+<<set $pathArray to $pathArray.concat(["Cruise: the engine keeps its own counsel"])>>
+
+The engine settles into the long steady pull that eats distance without drama. <<if $routing is "corridor">>Fort Stockton comes and goes off the wing, its runway a pale stripe you are quietly glad not to need.<<else>>Marathon's grid comes and goes, small as a circuit board dropped in the desert.<</if>> Grant reads his notes, then doesn't, then watches Texas turn evening-colored at two and a half miles a minute.
+
+<<if $vmNote and not $vmReply>>\
+<<set $vmReply to true>>\
+Over the emptiest stretch, your phone finds one bar of something and buzzes against your leg. A text, from the A&P's number, sent to the Sunday air:
+
+<div class="text-msg">Heard vm. If it cleared after a hard lean burnoff its prob plug fouling, that field eats plugs in summer. But a 240 with real shake and a 50 split after, I'd want that mag on a bench before too many more hot starts. Heat brings that kind of thing out. Cant get there till tues am. Yr call.</div>
+
+You read it twice. Behind you, the field where the bench is. Ahead, home. The engine, consulted, says nothing new.
+<</if>>\
+Abeam Sanderson, 9,500, the JPI bars even as a picket fence, a thought arrives and sets up camp: you could check the mags right now. In cruise, at altitude, a two-second flick each way would tell you how the right one feels about the last hour of heat. Some pilots do it as habit on long legs. Others won't disturb a running system over country like this on principle, and the POH, for what it's worth, calls for the check at run-up and says nothing about cruise.
+
+<div class="choice-list">
+<<link "A. You check: left, both, right, both, eyes on the tach and the JPI." "Cruise_MagCheckBeat">>
+  <<set $pathArray to $pathArray.concat(["Cruise: ran an in-flight mag check"])>>
+<</link>>
+
+<<link "B. You leave it alone. The engine is smooth, the country is empty, and the check can live at the next run-up where it belongs." "Arrive_KHYI">>
+  <<set $pathArray to $pathArray.concat(["Cruise: left the running system alone"])>>
+<</link>>
+
+<<link "C. You split the difference: no switching, but you shallow the leaning, log the JPI numbers, and watch three and five like they owe you money." "Arrive_KHYI">>
+  <<set $pathArray to $pathArray.concat(["Cruise: watched the JPI, touched nothing"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_MagCheckBeat [scenario]
+<<set $pathArray to $pathArray.concat(["In-flight check: right mag clean at cruise"])>>
+
+You tell Grant what you're doing before you do it, which he appreciates more than he says. Left alone: the faintest softening, all bars even. Both. Right alone: you brace for it, and the engine gives you two seconds of perfectly ordinary running, three and five as lit as anything. Both again.
+
+Clean. A cool engine at sixty-five percent power in evening air, telling you about this minute. You knew that's all it could testify to before you asked. You asked anyway, and the answer is worth exactly what it cost.
+
+<div class="pax-quote">"I understood maybe a third of that. The third I understood seemed like good news."</div>
+
+<<link "The last hundred miles are the gentle ones." "Arrive_KHYI">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Arrive_KHYI [scenario]
+<<set $pathArray to $pathArray.concat(["Arrival at San Marcos"])>>
+
+The land steps down through Junction and the Hill Country goes soft and green-brown in the last light. San Marcos tower is awake and bored. <<if $delayed>>The sun sets somewhere over your left shoulder on downwind, official to the minute, and the runway lights come up like the field is setting a table.<<else>>The evening is still ahead of the sun when the tower clears you in.<</if>>
+
+<div class="choice-list">
+<<link "A. You take the straight-in they offer for 26 and keep the power settings you trust." "End_Home_Arrived">>
+  <<set $pathArray to $pathArray.concat(["Accepted the straight-in"])>>
+<</link>>
+
+<<link "B. You ask for the overhead teardrop to a full pattern: one more minute aloft, one more stable look at everything, in exchange for nothing you'll miss." "End_Home_Arrived">>
+  <<set $pathArray to $pathArray.concat(["Flew the full pattern by choice"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Miss [scenario]
+<<set $pathArray to $pathArray.concat(["Cruise: the right mag begins to miss"])>>
+<<set $missBegan to true>>
+
+Thirty-eight minutes out of Alpine, the engine misses.
+
+One beat, like a skipped heartbeat in a chest you're leaning against. Then a run of them: a buzzing stagger through the airframe, the tach needle shivering, the JPI's three and five bars flickering down and up. Four seconds, maybe five. Then smooth again, the engine pretending none of it happened.
+
+<<if $routing is "corridor">>Fort Stockton's runway sits fifteen miles off the left wing, long and pale and open for business to anyone with a radio call. I-10 runs under you like a handrail.<<else>>Below is the country you briefed as the memory of airports: Marathon behind the left wing somewhere, Sanderson's canyons ahead, the last paved road a rumor to the south. Fort Stockton is sixty miles behind the left shoulder. Ozona is a hundred ahead.<</if>>
+
+Grant's pen has stopped. He doesn't say anything. His silence has excellent diction.
+
+<div class="choice-list">
+<<link "A. You isolate it now: a deliberate mag check at altitude, left, both, right, both, and learn which system is lying." "Cruise_Isolate">>
+  <<set $pathArray to $pathArray.concat(["Miss: isolated with an in-flight mag check"])>>
+  <<set $isolated to true>>
+<</link>>
+
+<<link "B. You go richer, boost pump on, switch tanks, carb-and-fuel logic first. Rule out the cheap causes before touching the ignition." "Cruise_Fiddle">>
+  <<set $pathArray to $pathArray.concat(["Miss: chased fuel causes first"])>>
+<</link>>
+
+<<link "C. You turn for the nearest long runway right now and diagnose from overhead it, not from out here." "Divert_Hub">>
+  <<set $pathArray to $pathArray.concat(["Miss: turned for the outs immediately"])>>
+<</link>>
+
+<<link "D. It cleared. Engines do this. You hold what you have and give it a minute to be a fluke." "Cruise_PressOn">>
+  <<set $pathArray to $pathArray.concat(["Miss: pressed on, calling it a fluke"])>>
+  <<set $badchoices to $badchoices + 1>>
+  <<set $pressOn to $pressOn + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Fiddle [scenario]
+<<set $pathArray to $pathArray.concat(["Fuel logic changed nothing"])>>
+
+Mixture richer: the EGTs drop, the miss doesn't care. Boost pump: pressure needle unmoved, the stagger returns for another four-second run while the pump whines. Other tank: the engine drinks from it identically. You've spent three minutes and ruled out the cheap suspects, which is worth something, and fixed nothing, which is worth knowing.
+
+The airplane flies on through it, autopilot indifferent, altitude pegged. The misses come in little paragraphs now, thirty seconds apart, then a clean minute, then another paragraph.
+
+<div class="choice-list">
+<<link "A. You isolate the ignition: left, both, right, both, and get a name for this." "Cruise_Isolate">>
+  <<set $pathArray to $pathArray.concat(["Then isolated the mags"])>>
+  <<set $isolated to true>>
+<</link>>
+
+<<link "B. You turn for the nearest long runway and do the rest of your thinking pointed at it." "Divert_Hub">>
+  <<set $pathArray to $pathArray.concat(["Then turned for the outs"])>>
+<</link>>
+
+<<link "C. It runs. It keeps clearing. You press on and keep the troubleshooting in your lap." "Cruise_PressOn">>
+  <<set $pathArray to $pathArray.concat(["Then pressed on anyway"])>>
+  <<set $badchoices to $badchoices + 1>>
+  <<set $pressOn to $pressOn + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Isolate [scenario]
+<<set $pathArray to $pathArray.concat(["Isolation: it's the right mag, airborne"])>>
+
+You announce it to Grant in five words and do it like a lab procedure. Left mag alone: the engine softens a hair and runs like silk. Back to both. Right mag alone: the stagger arrives on cue, deep and immediate, three and five collapsing on the display, and your hand is back on BOTH before the second shudder finishes.
+
+There's your name. The right magneto, the one that shook the airplane on the ground and got talked back into the flight by a clean recheck, is failing under heat, airborne, over this.
+
+On the left mag alone the engine is smooth. On both, the right one joins in just often enough to shake the airframe and your composure on its own schedule.
+
+<div class="pax-quote">"Translate?" A beat while you do. "Okay. So the spare works. What I want to say is 'then we're fine.' The fact that you're not saying it is the whole conversation, isn't it."</div>
+
+<div class="choice-list">
+<<link "A. You select the left mag alone, smooth the engine out, and turn for the nearest long runway with your remaining redundancy spent on purpose." "Divert_Hub">>
+  <<set $pathArray to $pathArray.concat(["Left mag only, turned for the outs"])>>
+  <<set $singleMag to true>>
+<</link>>
+
+<<link "B. You keep BOTH selected, accept the intermittent shake, and turn for the nearest long runway with the sick mag still contributing what it can." "Divert_Hub">>
+  <<set $pathArray to $pathArray.concat(["Kept both mags, turned for the outs"])>>
+<</link>>
+
+<<link "C. You select the left mag alone, the engine runs smooth as new, and home is 170 miles of smooth away. This is what redundancy is for." "Cruise_PressOn">>
+  <<set $pathArray to $pathArray.concat(["Left mag only, continued for home"])>>
+  <<set $singleMag to true>>
+  <<set $badchoices to $badchoices + 1>>
+  <<set $pressOn to $pressOn + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Divert_Hub [scenario]
+<<set $pathArray to $pathArray.concat(["Choosing the out"])>>
+
+You put the destination question where it belongs: on the chart in front of you, not in the calendar behind you.
+
+<<if $routing is "corridor">>Fort Stockton is the easy geometry, fifteen-odd miles, 7,508 feet of runway, the AWOS already legible, a descent you could fly with one hand writing the logbook entry. Ozona sits a hundred miles ahead on course; Alpine is eighty behind, over the high country you just crossed.<<else>>From out here the honest options are all commitments. Fort Stockton: sixty miles back over the left shoulder, big runway, the only shop in the region come Monday. Ozona: a hundred miles ahead on course, six thousand feet of quiet asphalt, and every mile toward it is also a mile toward home. Alpine: eighty-five miles back through the saddle, into the lowering sun.<</if>> Albuquerque Center is a button-push away on 135.875, and the word "precautionary" is free to say and cheap to own.
+
+<div class="pax-quote">"Whatever you pick, pick it like I'm not here. I can be mad at a magneto. I'd have real trouble being mad at you."</div>
+
+<div class="choice-list">
+<<link "A. Fort Stockton. Long runway, the Monday shop, and the shortest version of this story." "Approach_KFST">>
+  <<set $pathArray to $pathArray.concat(["Diverted to KFST"])>>
+  <<set $divert to "KFST">>
+<</link>>
+
+<<link "B. Ozona. On course, long enough, and it converts the divert into most of the trip." "Approach_KOZA">>
+  <<set $pathArray to $pathArray.concat(["Diverted to KOZA"])>>
+  <<set $divert to "KOZA">>
+<</link>>
+
+<<link "C. Back to Alpine. The devil you know, the tie-down you left, the mechanic's Tuesday bench." "Divert_E38">>
+  <<set $pathArray to $pathArray.concat(["Turned back for E38"])>>
+  <<set $divert to "E38">>
+<</link>>
+
+<<link "D. None of them. The engine is holding; home holds the calendar. You continue." "Cruise_PressOn">>
+  <<set $pathArray to $pathArray.concat(["Declined every out"])>>
+  <<set $badchoices to $badchoices + 1>>
+  <<set $pressOn to $pressOn + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_PressOn [scenario]
+<<set $pathArray to $pathArray.concat(["Pressing on; Ozona is the next mile marker"])>>
+
+<<if $singleMag>>On the left mag alone the engine runs like a promise, smooth in a way that would be comforting if you didn't know what bought it. The tachometer holds. The JPI is a picket fence again. Somewhere in the right magneto, whatever is broken rides along at four hundred and some RPM of its own, disconnected and patient.<<else>>The engine runs its new pattern: a clean minute, then a paragraph of misfire that buzzes the airframe and flickers three and five, then clean again. You find yourself counting the clean minutes the way you'd count contractions.<</if>>
+
+The land starts its long step down. Ozona's water tower and its quiet runway crawl up the windshield and sit off the nose, six thousand feet of asphalt, the last easy answer between here and the Hill Country. <<if $delayed>>The light has gone from amber to ember.<<else>>The sun is low enough now to sit in the mirrors.<</if>>
+
+<div class="pax-quote">"That's the one you mentioned, isn't it. Ozona." A pause with structure to it. "I'm not arguing anymore. I'm just reading the exhibits out loud."</div>
+
+<div class="choice-list">
+<<link "A. You take it. Ozona, now, while the choice is still entirely yours." "Approach_KOZA">>
+  <<set $pathArray to $pathArray.concat(["Took Ozona, the last easy out"])>>
+  <<set $divert to "KOZA">>
+<</link>>
+
+<<link "B. Junction is only fifty more miles, I-10 the whole way, and home fifty behind it. You continue." "Cruise_Deeper">>
+  <<set $pathArray to $pathArray.concat(["Passed Ozona, continuing"])>>
+  <<set $badchoices to $badchoices + 1>>
+  <<set $pressOn to $pressOn + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Deeper [scenario]
+<<set $pathArray to $pathArray.concat(["Past Ozona; the situation chooses a direction"])>>
+
+<<if $singleMag>>\
+The left mag carries the airplane past Ozona without a stumble, and the miles to Junction come off in that smooth, expensive silence. The panel lights are on now. Below, ranch lights arrive in ones and twos, the country slowly remembering people. Junction's beacon shows up right on schedule, white-green against the dusk, I-10 pouring headlights past it.
+
+Fifty miles beyond it, home. You have one ignition system doing all the work, one doing none, night arriving, and an airplane that has been flawless for an hour on exactly half its redundancy.
+
+<div class="choice-list">
+<<link "A. Junction, tonight. The airplane sleeps at KJCT, and tomorrow it's a two-hour problem instead of a headline." "End_KJCT_Dusk">>
+  <<set $pathArray to $pathArray.concat(["Stopped at Junction for the night"])>>
+  <<set $divert to "KJCT">>
+<</link>>
+
+<<link "B. Fifty miles. Twenty minutes. The left mag has earned the benefit of the doubt. You continue home." "End_PressOn_Landed">>
+  <<set $pathArray to $pathArray.concat(["Continued home on the left mag"])>>
+  <<set $badchoices to $badchoices + 1>>
+  <<set $pressOn to $pressOn + 1>>
+<</link>>
+</div>
+<<else>>\
+Past Ozona the misfire paragraphs get longer and lose their manners. The clean minutes shrink to clean half-minutes. Twice the engine sags, actually sags, a couple hundred RPM of stagger that pushes the nose down a degree before it catches itself, and the second time Grant's hand finds the door armrest and stays there.
+
+The JPI has stopped being subtle: three and five live somewhere south of their neighbors now, flickering. The airframe buzz is intermittent but familiar, a phone ringing in another room that you keep almost answering.
+
+Junction's beacon is twenty miles ahead. The last of the light is going. The engine runs, then doesn't quite, then does.
+
+<div class="choice-list">
+<<link "A. You finally do the isolation you've been owed for an hour: left mag alone." "Cruise_LateIsolate">>
+  <<set $pathArray to $pathArray.concat(["Late isolation to the left mag"])>>
+  <<set $isolated to true>>
+  <<set $singleMag to true>>
+<</link>>
+
+<<link "B. Junction, now, while the engine still makes climb power on request." "End_KJCT_Dusk">>
+  <<set $pathArray to $pathArray.concat(["Took Junction while the taking was good"])>>
+  <<set $divert to "KJCT">>
+<</link>>
+
+<<link "C. It keeps catching itself. Fifty miles past Junction is home. You press on as-is." "Cruise_Failing">>
+  <<set $pathArray to $pathArray.concat(["Pressed past Junction, engine degrading"])>>
+  <<set $badchoices to $badchoices + 1>>
+  <<set $pressOn to $pressOn + 1>>
+<</link>>
+</div>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_LateIsolate [scenario]
+<<set $pathArray to $pathArray.concat(["Left mag alone: smooth at last"])>>
+
+Left mag, alone. The engine smooths out mid-shudder, like a hand laid on a rattling table. The picket fence rebuilds itself on the JPI. It is the sound you could have had an hour ago, and knowing that is its own instrument reading.
+
+Junction's beacon holds off the nose, its runway lights a small punctuation in the gathering dark. Home is fifty miles past it. One system working, one confirmed sick, and the night coming up to meet you.
+
+<div class="pax-quote">"Better." A pause. "Better isn't the same as good, is it. I can hear the difference now."</div>
+
+<div class="choice-list">
+<<link "A. Junction. You land while every option is still open and let tomorrow be tomorrow." "End_KJCT_Dusk">>
+  <<set $pathArray to $pathArray.concat(["Landed Junction after the late isolation"])>>
+  <<set $divert to "KJCT">>
+<</link>>
+
+<<link "B. Smooth is smooth. Twenty minutes to home. You continue." "End_PressOn_Landed">>
+  <<set $pathArray to $pathArray.concat(["Continued home after the late isolation"])>>
+  <<set $badchoices to $badchoices + 1>>
+  <<set $pressOn to $pressOn + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Failing [scenario]
+<<set $pathArray to $pathArray.concat(["Past Junction; the engine stops negotiating"])>>
+
+Junction's lights slide behind the left wing and become the past. For six or seven minutes the engine keeps its ugly bargain, roughness and recovery, roughness and recovery, while the ranch country west of the Hill Country goes fully dark below, stars on top and the occasional yard light beneath, and not much in between.
+
+Then the bargain ends. The sag comes and doesn't catch itself: the engine drops into a deep, continuous stagger, EGTs scattering, manifold pressure available but the fire behind it arriving in fits. You are holding 7,000 with maybe sixty percent of an engine on a good second, and the seconds are not all good.
+
+The nose is already trimmed down before you decide anything. Some part of you has been briefing this without permission: the dark quilt below, the gray thread of a caliche ranch road running northeast, wide as forgiveness, and Fredericksburg's glow twenty-some miles too far ahead.
+
+<div class="pax-quote">"Tell me what to do with my hands and I'll do it."</div>
+
+<div class="choice-list">
+<<link "A. You fly the airplane to the road while power remains to choose with: flaps set, into what wind there is, gear a deliberate decision, flashlight in Grant's fist." "End_RanchRoad">>
+  <<set $pathArray to $pathArray.concat(["Committed to the ranch road under control"])>>
+<</link>>
+
+<<link "B. Fredericksburg's glow is twenty miles. The engine keeps almost recovering. You stretch for the airport." "End_RanchRoad">>
+  <<set $pathArray to $pathArray.concat(["Tried to stretch for the airport glow"])>>
+  <<set $stretched to true>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_KFST [scenario]
+<<set $pathArray to $pathArray.concat(["Diverting to Fort Stockton"])>>
+
+You tell Center the word and the word does its work: "precautionary," and the frequency reorganizes itself around you without a single wasted syllable. Descent at your discretion. The Fort Stockton AWOS robot recites its evening report: wind one seven zero at eight, altimeter three zero zero seven.
+
+<<if $singleMag>>The left mag flies you down the long slope smooth as poured concrete.<<else>>The engine throws in one more paragraph of misfire on the descent, as if to endorse the decision.<</if>> Runway 12/30 shows up pale and enormous, 7,508 feet of it, and you land on 12 with a thousand-foot float's worth of margin and taxi in past hangars shut tight for the weekend.
+
+Engine off. Tick of cooling metal. The Sunday silence of a west Texas ramp, two men, and one magneto with a secret.
+
+Grant is already on his phone rearranging his Monday, voice level, the word "continuance" pronounced like a tool he owns. When he hangs up he looks at the airplane a long moment.
+
+<div class="pax-quote">"For the record: the version of this where you'd listened to me is the version where that happened over the part with no roads. I withdraw my earlier remarks. All of them."</div>
+
+<<link "The rest is phone calls and a shared room at the highway motel." "End_KFST_Precautionary">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_KOZA [scenario]
+<<set $pathArray to $pathArray.concat(["Diverting into Ozona"])>>
+
+Ozona has no one to talk to and needs nothing said: you announce on CTAF to an audience of parked crop sprayers and fly a wide, gentle pattern to runway 16. <<if $singleMag>>The left mag hums you down final without a flicker.<<else>>The misfire keeps its distance for the whole descent, then throws one last shiver on short final, a parting signature.<</if>> Six thousand feet of quiet asphalt accepts the airplane, and the rollout is long and unhurried because you have nowhere better to be than under control.
+
+The ramp is empty except for the courtesy car, which exists after all: a county pickup with the key above the visor and a clipboard asking only that you say who you were.
+
+Grant stands on the ramp in the last usable light, hands in his pockets, looking at the airplane the way people look at horses that almost threw them.
+
+<div class="pax-quote">"I want to say something for the record and then buy you dinner if this town has one. You were inside your book the whole time and you still called it. I make arguments for a living, and the scariest thing I've learned today is how good mine was."</div>
+
+<<link "Chicken-fried steak, a motel with a buzzing sign, and tomorrow made simple." "End_KOZA_Precautionary">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Divert_E38 [scenario]
+<<set $pathArray to $pathArray.concat(["Turning back for Alpine"])>>
+
+The one-eighty puts the low sun in the windshield and the high country back under the nose, which is the price of the familiar tie-down and the Tuesday bench. <<if $singleMag>>The left mag makes it a smooth, golden, uphill-feeling ride, the saddle at Altuda repainting itself in evening colors.<<else>>The misfire comes along for the ride, its paragraphs arriving and dissolving while you cross the saddle with more altitude than you strictly need and no apology for it.<</if>>
+
+Alpine's AWOS is still narrating the temperature to nobody. You land on 19 in long shadows, taxi to the same tie-down whose chains you unhooked three hours and one education ago, and shut it down.
+
+Grant helps with the chains, which he has never once done before, and doesn't say anything clever at all.
+
+<<link "Town is two miles. The motel has vacancies. Monday, this field wakes up with mechanics on it." "End_E38_Return">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Reposition_KFST [scenario]
+<<set $pathArray to $pathArray.concat(["Repositioning gently to Fort Stockton"])>>
+
+You make it the tamest fifty-one miles the airplane has ever flown: reduced power, altitude in hand the whole way, I-10 under the right wing like a spare runway unrolled for the occasion, Center advised in plain words what you're doing and why. The engine, at this kindly power setting in the cooling afternoon, never says a word. <<if $grantSaw>>Grant watches the JPI the entire way, self-appointed to the board of directors of cylinders three and five.<</if>>
+
+Fort Stockton's 7,508 feet arrive under the wheels with the whole affair feeling almost anticlimactic, which was the intended design. You taxi to the maintenance hangar, find its doors shut for Sunday, and leave the airplane nose-to-the-door with a note under the wiper written on legal-pad paper in a lawyer's ruthless print: the symptoms, the numbers, your phone, the word URGENT underlined once, because twice would be shouting.
+
+<<link "The highway motel has two rooms and a view of the interstate." "End_Reposition_KFST">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_AfterCatch [scenario]
+<<set $pathArray to $pathArray.concat(["Back on the ground at Alpine, question answered"])>>
+
+The spiral down is unhurried and the landing ordinary, which feels almost rude given the circumstances. You put N429TC back on the same tie-down, and this time the chains go on like a verdict.
+
+The question the run-up couldn't answer is answered: the fault is real, it likes heat and load, and it showed itself the moment you gave it both with a runway underneath. The airplane stays. That part is over, and it was never really the hard part.
+
+The hard part checks his watch, then visibly decides not to. Tomorrow at eight, a federal judge expects him groomed and lethal in San Antonio, 273 miles from this ramp.
+
+<div class="pax-quote">"Options as I see them. One: I find tonight's version of a rental car and drive it. Five hours, ugly, doable. Two: I call opposing counsel tonight, eat the continuance, and owe a man I dislike a favor. Three exists only if this town hides an airline. You know this country; I know my judge. Deal me a recommendation."</div>
+
+<div class="choice-list">
+<<link "A. You help him hunt down the rental outfit's after-hours number and get him rolling east tonight with coffee and a full tank." "End_Caught_Overnight">>
+  <<set $pathArray to $pathArray.concat(["Got Grant a car and rolling east"])>>
+<</link>>
+
+<<link "B. You tell him to make the call and eat the continuance: tired driving five hours of two-lane in the dark is the same bet you just refused to make with the airplane." "End_Caught_Overnight">>
+  <<set $pathArray to $pathArray.concat(["Advised the continuance over the night drive"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_E38_Return [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: back where the day started, on purpose"])>>
+
+The motel clerk recognizes the look of you both and doesn't ask. Dinner is green chile and quiet. Monday morning the field wakes up with mechanics on it after all, and by ten the right magneto is open on a bench with a carbon track across the distributor block, scorched in like a signature. "Heat-soaked climb at altitude," the mechanic says, tapping it. "This thing was always going to introduce itself properly today. You just picked where."
+
+Grant's deposition moves to Wednesday. He bills the drive home Tuesday to the client with a straight face and buys the new distributor block himself, over your objection, "as a licensing fee for the story."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The fault waited until you were airborne over the high country, and you spent it the most conservative way available: a one-eighty back to the field you knew, with the sun still up and altitude in hand, and a bench the next morning that confirmed everything.</p>
+<h3>ADM analysis</h3>
+<p>Turning back reads as defeat and functions as engineering: Alpine held your tie-down, Monday mechanics, a town you could walk to, and terrain you'd just seen in daylight. The alternative math (pressing to somewhere new because it's ahead) values motion over information. The one hard look this path deserves: the ride back crossed the saddle again with a misbehaving ignition system, and a case existed for Fort Stockton's bigger runway and shop. You weighed known against nearer. Reasonable seats disagree here; yours decided, which is the job.</p>
+<h3>What good judgment looks like here</h3>
+<p>Exactly what the one-eighty always looks like when it's flown early: boring. The engine got kinder power, the terrain got more altitude than pride would have carried, and the decision was made while every option was still open rather than after two more misses closed some. The 180 is a system, not an apology.</p>
+<h3>Key takeaway</h3>
+<p>The turn back is a destination choice like any other. Fly it before the airplane makes it for you, and let the bench write the last word.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KOZA_Precautionary [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: Ozona, under control, by choice"])>>
+
+The county pickup starts on the second try and the diner in town serves chicken-fried steak until eight. Grant moves his deposition by phone from the booth, performing contrition he does not feel, and tips like a man renegotiating with the universe. The motel sign buzzes. The stars are ridiculous.
+
+Tuesday, the mobile mechanic out of San Angelo puts the right mag on his tailgate bench and finds the carbon track inside twenty minutes. "Y'all flew the smart half of this one," he says, which out here is a eulogy-grade compliment. N429TC is home Wednesday. The county gets its pickup back with a full tank and a note.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>When the engine started editorializing, you took the out that was also progress: Ozona, on course, six thousand feet of runway, reached with power to spare and daylight in hand. The mission converted into a phone call and a motel, which is the entire design goal of a precautionary landing.</p>
+<h3>ADM analysis</h3>
+<p><<if $isolated>>The in-flight isolation gave the problem its name before you bet anything on geography, and the divert spent that knowledge well.<<else>>You diverted without a full diagnosis, which trades some information for time and margin; over that country, an entirely defensible exchange rate.<</if>> <<if $pressOn gte 1>>The miles flown between the first miss and this decision were the expensive ones: nothing on the panel got better during them, and the options behind you got farther away.<<else>>The decision came early, while every option was still open, which is what early is for.<</if>> Grant's line on the ramp is the scenario's thesis found by a layman: the argument was good, and the argument was beside the point.</p>
+<h3>What good judgment looks like here</h3>
+<p>An on-course divert is the least dramatic instrument in the bag and often the best: it banks the progress, keeps the interstate's services within a courtesy car's reach, and leaves every future option (bench, ferry, airline) alive. The precautionary landing's reputation as an overreaction survives only among pilots who haven't needed one; the NTSB files are quieter on the subject, mostly because precautionary landings don't appear in them.</p>
+<h3>Key takeaway</h3>
+<p>A divert that's also sixty percent of the trip is no retreat. It's the mission, renegotiated from a position of strength.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KFST_Precautionary [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: Fort Stockton, the short version"])>>
+
+Monday at 8:40 the shop two hangars down rolls its doors open and inherits your Sunday. By eleven the distributor block is on the counter between you, its carbon track catching the fluorescent light. "See how it wanders?" the mechanic says, tracing it with a pen he doesn't let touch the surface. "Cold, spark stays home. Hot, it takes this road. Y'all heard the road."
+
+Grant caught the shop's dawn loaner east and made San Antonio with time to shave twice. The new block goes in before lunch; you're home for dinner Monday, one day and one education late.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The first miss got a named response inside of minutes: the nearest long runway, a word to Center, and a wide pale runway that made the whole problem feel smaller on short final. The shop confirmed the fault the next morning and the trip finished by loaner car and a Monday-evening ferry flight home.</p>
+<h3>ADM analysis</h3>
+<p><<if $routing is "corridor">>The corridor routing wrote this ending before the engine did: fifteen miles to a runway instead of sixty, purchased at the run-up pad for twenty-five extra track miles. That's what buying outs looks like when the bill comes due.<<else>>From the direct line, Fort Stockton cost a turn back toward the sun and the discipline to prefer a known good option behind you over unknown miles ahead. That discipline is the rare commodity. Geometry is just arithmetic.<</if>> The word "precautionary," said early to Center, converted the system from an audience into a resource, and it costs exactly nothing. <<if $singleMag>>Running the left mag alone smoothed the ride down, and spending your remaining redundancy deliberately, pointed at a runway, is the correct shape for that decision.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Divert to capability, not just proximity: 7,508 feet of runway, an AWOS, a shop that would open in fifteen hours, and an interstate for the human logistics. The destination solved the airplane's problem and the calendar's in one landing. That's not luck; that's what the Field Guide page was for.</p>
+<h3>Key takeaway</h3>
+<p>The best divert answers tomorrow's question too. Land where the fix lives.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KJCT_Dusk [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: Junction, in the last of the light"])>>
+
+Junction's runway lights are already up when you join the pattern, and the landing happens in that blue ten minutes where the world is all silhouette and beacon. <<if $singleMag>>The left mag flies the approach without a tremor, which you refuse to find reassuring on principle.<<else>>The engine holds its manners through the pattern, one small shiver in the flare, as if signing its work.<</if>> You shut down in front of a dark FBO with I-10's river of headlights pouring past beyond the fence.
+
+Grant surveys the empty ramp, the vending machine's glow, the first stars. "I have slept in worse towns for worse reasons," he says, and has the motel's number dialed before you finish the chains. Tuesday, a mechanic from Kerrville makes the drive, benches the mag, and finds the carbon track. The last hundred miles home take thirty-eight minutes and feel like a victory lap someone else paid for.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You carried the problem <<if $pressOn gte 2>>a long way past its first exit<<elseif $pressOn gte 1>>past at least one good exit<<else>>to the edge of night<</if>> and then, at Junction, stopped carrying it: a runway taken with power available, options open, and nothing bent. The airplane spent two nights in Junction. Nobody remembers that part in a year; that's the point of it.</p>
+<h3>ADM analysis</h3>
+<p><<if $pressOn gte 2>>Look honestly at the shape of this path: the engine asked for attention, and got it only after multiple refusals, each individually defensible, each narrowing the next choice. The chain broke because you finally broke it, in nearly the last place with lights. Credit for the break; the audit belongs to the links.<<elseif $isolated>>The isolation gave you truth, and Junction is where the truth finally outweighed the totalizer's twenty-minutes-to-home arithmetic. Earlier would have been cheaper; later would have been expensive in a different currency.<<else>>Stopping at Junction with climb power still on request is the definition of using margin while it's still margin.<</if>> The dusk matters more than it feels like it does at the time: every minute later converts a precautionary landing into a night precautionary landing, which is a different and worse instrument.</p>
+<h3>What good judgment looks like here</h3>
+<p>When a known-degraded system is flying you toward darkness, the last lighted runway before the empty stretch is not one of the options; it is the option, and it should be briefed that way out loud ("Junction or we declare"). The versions of this evening that skipped Junction appear elsewhere in this scenario, and they are not better stories.</p>
+<h3>Key takeaway</h3>
+<p>Margins spend like daylight: invisibly, then all at once. Land while stopping is still a choice and not a result.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_PressOn_Landed [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: home on one magneto"])>>
+
+San Marcos tower clears you to land in full dark, and the left magneto, which has now flown an airplane by itself for the better part of two hours, delivers you to runway 26 without a comma out of place. The taxi in is very quiet. Grant doesn't narrate this arrival to anyone.
+
+On the ramp he stands under the wing for a moment before getting his bag. "I've won cases I should have lost," he says finally. "The feeling afterward is exactly this. You don't frame those verdicts."
+
+Thursday the bench finds the carbon track in the right mag's distributor block. Your mechanic calls it a "when, not if" and doesn't ask how the airplane got home. You tell him anyway, because somebody should have to say it out loud.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A demonstrated ignition failure at altitude was answered with <<if $isolated>>a correct diagnosis and then a long bet: the healthy magneto, alone, across the emptiest country on the route, into the night, past <<if $pressOn gte 3>>every exit the chart offered<<else>>good exits<</if>>.<<else>>continued flight on a degrading system, without ever fully naming the problem, past the exits.<</if>> The bet paid. The airplane is home, the passenger is home, and the margin that got you there existed entirely inside a magneto you had no reason to trust and one you had merely not yet caught lying.</p>
+<h3>ADM analysis</h3>
+<p><<if $isolated>>Split this path in two and grade the halves separately. The isolation was airmanship: deliberate, informative, correctly executed. Everything after it was exposure: single-ignition, night, terrain-poor, help-poor, chosen against multiple runways of refusal.<<else>>The undiagnosed press-on compounds two errors: flying a sick system, and not knowing which system was sick.<</if>> "This is what redundancy is for" is the scenario's most seductive sentence, and it inverts the truth: redundancy exists to get you to the nearest suitable runway after a failure, not to complete missions on the last layer. The moment you select the last healthy system, redundancy is over. What remains is all there is.</p>
+<h3>What good judgment looks like here</h3>
+<p>Junction. Ozona. Fort Stockton. The judgment this ending lacks isn't knowledge (you knew) or skill (the flying was fine); it's the willingness to let the calendar lose. The debrief question that matters: what, specifically, would have made you land? If the honest answer is "a second failure," then the plan was to have an emergency. Write the personal minimum now, in a chair, in daylight: known ignition fault equals nearest suitable, full stop.</p>
+<h3>Key takeaway</h3>
+<p>Landing a bet like this feels like vindication and proves nothing. The bench doesn't care that it worked; next time the bench votes first.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_RanchRoad [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the caliche road"])>>
+
+<<if $stretched>>The stretch toward Fredericksburg's glow lasts four minutes. The engine's recoveries get shorter, the sags get deeper, and the glide math finally speaks in a voice louder than hope: the glow is seventeen miles away and the airplane has nine of them. You come back to the road you passed, lower now, fewer choices in the dark, and take what the flashlight and the landing light can build.
+
+The caliche is wide and mostly straight. The airplane arrives fast and flat, touches once, skips, and the second arrival finds the washout the first one warned you about. The nose gear folds. The prop finds the road. N429TC slides two hundred yards on its nose bowl and comes to rest tilted into the fence line, and then it is very, very quiet.<<else>>You fly it like an approach, because that's what it is: power set on the good seconds, flaps on schedule, Grant's flashlight steady on the road, gear down onto the wide caliche with the last of the engine's cooperation. The touchdown is honest. The rollout isn't: a cattle-guard dip a quarter mile in takes the nose gear, and the airplane slides the last hundred feet on its cowl, prop bent back like grass in the wind, and stops.<</if>>
+
+Headsets off. The tick of metal. Grant's voice, carefully level: "Are we done? I'd like to be done."
+
+You are done. Doors open, both of you out and upright in the sudden enormous dark, a bruise starting where the shoulder strap did its work. The ELT is chirping to satellites. A ranch house porch light comes on a half mile off, and a dog announces you to the county.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A heat-activated magneto fault, first observed at the run-up pad, was carried through <<print $pressOn>> declined exits until the failing unit stopped being intermittent at night over ranch country. <<if $stretched>>The last decision, stretching for a glow instead of committing to the surface in reach, spent the remaining altitude on distance and paid for it with control of the arrival.<<else>>The forced landing itself was flown with discipline, which is why this debrief is being read by its participants.<</if>> Two people walked away. The airplane didn't.</p>
+<h3>ADM analysis</h3>
+<p>Chain endings deserve chain debriefs, so name the links. A cleared-but-unexplained run-up accepted as resolved. A heat-soaked launch over the route's worst terrain. <<if not $isolated>>A failure never fully diagnosed.<<else>>A diagnosis made and then outvoted.<</if>> Ozona declined. Junction declined. <<if $stretched>>A glide spent on hope instead of geometry.<<else>>And then the engine ended the voting.<</if>> No single link looks fatal, and none was: this ending exists five decisions deep, every one of them reversible at the time. That is how these arrive in the real world too. Not as one bad call, but as a hallway of doors, each quietly closing.</p>
+<h3>What good judgment looks like here</h3>
+<p>Any earlier ending in this scenario. Failing those: exactly what the final minutes contained on the disciplined branch, an arrival flown under control to a chosen surface with the airplane's energy spent on the pilot's terms. The FAA's forced-landing guidance and every glider pilot alive agree on the core: fly the machine all the way to the stop, and choose the crash you can walk from over the airport you can't reach. <<if $stretched>>The glow on the horizon is the last trap on the route: seventeen miles of maybe against nine miles of certainty is not a close call, and at night it only ever feels like one.<</if>></p>
+<h3>Key takeaway</h3>
+<p>Nobody plans to bet an airplane on a magneto. It happens one reasonable-sounding mile at a time. The road home was paved with exits, and the last one out here was made of caliche.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_Overnight_Decide [scenario]
+<<set $pathArray to $pathArray.concat(["Announcing the overnight"])>>
+
+You say it plainly, because that's how the good calls deserve to be said: the airplane stays until a mechanic who isn't guessing has had that magneto on a bench. Tonight is Alpine. You'll cover the rooms and the dinner and whatever the Monday costs.
+
+Grant takes the legal pad off his knee and squares it on his lap, which you have learned is his tell for choosing among prepared remarks.
+
+<div class="pax-quote">"Last argument, then I rest. The evidence hasn't changed since the run-up: the numbers passed, the procedure worked, the book is satisfied. What changed is that we talked about it longer. If a client reversed a sound position because the negotiation ran late, you'd call that fatigue, not judgment. Persuade me there's a difference and I'll carry your bags to the motel myself."</div>
+
+It is, as usual, a good argument. The engine ticks as it cools, within limits and unexplained.
+
+<div class="choice-list">
+<<link "A. You hold the call, and give him the honest answer: you can't out-argue him, and you don't have to. The seat you're renting him doesn't come with a vote on this one." "Overnight_Logistics">>
+  <<set $pathArray to $pathArray.concat(["Held the overnight; invoked the seat, kindly"])>>
+<</link>>
+
+<<link "B. You hold the call and offer him the machinery of your logistics: your phone, the rental outfit's number, the motel, the 6 a.m. option, whatever solves his Monday." "Overnight_Logistics">>
+  <<set $pathArray to $pathArray.concat(["Held the overnight; solved his Monday with him"])>>
+<</link>>
+
+<<link "C. He wants the car, you can hear it. You help him hunt down the rental outfit tonight and send him east on four wheels while you stay with the airplane." "End_Deadline_Drive">>
+  <<set $pathArray to $pathArray.concat(["Sent Grant east by car tonight"])>>
+<</link>>
+
+<<link "D. The argument lands. The engine is cool now, the evening is kind, and a clean recheck would be a third data point. You reverse yourself and go." "Launch_Cooled">>
+  <<set $pathArray to $pathArray.concat(["Reversed the overnight and launched"])>>
+  <<set $delayed to true>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Overnight_Logistics [scenario]
+<<set $pathArray to $pathArray.concat(["Making the overnight work"])>>
+
+He nods once, the way he probably nods at judges, and gets to work beside you instead of against you. The rental outfit's phone rings into the Sunday void. The motel answers on the second ring and has two rooms; the clerk gives walking directions that consist of the word "downhill."
+
+The Monday problem gets solved the way real ones do: Grant calls opposing counsel from the shade of the wing, absorbs thirty seconds of theatrical inconvenience, and moves the deposition to one o'clock. "Depositions move," he says, pocketing the phone. "I try to save my outrage for things that don't."
+
+You call Leah. She listens to the whole shape of it and says the thing she always says, which is the reason you married into this family twice over: "Good. Come home when it's boring."
+
+<div class="choice-list">
+<<link "A. Dinner in town, the airplane chained under the biggest sky in Texas." "Overnight_Evening">>
+  <<set $pathArray to $pathArray.concat(["To town for the evening"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Overnight_Evening [scenario]
+<<set $pathArray to $pathArray.concat(["Alpine evening; morning plan set"])>>
+
+The diner is good in the way small-town diners are good: nothing on the menu is a metaphor. Grant preps his witness outline at the corner table for an hour, then puts it away and asks real questions about flying, the kind he'd never ask while an argument was live. Why the book number exists. What a magneto actually does. Why "within limits" and "airworthy" aren't the same word. You answer, and somewhere in there the day's ledger quietly balances.
+
+Walking back, the sky does its high-desert thing: too many stars to look casual about.
+
+Morning plan: coffee at seven, out to the field, a cold-engine recheck with the town's mechanics awake and reachable, and a decision made in daylight with all options open.
+
+<div class="choice-list">
+<<link "A. Morning comes. You go run it up." "Morning_Run">>
+  <<set $pathArray to $pathArray.concat(["Monday morning recheck"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Morning_Run [scenario]
+<<set $pathArray to $pathArray.concat(["Monday: cold engine, clean numbers, open shop"])>>
+
+Monday, 7:40 a.m., the field already busy by Alpine standards: one Cessna in the pattern and the maintenance hangar's doors rolled open, a shop fan running inside. The desert morning is fifty-nine degrees and the airplane starts like it slept well.
+
+The run-up, cold: left 70, right 85, split of 15, smooth as glass both ways. A cold engine in cold air, telling you about this minute. By now you could write the footnote yourself.
+
+The difference between last night and this morning isn't the numbers. It's the open hangar doors two hundred yards away, and Grant's deposition sitting safely at one o'clock.
+
+<div class="choice-list">
+<<link "A. You taxi it to the open shop first and put the mag on the bench before you bet anything else on it." "End_Overnight_Shop">>
+  <<set $pathArray to $pathArray.concat(["Shop first, flight after"])>>
+<</link>>
+
+<<link "B. Clean and cold, you fly it home now and book it with your own mechanic for this week; Grant makes his one o'clock with hours to spare." "End_Overnight_Clean">>
+  <<set $pathArray to $pathArray.concat(["Flew home Monday; scope booked at home"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Home_Arrived [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: home at San Marcos"])>>
+
+The tires chirp on 26 and San Marcos ground taxis you home through the last of the color in the sky. Leah's headlights are waiting at the hangar row; Grant is out of the airplane before the prop stops turning, kissing his sister's cheek, already narrating. "Your husband," you hear him say, "runs a tougher courtroom than mine."
+
+Thursday, because you booked it Monday morning<<if $vmReply>>, and because a west Texas mechanic's text kept reading itself to you at red lights<</if>>, your own shop pulls the right magneto. The distributor block comes out with a carbon track across it like a pencil line: a carbon path where spark had been finding its own way home, worse when hot, invisible on a bench that isn't looking for it. "Ran fine for you, did it?" your mechanic says, holding it up. "It was going to get louder every hot start until it got loud somewhere you'd remember."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You saw a 240 RPM drop with real roughness, ran the correct clearing procedure, and got numbers inside the book. <<if $tested>>Then you spent ten minutes and a few gallons buying evidence: a full-power test profile overhead the field, which the fault happened not to attend.<<elseif $delayed>>Then you took the one mitigation the afternoon offered for free: time. A cooler engine, cooler air, softer light, and a recheck before launch.<<else>>Then you flew home.<</if>> The flight was uneventful. The magneto was failing the entire time.</p>
+<h3>ADM analysis</h3>
+<p>The pressure in this scenario never raised its voice. It cross-examined. Grant's argument was locally sound: the limits were met, the procedure behaved as designed, the base rate favored fouling. What his argument could not supply, because no argument can, is the distinction between <em>within limits</em> and <em>understood</em>. The drop that clears is consistent with two stories, and only one of them is finished with you. <<if $badchoices gte 1>>Reversing a made decision under sustained persuasion is worth an honest look in the mirror: the evidence didn't change between your no and your yes. Only the argument did.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p><<if $tested>>The test profile is the counterintuitive move that looks aggressive and is actually conservative: it converts an argument into an observation, with a runway attached the whole time. It didn't catch this fault, because intermittents keep their own calendar. That doesn't make it wasted. It makes it evidence with error bars.<<else>>When a discrepancy clears without a proven cause, the honest options all involve buying information: a test profile overhead the field, a cool-down that removes the fault's favorite condition, a bench, or a night. You bought some. The outcome cooperated.<</if>> The debrief question that matters is the one outcome bias hides: would this decision look as good if the carbon track had spoken up over the Glass Mountains? Judge the bet, not the payout. 14 CFR 91.7 makes the pilot the airworthiness authority of record for exactly this gray zone. The book number is where that authority starts, not where it ends.</p>
+<h3>Key takeaway</h3>
+<p>A cleared discrepancy without a confirmed cause is a loan, not a verdict. You can't out-argue a good lawyer, and you don't have to: the seat decides, and the seat's job is to be right about the airplane, not about the debate.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Caught_Overnight [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the fault confessed overhead the field"])>>
+
+<<if $pathArray.includes("Got Grant a car and rolling east")>>The rental outfit's after-hours number answers on the fourth try, and by 7:30 Grant is eastbound in a dusty crossover with two gas-station coffees and his outline recited into his phone. He makes San Antonio by half past midnight and a federal courtroom by eight, on schedule and running on fumes of several kinds. His text arrives as you're chaining the airplane: "Home. Your move was right and so was mine. Family holiday story secured."<<else>>Grant makes the call from the pilot lounge, absorbs a performance of inconvenience from opposing counsel, and moves the deposition to Wednesday. "He'll dine out on this favor for a year," he says, pocketing the phone. "Cheap at the price." You split a motel, a diner table, and the kind of evening conversation that only happens after an airplane has settled an argument for you.<</if>>
+
+Tuesday morning the Alpine shop puts the right mag on the bench and finds the carbon track across the distributor block inside the first half hour: a scorched pencil line of wandering spark, heat-activated, exactly the kind of fault that passes a cold check and fails a hot climb.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You refused to let a cleared number close an unexplained case, and you built the one experiment that could reopen it: full power, real heat, real load, with a runway directly below. The fault attended. From that moment the scenario stopped being a judgment problem and became a logistics problem, which is the happiest demotion in aviation.</p>
+<h3>ADM analysis</h3>
+<p>The test-overhead profile is the counterintuitive-but-correct move at the heart of this scenario: it spends fuel and minutes to convert an argument into an observation. Note what it did to the social pressure: it didn't defeat Grant's argument, it made the argument moot. Evidence is the only thing that ever truly ends a debate with a smart passenger, because it's the only thing that lets them lose without losing face.</p>
+<h3>What good judgment looks like here</h3>
+<p>Exactly this shape. Treat an unproven diagnosis as unproven. Design the cheapest observation that can distinguish the stories, and run it where the consequences of the bad story are smallest. And then handle the humans. <<if $pathArray.includes("Got Grant a car and rolling east")>>Sending Grant east by road traded your risk domain for his: five hours of dark two-lane is not free, and it was his call to make in his own domain, made with open eyes.<<else>>Advising the continuance priced the night drive honestly: a tired man doing five hours of dark two-lane is the same unproven-system bet you'd just declined, wearing different equipment.<</if>></p>
+<h3>Key takeaway</h3>
+<p>When the numbers pass but the engine already testified once, build a test the fault can fail. Ten minutes over the field is the cheapest magneto bench in Texas.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Reposition_KFST [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: repositioned to the shop's doorstep"])>>
+
+The motel's air conditioner has two settings, arctic and off, and the interstate hums all night like a distant frequency. Monday at 8:05 the shop's phone rings you before you can ring it: they found the note. By 10:30 the right mag is on the bench and the mechanic is holding the distributor block up to the window light, whistling at the carbon track scorched across it. "Hot-start special," he says on the phone. "You want the old block for your desk? Some guys do." Grant, who took the shop's loaner car east at dawn, makes his continuance-free Monday by twenty minutes.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The fault confessed overhead the field, and you spent the confession carefully: fifty-one gentle miles to the doorstep of the region's open-Monday shop, in deep daylight, at reduced power, with an interstate under the wing and altitude in hand. The airplane was on a bench eighteen hours later and home two days after that.</p>
+<h3>ADM analysis</h3>
+<p>This is a genuinely debatable call, and the debrief should say so out loud. Against it: you launched an airplane with a known, demonstrated, intermittent ignition fault, and intermittents do not owe you a repeat of their mild opening act. For it: every mitigation that exists was actually applied: power reduced below the fault's favorite regime, routing over a road and a runway, altitude banked, daylight deep, the destination chosen precisely because the bench was there. What separates this from the press-on paths is not luck. The exposure was designed, bounded, and pointed at the fix.</p>
+<h3>What good judgment looks like here</h3>
+<p>If you fly a known-degraded airplane at all, fly it the way this leg was flown: shortest useful distance, kindest power, maximum outs, and a reason on the other end that actually retires the risk (a bench, not a barbecue). The equally correct answer was the tie-down at Alpine and a Tuesday mechanic; that version costs a day and buys certainty. Reasonable pilots split here. What they don't get to split on is doing it at night, over the empty, or at full power: those versions are a different scenario, and it appears elsewhere in this one.</p>
+<h3>Key takeaway</h3>
+<p>A ferry flight to the fix is a designed exposure, not a continuation of the mission. Design it or decline it.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Overnight_Clean [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: Monday flight home, scope booked"])>>
+
+The Monday flight home is one hour and forty-eight minutes of anticlimax, which you have learned to count as winnings. Cool morning, smooth engine, the Hill Country green-gold out the right window. Grant naps like a man acquitted. He makes his one o'clock with a margin wide enough to bill somebody for, and his text that evening reads: "Deposition went long. Nobody died of continuance. Noted for future reference."
+
+Thursday your own shop pulls the right mag. Carbon track across the distributor block, scorched and unambiguous. Your mechanic photographs it next to a fresh one and sends both pictures with a one-line caption: "Cold, it behaves. Hot, it freelances. Good call not trusting it Sunday."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You held an unpopular no on Sunday, converted it into logistics instead of an argument, and flew home Monday on a cold engine and a clean check, with the bench already booked. The bench then told you what the Sunday engine had been trying to say: the fault was real, heat-activated, and patient.</p>
+<h3>ADM analysis</h3>
+<p>Notice what the Monday-morning clean numbers almost did: they made Sunday's decision look excessive. That's outcome bias running in reverse, and pilots who overnight on a discrepancy meet it in the morning every time: the airplane behaves, the sunk cost aches, and the temptation is to quietly downgrade yesterday's judgment. The bench's photograph is the antidote worth remembering: the decision was right when you made it, with the information you had, and it stayed right after the evidence arrived. It would have stayed right even if the block had come back clean, because reasonable doubt about ignition over that country was worth one motel night at any exchange rate.</p>
+<h3>What good judgment looks like here</h3>
+<p>The full sequence, which is rarer than any single piece. A no-go held without drama. The passenger's problem treated as real and solved with him rather than dismissed. The flight resumed under conditions that took away the fault's favorite weather (cold engine, cold morning, help awake along the route). And the discrepancy retired on a bench instead of by fading memory. The old joke about useless things (runway behind you, altitude above you) earns a third clause here: a mechanic you didn't call.</p>
+<h3>Key takeaway</h3>
+<p>Right decisions sometimes feel wrong the next morning. Book the bench anyway; the block doesn't lie.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Overnight_Shop [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the bench before the flight"])>>
+
+You taxi the two hundred yards to the open hangar and the day gets simple. The mechanic listens to ninety seconds of your story, nods at "cleared after a lean burn-off," and has the right mag off the engine before his coffee cools. The distributor block comes out with a carbon track burned across it like a dry riverbed.
+
+"There's your ghost," he says. "Cold check passes. Get it good and hot under load, spark starts commuting by the scenic route. Next hot day it quits being intermittent." He has a block in stock for the Slick, because out here he stocks what the desert breaks. You're airborne by 1:30 and home by hangar-door dusk. Grant, deposed and victorious at one o'clock, texts at four: "Tell the magneto I said nothing personal."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The overnight bought exactly what it promised: a Monday morning where the discrepancy could be handed to someone with a bench instead of argued with. The fault was found in thirty minutes, fixed in ninety, and the flight home was flown behind an ignition system with no secrets in it.</p>
+<h3>ADM analysis</h3>
+<p>The choice this ending rewards is the refusal to let a clean cold check retire a hot-engine question, which is a different thing from caution for its own sake. That distinction, cold evidence versus hot question, ran the whole scenario, and the shop's diagnosis names it: some faults only exist at temperature. A run-up is a thermometer reading taken in the shade.</p>
+<h3>What good judgment looks like here</h3>
+<p>When the fix is two hundred yards away and open for business, the cost-benefit table has a column most Sundays don't: certainty, same-day, cheap. Taking it converted every remaining unknown in this scenario into a receipt. The alternative (fly it home cold and scope it Thursday) was defensible and is its own ending; the difference between them is three days of carrying a question you could have answered before lunch.</p>
+<h3>Key takeaway</h3>
+<p>If the bench is within taxi distance, the bench goes first. Certainty is rarely this conveniently located; when it is, buy it.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Deadline_Drive [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: Grant drives; the airplane waits for the bench"])>>
+
+The rental outfit's after-hours voicemail calls back at 7:40, and by 8:15 Grant is eastbound in the only car on the lot, seat racked forward, deposition outline playing through the speakers in his own recorded voice. It is three hundred and seventy road miles to San Antonio. He texts from a gas station in Sonora at 10:50 ("alive, caffeinated, rehearsing") and from his driveway at 1:15 a.m. ("home. we are never speaking of this weekend under oath").
+
+You stay with the airplane. Monday morning the Alpine shop opens at eight, finds the carbon-tracked distributor block by nine, and has you airborne by noon. Grant performs his deposition on five hours of sleep and wins it anyway, because of course he does.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You held the airplane on the ground and the calendar found another way to San Antonio: five hours of dark two-lane, driven by a tired man with a morning commitment. The magneto's fault was confirmed on a bench twelve hours later. Everyone arrived; not everything about how was free.</p>
+<h3>ADM analysis</h3>
+<p>The aviation decision was sound and the bench proved it. The transportation decision that replaced the flight deserves its own honest look: risk didn't vanish when the airplane stayed chained, it changed vehicles. A fatigued night drive is statistically no one's safe harbor. The instructive part is jurisdictional: in the airplane, the risk was yours to accept or refuse for both of you, and you refused it; on the road, it was his, in his own domain, made with open eyes and his own hands on the wheel. PIC authority is total and it is also bounded. Knowing where it ends is part of carrying it well.</p>
+<h3>What good judgment looks like here</h3>
+<p>Solve the passenger's real problem with him before he solves it alone: lay out the drive, the continuance, and the morning flight as honest options with honest costs. You did the aviation half cleanly. The version of this ending with nothing to examine is the one where the continuance got one more minute of your advocacy: the deposition moved once in this scenario's other branches, and nobody died of it.</p>
+<h3>Key takeaway</h3>
+<p>Grounding the airplane moves the risk; it doesn't retire it. Finish the job: help the mission die completely or move safely, not just leave your cockpit.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readFlightPlan to false>><<set $readAircraft to false>><<set $readField to false>><<set $methodical to false>><<set $vmNote to false>><<set $vmReply to false>><<set $plugPulled to false>><<set $tested to false>><<set $testShowedDrop to false>><<set $delayed to false>><<set $heatSoak to false>><<set $missBegan to false>><<set $routing to "">><<set $stretched to false>><<set $isolated to false>><<set $singleMag to false>><<set $divert to "">><<set $pressOn to 0>><<set $grantSaw to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
