@@ -1,0 +1,948 @@
+:: StoryTitle
+The Forty-Five
+
+:: StoryData
+{
+  "ifid": "772B8C45-26A7-4154-B619-42E2A3120F45",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "FlightPrep"
+}
+
+:: StoryInit
+/* Scenario metadata
+   SCENARIO TITLE:      The Forty-Five
+   AUDIENCE:            Pilot (GA, 500-1,000 hr; protagonist 730 TT, private ASEL, night current)
+   TONE:                Professional
+   PRIMARY TOPIC:       Night fuel planning and in-flight fuel decision-making
+                        when the wind eats the plan
+   SECONDARY TOPIC:     Destination fixation; the difference between legal and
+                        comfortable; diversion mechanics at night
+   AIRCRAFT/EQUIPMENT:  1979 Piper Cherokee Archer II (PA-28-181), N4372W, rented.
+                        Lycoming O-360-A4M, 180 hp. 48 gal usable in two 24-gal
+                        tanks, selector LEFT/RIGHT/OFF. Two float-type fuel
+                        gauges, no totalizer. KX 170B, GNS 430W, no autopilot.
+   SETTING:             KCOU Columbia Regional MO to KEVV Evansville Regional IN,
+                        225 nm direct, Friday night, late October. A friend's
+                        band goes on at 9:30 in Evansville.
+   WEATHER:             Severe clear both ends. Winds aloft forecast 240/15 at
+                        6,000 on the Columbia column; in fact easterly, on the
+                        nose at 24-28 at 5,500 east of the Mississippi. The sky
+                        is not the problem. The wind is the plan's problem.
+   ADM THEMES:          Fuel as bookkeeping, not faith; opening-balance errors;
+                        destination fixation; legal floor vs. personal plan;
+                        minimum fuel vs. emergency fuel; the honest instrument
+                        (the clock) vs. the comfortable ones
+   HAZARDOUS ATTITUDES: Invulnerability (the kid topped it), impulsivity (go,
+                        the math will work out), macho (I do not land 28 miles
+                        short), resignation (the gauges bounce, nothing to know)
+   TOTAL DECISIONS:     Branching; every path passes 5+ decision points
+   TOTAL ENDINGS:       9 (success 2, qualified 2, teaching-success/minimum
+                        fuel 1, friction-blind 1, scare 1, delay/diversion 1
+                        with two narrative variants, off-airport damage 1,
+                        fatal 0 by design)
+   MIN DECISION DEPTH:  5
+   TIMED DECISIONS:     No
+   ESTIMATED DURATION:  20-30 minutes
+   VERSION:             1.0
+   LAST REVIEWED:       2026-07-07
+   REVIEWER:            Claude (initial draft) / Harvey Madison (pending)
+
+   Facts verified July 2026 (FAA/aviation data + AirNav):
+   KCOU elev 889, rwys 02/20 7401x150 and 13/31 5500x100, twr 119.3, ATIS 128.45.
+   KEVV elev 418, rwys 04/22 8021x150, 18/36 6286x150, 09/27 3497x75, twr 118.7,
+     ATIS 120.2. KFYG Washington Rgnl 5002x75. KSAR Sparta 4002x75 (15 nm S of
+     the direct line). KMVN Mount Vernon elev 480, rwy 05/23 6496x150 HIRL, ILS
+     23, CTAF 123.0, AWOS-3PT 118.2, attended 0630-2000 with posted after-hours
+     number, lights pilot-controlled at night, Kansas City Center 127.7 (Mount
+     Vernon RCAG), 100LL. KCUL Carmi Muni 18/36 4000x75, elev 387. KEHR
+     Henderson City-County 09/27 5503x100. COU and EVV are real FB winds-aloft
+     stations. Distances (computed from FAA coords): COU-FYG 59, COU-river 93,
+     COU-abeam-Sparta 121, COU-MVN 161, COU-abeam-Carmi 197, COU-EVV 225. TC 102.
+
+   CANONICAL FUEL/TIME TABLE (all prose numbers derive from this):
+   Engine start 19:00 CDT, wheels up 19:15, TOC 5,500 at 19:28 (14 nm, 2.3 gal).
+   Taxi/runup 1.5 gal. Cruise 117 KTAS. Burn: 10.4 gph until the 20:00 mixture
+   decision, then 9.5 leaned / 10.8 rich. Groundspeed: 104 to CP1 (wind ~13),
+   96 CP1-river, 91 river-Sparta, then 89 at 5,500 (wind 28) or 99 at 3,500
+   (wind 16). Tanks: takeoff LEFT, switch to RIGHT at the river (20:15).
+   PLAN column (GS 120, paper): CP1 19:50, river 20:07, MVN 20:41, EVV 21:13.
+   ACTUAL: CP1 19:54 (4 late), river 20:16 (9 late), abeam Sparta 20:33.
+     High lane:      MVN 21:00, abeam Carmi 21:24, EVV overhead 21:44, TD 21:48.
+     Descended lane: MVN 20:57, abeam Carmi 21:19, EVV overhead 21:37, TD 21:41.
+   Fuel used (from start): CP1 8.3; river/switch 11.7 lean 12.0 rich; Sparta
+   14.7/15.4; MVN 18.5-18.9 lean, 19.8-20.3 rich; touchdown EVV incl 0.5
+   pattern: desc-lean 25.8, high-lean 27.0, desc-rich 28.0, high-rich 29.3.
+   Start fuel: topped = 48.0. Not topped = 28.0 actual (L 15, R 13), believed
+   48 on the trust lane, known on the stick-and-go lane.
+   Landing fuel: 48-lane 22.2/21.0/20.0/18.7. 28-lane desc-lean 2.2, high-lean
+   1.0, rich exhausts: R tank (13 gal) dry at 21:37 leaned / 21:27 rich; L tank
+   at the switch holds 3.3 leaned / 3.0 rich. Downwind-quiet: descended+leaned,
+   on RIGHT tank, R dry 21:37 with TD 21:41. Beans chain: rich lanes, R dry
+   21:27 (20-25 nm short), relight on L (3.0), L dry ~21:44, down in the
+   bottoms 6-10 nm west of EVV. KMVN stop lane: land 21:01/20:57 with 9.5-13.5
+   actual (28-lane) or 29.5+ (48-lane); after-hours callout, fueled and off
+   about 21:50; TD EVV ~22:35.
+*/
+<<set $pathArray to []>>
+<<set $badchoices to 0>>
+<<set $readWeather to false>>
+<<set $readRoute to false>>
+<<set $readAircraft to false>>
+<<set $readReserve to false>>
+<<set $fuelActual to 48>>    /* gallons aboard in fact; set at D1 */
+<<set $fuelGal to 48>>       /* running ACTUAL gallons, decremented per leg */
+<<set $fuelKnown to true>>   /* false on the trust lane: belief says 48 */
+<<set $topped to false>>     /* tanks verified full at Columbia */
+<<set $looked to false>>     /* glanced in the filler necks, no dipstick */
+<<set $gsKnown to false>>    /* did honest groundspeed/fuel math at CP1 */
+<<set $leaned to false>>     /* leaned to the card number at 20:00 */
+<<set $altitude to 5500>>    /* 5500, or 3500 after the descent decision */
+<<set $fssTried to false>>   /* called FSS for updated winds: didn't help */
+<<set $stopMade to false>>   /* landed KMVN for fuel */
+<<set $declaredMin to "">>   /* "", "min", or "emerg" */
+<<set $onTank to "L">>       /* "L" or "R"; switch at the river */
+<<set $toldDez to false>>    /* texted Dez about running late */
+<<set $pressOn to 0>>        /* exits declined after the wind showed its hand */
+<<set $quietOnce to false>>  /* a tank has already run dry this flight */
+<<set $divert to "">>        /* "", "KMVN", "KCUL" */
+
+:: StoryStylesheet [stylesheet]
+body {
+  background: #0f1720;
+  color: #d6dee6;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#story {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+#passages { border-left: none; padding: 0; }
+.passage { padding: 0; }
+a.link-internal, a.macro-link {
+  color: #e6b84a;
+  text-decoration: none;
+  border-bottom: 1px dotted #8a6f2a;
+}
+a.link-internal:hover, a.macro-link:hover {
+  color: #fff4d0;
+  background: #3a2d0a;
+  border-bottom: 1px solid #e6b84a;
+}
+.choice-list { margin: 1.2em 0 0.5em 0; }
+.choice-list p { margin: 0.6em 0; }
+hr { border: none; border-top: 1px solid #2c3a4a; margin: 1.8em 0; }
+.debrief {
+  background: #141d28;
+  padding: 1rem 1.3rem;
+  border-left: 3px solid #e6b84a;
+  margin-top: 1rem;
+  font-size: 0.98rem;
+}
+.debrief h3 {
+  color: #e6b84a;
+  font-size: 1.05rem;
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.04em;
+}
+.restart { margin-top: 2em; font-size: 0.95rem; color: #8aa0b5; }
+.metar-block, .flight-plan, .aircraft-card {
+  font-family: "Courier New", monospace;
+  font-size: 0.95rem;
+  color: #b8cce4;
+  background: #0a121b;
+  padding: 0.6em 0.9em;
+  border-left: 2px solid #5a6e88;
+  margin: 0.6em 0;
+  white-space: pre-wrap;
+}
+.airport-table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.9em; }
+.airport-table th, .airport-table td { padding: 6px 10px; border-bottom: 1px solid #2a3a56; text-align: left; }
+.airport-table th { color: #9ab0c8; }
+.scenario-title { font-size: 2em; color: #ffffff; text-align: center; margin-bottom: 0.2em; }
+.scenario-subtitle {
+  font-size: 1.05em; color: #8aa0c0; text-align: center;
+  margin-bottom: 1.5em; font-style: italic;
+}
+.preflight-btn {
+  display: inline-block;
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  padding: 10px 20px;
+  margin: 6px 4px;
+  min-width: 230px;
+  text-align: center;
+  color: #e0e0e0;
+  text-decoration: none;
+}
+.preflight-btn:hover { background: #0f3460; color: #ffffff; }
+.chart-disclaimer {
+  font-size: 0.8em; color: #8090a8;
+  border-left: 3px solid #3a4a6c;
+  padding: 6px 12px; margin: 1em 0;
+}
+.sectional-container { margin: 1em 0; }
+.sectional-container img { max-width: 100%; border: 1px solid #2a3a56; border-radius: 4px; }
+.sectional-label { font-size: 0.85em; color: #8090a8; margin-top: 0.3em; }
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block; padding: 0.55em 1.3em;
+  background: #1A3C57; color: #fff !important;
+  border: 1px solid #2E5C82; border-radius: 4px;
+  text-decoration: none; font-size: 0.95em; letter-spacing: 0.03em;
+}
+.main-menu-btn:hover, .main-menu-btn:focus { background: #2E5C82; outline: none; }
+.text-msg {
+  background: rgba(46, 66, 52, 0.35);
+  border-left: 3px solid #6a9a78;
+  padding: 0.5em 0.9em;
+  margin: 0.8em 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 0.95em;
+  color: #c8dcc8;
+}
+.text-msg::before { content: "Dez: "; color: #7aa88a; font-weight: bold; }
+
+:: FlightPrep [preflight]
+<<set $pathArray to $pathArray.concat(["Preflight: planning at the kitchen table"])>>
+
+<div class="scenario-title">The Forty-Five</div>
+<div class="scenario-subtitle">Two hundred twenty-five miles, forty-eight gallons, one wristwatch</div>
+
+Friday, late October, 6:10 in the evening, and you are still in work clothes with a sectional on the kitchen table you mostly won't need. Columbia to Evansville, 225 nautical miles, direct. You have flown into KEVV twice. Severe clear both ends tonight, a fat high to the northeast, some kind of low sulking down over Arkansas. Sunset is 6:21. The whole flight is night, and you are night current and honest about it, which are not always the same thing.
+
+The reason is a band. Dez Whitfield, your college roommate, plays bass in a four-piece called The Boonville Shakes, and tonight they open for somebody almost famous at a brick bar in downtown Evansville. Doors at nine, on stage at 9:30. Dez has been texting about this show for three weeks the way other people text about weddings.
+
+The airplane is N4372W, a 1979 Archer II from Katy Trail Aviation, the school on the east ramp at Columbia Regional. You have 730 hours, about 60 of them in this exact airplane. It is a known quantity: honest, slow, and equipped with two fuel gauges that bounce like the band's rhythm section.
+
+Your plan says two hours in the air. The book says 48 usable. On paper, this flight is drowning in margin.
+
+Review what you have, then go get the airplane.
+
+<div class="chart-disclaimer">Charts, weather data, and performance figures in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here, not current publications, as the scenario is designed around them.</div>
+
+<<link "<span class=\"preflight-btn\">Weather &amp; Winds</span>" "Preflight-Weather">><<set $readWeather to true>><</link>>
+<<link "<span class=\"preflight-btn\">Route &amp; the Ladder of Outs</span>" "Preflight-Route">><<set $readRoute to true>><</link>>
+<<link "<span class=\"preflight-btn\">Aircraft &amp; Fuel Truth</span>" "Preflight-Aircraft">><<set $readAircraft to true>><</link>>
+<<link "<span class=\"preflight-btn\">Night &amp; the Reserve</span>" "Preflight-Reserve">><<set $readReserve to true>><</link>>
+
+<<if $readWeather and $readRoute and $readAircraft and $readReserve>>
+<hr>
+That's everything on the table. The airport is fifteen minutes away and the airplane is fueled, or so the schedule board says.
+
+<<link "<span class=\"preflight-btn\">☑ Drive to the Airport</span>" "Ramp_Walkout">><</link>>
+<<elseif $readWeather or $readRoute or $readAircraft or $readReserve>>
+<hr>
+<em>There's more here if you want it. Doors are at nine either way.</em>
+
+<<link "<span class=\"preflight-btn\">Drive to the Airport Anyway</span>" "Ramp_Walkout">><</link>>
+<</if>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Weather [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed weather and winds"])>>
+<strong>The sky: clear. The air: moving the wrong way.</strong>
+
+<div class="metar-block">KCOU 232354Z 08007KT 10SM FEW250 13/04 A3011
+KSTL 232351Z 09010KT 10SM SCT250 13/06 A3008
+KMVN 232356Z AUTO 09012KT 10SM CLR 14/07 A3004
+KEVV 232354Z 10011KT 10SM FEW200 15/08 A3001</div>
+
+<div class="metar-block">TAF KEVV 232320Z 2400/2424 10012KT P6SM FEW200
+  FM241200 12008KT P6SM SKC</div>
+
+<strong>Synopsis, in one breath</strong>
+
+<p>High pressure anchored over the Great Lakes, a surface low deepening over northern Arkansas, and your route running right along the squeeze between them. Clear air, good visibility, and an easterly flow strengthening east of the Mississippi ahead of the low. Nothing in this picture rains, ices, or gusts. It just blows, gently at the surface, and harder where you cruise.</p>
+
+<strong>Winds aloft (FB, based on 231200Z, valid 240000Z, for use 2100-0600Z)</strong>
+
+<div class="metar-block">FT      3000    6000    9000
+COU     2508    2415+08 2318+04
+EVV     1108    1122+07 1230+03</div>
+
+<p>Read that table twice, because it disagrees with itself. The Columbia column says a friendly southwest 15 at 6,000. The Evansville column says east at 22 at the same altitude, and single digits down at 3,000. Two stations, 220 miles apart, calling the same layer from opposite directions. The forecast is eleven hours old. Somewhere between those columns is the truth, and you will be flying through the middle of it with a watch.</p>
+
+<div class="metar-block">UA /OV FAM090015/TM 2310/FL055/TP BE35/WV 09526KT/TA 11
+/RM SMOOTH. GS 25 KT UNDER PLAN EB.</div>
+
+<p>One PIREP, an hour old: a Bonanza east of Farmington at 5,500 measuring east wind at 26 knots and complaining about it in the remarks. One airplane, one altitude, one data point south of your line.</p>
+
+<<link "&larr; Back to preflight" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Route [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed route and the ladder of outs"])>>
+<strong>KCOU direct KEVV: 225 nm, true course 102</strong>
+
+<div class="sectional-container">
+<img src="/scenarios/the-forty-five/images/area_map.jpg" alt="Route overview map, Columbia Missouri to Evansville Indiana, showing Washington Regional, the Mississippi River crossing, Mount Vernon, and Carmi along the direct line">
+<div class="sectional-label">Route overview: KCOU direct KEVV. The line runs south of the St. Louis Class B, crosses the Mississippi at the 93-mile mark, and spends its second half over the dark farm country of southern Illinois.</div>
+</div>
+
+<div class="flight-plan">Aircraft:   N4372W  Archer II (PA-28-181)
+Route:      KCOU DCT KEVV (VFR, flight following)
+Cruise:     5,500 / 65% / 117 KTAS / 9.5 GPH leaned
+Winds:      COU column says push, EVV column says shove.
+            Planned as a wash: GS 120.
+Checkpoints (plan, wheels-up + time):
+  KFYG Washington Rgnl   59 nm    0:35
+  Mississippi River      93 nm    0:52
+  KMVN Mount Vernon     161 nm    1:26
+  KEVV Evansville       225 nm    1:58
+Fuel:       48.0 start / 1.5 taxi / 2.3 climb / 18.2 cruise
+            Landing with about 26. Reserve on paper: 2 hours 45.
+Time box:   Engine start 7:00, wheels up 7:15, on the ground
+            9:13, at the bar by 9:45. Second song, maybe third.</div>
+
+<p>The TAC shows the direct line staying south of the St. Louis Class B shelves at five-five; you'll be talking to Approach through there on flight following anyway. West of the river the ground has towns on it. East of the river, southern Illinois goes dark in a way that surprises people: coal country, corn stubble, one yard light per mile, and the interstates all somewhere else.</p>
+
+<strong>The ladder of outs, west to east</strong>
+
+<table class="airport-table">
+<tr><th>Field</th><th>Where</th><th>What's there at 9 p.m.</th></tr>
+<tr><td>KFYG Washington Rgnl</td><td>59 nm, on the line</td><td>5,002 ft, lights, nobody home</td></tr>
+<tr><td>KSAR Sparta</td><td>121 nm, 15 south of the line</td><td>4,002 ft, dark and quiet</td></tr>
+<tr><td>KMVN Mount Vernon</td><td>161 nm, on the line</td><td>6,496 ft, HIRL, ILS, AWOS 118.2, CTAF 123.0. Attended to 8 p.m., after-hours callout number on the FBO door. The last big lit runway before Evansville.</td></tr>
+<tr><td>KCUL Carmi</td><td>197 nm, 3 south of the line</td><td>4,000 ft, beacon, self-serve pump of unknown temperament. Unattended. Dark.</td></tr>
+<tr><td>KEHR Henderson</td><td>Across the river, 12 past EVV</td><td>5,503 ft. It's behind the destination; it only helps if you're already there.</td></tr>
+</table>
+
+<p>Notice the shape: the ladder's best rung is Mount Vernon, and it comes 64 miles before the destination. After Carmi there is nothing but river bottoms until the Evansville beacon.</p>
+
+<<link "&larr; Back to the table" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Aircraft [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed aircraft and fuel truth"])>>
+<strong>N4372W: 1979 Archer II, rental honest</strong>
+
+<div class="aircraft-card">Powerplant:  Lycoming O-360-A4M, 180 hp, carbureted
+Fuel:        50 gal total, 48.0 usable. Two tanks, 24.0 each.
+             Tabs at 17 per side. Selector LEFT / RIGHT / OFF.
+             No BOTH. No totalizer. Two float gauges.
+Burn:        9.5 GPH at 65% leaned. More if you don't.
+Panel:       GNS 430W (groundspeed lives here), KX 170B,
+             transponder, no autopilot. Post light flickers.
+Speeds:      117 KTAS at 65%. Best glide 76 KIAS.
+             Vso 55 KIAS. Vno 125 KIAS.</div>
+
+<strong>The squawk sheet, last page</strong>
+
+<div class="aircraft-card">10/19  R FUEL QTY GAUGE READS HIGH. SHOWED 3/4,
+       DIPPED 11 GAL ACTUAL. DO NOT TRUST FOR
+       PLANNING.               -- R. MALDONADO
+10/21  Post light intermittent. Wiggle it.
+10/22  Squawk 1 sent to avionics. No parts yet.
+       Gauge placarded? No. Use the dipstick.</div>
+
+<p>Read Maldonado's line the way he meant it. The right gauge is not broken in the useful, obvious way. It reads. It moves. It just reads rich, the way a golf buddy reports his score. The school's answer is the wooden dipstick in the door pocket, marked in gallons, which works every time on an airplane parked level with the caps off.</p>
+
+<p>The Archer's fuel system asks one thing of you all flight: pick a tank. There is no BOTH. Takeoff and landing on the fuller tank, switch on a schedule, and know at every moment which wing is feeding the engine. The gauges are federally required to be accurate at exactly one reading: empty. Everything above that is a rumor. The watch, the burn rate, and the opening balance are the whole science. Get the opening balance wrong and every careful subtraction after it is confident garbage.</p>
+
+<<link "&larr; Back to the plan" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Reserve [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed night rules and the reserve"])>>
+<strong>What the number 45 actually is</strong>
+
+<p>14 CFR 91.151(b): no person may begin a flight in an airplane at night unless, considering wind and forecast weather, there is enough fuel to fly to the first point of intended landing and after that for at least 45 minutes at normal cruising speed.</p>
+
+<p>Three things about that sentence earn their keep tonight.</p>
+
+<p>First, it is a planning rule. It judges the moment you push the throttle up at Columbia, using the forecast you had. It does not follow you across Illinois recomputing itself. A flight can satisfy 91.151(b) at takeoff and still land on fumes, and the reg will have nothing to say about it. The NTSB will.</p>
+
+<p>Second, 45 minutes in this airplane is about 7 gallons. Sit with that. Seven gallons, split between two tanks you can't see into, measured by two gauges with a loose relationship to the truth, at night, is where the FAA's patience ends. It is a floor, set low on purpose, for everyone. It was never meant to be anyone's plan.</p>
+
+<p>Third, the words that go with it. <em>Minimum fuel</em>, said to ATC, is an advisory: it means you can accept no undue delay. It gets you no priority, jumps you past nobody, and generates no paperwork at all. <em>Emergency fuel</em> is a declaration: it gets you priority handling, the shortest path to pavement, and afterward, possibly, a phone call in which you tell a calm person a true story. Pilots treat the second word like it costs a certificate. It costs a sentence. The thing that actually costs certificates, and airplanes, is needing the word and not saying it.</p>
+
+<p>Fuel exhaustion accidents are rarely a gauge problem. They are a bookkeeping problem wearing a hope costume. The ledger tonight is simple: 48 gallons, 9.5 an hour, and a wristwatch. Nothing else on the panel gets a vote.</p>
+
+<<link "&larr; Back to the kitchen table" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_Walkout [scenario]
+<<set $pathArray to $pathArray.concat(["At the airplane; the schedule board says fueled"])>>
+
+The line kid at Katy Trail is seventeen, polite, and gone in the direction of a Bonanza with a fuel order before you've finished signing the book. "Topped your Archer an hour ago," he says over his shoulder. The schedule board agrees: 72W, FUELED, initials, 5:40 p.m.
+
+Out at the tie-down, 72W sits level in the last of the dusk, cold to the touch. The preflight is the preflight: sumps clean and blue, oil at six, the post light flickering until you wiggle it, per the squawk sheet's instructions. Which leaves the caps, and the question every renter answers in their own dialect: what, exactly, is in this airplane.
+
+The left gauge says a needle-width under full. The right gauge, the one Maldonado's squawk says reports like a golf buddy, reads full. Full-ish. The dipstick is in the door pocket, where the school promised. It is 6:52. Wheels up at 7:15 makes the whole night work.
+
+<div class="choice-list">
+<<link "A. The board says topped, the kid says topped, the gauges agree as much as they ever do. You button up and go." "Climb_Depart">>
+  <<set $pathArray to $pathArray.concat(["D1: trusted the board and the kid"])>>
+  <<set $fuelActual to 28>><<set $fuelGal to 28>><<set $fuelKnown to false>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. You pull the caps and look. Fuel, both sides, shining somewhere below the collars in the dark. Looks right. Good enough." "Ramp_Look">>
+  <<set $pathArray to $pathArray.concat(["D1: looked in the necks, no stick"])>>
+  <<set $looked to true>>
+<</link>>
+
+<<link "C. You get the dipstick out and measure both tanks like the squawk sheet is watching." "Ramp_Stick">>
+  <<set $pathArray to $pathArray.concat(["D1: dipped both tanks"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_Look [scenario]
+<<set $pathArray to $pathArray.concat(["Eyeballed the filler necks"])>>
+
+Flashlight in your teeth, you look down both filler necks. There is fuel in there. It catches the light and moves when you rock the wing. How much fuel is a different question: below the collar, above the tabs, somewhere in the region where every tank in the world looks the same, which is to say, like fuel.
+
+The stick is eight inches away in the door pocket. The clock says 6:56.
+
+<div class="choice-list">
+<<link "A. Fuel visible both sides, board says topped, math says fat. You saddle up." "Climb_Depart">>
+  <<set $pathArray to $pathArray.concat(["Went on the eyeball"])>>
+  <<set $fuelActual to 28>><<set $fuelGal to 28>><<set $fuelKnown to false>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. You've come this far. You get the stick." "Ramp_Stick">>
+  <<set $pathArray to $pathArray.concat(["Got the stick after all"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_Stick [scenario]
+<<set $pathArray to $pathArray.concat(["The stick says 28, not 48"])>>
+
+The wooden stick comes up wet at fifteen gallons on the left. You read it twice, wipe it, dip again. Fifteen. The right tank reads thirteen, which means the golf-buddy gauge is currently exaggerating by about the usual handicap.
+
+Twenty-eight gallons. Not forty-eight. The board is wrong, or the kid topped a different Archer, or somebody flew 72W after 5:40 and the paperwork hasn't caught up. It doesn't matter which. What matters is that the opening balance you were about to trust was off by twenty gallons, and the only instrument that caught it cost the school nine dollars.
+
+The fuel pumps are two hundred yards away, self-serve, working. Topping off costs maybe twenty minutes against a 7:15 wheels-up. Twenty-eight gallons is also, for the record, 2 hours and 50 minutes of fuel against a flight planned at 1 hour 58: legal tonight under 91.151(b), with the forecast you have.
+
+<div class="choice-list">
+<<link "A. You taxi to the pump and top it. Full tanks, full stop. The band can survive you arriving at song four." "Ramp_Fuel">>
+  <<set $pathArray to $pathArray.concat(["Topped it: 48 aboard, verified"])>>
+  <<set $topped to true>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>>
+<</link>>
+
+<<link "B. Twenty-eight known gallons is a legal, honest number: two hours of flight, fifty-plus minutes of reserve on the forecast winds. You go with what you have and watch the math." "Climb_Depart">>
+  <<set $pathArray to $pathArray.concat(["Went with a known 28"])>>
+  <<set $fuelKnown to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_Fuel [scenario]
+<<set $pathArray to $pathArray.concat(["Topped at the self-serve"])>>
+
+The pump takes your card on the first try, which you choose to read as a good omen. Twenty point two gallons go in, which settles the question of what the schedule board was worth. You stick both tanks afterward anyway, because the habit is the point: the stick kisses the collar both sides. Forty-eight, verified, by you, tonight.
+
+Wheels up slips to 7:32. The math moves with it: on the ground at 9:30ish, at the bar for the back half of the set. Dez will forgive what Dez has to forgive.
+
+<<link "You strap in and get the clearance for flight following." "Climb_Depart">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Climb_Depart [scenario]
+<<set $pathArray to $pathArray.concat(["Wheels up, eastbound in the dark"])>>
+
+<<if $topped>>Wheels up at 7:32, seventeen minutes down on the plan already and honest about why.<<else>>Wheels up at 7:15, on the number.<</if>> Columbia tower hands you to departure, departure gives you a squawk and the night, and the Archer climbs east into air smooth as poured glass. Level 5,500. Power set, 117 true. The towns of central Missouri scroll under the nose wearing their Friday lights.
+
+The GNS thinks about it for a while and settles on a groundspeed: 104.
+
+Not 120. One-oh-four. The Columbia winds-aloft column promised a push from behind; the airplane is reporting a headwind of thirteen knots, and it is only the first installment if the Evansville column was the honest one.
+
+Dez's first text arrives on the kneeboard phone at 7:40:
+
+<div class="text-msg">soundcheck done. levi says the room holds 250 and I believe him tonight. doors at 9. you close??</div>
+
+<<link "Washington Regional's beacon comes up ahead: your first checkpoint." "Cruise_CP1">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_CP1 [scenario]
+<<set $pathArray to $pathArray.concat(["Checkpoint one: four minutes late"])>>
+<<set $fuelGal to $fuelGal - 8.3>>
+
+Washington Regional's beacon passes under the left wing at 7:54 by the panel clock<<if $topped>>, thirty-nine minutes after wheels-up against a plan that said thirty-five<<else>>, four minutes late against a thirty-five minute plan<</if>>. Four minutes, one checkpoint. The kind of miss that is either noise or the first data point of the night, depending entirely on whether you do the arithmetic.
+
+The GNS holds at 104 across the ground. The fuel gauges say what they say: left easing off full, right claiming abundance per its custom.
+
+<div class="choice-list">
+<<link "A. You do it properly on the kneeboard: 59 miles in 39 minutes is 91 flight-planned into 104 actual, headwind 13, and the projection forward if the wind builds like the Evansville column says. New ETA, new fuel-at-destination, written down." "Cruise_Math">>
+  <<set $pathArray to $pathArray.concat(["D2: did the honest math at CP1"])>>
+  <<set $gsKnown to true>>
+<</link>>
+
+<<link "B. Four minutes is four minutes. The GNS shows an ETA right on the panel and it still ends in a nine. You keep the scan moving and let the box do the bookkeeping." "Cruise_River">>
+  <<set $pathArray to $pathArray.concat(["D2: let the box carry the math"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Math [scenario]
+<<set $pathArray to $pathArray.concat(["The kneeboard tells the truth early"])>>
+
+Two minutes of pencil work, red flashlight in your teeth, and the night has numbers on it. One hundred four across the ground now. If the Evansville column is right and the wind builds easterly past the river, the second half runs at ninety-something, and the ride finishes at 9:40 or later instead of 9:13. Fuel is arithmetic: <<if $fuelActual gte 48>>even at the ugly end of the projection you land with nineteen or twenty gallons, two hours of margin. The wind is going to cost you songs, not options.<<else>>twenty-eight opening, minus the burn, lands you somewhere around three gallons if the wind builds and you change nothing. Three gallons. The number sits on the kneeboard looking back at you, and every option in the ladder of outs is still ahead of the nose.<</if>>
+
+You write the new ETAs next to the old ones, which is the whole discipline: two columns, plan and actual, disagreeing in ink.
+
+<<link "The Mississippi comes up as a black ribbon between two galaxies of town light." "Cruise_River">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_River [scenario]
+<<set $pathArray to $pathArray.concat(["Crossing the river; tank switch; the mixture question"])>>
+<<set $fuelGal to $fuelGal - 3.4>><<set $onTank to "R">>
+
+The Mississippi crosses under at 8:16, nine minutes late now and no longer pretending otherwise. St. Louis Approach hands you to Kansas City Center with the frequency change delivered in the bored kindness of a quiet night sector. You switch tanks on schedule over the river, left to right, and the engine takes the new wing without comment. One hour on the left tank, logged on the kneeboard<<if $gsKnown>> next to the honest columns<</if>>.
+
+East of the river the ground goes dark the way the route brief promised: southern Illinois at night is scattered yard lights and the occasional grain elevator lit like a shrine, and a wind that has stopped being theoretical. The GNS settles at 96, then 93, then 91.
+
+Eight o'clock. Cruise checklist item you've been saving: the mixture. You're at sixty-five percent at five-five. Leaned to the card number, this engine burns 9.5. Where it sits now, rich of everything, it burns closer to 11.
+
+<div class="choice-list">
+<<link "A. You lean it to the card number and verify on the EGT: 9.5 an hour from here on, and the engine runs cooler and cleaner for it." "Cruise_Sparta">>
+  <<set $pathArray to $pathArray.concat(["D3: leaned to the card"])>>
+  <<set $leaned to true>>
+<</link>>
+
+<<link "B. Night, one engine, dark ground: you leave it rich. Rich is cheap insurance against a lean stumble, and fuel is something you have plenty of. Probably." "Cruise_Sparta">>
+  <<set $pathArray to $pathArray.concat(["D3: stayed rich for the night"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Sparta [scenario]
+<<set $pathArray to $pathArray.concat(["Abeam Sparta; the altitude question"])>>
+<<set $fuelGal to $fuelGal - (($leaned) ? 2.9 : 3.5)>>
+
+Sparta's beacon winks fifteen miles off the right wing at 8:33. The groundspeed has settled into an honest, ugly 91: the Evansville column was the truth-teller, east at twenty-eight where you sit. Mount Vernon is forty-five minutes ahead at this rate. Evansville, an hour and ten.
+
+Dez again:
+
+<div class="text-msg">doors open. line down the block, not kidding. levi is levitating. where u at</div>
+
+There's a move on the table, and it costs altitude to see it. The winds-aloft table put single digits at 3,000 on the Evansville column. Down at three-five, the headwind might drop from twenty-eight to the mid-teens: ten knots of groundspeed bought back for the price of flying lower over dark country, closer to the towers, further from the glide.
+
+<div class="choice-list">
+<<link "A. You take the trade: request three thousand five hundred from Center and go down where the wind is lazier." "Cruise_Descend">>
+  <<set $pathArray to $pathArray.concat(["D4: descended to 3,500 for the wind"])>>
+  <<set $altitude to 3500>>
+<</link>>
+
+<<link "B. Altitude over dark ground is life insurance. You hold five-five and pay the wind its toll." "Cruise_MVN">>
+  <<set $pathArray to $pathArray.concat(["D4: held 5,500 and paid the wind"])>>
+<</link>>
+
+<<link "C. You raise Flight Service on the remote and ask for updated winds aloft before spending anything." "Cruise_FSS">>
+  <<set $pathArray to $pathArray.concat(["D4: asked FSS for newer winds"])>>
+  <<set $fssTried to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_FSS [scenario]
+<<set $pathArray to $pathArray.concat(["FSS has the same forecast you have"])>>
+
+The briefer is friendly, unhurried, and in possession of exactly the product you already own: the same eleven-hour-old FB table, valid through the same window, saying the same two contradictory things. "No amendments," he says. "One PIREP east of Farmington, hour and a half old now, easterly twenty-six at five point five." Which you also have.
+
+Nothing gained, nothing lost but two minutes of listening. The wind outside remains a measurement, not a forecast: the GNS says 91, and the GNS is not eleven hours old.
+
+<div class="choice-list">
+<<link "A. Down to three-five, then, where the table and physics both say the wind eases." "Cruise_Descend">>
+  <<set $pathArray to $pathArray.concat(["Then descended for the wind"])>>
+  <<set $altitude to 3500>>
+<</link>>
+
+<<link "B. Hold five-five. The known wind beats the forecast bargain." "Cruise_MVN">>
+  <<set $pathArray to $pathArray.concat(["Then held altitude anyway"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Descend [scenario]
+<<set $pathArray to $pathArray.concat(["Down at 3,500: ten knots bought back"])>>
+
+Center approves without a beat. The descent costs nothing but the view: at three thousand five hundred the yard lights have faces and the dark has texture, and the GNS climbs as the wind lets go: 95, 97, 99. Ten knots bought back, exactly as advertised on the table's bottom row.
+
+It is a different kind of flying down here, closer and busier, towers plotted and respected, the glide ring smaller in your head. You retrim, reset the numbers<<if $gsKnown>>, and redo the two columns: Mount Vernon at 8:57, Evansville overhead at 9:37<</if>>. The airplane hums along in air that has gone from poured glass to faintly textured, the low over Arkansas breathing up the valley.
+
+<<link "Mount Vernon's runway lights up the horizon dead ahead." "Cruise_MVN">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_MVN [scenario]
+<<set $pathArray to $pathArray.concat(["Mount Vernon: the best rung on the ladder"])>>
+<<set $fuelGal to $fuelGal - (($leaned) ? 4.1 : 4.8)>>
+
+Mount Vernon arrives under the nose at <<if $altitude lte 3500>>8:57<<else>>9:00<</if>>: six thousand five hundred feet of lit, ILS-equipped, high-intensity pavement, the AWOS murmuring calm winds, a fuel pump with an after-hours number on the door. The last big rung on the ladder, sliding under the wheels with sixty-four dark miles still to go.
+
+<<if $gsKnown>>The kneeboard columns have their answer ready. <<if $fuelActual gte 48>>Overhead Evansville around 9:40 with better than eighteen gallons in the tanks: two full hours of margin. The stop would cost forty-five minutes and buy nothing but smell-proofing.<<else>>Overhead Evansville around 9:40 with something between one and three gallons aboard, depending on which decimal you believe. Written in your own handwriting, the number does not blink.<</if>><<else>>The GNS ETA says 9:37 and the fuel gauges say what they say: left low-ish, right insisting on abundance. You have not run the numbers by hand tonight. The box's ETA ends in a seven and the needles are above the pegs, and that is the entire dashboard of your knowledge.<</if>>
+
+Dez, 9:02:
+
+<div class="text-msg">levi just did the thing where he taps the mic and says CHECK CHECK. we're ON at 9:30 sharp. tell me ur close</div>
+
+<div class="choice-list">
+<<link "A. You land at Mount Vernon, take on fuel, and arrive at the bar late, honest, and heavy with gallons." "Divert_MVN">>
+  <<set $pathArray to $pathArray.concat(["D5: took the stop at Mount Vernon"])>>
+  <<set $stopMade to true>><<set $divert to "KMVN">>
+<</link>>
+
+<<link "B. You press for Evansville with a briefed backstop: Carmi in twenty minutes is the trip's last pavement, and you say its name out loud so it's real." "Cruise_Carmi">>
+  <<set $pathArray to $pathArray.concat(["D5: pressed with Carmi briefed as backstop"])>>
+<</link>>
+
+<<link "C. Sixty-four miles. Thirty-nine minutes. The airplane is running like a watch and the ETA still starts with a nine. You press on and let the night keep its rhythm." "Cruise_Carmi">>
+  <<set $pathArray to $pathArray.concat(["D5: pressed on rhythm"])>>
+  <<set $pressOn to $pressOn + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Divert_MVN [scenario]
+<<set $pathArray to $pathArray.concat(["Down at Mount Vernon for gallons"])>>
+
+You tell Center, who could not be more agreeable, and fly the easy visual to the big lit runway. The field is closed-quiet: pumps lit, FBO dark, the after-hours number taped inside the door glass exactly where the route brief promised. The man who answers says "gimme fifteen" and means twenty-five, and arrives in a Carhartt jacket over pajama pants, for which you will tip him like a valet at the end of the world.
+
+While the fuel goes in you text Dez the truth<<set $toldDez to true>>: on the ground for gas, there by the back half of the set, save you a stool. The reply takes ninety seconds:
+
+<div class="text-msg">a STOOL. sir this is a rock and roll establishment. (there will be a stool)</div>
+
+Off again at 9:50 with the tanks heavy and the night simple. The last sixty-four miles take thirty-five minutes and ask nothing of you at all.
+
+<<link "Evansville's beacon, then the bar." "End_MVN_Stop">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Carmi [scenario]
+<<set $pathArray to $pathArray.concat(["Past the last rung"])>>
+<<set $fuelGal to $fuelGal - (($leaned) ? 3.0 : 3.6)>>
+
+<<if $fuelActual lt 30 and not $leaned>>\
+Carmi's beacon shows up three miles south of course at 9:24, right where the brief put it, and slides past the wing.
+
+At 9:27 the engine clears its throat.
+
+Half a second of nothing where the power was. Then power again, then the nothing, longer, the propeller loafing against dead pistons, the nose already easing down because your hand did something your brain is still catching up to. The right fuel gauge, the golf buddy, reads an eighth. Reads it cheerfully.
+
+Right tank, dry. The one the board said was topped.
+
+<<set $quietOnce to true>>\
+Your hand is on the selector doing the drill before the fear finishes arriving: LEFT tank, boost pump ON, mixture rich. Two seconds. Four. The engine catches, roars, settles, runs, and the night is suddenly very large and the panel very small. Whatever is in the left tank is all the airplane there is.
+
+<div class="choice-list">
+<<link "A. Carmi is four miles behind the left shoulder, lit by its beacon and nothing else. You turn back for it now, on the tank that works." "End_KCUL_Night">>
+  <<set $pathArray to $pathArray.concat(["Turned back for Carmi on the good tank"])>>
+  <<set $divert to "KCUL">>
+<</link>>
+
+<<link "B. Evansville is twenty-five miles, twelve or thirteen minutes, and its beacon is already visible. The left tank fed the engine for the whole first hour and never coughed. You press for the lights." "End_Beans">>
+  <<set $pathArray to $pathArray.concat(["Pressed for Evansville on the last tank"])>>
+  <<set $pressOn to $pressOn + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+<<else>>\
+Carmi's beacon shows up three miles south of course at <<if $altitude lte 3500>>9:19<<else>>9:24<</if>> and holds there, the trip's last pavement doing a slow wing-walk down the right side. Beyond it the chart goes honest: river bottoms, no beacons, the Wabash somewhere black ahead, and then the far glow that is Evansville pretending to be closer than it is.
+
+<<if $fuelKnown and $fuelActual lt 30>>The kneeboard number for touchdown still starts with a two and ends with a decimal you keep re-deriving, hoping for arithmetic mercy that arithmetic does not offer. The gauges have both joined the left one's religion now: low, lower, bouncing.<<elseif $gsKnown>>The columns say you land fat. The night agrees: steady engine, steady numbers, a groundspeed that finally quit shrinking.<<else>>The needles are lower than you would like and higher than empty, and the box's ETA holds at 9:37. It has been a long day of trusting things.<</if>>
+
+<div class="choice-list">
+<<link "A. Carmi, now. Four thousand feet of dark-field pavement and a pump of unknown temperament beats every version of the next twenty minutes that goes wrong." "End_KCUL_Night">>
+  <<set $pathArray to $pathArray.concat(["Took Carmi, the last pavement"])>>
+  <<set $divert to "KCUL">>
+<</link>>
+
+<<link "B. Twenty-five miles to a towered field with two big runways. You continue, and start the arrival off right: listen to the ATIS now, plan the straight-in, fly it clean." "Approach_EVV">>
+  <<set $pathArray to $pathArray.concat(["Continued to Evansville"])>>
+  <<if not $gsKnown and $fuelActual lt 30>><<set $pressOn to $pressOn + 1>><</if>>
+<</link>>
+
+<<link "C. The right tank's hour is up. You switch back to the left on schedule, note the time on the kneeboard, and continue: tank discipline is free." "Approach_EVV">>
+  <<set $pathArray to $pathArray.concat(["Switched to the left on the hour, continued"])>>
+  <<set $onTank to "L">>
+<</link>>
+</div>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_EVV [scenario]
+<<set $pathArray to $pathArray.concat(["The Evansville arrival"])>>
+<<set $fuelGal to $fuelGal - 3.3>>
+
+Evansville Approach takes the handoff and the city rises out of the river bend, bright as a carnival after two hundred miles of yard lights. The ATIS calls calm wind, runway 22 in use, altimeter three zero zero one.
+
+<<if $fuelActual lt 30 and $leaned and $fuelKnown>>\
+The kneeboard's last line says you will land with about two gallons: one wet wing, one theoretical one, and a regulation somewhere behind you at Columbia that was satisfied eleven hours of forecast ago. You moved the selector to the fuller left tank crossing the Wabash, on schedule, because the schedule is the one instrument that has told the truth all night. Approach asks you to say your position and intentions, routine as a toll booth. The words available to you cost nothing and mean everything.
+
+<div class="choice-list">
+<<link "A. \"Archer four three seven two whiskey, one five east, landing Evansville. Request straight-in two two, minimum fuel.\"" "End_EVV_MinFuel">>
+  <<set $pathArray to $pathArray.concat(["Said the words: minimum fuel"])>>
+  <<set $declaredMin to "min">>
+<</link>>
+
+<<link "B. You say nothing about the gallons. Position, intentions, straight-in if able. The engine is running and the field is in sight; the number stays your private business." "End_EVV_Squeaked">>
+  <<set $pathArray to $pathArray.concat(["Kept the number private"])>>
+  <<set $pressOn to $pressOn + 1>>
+<</link>>
+</div>
+<<elseif $fuelActual lt 30 and $leaned and not $fuelKnown and $onTank is "R">>\
+<<if $altitude lte 3500>>Approach clears you into the downwind for two two behind a Skyhawk doing pattern work, and you fly it by the numbers, carb heat, first notch, the bar's neighborhood actually visible off the left wing.
+
+Abeam the numbers, the engine goes quiet.<<else>>Approach hands you a straight-in from twelve miles and you ride it down the extended centerline, the runway's rabbit lights flashing you home.
+
+Five miles out, the engine goes quiet.<</if>>
+
+Not a cough: a smooth, total, dignified silence, the propeller windmilling, the nose easing over. The right gauge reads an eighth. Cheerfully.
+
+<<set $quietOnce to true>>\
+Selector LEFT, boost ON, mixture rich, hands doing the drill ahead of thought. Two seconds that bill by the year. The engine catches and roars and you say words to Approach that come out steadier than they have any right to: fuel emergency, request immediate landing.
+
+<<link "The runway takes you the rest of the way in." "End_EVV_Downwind">><</link>>
+<<elseif $fuelActual lt 30 and not $fuelKnown>>\
+Approach sets you up for the straight-in to two two. You fly it clean, gear-welded stable, and the runway comes up the windshield like a promise kept.
+
+<<link "Touchdown, 9:48. The bar is nine minutes away." "End_EVV_Blind">><</link>>
+<<elseif $gsKnown and $leaned>>\
+Approach sets you up however you like it: straight-in offered, the pattern available, no traffic that matters. You fly the arrival with the whole panel green and the tanks doing what verified tanks do, which is sit there being boring.
+
+<<link "Touchdown. The bar is nine minutes away." "End_EVV_Fat">><</link>>
+<<else>>\
+Approach sets you up for the straight-in and you ride it home with the city glittering past the cowling. The panel is green. The tanks are heavy. Whatever the night's bookkeeping would have said, nobody asked it to speak.
+
+<<link "Touchdown. The bar is nine minutes away." "End_EVV_Thin">><</link>>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_EVV_Fat [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: heavy tanks, easy night"])>>
+
+You walk into the brick bar at 10:04, four songs deep, and Dez spots you from the stage mid-bassline and points with his headstock like a man identifying a witness. The set is loud and gloriously mediocre in places and the encore is not, and afterward there is a stool with your name on a bar napkin taped to it.
+
+Sunday morning, out of nothing but habit, you stick the tanks before flying home: twenty-one and change, right where the kneeboard said they'd be. The stick goes back in the door pocket. The habit goes back in yours.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A nine-dollar wooden stick caught a twenty-gallon lie before it left the ground, and honest arithmetic kept the books straight the rest of the night. The wind cost you fifty-one minutes and some songs. It never got a vote on anything that mattered.</p>
+<h3>ADM analysis</h3>
+<p>The night's one load-bearing decision happened on the ramp at Columbia, before the propeller turned: verifying the opening balance instead of inheriting it from a schedule board. Every calculation downstream of a fuel quantity is only as good as that first number. The schedule board was wrong. The line kid was wrong. The golf-buddy gauge was wrong in its own special way. The stick was nine dollars.</p>
+<h3>What good judgment looks like here</h3>
+<p>This flight, nearly move for move: verify, then measure, then keep two columns (plan and actual) that are allowed to disagree in ink. Notice how cheap it all was. The stick cost two minutes. The kneeboard math cost two more. The top-off cost seventeen minutes against a band with two sets. Margin, purchased in advance at ground prices, never has to be repurchased in the air at night rates.</p>
+<h3>Key takeaway</h3>
+<p>The opening balance is the whole science. Buy it with a stick, not a story.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readReserve to false>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>><<set $topped to false>><<set $looked to false>><<set $gsKnown to false>><<set $leaned to false>><<set $altitude to 5500>><<set $fssTried to false>><<set $stopMade to false>><<set $declaredMin to "">><<set $onTank to "L">><<set $toldDez to false>><<set $pressOn to 0>><<set $quietOnce to false>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_EVV_Thin [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: landed fat, flew thin"])>>
+
+The set is great. The night is great. The airplane sits on the Evansville ramp with eighteen-some gallons aboard, which by any standard is plenty, and which you know because Sunday morning you stick the tanks and do, for the first time since Columbia, some arithmetic.
+
+It comes out fine. It was always going to come out fine, tonight, with forty-eight verified gallons under the caps. What the Sunday math also shows, if you sit with it, is the shape of the night you actually flew: rich mixture burning an extra gallon-plus an hour, altitude held into a twenty-eight knot headwind that a cheaper altitude would have halved, checkpoints drifting late without a pencil lifted, and a margin that shrank all evening without once being measured.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You landed with roughly eighteen gallons: a completely safe outcome riding on completely unexamined process. The verified opening balance you bought at Columbia was thick enough to absorb a rich mixture, a slow altitude, and a night of unrun numbers, and it absorbed all three without you ever asking it to.</p>
+<h3>ADM analysis</h3>
+<p>Grade the night by its inputs. The wind announced itself at the first checkpoint (four minutes is a measurement, not a rounding error) and the announcement went unanswered. The mixture stayed rich on a vague theory of night insurance that the engine never asked for. The one PIREP in the briefing turned out to be the evening's truest document, and nothing was done with it. None of it mattered, because of one decision made on the ramp with a wooden stick. That is one layer of protection doing the work of four.</p>
+<h3>What good judgment looks like here</h3>
+<p>The same night flown by the sibling version of you who runs the numbers at Washington Regional, leans to the card over the river, and buys ten knots back at three-five: that pilot lands twenty minutes sooner with the same gallons and a complete set of books. Fly this exact profile on the night the stick stays in the door pocket, and the story is told by a different ending in this scenario. It's worth reading.</p>
+<h3>Key takeaway</h3>
+<p>Landing with plenty proves the tanks were deep, not that the flying was. Margin you never measured is margin you never actually had.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readReserve to false>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>><<set $topped to false>><<set $looked to false>><<set $gsKnown to false>><<set $leaned to false>><<set $altitude to 5500>><<set $fssTried to false>><<set $stopMade to false>><<set $declaredMin to "">><<set $onTank to "L">><<set $toldDez to false>><<set $pressOn to 0>><<set $quietOnce to false>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_MVN_Stop [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the stop, the stool, the encore"])>>
+
+You walk in at 10:40 as the band comes back from their break, and Dez introduces the next song by pointing at the door: "This one's for the guy who just flew here from Missouri and stopped for gas like a responsible adult, which is the least rock and roll thing I have ever said into a microphone." The room, seven beers deep, cheers the concept of fuel planning. It is, all things considered, the best introduction you have ever received.
+
+The airplane sits at Evansville with thirty gallons aboard. The ride home Sunday needs no arithmetic at all, though you do it anyway, at the kitchen table, out of respect.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The wind ate the plan; the plan got amended at the last good place to amend it. Mount Vernon cost forty-nine minutes, one after-hours callout fee, and a tip for a man in pajama pants. It bought unlimited margin for the darkest stretch of the route and converted the whole fuel question into a solved problem.</p>
+<h3>ADM analysis</h3>
+<p>Destination fixation is the quiet engine of most fuel exhaustion accidents: the destination acquires a gravity that bends every calculation toward it. The stop broke that gravity with sixty-four miles still to run. Note the structure of the decision: it wasn't fear, it was bookkeeping. The columns said land, and the ladder of outs had exactly one rung left with lights, fuel, and a phone number. Taking the best option while it exists, rather than the last option when it's all that exists, is the entire art.</p>
+<h3>What good judgment looks like here</h3>
+<p>Also worth keeping: the text you sent from the ramp. Telling the person waiting that you'll be late converts their expectation from pressure into patience, and it costs one sentence. The waiting friend is almost never the source of the pressure pilots feel; the pressure is self-manufactured, and it dissolves on contact with honesty.</p>
+<h3>Key takeaway</h3>
+<p>Nobody at the bar remembers what time you landed. The stop that feels like losing is the version of the night where nothing was ever at stake.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readReserve to false>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>><<set $topped to false>><<set $looked to false>><<set $gsKnown to false>><<set $leaned to false>><<set $altitude to 5500>><<set $fssTried to false>><<set $stopMade to false>><<set $declaredMin to "">><<set $onTank to "L">><<set $toldDez to false>><<set $pressOn to 0>><<set $quietOnce to false>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_EVV_MinFuel [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the words, said early"])>>
+
+"Archer seven two whiskey, roger, minimum fuel," Approach reads back, in the tone of a person acknowledging a coffee order, and the system quietly rearranges itself: the straight-in firms up, the Skyhawk in the pattern gets extended a lap, and the frequency stops offering you anything that costs time. No sirens. No forms. The runway arrives, you land on it, and the taxi to the ramp happens with the fuel pressure needle exactly where it has been all night, which is to say, fine, which is to say, you got away with the margin you chose.
+
+The next morning the pump puts 45.7 gallons into a 48-gallon system. You stand there watching the meter, doing the subtraction, letting it be what it is.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A known-thin arrival got flown with the system's help instead of despite it: the phrase "minimum fuel" told Approach you could accept no undue delay, and Approach, hearing it maybe twice a month, treated it like the professional courtesy it is. You landed with about two gallons, split between a wet wing and a rumor.</p>
+<h3>ADM analysis</h3>
+<p>Two things are true and the debrief needs both. Saying the words was exactly right: it cost one sentence, carried no penalty, and removed the only variable ATC controls (delay) from a night that had no room for it. And needing the words was the bill for upstream choices: a known 28-gallon departure was legal and tight, and every mile past Mount Vernon converted slack into hope at a fixed exchange rate. The radio call managed the arrival. Nothing can retroactively manage the planning.</p>
+<h3>What good judgment looks like here</h3>
+<p>Know the vocabulary cold, because the hesitation is the hazard: minimum fuel is an advisory (no priority, no paperwork, just no delay); emergency fuel is a declaration (priority handling, shortest path to pavement, and afterward, at most, a conversation). Pilots who are sure of the difference use the right word early. Pilots who aren't say nothing until the engine says it for them. Elsewhere in this scenario, that version of the night exists too.</p>
+<h3>Key takeaway</h3>
+<p>The words are free and the delay isn't. Say minimum fuel while it's still an advisory, and plan so you never have to learn how easy declaring is.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readReserve to false>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>><<set $topped to false>><<set $looked to false>><<set $gsKnown to false>><<set $leaned to false>><<set $altitude to 5500>><<set $fssTried to false>><<set $stopMade to false>><<set $declaredMin to "">><<set $onTank to "L">><<set $toldDez to false>><<set $pressOn to 0>><<set $quietOnce to false>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_EVV_Squeaked [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: private arithmetic"])>>
+
+You land at 9:44, taxi in, shut down, and sit in the dark cockpit for a moment with the master off, listening to the gyros wind down and doing, one last time, the subtraction you have been doing all night. Two gallons. Maybe. You make the bar by 10:15 and the show is great and you tell no one anything.
+
+Sunday morning at the self-serve pump, the meter runs and runs and runs and clicks off at 45.7 gallons. You stand there in the propeller-flattened grass with the nozzle in your hand and your heart doing something complicated, because 48 minus 45.7 is a number you can hold in two cupped hands, and last night it was holding you.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A known-thin fuel state got flown to the destination in silence: no stop, no advisory to ATC, no witness but the kneeboard. The engine ran to the chocks. The morning meter then quantified the night: about two and a quarter gallons of airplane remaining, roughly fourteen minutes of cruise, at night, over a city.</p>
+<h3>ADM analysis</h3>
+<p>The honest core of this path: you did the math, knew the number, and decided the number was a private matter. That privacy bought nothing and cost a layer: Approach, told nothing, was one pattern conflict or one runway change away from assigning you a delay you could not afford and did not know to refuse. The macho inversion here is subtle, because it looks like competence: I know my situation, I don't need help. The situation disagreed only by luck.</p>
+<h3>What good judgment looks like here</h3>
+<p>The same flight with two sentences added: minimum fuel to Approach at twenty miles, and a text to Dez from Mount Vernon's ramp an hour earlier. And the deeper fix lives further upstream, where 91.151(b) was read as permission instead of as a floor: twenty-eight known gallons against a forecast that disagreed with itself was legal, and legal was doing all of the work in that sentence.</p>
+<h3>Key takeaway</h3>
+<p>If the number is thin enough to keep secret, it's thin enough to say out loud. Secrets don't extend glide.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readReserve to false>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>><<set $topped to false>><<set $looked to false>><<set $gsKnown to false>><<set $leaned to false>><<set $altitude to 5500>><<set $fssTried to false>><<set $stopMade to false>><<set $declaredMin to "">><<set $onTank to "L">><<set $toldDez to false>><<set $pressOn to 0>><<set $quietOnce to false>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_EVV_Blind [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the morning meter"])>>
+
+The landing is lovely. The show is better. Dez plays like a man possessed, the almost-famous headliner is exactly as good as almost, and you drive back to the field Sunday morning rehearsing the flight home and feeling, on the whole, like a pilot who had a smooth night.
+
+Then the self-serve meter clicks off at 45.8 gallons.
+
+You stand very still. The airplane holds 48. You do the arithmetic twice, then a third time with the receipt in your hand like it might confess to an error. Two point two gallons. You flew the last hour of last night, at night, over the dark parts of two states, on a fuel state you would never have accepted on purpose, protected by nothing but a tank-switch habit and a schedule board's lie you never caught.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The opening balance was wrong by twenty gallons and nothing downstream ever tested it: no dipstick, no checkpoint math, no suspicion aimed at gauges that were behaving exactly as the squawk sheet warned. The hourly tank switch you flew out of pure habit happened to put the engine on the wetter tank for the arrival, which is why this debrief is a scare and not a docket number. The flight was, at every moment after rotation, one assumption deep.</p>
+<h3>ADM analysis</h3>
+<p>This is the bookkeeping accident with the last page missing. Every classic element is present: an unverified opening balance, a wind that ate the plan while the plan went unread, a mixture left rich on vibes, and a destination that pulled harder as the night got darker. The absence of consequence is the most dangerous part, because the memory files this night under smooth. Fuel exhaustion statistics are built almost entirely from pilots whose previous near-misses they never detected.</p>
+<h3>What good judgment looks like here</h3>
+<p>The stick, every time, no exceptions, no matter what the board says: it is the only instrument that reads the opening balance directly. And the checkpoint arithmetic, which would have caught this by Washington Regional: 8.3 gallons burned against a believed 48 is comfortable; against an actual 28 it is a closing window, and four minutes of pencil work separates the two. The habits are cheap. The alternative prices vary.</p>
+<h3>Key takeaway</h3>
+<p>The scariest fuel story is the one you find out about at the pump. Audit the nights that felt smooth; some of them weren't.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readReserve to false>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>><<set $topped to false>><<set $looked to false>><<set $gsKnown to false>><<set $leaned to false>><<set $altitude to 5500>><<set $fssTried to false>><<set $stopMade to false>><<set $declaredMin to "">><<set $onTank to "L">><<set $toldDez to false>><<set $pressOn to 0>><<set $quietOnce to false>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_EVV_Downwind [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: two seconds of silence"])>>
+
+The tower, warned by Approach, has the field to you before the words finish leaving your mouth. The runway is wide and lit and forgiving, and the Archer lands on it running on its left tank and adrenaline, and you taxi clear and stop and sit with your hands in your lap until they belong to you again.
+
+The tower asks, gently, if you need anything. You say no. The tower says "welcome to Evansville" the way people say it to survivors. At the bar, later, Dez knows something happened because you hug him too long, and he doesn't ask, and you don't say, until Sunday breakfast, when you say all of it.
+
+The pump Sunday takes 46.9 gallons: one point one remained, all of it in the left wing. You file the ASRS report Monday from your kitchen table, in detail, because somebody's future checkride story should have this flight in it.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A tank ran dry in the pattern because the opening balance was fiction and the bookkeeping never existed to catch it. The restart drill (selector, boost, mixture) worked exactly as drilled, the emergency was declared in plain words, and the system did the rest. Total time engine-off: about four seconds. Total remaining fuel at shutdown: about an hour's worth of adrenaline and sixty-six minutes of regulation minimum, which is to say, one point one gallons.</p>
+<h3>ADM analysis</h3>
+<p>Credit first, honestly earned: the restart flow came out of your hands without transiting your brain, which is what emergency procedures are for, and the word emergency followed it without pride negotiating. That reflex pairing saved the night. Now the chain that required saving: a board trusted over a stick, four late minutes unexamined, a gauge with a written confession in the squawk sheet allowed to keep testifying, and Mount Vernon's lit runway sliding under the wheels carrying twenty more gallons of somebody else's evening.</p>
+<h3>What good judgment looks like here</h3>
+<p>Upstream, everything this scenario keeps saying. Downstream, exactly what you did, plus the ASRS filing, which is the professional's ending to an amateur hour: it costs twenty minutes, carries limited immunity, and converts a private scare into the aggregate data that gets schedule boards and golf-buddy gauges taken seriously.</p>
+<h3>Key takeaway</h3>
+<p>The drill you practice is the one that shows up. Practice the dipstick with the same religion and the drill never gets its cue.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readReserve to false>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>><<set $topped to false>><<set $looked to false>><<set $gsKnown to false>><<set $leaned to false>><<set $altitude to 5500>><<set $fssTried to false>><<set $stopMade to false>><<set $declaredMin to "">><<set $onTank to "L">><<set $toldDez to false>><<set $pressOn to 0>><<set $quietOnce to false>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KCUL_Night [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: Carmi in the dark"])>>
+
+<<if $quietOnce>>You fly the four miles back to Carmi like they are made of glass, land on the dark little runway with the beacon strobing overhead, and taxi in on a tank you no longer make assumptions about. When the engine stops, the silence has a different quality than engine silence usually does: it's the kind you chose.<<else>>Seven clicks on the CTAF and Carmi's runway lights bloom out of the black like a carnival booting up. You land, roll out long and easy, and taxi to the pump island of the emptiest airport in Illinois.<</if>>
+
+The self-serve pump considers your first card at length and declines it. The second card, same. The third card, older and more embarrassed than the first two, takes. Fuel runs into the wings under a dome of stars while a dog barks somewhere in town, twice, and quits.
+
+<<if $quietOnce>>You put in enough to make the arithmetic silly and fly the last twenty-five minutes to Evansville with your hands very quiet on the yoke.<<else>>Thirty gallons later you lift off from the dark little field and fly the last leg fat.<</if>> The bar gets you at 11:05, in time for three songs and the encore, and Dez's grin arrives before the questions do.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p><<if $quietOnce>>After the right tank ran dry and the restart caught, the nearest pavement won the argument with the nearest destination: four miles back beat twenty-five miles ahead on one unverified tank.<<else>>The last pavement before the river bottoms got used for exactly what last pavement is for.<</if>> The pump's card reader did its wilderness-ATM routine, the tanks got heavy, and the night ended at a bar instead of in a report.</p>
+<h3>ADM analysis</h3>
+<p><<if $quietOnce>>The decision after the restart is the one this ending exists to teach: an engine that just quit from starvation and restarted on the other tank has told you its remaining range is exactly as trustworthy as your worst number. Turning your back on visible destination lights to land on a dark strip four miles behind you is emotionally expensive and arithmetically free.<<else>>Landing at Carmi with the destination's glow already visible on the horizon is the hard version of the easy call: the last option was still open, and you took it while it was an option instead of a requirement.<</if>> The card reader deserves its paragraph too: unattended fields keep their own hours and their own opinions of your credit, and a night plan that requires a specific pump to cooperate is a plan with a single-point failure. Budget for the third card.</p>
+<h3>What good judgment looks like here</h3>
+<p>Mostly this. The upgrade is earlier: the same landing at Mount Vernon, one rung higher on the ladder, buys a lit ILS runway and a human with a phone number instead of a dark strip and a moody pump. Take the best rung available, not the last one.</p>
+<h3>Key takeaway</h3>
+<p>Dark pavement with fuel beats bright sky without it, every time the choice exists. It stops existing quickly.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readReserve to false>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>><<set $topped to false>><<set $looked to false>><<set $gsKnown to false>><<set $leaned to false>><<set $altitude to 5500>><<set $fssTried to false>><<set $stopMade to false>><<set $declaredMin to "">><<set $onTank to "L">><<set $toldDez to false>><<set $pressOn to 0>><<set $quietOnce to false>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Beans [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the river bottoms"])>>
+
+The left tank gives you seventeen minutes. You spend them well, which is the only compliment this stretch of the night will earn: Evansville's glow dead ahead, altitude traded evenly for miles, the emergency declared in a voice you keep level by main force, Approach reading you the distance to the threshold like a countdown you are losing. At six miles the engine does what engines out of fuel do, and does it for good.
+
+The Wabash bottoms are black. Your landing light finds bean stubble, cut rows running crosswise, a treeline you clear by a margin you will never let yourself calculate. The Archer arrives in the field flaps-down and flying, touches, runs forty yards on the mains, finds the soft spot, and goes over on its back with a sound like a filing cabinet thrown down stairs.
+
+Hanging in the straps in the sudden ticking dark, you take inventory: fingers, toes, neck, the smell of fuel that isn't there because there is no fuel. You release the buckle like the POH says, fall onto the headliner like nobody says, and crawl out into the beans. The ELT is chirping. Evansville's glow sits on the horizon, six miles and one universe away.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Fuel exhaustion, both tanks, at night, six miles short. The forced landing was flown with genuine skill: field found, wires and trees avoided, airplane arrived under control, occupant walked away. The NTSB report will note the skill in one sentence and spend its pages on the seven decisions that made the skill necessary, starting with a schedule board that was believed and a wooden stick that stayed in a door pocket 225 miles away.</p>
+<h3>ADM analysis</h3>
+<p>Name the chain, because chains only break when named: the unverified opening balance; the four-late checkpoint that never got arithmetic; the rich mixture spending a gallon an hour on a feeling; Mount Vernon's lit ILS runway declined with the backstop already briefed; the first tank running dry, the loudest possible warning, answered by pressing on toward glow instead of turning to pavement four miles behind; and the last tank asked to do what the ledger always said it couldn't. Six links. Every one reversible when it happened. The seventh link was physics, which does not negotiate.</p>
+<h3>What good judgment looks like here</h3>
+<p>Any earlier ending in this scenario, and inside the final minutes, exactly what was flown: airplane first, best glide held, field chosen early, declared without pride, flown all the way to the stop. The forced-landing skill deserves its credit. It also deserves the observation that it was purchased at the cost of every skill that would have made it unnecessary, all of which were cheaper.</p>
+<h3>Key takeaway</h3>
+<p>The engine quit at the end of a ledger, not a flight. Keep the ledger like your life depends on it; some Friday night, at 9:27, over the river bottoms, it does.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readReserve to false>><<set $fuelActual to 48>><<set $fuelGal to 48>><<set $fuelKnown to true>><<set $topped to false>><<set $looked to false>><<set $gsKnown to false>><<set $leaned to false>><<set $altitude to 5500>><<set $fssTried to false>><<set $stopMade to false>><<set $declaredMin to "">><<set $onTank to "L">><<set $toldDez to false>><<set $pressOn to 0>><<set $quietOnce to false>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>

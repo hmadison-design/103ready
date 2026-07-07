@@ -64,6 +64,20 @@ ROUTES = {
         ],
         "airway_labels": [],
     },
+    "the-forty-five": {
+        "title": "KCOU to KEVV, 225 nm, the ladder of outs along the line",
+        "path": [
+            ("KCOU", 38.8177, -92.2178, "airport"),
+            ("KEVV", 38.0408, -87.5285, "airport", -18, 12),
+        ],
+        "extras": [
+            ("KFYG", 38.5876, -90.9938, "alternate", -14, -18),
+            ("KSAR", 38.1489, -89.6985, "alternate", -14, -18),
+            ("KMVN", 38.3234, -88.8588, "alternate"),
+            ("KCUL", 38.0895, -88.1231, "alternate", -12, -18),
+        ],
+        "airway_labels": [],
+    },
     "cabin-heat": {
         "title": "KBRD north to KINL, 158 nm via the Range",
         "path": [
