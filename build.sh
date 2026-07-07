@@ -68,13 +68,14 @@ compile_scenario "ice-in-the-cowl"
 compile_scenario "crossfeed"
 compile_scenario "the-good-engine"
 compile_scenario "within-limits"
+compile_scenario "cabin-heat"
 
 echo "== Staging landing page =="
 cp public/index.html output/index.html
 cp public/103ready_logo.svg output/103ready_logo.svg
 
 # Copy per-scenario audio/images if present (referenced at runtime).
-for slug in game-day the-wall cylinder-three breakfast-at-coulter blue-line third-face red-x pink-dot the-gauntlet ice-in-the-cowl crossfeed the-good-engine within-limits; do
+for slug in game-day the-wall cylinder-three breakfast-at-coulter blue-line third-face red-x pink-dot the-gauntlet ice-in-the-cowl crossfeed the-good-engine within-limits cabin-heat; do
   for sub in audio images; do
     if [ -d "scenarios/${slug}/${sub}" ]; then
       mkdir -p "output/scenarios/${slug}/${sub}"

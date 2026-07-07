@@ -1,0 +1,1575 @@
+:: StoryTitle
+Cabin Heat
+
+:: StoryData
+{
+  "ifid": "4362734A-8625-464D-AE91-C01F1AFB9C31",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "FlightPrep"
+}
+
+:: StoryInit
+/* Scenario metadata
+   SCENARIO TITLE:      Cabin Heat
+   AUDIENCE:            Pilot (GA, 500-1,000 hr; protagonist 810 TT, PPL,
+                        instrument rating not current)
+   TONE:                Professional
+   PRIMARY TOPIC:       Carbon monoxide contamination: insidious onset, in
+                        the season when cabin heat is non-negotiable
+   SECONDARY TOPIC:     Subtle-incapacitation recognition; the vent-versus-
+                        cold tradeoff; ATC as a resource when cognition is
+                        suspect
+   AIRCRAFT/EQUIPMENT:  1975 Cessna 182P, N5238R. Continental O-470-S,
+                        230 hp, carbureted. Shroud-type muff heater on the
+                        exhaust. 61 gal usable. GNS 430W, KX 170B, no
+                        autopilot. Steam gauges. No electronic CO detector;
+                        chemical spot card on the panel expired 14 months
+                        ago.
+   SETTING:             KBRD Brainerd Lakes Rgnl to KINL Falls Intl,
+                        northern Minnesota, mid-January, Saturday morning.
+                        Route via KGPZ and KHIB, about 160 nm.
+   WEATHER:             Severe clear high pressure. Surface temps near
+                        -18 C, light northwest wind, smooth air. The
+                        weather is perfect. That is the point.
+   ADM THEMES:          Insidious-onset recognition, symptom attribution,
+                        conflicting information (expired detector vs. human
+                        symptoms), comfort as a hazard, confession to ATC,
+                        divert timing
+   HAZARDOUS ATTITUDES: Invulnerability (it's just a headache), macho
+                        (toughing out the cold backwards: closing the vents
+                        for comfort), resignation (the card says fine),
+                        impulsivity (cycling heat back on)
+   TOTAL DECISIONS:     Branching; every path passes 4+ decision points
+   TOTAL ENDINGS:       13 (full success x1, qualified x3, friction/delay
+                        x4, scare x3, aircraft damage x1, fatal x1)
+   MIN DECISION DEPTH:  4
+   TIMED DECISIONS:     No
+   ESTIMATED DURATION:  20-30 minutes
+   VERSION:             1.0
+   LAST REVIEWED:       2026-07-07
+   REVIEWER:            Claude (initial draft) / Harvey Madison (pending)
+
+   Facts verified against FAA data July 2026 cycle (aviation MCP,
+   get_airport_info): KBRD elev 375, rwys 16/34 7100x150 and 05/23
+   6512x150, no tower. KGPZ (Grand Rapids/Itasca Co-Gordon Newstrom Fld)
+   elev 413, rwy 16/34 5756x100, rwy 05/23 3000x60, no tower. KHIB (Range
+   Rgnl) elev 412, rwy 13/31 6758x150, rwy 04/22 3075x75, no tower. KEVM
+   (Eveleth-Virginia Muni) elev 419, rwy 09/27 4000x75, rwy 14/32 2050x100
+   turf, no tower. KINL (Falls Intl/Einarson Fld) elev 361, rwy 13/31
+   7400x150, rwy 04/22 2999x75, no tower. Leg distances computed from FAA
+   coordinates: BRD-GPZ 55 nm, GPZ-HIB 29 nm, HIB-INL 74 nm, total 158 nm.
+   AirNav unreachable this session; radio frequencies deliberately not
+   stated anywhere in this scenario.
+
+   Hidden state model: $co tracks carboxyhemoglobin load 0-10. Heat on
+   adds 2 per cruise segment (1 for the initial climb, 1 per segment with
+   a vent cracked). Heat off with vents open subtracts 1 per segment,
+   never below 1 once exposed (washout on ambient air is slow). Symptom
+   bands: 2-3 Maja's headache; 4-5 warmth-as-contentment, heading wander;
+   6-7 readback and arithmetic errors, Maja dozing; 8+ gray edges.
+   Only landing ends the exposure.
+*/
+<<set $pathArray to []>>
+<<set $badchoices to 0>>
+<<set $readWeather to false>>
+<<set $readRoute to false>>
+<<set $readAircraft to false>>
+<<set $readField to false>>
+<<set $co to 0>>              /* hidden CO load, 0-10 */
+<<set $heatOn to false>>      /* cabin heat pulled on */
+<<set $ventsOpen to false>>   /* fresh-air vents / storm window open */
+<<set $cardChecked to false>> /* consulted the spot card in flight */
+<<set $card to "tan">>        /* the expired card's dot; it never commits */
+<<set $peeked to false>>      /* looked under the cowl at the shroud */
+<<set $trialCold to false>>   /* departed with the heat off as a test */
+<<set $cycled to false>>      /* turned heat back on after having it off */
+<<set $majaHeadache to false>>/* she has reported the headache */
+<<set $majaFeet to false>>    /* the frozen-feet conversation happened */
+<<set $majaAsleep to false>>  /* she has gone quiet and dozed off */
+<<set $declared to false>>    /* told ATC what you suspect */
+<<set $divert to "">>         /* "", "KGPZ", "KHIB", "KEVM", "KBRD", "KINL" */
+<<set $dismissals to 0>>      /* in-flight symptom dismissals */
+<<set $lowAlt to false>>      /* descended to 3,500 for kinder air */
+<<set $lastHeat to false>>    /* heat back on for the final stretch */
+<<set $descHeat to false>>    /* heat back on for the descent to GPZ */
+<<set $simpleApproach to false>> /* flew the simplified approach impaired */
+<<set $scrubRide to "">>      /* "drive", "wait", "airline" */
+<<set $vectors to false>>     /* accepted vectors and altitude from Center */
+
+:: StoryStylesheet [stylesheet]
+body {
+  background: #0f1720;
+  color: #d6dee6;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#story {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+#passages { border-left: none; padding: 0; }
+.passage { padding: 0; }
+a.link-internal, a.macro-link {
+  color: #e6b84a;
+  text-decoration: none;
+  border-bottom: 1px dotted #8a6f2a;
+}
+a.link-internal:hover, a.macro-link:hover {
+  color: #fff4d0;
+  background: #3a2d0a;
+  border-bottom: 1px solid #e6b84a;
+}
+.choice-list { margin: 1.2em 0 0.5em 0; }
+.choice-list p { margin: 0.6em 0; }
+hr { border: none; border-top: 1px solid #2c3a4a; margin: 1.8em 0; }
+.debrief {
+  background: #141d28;
+  padding: 1rem 1.3rem;
+  border-left: 3px solid #e6b84a;
+  margin-top: 1rem;
+  font-size: 0.98rem;
+}
+.debrief h3 {
+  color: #e6b84a;
+  font-size: 1.05rem;
+  margin-top: 0.8em;
+  margin-bottom: 0.3em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.04em;
+}
+.restart { margin-top: 2em; font-size: 0.95rem; color: #8aa0b5; }
+.metar-block, .flight-plan, .aircraft-card {
+  font-family: "Courier New", monospace;
+  font-size: 0.95rem;
+  color: #b8cce4;
+  background: #0a121b;
+  padding: 0.6em 0.9em;
+  border-left: 2px solid #5a6e88;
+  margin: 0.6em 0;
+  white-space: pre-wrap;
+}
+.airport-table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.9em; }
+.airport-table th, .airport-table td { padding: 6px 10px; border-bottom: 1px solid #2a3a56; text-align: left; }
+.airport-table th { color: #9ab0c8; }
+.scenario-title { font-size: 2em; color: #ffffff; text-align: center; margin-bottom: 0.2em; }
+.scenario-subtitle {
+  font-size: 1.05em; color: #8aa0c0; text-align: center;
+  margin-bottom: 1.5em; font-style: italic;
+}
+.preflight-btn {
+  display: inline-block;
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 6px;
+  padding: 10px 20px;
+  margin: 6px 4px;
+  min-width: 230px;
+  text-align: center;
+  color: #e0e0e0;
+  text-decoration: none;
+}
+.preflight-btn:hover { background: #0f3460; color: #ffffff; }
+.chart-disclaimer {
+  font-size: 0.8em; color: #8090a8;
+  border-left: 3px solid #3a4a6c;
+  padding: 6px 12px; margin: 1em 0;
+}
+.sectional-container { margin: 1em 0; }
+.sectional-container img { max-width: 100%; border: 1px solid #2a3a56; border-radius: 4px; }
+.sectional-label { font-size: 0.85em; color: #8090a8; margin-top: 0.3em; }
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block; padding: 0.55em 1.3em;
+  background: #1A3C57; color: #fff !important;
+  border: 1px solid #2E5C82; border-radius: 4px;
+  text-decoration: none; font-size: 0.95em; letter-spacing: 0.03em;
+}
+.main-menu-btn:hover, .main-menu-btn:focus { background: #2E5C82; outline: none; }
+.pax-quote {
+  background: rgba(40, 58, 80, 0.35);
+  border-left: 3px solid #6080a8;
+  padding: 0.5em 0.9em;
+  margin: 0.8em 0;
+  font-style: italic;
+  color: #c0d0e8;
+}
+.pax-quote::before { content: "Maja: "; font-style: normal; color: #7a8aa8; font-weight: bold; }
+.text-msg {
+  background: rgba(46, 66, 52, 0.35);
+  border-left: 3px solid #6a9a78;
+  padding: 0.5em 0.9em;
+  margin: 0.8em 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 0.95em;
+  color: #c8dcc8;
+}
+
+:: FlightPrep [preflight]
+<<set $pathArray to $pathArray.concat(["Preflight: reviewing materials at Brainerd"])>>
+
+<div class="scenario-title">Cabin Heat</div>
+<div class="scenario-subtitle">A perfect winter morning, a hundred and sixty miles north, and the heater working the whole way</div>
+
+Saturday morning, mid-January, Brainerd Lakes Regional. Eighteen below zero Celsius, which the locals report as just below zero Fahrenheit and say without flinching. The sky is the deep scoured blue that only high pressure and real cold can make. You are Tom Kowalski, fifty-eight, 810 hours, and the Skylane waiting on the ramp has been plugged into a preheater since last night because you have owned it long enough to know better.
+
+In the FBO, working on the last of a gas-station coffee, is your daughter Maja: twenty-four, a wildlife-biology grad student, and the best right-seater you've ever flown with, mostly because she grew up in that seat. The family week at the lake place is over. Her tracking crew starts its survey rotation Monday out of a field station north of International Falls, and you are the ride back. A hundred and sixty miles up the iron country, an hour and a half, smooth as glass the whole way. Days like this are why you kept the airplane.
+
+The airplane is fueled, the oil is warm, and Maja is already carrying her duffel toward the door. Review your materials, then go fly.
+
+<div class="chart-disclaimer">Charts, weather data, and performance figures in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here, not current publications, as the scenario is designed around them.</div>
+
+<<link "<span class=\"preflight-btn\">Weather &amp; the Cold</span>" "Preflight-Weather">><<set $readWeather to true>><</link>>
+<<link "<span class=\"preflight-btn\">Route &amp; Outs</span>" "Preflight-Route">><<set $readRoute to true>><</link>>
+<<link "<span class=\"preflight-btn\">Aircraft &amp; the Heater</span>" "Preflight-Aircraft">><<set $readAircraft to true>><</link>>
+<<link "<span class=\"preflight-btn\">Field Guide</span>" "Preflight-Field">><<set $readField to true>><</link>>
+
+<<if $readWeather and $readRoute and $readAircraft and $readField>>
+<hr>
+That's everything on the clipboard. Maja has the door.
+
+<<link "<span class=\"preflight-btn\">☑ Walk Out to the Airplane</span>" "Ramp_Opening">><</link>>
+<<elseif $readWeather or $readRoute or $readAircraft or $readField>>
+<hr>
+<em>There's more here if you want it. The airplane will still be cold in five minutes.</em>
+
+<<link "<span class=\"preflight-btn\">Walk Out Anyway</span>" "Ramp_Opening">><</link>>
+<</if>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Weather [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed weather and the cold"])>>
+<strong>Weather: nothing to outfly today</strong>
+
+<div class="metar-block">KBRD 171253Z 32005KT 10SM CLR M18/M23 A3041 RMK AO2 SLP330
+KGPZ 171253Z AUTO 31004KT 10SM CLR M19/M24 A3041 RMK AO2
+KHIB 171253Z AUTO 32006KT 10SM CLR M20/M25 A3042 RMK AO2 SLP334
+KEVM 171253Z AUTO 31005KT 10SM CLR M20/M26 A3042 RMK AO2
+KINL 171253Z 33004KT 10SM CLR M22/M27 A3043 RMK AO2 SLP338</div>
+
+<div class="metar-block">TAF KINL 171130Z 1712/1812 32006KT P6SM SKC
+  FM172100 30004KT P6SM SKC
+  FM180600 VRB03KT P6SM SKC</div>
+
+<strong>Winds aloft (FB, 1200Z issuance)</strong>
+
+<div class="metar-block">          3000      6000      9000
+BRD area  3308      3212-21   3218-25
+INL area  3306      3210-23   3215-27</div>
+
+<p>A dome of arctic high pressure is parked over the whole state and plans to stay through Sunday. No fronts, no moisture, no wind worth the name. The air is dense and dead smooth. Density altitude this morning is somewhere around three and a half thousand feet <em>below</em> sea level, and the airplane will climb like it's showing off.</p>
+
+<p>The number that matters today isn't in the METARs. It's the temperature itself. At eighteen below, the cold is not a comfort problem. Exposed skin takes frostbite in under half an hour, a car that won't start is a genuine event, and an airplane cabin without heat at altitude is a place you can endure but not ignore. Everything that runs today, runs warm on purpose.</p>
+
+<<link "← Back to preflight" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Route [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed route and outs"])>>
+<strong>The trip north: KBRD to KINL, 158 nm the way you've drawn it</strong>
+
+<div class="sectional-container">
+<img src="/scenarios/cabin-heat/images/area_map.jpg" alt="Route overview map, Brainerd north to International Falls, with Grand Rapids, Hibbing, and Eveleth-Virginia flanking the route">
+<div class="sectional-label">Route overview: KBRD north to KINL via Grand Rapids and Hibbing, with KGPZ, KHIB, and KEVM flanking the route. The last seventy miles are the empty ones.</div>
+</div>
+
+<div class="flight-plan">Aircraft:   N5238R  Cessna 182P
+Route:      KBRD GPZ HIB KINL (VFR, flight following
+            with Minneapolis Center)
+Altitude:   5,500 to abeam Hibbing, then 4,500
+Cruise:     120 KTAS / about 12.5 gph
+Legs:       BRD-GPZ 55 nm | GPZ-HIB 29 nm | HIB-INL 74 nm
+Time:       about 1+25 at forecast winds
+Fuel:       61 gal usable at engine start
+Souls:      2</div>
+
+<p>The direct line is 133 miles and spends most of them over bog, black spruce, and lakes with no names you'd want to explain to a search coordinator. Your line is twenty-five miles longer and rides the pavement instead: US 169 up through Grand Rapids and the Iron Range towns, then US 53 north out of Virginia to the border. In January, in a single, over this country, you fly where the plow trucks go.</p>
+
+<table class="airport-table">
+<tr><th>The outs, in order of appearance</th><th>Where</th><th>What's there</th></tr>
+<tr><td>KGPZ Grand Rapids</td><td>On route, 55 nm out</td><td>16/34, 5,756 ft. AWOS. Fuel, and a shop that answers its phone.</td></tr>
+<tr><td>KHIB Hibbing (Range Regional)</td><td>On route, 84 nm out</td><td>13/31, 6,758 ft. The big runway of the Range. Airline ramp, plowed early.</td></tr>
+<tr><td>KEVM Eveleth-Virginia</td><td>14 nm east of Hibbing</td><td>09/27, 4,000 ft. Quiet. The hospital in Virginia is ten minutes from the ramp.</td></tr>
+<tr><td>Cook, Orr</td><td>Along US 53 north</td><td>Strips. Plowed when they're plowed. Count them as roads with names.</td></tr>
+</table>
+
+<p>Worth saying out loud: after Virginia, the options thin fast. From abeam Cook, it's forty miles of forest to the Rainy River, and the best out is usually the highway itself. Whatever needs deciding, decide it over the Range.</p>
+
+<<link "← Back to the clipboard" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Aircraft [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed aircraft and the heater"])>>
+<strong>N5238R: 1975 Cessna 182P</strong>
+
+<div class="aircraft-card">Powerplant:  Continental O-470-S, 230 hp, carbureted
+Fuel:        61 gal usable, 2 tanks
+Prop:        McCauley 2-blade constant speed
+Avionics:    GNS 430W, KX 170B, mode C. No autopilot
+             (the old Navomatic came out years ago).
+             Steam gauges, vacuum DG and AI.
+Speeds (kt): Vy 78   Vfe(40) 87   Va 111 @ gross
+             Approach 65-70      Best glide 70
+Heater:      Muff shroud on the exhaust, HEAT and
+             DEFROST push-pull controls
+CO monitor:  Chemical spot card, panel-mounted.
+             Replace-by date: fourteen months ago.</div>
+
+<p>The heater deserves a paragraph, because on a Cessna it is simpler than most owners ever bother to learn. There is no furnace. A sheet-metal shroud wraps the muffler, ram air from the front baffles passes through the gap between shroud and muffler, picks up heat from the exhaust surface, and ducts straight into the cabin at your shins. The system works beautifully and has exactly one failure mode that matters: the wall between exhaust gas and heater air is the muffler itself. One crack, one bad weld, one pinhole burned through, and the duct carries the exhaust to you. The crack lives inside the shroud, where no preflight ever sees it.</p>
+
+<p>The spot card is a chemical dot that darkens toward gray-black in the presence of carbon monoxide. Fresh, it's a crude but honest instrument. The chemistry has a service life of about a year once the package is opened; past that, the dot desensitizes and settles into a permanent noncommittal tan. Yours went past that mark fourteen months ago. It has read tan through two oil changes, one long summer, and this morning.</p>
+
+<p>Fresh air, for the record: two panel corner vents, the wing-root vents, and the pilot's storm window. All of them work. At eighteen below, all of them cost.</p>
+
+<<link "← Back to the ramp door" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Field [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed field guide"])>>
+<strong>Brainerd Lakes Regional (KBRD), elevation 375</strong>
+
+<table class="airport-table">
+<tr><th>Item</th><th>Fact</th></tr>
+<tr><td>Runways</td><td>16/34, 7,100 x 150, concrete. 05/23, 6,512 x 150. Both plowed at dawn, packed-snow patches on the edges.</td></tr>
+<tr><td>Traffic</td><td>Non-towered. Everyone self-announces, and on a Saturday this cold, "everyone" is generous.</td></tr>
+<tr><td>Weather</td><td>ASOS on the field</td></tr>
+<tr><td>Services</td><td>FBO open 7 a.m., coffee reliable. Aho Aviation Maintenance on the field: closed weekends, sign says "Mondays we answer for our sins."</td></tr>
+<tr><td>Flight following</td><td>Minneapolis Center works this whole route; the frequencies are on your kneeboard card</td></tr>
+</table>
+
+<strong>Falls International/Einarson Field (KINL), elevation 361</strong>
+
+<table class="airport-table">
+<tr><th>Item</th><th>Fact</th></tr>
+<tr><td>Runways</td><td>13/31, 7,400 x 150. 04/22, 2,999 x 75. The long one earns its keep: the airline flies here.</td></tr>
+<tr><td>Traffic</td><td>Non-towered. The regional airline turboprop and not much else on a January Saturday.</td></tr>
+<tr><td>Weather</td><td>ASOS, plus an actual National Weather Service office on the field, this being the town that wins the national low three mornings a week.</td></tr>
+<tr><td>Services</td><td>Borderland Aviation, the FBO, open Saturdays until 5. Fuel, a warm crew car, and a shop that works airline hours, not yours.</td></tr>
+<tr><td>Ground logistics</td><td>Maja's crew lead, Roz, can meet the airplane with the station truck on an hour's notice. The drive from Brainerd, if it came to that, is three and a half hours of two-lane.</td></tr>
+</table>
+
+<p>One more homely fact: your wife Hania drove the other car home this morning and expects two texts today. Wheels-up and wheels-down.</p>
+
+<<link "← Back to the rest of it" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_Opening [scenario]
+<<set $pathArray to $pathArray.concat(["Runup: something faint in the defrost air"])>>
+
+The preflight goes quick because at this temperature everything goes quick. Fuel drains, oil at nine quarts, tail feathers clean, the belly's usual winter film of oil and grit. The O-470 has been sleeping under a preheater since ten last night and lights on the third blade, indignant but willing. You let it warm at a thousand RPM while the two of you sort headsets and Maja plugs the aux cable into her phone out of twenty years of habit.
+
+Runup pad, nose into a five-knot breath from the northwest. Defrost full open and roaring, because the windshield wants to fog with two people breathing in a cold cabin. Mags at 1,800: drop of 90 left, 80 right, smooth as a bank statement. Carb heat: rise where a rise belongs. Prop cycle: three clean swings.
+
+And there, riding in under the engine note, something in the defrost air. A thin edge. Exhaust-ish. There for two breaths, then gone, then maybe back if you hunt for it. The cabin of a fifty-year-old airplane is a library of old smells: fuel, oil, warm dust, ancient carpet. This one is either new or imagined.
+
+<div class="pax-quote">"Smells like Grandpa's ice shack in here. Kind of cozy, honestly."</div>
+
+The spot card rides in its clip at the bottom of the panel, replace-by date long gone. Its dot is tan. Its dot has been tan since before Thanksgiving, through every kind of day.
+
+The ASOS mutters about the temperature on the second radio. The airplane is warm, legal, and ready. So, in theory, are you.
+
+<div class="choice-list">
+<<link "A. You shut down, grab the flashlight, and go in through the cowl openings for a look at the muffler shroud before you commit to anything." "Ramp_Peek">>
+  <<set $pathArray to $pathArray.concat(["D1: shut down to inspect the shroud"])>>
+  <<set $peeked to true>>
+<</link>>
+
+<<link "B. You hold the runup, pull the cabin heat to full hot, and watch the spot card up close for a full minute. Let the instrument testify." "Ramp_CardWatch">>
+  <<set $pathArray to $pathArray.concat(["D1: ran the heat and watched the card"])>>
+  <<set $cardChecked to true>>
+<</link>>
+
+<<link "C. Old airplane, cold morning, defroster pulling hard. You call it the smell this cabin has always had, and take runway 34." "Climb_Depart">>
+  <<set $pathArray to $pathArray.concat(["D1: departed as planned"])>>
+<</link>>
+
+<<link "D. You depart, but with the heat and defrost shut off for the first stretch: bundled, cold, and curious whether the smell leaves with the heater." "Climb_ColdTrial">>
+  <<set $pathArray to $pathArray.concat(["D1: departed with the heat off as a test"])>>
+  <<set $trialCold to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_Peek [scenario]
+<<set $pathArray to $pathArray.concat(["Shroud inspection: nothing to see"])>>
+
+Mixture out, mags off, master off, and the prop clunks to a stop. The cold starts counting the moment the engine quits.
+
+You go in with the flashlight through the cowl flaps and the nose bowl, cheek against freezing aluminum, and find the muffler shroud exactly where it has lived for fifty years: a wrap of ribbed sheet metal with the heater duct coming off its top. The shroud looks fine. No soot streaks at the seams, no scorch shadows, the duct boot seated and clamped. You reach in and rock the assembly gently. Solid.
+
+Which proves what it proves. The shroud is the jacket, and the jacket looks fine. The muffler is the thing inside the jacket, and there is no seeing it without pulling the whole affair apart on a bench. If the wall between exhaust and heater air has opened somewhere, it has done it in the one place your flashlight cannot go.
+
+Maja holds the light while you back out, and hands you your gloves one at a time.
+
+<div class="pax-quote">"So the verdict is 'looks fine from out here.' That's the same grade my car gets right before it does the thing again."</div>
+
+<div class="choice-list">
+<<if not $cardChecked>>\
+<<link "A. You restart, pull the heat to full hot at runup power, and watch the spot card up close for a minute." "Ramp_CardWatch">>
+  <<set $pathArray to $pathArray.concat(["Then ran the heat and watched the card"])>>
+  <<set $cardChecked to true>>
+<</link>>
+<</if>>\
+<<link "B. Looks fine, smells like an old Cessna, mags were perfect. You restart and take runway 34." "Climb_Depart">>
+  <<set $pathArray to $pathArray.concat(["Then departed as planned"])>>
+<</link>>
+
+<<link "C. You restart and go, but cold: heat and defrost stay off for the first stretch while you sample the cabin air with a clear head." "Climb_ColdTrial">>
+  <<set $pathArray to $pathArray.concat(["Then departed with the heat off as a test"])>>
+  <<set $trialCold to true>>
+<</link>>
+
+<<link "D. You put the flashlight away and call it: no flight until someone who owns a bench has had this muffler apart. Today becomes logistics." "Ground_Scrub">>
+  <<set $pathArray to $pathArray.concat(["Then scrubbed the flight"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_CardWatch [scenario]
+<<set $pathArray to $pathArray.concat(["Card watch: tan, unmoved"])>>
+
+You bring the power back up to 1,800, pull the cabin heat knob to the stop, and unclip the card so it rides in your palm a foot from your face. The heater floods your knuckles. The defrost roars. Maja watches you watch a small cardboard square, and has the grace not to say what that looks like.
+
+One minute by the panel clock. The dot is tan. Not the clean white-tan of the sample picture printed next to it, and nowhere near the gray-black the legend calls trouble. Tan. The exact tan of a card that has hung in sunlight and cabin fumes for two years and stopped having opinions about either.
+
+The smell comes and goes once more while you hold it. The dot does not move. On the evidence in your hand, the heater is acquitted. On the date printed under the dot, the witness slept through the trial.
+
+<div class="pax-quote">"Is that thing like the stickers on the pool test kit? Because Mom throws those out every spring and buys new ones."</div>
+
+<div class="choice-list">
+<<if not $peeked>>\
+<<link "A. You shut down and put a flashlight on the muffler shroud through the cowl openings before deciding anything." "Ramp_Peek">>
+  <<set $pathArray to $pathArray.concat(["Then shut down to inspect the shroud"])>>
+  <<set $peeked to true>>
+<</link>>
+<</if>>\
+<<link "B. The card had its minute and stayed tan, the mags are clean, the day is perfect. Runway 34." "Climb_Depart">>
+  <<set $pathArray to $pathArray.concat(["Then departed as planned"])>>
+<</link>>
+
+<<link "C. You go, but you go cold: heat and defrost off for the first stretch, vents cracked, and see whether the smell rides along." "Climb_ColdTrial">>
+  <<set $pathArray to $pathArray.concat(["Then departed with the heat off as a test"])>>
+  <<set $trialCold to true>>
+<</link>>
+
+<<link "D. A tan dot on an expired card settles nothing. You shut down and scrub until a mechanic opens the shroud. Today becomes logistics." "Ground_Scrub">>
+  <<set $pathArray to $pathArray.concat(["Then scrubbed the flight"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_Scrub [scenario]
+<<set $pathArray to $pathArray.concat(["Scrubbed at Brainerd on suspicion"])>>
+
+You say it the way you'd want to hear it: the airplane stays until Aho Aviation has had the muffler out of its shroud, and that is Monday at the earliest, and you're sorry, and you're not.
+
+Maja takes it standing on the cold ramp with her duffel over her shoulder, and you can watch her run the math she grew up running: Monday morning survey rotation, Sunday night at the station, gear check, the crew waiting on her.
+
+<div class="pax-quote">"Okay. Not arguing with the guy holding the flashlight. But I do have to be at Rat Root by tomorrow night, so we're solving that part next, right?"</div>
+
+The FBO's coffee is fresh and the counter has a phone book's worth of local numbers taped under glass. Three ways north suggest themselves.
+
+<div class="choice-list">
+<<link "A. You rent the only all-wheel-drive thing in town and drive her up yourself today: three and a half hours north, supper at the border, back tomorrow." "Ground_ScrubPlan">>
+  <<set $pathArray to $pathArray.concat(["Scrub ride: drove her north"])>>
+  <<set $scrubRide to "drive">>
+<</link>>
+
+<<link "B. You put her on tomorrow's airline turboprop out of Minneapolis: a long drive south tonight to fly north tomorrow, but somebody else does the winter flying." "Ground_ScrubPlan">>
+  <<set $pathArray to $pathArray.concat(["Scrub ride: the airline out of MSP"])>>
+  <<set $scrubRide to "airline">>
+<</link>>
+
+<<link "C. You call Roz at the field station and ask for a day of grace: if Monday's inspection is quick and clean, you fly Maja up Monday afternoon." "Ground_ScrubPlan">>
+  <<set $pathArray to $pathArray.concat(["Scrub ride: asked the station for a day"])>>
+  <<set $scrubRide to "wait">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_ScrubPlan [scenario]
+<<set $pathArray to $pathArray.concat(["Settling the airplane's weekend"])>>
+
+<<if $scrubRide is "drive">>The rental counter in town has a crossover with real tires and a scraped windshield, and by eleven you're loading duffels into it.<<elseif $scrubRide is "airline">>Roz turns out to have a cousin near the Cities, which solves tonight, and the airline's website solves tomorrow morning for the price of a checked bag and your pride.<<else>>Roz takes the call like someone who has rearranged around weather her whole career. "Monday afternoon works. Tuesday doesn't." A day of grace, exactly one.<</if>>
+
+That leaves the airplane, and the note you owe Denny Aho. You write it twice to get the tone right: the smell, when it comes and goes, the expired card, what you looked at, what you couldn't. The last line takes a minute: <em>Muffler out of the shroud, pressure-check it, I'll pay for the looking either way.</em>
+
+<div class="choice-list">
+<<link "A. You drop the note and the key at the FBO desk for Monday and let the weekend go where it's going." "End_NoGo">>
+  <<set $pathArray to $pathArray.concat(["Left the note and key for Monday"])>>
+<</link>>
+
+<<link "B. You decide to be standing in Aho's doorway when it opens Monday, note in hand, to watch the shroud come off yourself." "End_NoGo">>
+  <<set $pathArray to $pathArray.concat(["Chose to be there when the shroud opens"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Climb_Depart [scenario]
+<<set $pathArray to $pathArray.concat(["Departed runway 34, heat on"])>>
+<<set $heatOn to true>><<set $ventsOpen to false>><<set $co to $co + 1>>
+
+Runway 34, and the dense air does the flying for you: fifty knots arrives in what feels like six seconds, and the VSI pins itself somewhere it only visits in January. Brainerd's grid of white roofs and gray lakes falls away. You turn out northbound over US 169 and let the trim carry the climb.
+
+By 3,000 the cabin has gone from bearable to genuinely comfortable, the heater pouring its river of warmth across your shins, the defroster keeping a clean fan of windshield ahead of each of you. Maja pulls one glove off, then the other.
+
+Level 5,500. Power back to 22 squared, mixture leaned, the GPS counting down fifty-some miles to Grand Rapids. You raise Minneapolis Center and get a squawk and a groundspeed report that flatters the airplane. The air is dead smooth, the kind of smooth that makes passengers sleepy and owners smug.
+
+<div class="pax-quote">"Okay, this beats the van. Roz drove the van up last week and said the heater quit at Cotton. This is civilized."</div>
+
+The engine turns steady and sweet. The morning pours past the windows, blue over white to the horizon.
+
+<<link "The miles start coming off." "Cruise_D2_Headache">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Climb_ColdTrial [scenario]
+<<set $pathArray to $pathArray.concat(["Departed cold: heat off as a test"])>>
+<<set $heatOn to false>><<set $ventsOpen to true>>
+
+You brief her before the runup ends, because it's her cabin too: heat and defrost stay off, vents cracked, until you're satisfied the smell left with the heater. Maja zips her parka to the chin and produces, from somewhere, the wool blanket that has lived behind the seat since she was in middle school.
+
+Runway 34, the January climb, and the cold comes aboard like a third occupant. By 4,000 your breath is fogging the top of the windshield faster than the naked defroster slot can fight it, and you fly with one wristwatch-width of clear glass and a growing respect for the phrase "non-negotiable." The cabin air is sharp, clean, and empty. No exhaust edge. Nothing but cold vinyl and colder metal. Fifteen minutes of it, level at 5,500 with Center's squawk in the box, and the sample is as honest as you know how to take: whatever you smelled on the runup pad, it is not in this air.
+
+Which fits the innocent story. The heater valve off, the smell gone. It also fits the other story exactly as well, and your toes have started filing complaints, and Maja has gone quiet inside her hood.
+
+<div class="pax-quote">"For science, I respect this. As a daughter, I want you to know my water bottle just crunched."</div>
+
+<div class="choice-list">
+<<link "A. Test flown, air clean, point made. You pull the heat back on and fly the airplane the way it was built to be flown." "Cruise_D2_Headache">>
+  <<set $pathArray to $pathArray.concat(["D2: heat back on after the cold test"])>>
+  <<set $heatOn to true>><<set $ventsOpen to false>>
+<</link>>
+
+<<link "B. You keep it cold to the Range: Hibbing has the big runway and a shop, and you'd rather make the heat decision overhead an airport than out here." "Cruise_ColdHold">>
+  <<set $pathArray to $pathArray.concat(["D2: stayed cold to the Range"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_D2_Headache [scenario]
+<<set $pathArray to $pathArray.concat(["Maja reports a headache"])>>
+<<set $co to $co + 2>><<set $majaHeadache to true>>
+
+<<if $trialCold>>Twenty minutes after the heat comes back, with the cabin finally rebuilt to civilization and Grand Rapids crawling up under the nose, Maja<<else>>Twenty-five minutes in, Grand Rapids a thumb-width ahead on the GPS, Maja<</if>> pulls her right earcup off, works her jaw, and puts it back.
+
+<div class="pax-quote">"Is there Advil in the flight bag? I've got a headache parked right here." She taps the center of her forehead with two fingers. "Dull. Like a sinus thing, but it's not my sinuses."</div>
+
+She got the good seat, the one she always takes: right side, by the window, directly over the heater's best outlet, boots baking pleasantly since the climb. She looks fine. Sounds fine. Twenty-four-year-olds get headaches, especially ones who packed a field kit until one in the morning and got hauled out of bed at five.
+
+For your part, you feel the way 8:30 feels after a five o'clock alarm at fifty-eight: a little heavy behind the eyes, nothing worth a sentence. The resort did biscuits and sausage gravy at six. That's still with you too.
+
+The engine is a metronome. The morning outside is flawless. The heater breathes its steady warmth across the cabin, and the spot card sits tan in its clip, saying what it always says.
+
+<div class="choice-list">
+<<link "A. Early start, dry cabin, big breakfast. You dig out the Advil, hand her the water bottle, and press on. Grand Rapids slides by in a few minutes." "Cruise_Deep1">>
+  <<set $pathArray to $pathArray.concat(["D2: attributed it, pressed on"])>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. You crack the vent on your side: some fresh air into the mix, most of the heat kept, and see what ten minutes does for her." "Cruise_VentCrack">>
+  <<set $pathArray to $pathArray.concat(["D2: cracked a vent as a compromise"])>>
+  <<set $ventsOpen to true>>
+<</link>>
+
+<<link "C. Heat off. Vents open. All of it, now, and the cold can send its bill. If the air is the problem, you want it out of the airplane." "Vent_HeatOff">>
+  <<set $pathArray to $pathArray.concat(["D2: heat off, vents open"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>>
+<</link>>
+
+<<link "D. Brainerd is thirty minutes behind you with your own tiedown and a shop that opens Monday. You turn around now, while it's a short story." "Divert_TurnBack">>
+  <<set $pathArray to $pathArray.concat(["D2: turned back for Brainerd"])>>
+  <<set $divert to "KBRD">>
+<</link>>
+
+<<link "E. You unclip the spot card and hold it up to the light for a proper look before you change a single thing." "Cruise_CardCheck">>
+  <<set $pathArray to $pathArray.concat(["D2: consulted the spot card"])>>
+  <<set $cardChecked to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_CardCheck [scenario]
+<<set $pathArray to $pathArray.concat(["The card says tan"])>>
+
+You hold the card up into the winter light coming off the snowpack, which is the most honest light there is.
+
+Tan. You tilt it. Tan. You compare it against the printed legend beside the dot: NORMAL, a pale cream. CAUTION, a definite gray. DANGER, charcoal. The dot lives somewhere between the first two, where it has lived every day since you've bothered looking, unmoved by this flight or any other.
+
+There's the panel's whole testimony, and it reads like an acquittal. Engine instruments green. Mags proven on the runup. And the one instrument aboard whose entire job is this exact question says, in its faded way, fine.
+
+The date under the dot says the witness retired fourteen months ago. The headache in the right seat says what it says. Maja has her temple against the cold window now, which she claims helps.
+
+<div class="pax-quote">"What's the card supposed to prove again? Because you're looking at it like it owes you money."</div>
+
+<div class="choice-list">
+<<link "A. Tan is tan. Between the card, the runup, and a clean look under the cowl story, the airplane is telling you it's fine. You press on." "Cruise_Deep1">>
+  <<set $pathArray to $pathArray.concat(["Trusted the card, pressed on"])>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. Two humans with symptoms outvote one expired dot. Heat off, vents open, and the cold can have its way." "Vent_HeatOff">>
+  <<set $pathArray to $pathArray.concat(["Outvoted the card: heat off, vents open"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>>
+<</link>>
+
+<<link "C. You split the difference: crack a vent, keep most of the heat, and watch her like a gauge." "Cruise_VentCrack">>
+  <<set $pathArray to $pathArray.concat(["Split it: vent cracked, heat kept"])>>
+  <<set $ventsOpen to true>>
+<</link>>
+
+<<link "D. The card can't testify and you know it. Brainerd is half an hour behind you. You put the sun on the left wing and go home." "Divert_TurnBack">>
+  <<set $pathArray to $pathArray.concat(["Turned back after the card check"])>>
+  <<set $divert to "KBRD">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_VentCrack [scenario]
+<<set $pathArray to $pathArray.concat(["Vent cracked, heat kept"])>>
+<<set $co to $co + 1>>
+
+The vent opens with its little shriek and a blade of arctic air lays itself across your left forearm and the chart. The cabin becomes two climates: heater warmth from the floor, a moving edge of outside across the top. You hunt the airflow with your nose like a fool and get nothing you could swear to. Warm dust. Cold metal. Maybe a ghost of the runup smell, maybe its memory.
+
+Grand Rapids arrives under the right wing: the paper mill's white plume standing arrow-straight in the calm, the airport's plowed X printed dark on the snow, 5,756 feet of asphalt going by at two miles a minute. On the CTAF, somebody's Skyhawk calls crosswind for 34, the only other voice in the county.
+
+<div class="pax-quote">"Headache's... about the same? Maybe a notch better. Hard to say with the popsicle wind on my neck. I'm fine, Dad. It's a headache."</div>
+
+Her voice is level. She has folded her arms into her parka, and she's watching the mill smoke instead of her phone.
+
+<div class="choice-list">
+<<link "A. The field below has fuel, coffee, and a shop that answers its phone. You land at Grand Rapids and sort this out warm, on the ground." "Approach_KGPZ">>
+  <<set $pathArray to $pathArray.concat(["Landed GPZ off the compromise"])>>
+  <<set $divert to "KGPZ">>
+<</link>>
+
+<<link "B. Half-measures make bad data. Heat off entirely, all the vents open, and let the cabin air turn over for real." "Vent_HeatOff">>
+  <<set $pathArray to $pathArray.concat(["Went full cold after the compromise"])>>
+  <<set $heatOn to false>>
+<</link>>
+
+<<link "C. The vent is doing its job and she says she's better. You hold the compromise and continue up the Range." "Cruise_MidCompromise">>
+  <<set $pathArray to $pathArray.concat(["Held the compromise past GPZ"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_MidCompromise [scenario]
+<<set $pathArray to $pathArray.concat(["The compromise rides up the Range"])>>
+<<set $co to $co + 1>>
+
+The Range unrolls ahead: the open pits west of Hibbing like rust-red amphitheaters cut in the snow, overburden ridges in long combed rows, the towns strung on the highway like knots on a rope. Center calls traffic once, a King Air descending into Duluth's side of the world, no factor.
+
+The cabin has settled into its two climates, and you into yours. Warm floor, cold shoulder. There is a particular contentment to a smooth-air cruise with the heater on, and it has arrived on schedule: that low, pleasant heaviness, the sense that the airplane is flying itself just fine. You catch yourself having read the fuel placard three times without retaining the number, and let it go, the way you let go of most things on a smooth morning with nothing wrong.
+
+Maja hasn't said anything since the mill. When you glance over, she's rubbing her forehead again, slow, absent circles, her water bottle unopened in her lap.
+
+Hibbing's runway shows itself off the nose, the Range's big pale ribbon, 6,758 feet of it.
+
+<div class="choice-list">
+<<link "A. You key up and tell Minneapolis Center the truth: two headaches, an old heater, and a request for lower and direct Hibbing while somebody watches your readbacks." "Divert_Confess">>
+  <<set $pathArray to $pathArray.concat(["Confessed to Center, diverted HIB"])>>
+<</link>>
+
+<<link "B. Heat off, everything open, now. The compromise had its chance and the right seat is still rubbing her head." "Vent_LateOff">>
+  <<set $pathArray to $pathArray.concat(["Went full cold past the compromise"])>>
+  <<set $heatOn to false>>
+<</link>>
+
+<<link "C. Hibbing is right there on the nose. You land on the Range's big runway and put warm walls and a mechanic between you and the question." "Approach_KHIB">>
+  <<set $pathArray to $pathArray.concat(["Landed HIB off the compromise"])>>
+  <<set $divert to "KHIB">>
+<</link>>
+
+<<link "D. She said she's fine and the vent is working. Falls International in forty minutes, the crew truck waiting, done. You press on." "Cruise_NorthCreep">>
+  <<set $pathArray to $pathArray.concat(["Pressed on past Hibbing"])>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_NorthCreep [scenario]
+<<set $pathArray to $pathArray.concat(["North of the Range, going quiet"])>>
+<<set $co to $co + 2>><<set $majaAsleep to true>>
+
+Virginia's grain elevator and its highway interchange slide behind the right wing, and the country changes its mind: the pits and towns give way to spruce, bog, and lakes with white, unmarked faces. US 53 below is down to a moving handful of trucks. Cook's little strip is out there somewhere ahead, a gray dash you know better than you can currently find.
+
+You work the time problem, since the fuel is fat and the time is the only number left to manage. Forty-six miles to go, two miles a minute. You make it forty minutes and write 40 on the kneeboard in pencil, and the pencil takes two tries to find its pocket.
+
+It is ten in the morning. Maja is asleep. Mid-sentence-asleep: she was saying something about the survey grid and then her head was on the window, hood bunched into a pillow. Kid kept grad-student hours all week. The heater breathes. The engine turns. The airplane is warm and steady and profoundly comfortable<<if $co gte 6>>, and your fingertips, when you flex them on the yoke, have a faint carbonation to them, which the cold explains, or the altitude, or the coffee wearing off<</if>>.
+
+<div class="choice-list">
+<<link "A. Twenty-some minutes to Falls International. Land, coffee, hand her to Roz, done. You hold what you have." "End_INL_Unaware">>
+  <<set $pathArray to $pathArray.concat(["Held on to INL, letting it be a tired morning"])>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. Asleep at 10 a.m. after a headache is a gauge reading. You wake her, kill the heat, open everything, and fly the last stretch cold." "Cruise_ColdFinal">>
+  <<set $pathArray to $pathArray.concat(["Woke her, went cold for the last stretch"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>>
+<</link>>
+
+<<link "C. You key the mic and say the quiet thing to Minneapolis Center, out loud, on tape: you suspect carbon monoxide and you want help thinking." "Divert_ConfessLate">>
+  <<set $pathArray to $pathArray.concat(["Called Center from north of Virginia"])>>
+<</link>>
+
+<<link "D. Eveleth-Virginia is twenty-five minutes behind the right shoulder, with a hospital ten minutes from the ramp. You turn back for it." "Approach_KEVM">>
+  <<set $pathArray to $pathArray.concat(["Turned back for Eveleth"])>>
+  <<set $divert to "KEVM">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Vent_HeatOff [scenario]
+<<set $pathArray to $pathArray.concat(["Heat off, vents open, paying cold"])>>
+
+The heat knob goes in to the stop and the defroster with it, since they drink from the same well. Both panel vents open, both wing roots, and the storm window unlatched to a half-inch howl. The cabin's temperature starts falling like a stage curtain.
+
+Nothing else changes right away, which is the honest part nobody advertises. Headaches don't take orders. Five minutes in, Maja's is where it was, and the only new data is the fog garden growing at the windshield corners now that the defroster's gone, kept in check by the moving air and a rag from the seat pocket.
+
+<<if $dismissals gte 1>>Grand Rapids sits fifteen behind the left shoulder, a known quantity getting smaller. Ahead, the Range and Hibbing's long runway.<<else>>Grand Rapids rides just off the left wing, its mill plume standing straight as a plumb line, its plowed runway printed dark on the snow.<</if>> The OAT needle sits near the bottom of its arc, and the cold is already past your collar and working on your knuckles. Maja pulls her hood up one-handed and says nothing, which is her being a good sport at volume.
+
+<div class="choice-list">
+<<if $dismissals gte 1>>\
+<<link "A. Grand Rapids is fifteen minutes back and has fuel, coffee, and a shop that answers its phone. You turn around and land there now." "Approach_KGPZ">>
+  <<set $pathArray to $pathArray.concat(["Turned back to land GPZ"])>>
+  <<set $divert to "KGPZ">>
+<</link>>
+<<else>>\
+<<link "A. The airport is right there under the wing. You pull the power, spiral down, and land at Grand Rapids now, while the question is still small." "Approach_KGPZ">>
+  <<set $pathArray to $pathArray.concat(["Landed GPZ off the left wing"])>>
+  <<set $divert to "KGPZ">>
+<</link>>
+<</if>>\
+<<link "B. You hold the cold and continue north, gloves and blanket deployed, and say the why out loud: if it's the air, warm is the one thing you can't give back." "Vent_Hold">>
+  <<set $pathArray to $pathArray.concat(["Held the cold, explained the price"])>>
+<</link>>
+
+<<link "C. The cold hits harder than you briefed and the card did stay tan. You pull the heat back on and keep just one vent cracked instead." "Cruise_Recycle">>
+  <<set $pathArray to $pathArray.concat(["Heat back on within minutes"])>>
+  <<set $heatOn to true>><<set $cycled to true>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Vent_Hold [scenario]
+<<set $pathArray to $pathArray.concat(["Holding cold; the feet conversation"])>>
+<<if $co gt 1>><<set $co to $co - 1>><</if>><<set $majaFeet to true>>
+
+You give her your spare gloves for her boot toes, which looks ridiculous and works a little, and you say the reasoning out loud once, plainly, so it exists in the cabin as a briefed plan and not a mood.
+
+Recovery, it turns out, is not a switch. Twenty minutes past the vents opening, Maja reports the headache has gone from parked to idling. Your own head, which you hadn't formally admitted was involved, has changed in a way you notice mostly in reverse: the numbers on the fuel totalizer mean things again on the first read. The edges of the morning have sharpened by one click. None of it is proof. All of it is pattern.
+
+The cold, meanwhile, has stopped being a condition and become an occupant. The windows have grown lace at their edges. Hibbing's runway lies ahead and slightly right, the biggest piece of pavement between here and the border, its airline ramp plowed to the paint.
+
+<div class="pax-quote">"Dad. I can't feel my feet." A small laugh with no anger in it. "And the headache's easing, right? It's easing. The card said fine. Could we have the heat back just for a while? I'll take the headache over the toes, honestly."</div>
+
+It is a completely reasonable request, made gently, by the person you opened the vents for.
+
+<div class="choice-list">
+<<link "A. Ten minutes of heat, then off again before it can matter. She's freezing, she's improving, and the card did stay tan. You pull the knob." "Cruise_Recycle">>
+  <<set $pathArray to $pathArray.concat(["Gave the heat back: ten-minute deal"])>>
+  <<set $heatOn to true>><<set $cycled to true>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. You hold the cold, and you tell her the hard version: the headache easing while the vents are open is exactly why the vents stay open." "Cruise_ColdFinal">>
+  <<set $pathArray to $pathArray.concat(["Held the cold through the feet conversation"])>>
+<</link>>
+
+<<link "C. You land at Hibbing, minutes ahead: warm building, a phone, a shop, and a headache that started in this airplane gets checked outside of it." "Approach_KHIB">>
+  <<set $pathArray to $pathArray.concat(["Landed HIB off the cold hold"])>>
+  <<set $divert to "KHIB">>
+<</link>>
+
+<<if not $lowAlt>>\
+<<link "D. You split the suffering: down to 3,500 where the air is denser and a few degrees kinder, vents open, heat still off, and press north." "Cruise_ColdFinal">>
+  <<set $pathArray to $pathArray.concat(["Descended to 3,500, held the cold"])>>
+  <<set $lowAlt to true>>
+<</link>>
+<</if>>\
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Recycle [scenario]
+<<set $pathArray to $pathArray.concat(["The heat comes back"])>>
+<<set $co to $co + 2>>
+
+The knob comes out and the river of warmth returns, and the cabin sighs, both of you, honestly. Feeling flows back into extremities in pins and pulses. Maja puts her hood down for the first time in half an hour. Comfort arrives the way it always does, feeling less like a condition and more like the absence of a mistake.
+
+Probably the headache was the resort breakfast, or the five o'clock start, or two people breathing dry air in a sealed aluminum bottle. The morning offers its evidence for all of it.
+
+Fifteen minutes on, somewhere over the seam where the pits give out and the bog begins, the evidence changes sides. Maja's fingers are back at her forehead, the slow circles. Her water bottle is still unopened. When you ask, she takes a second too long to answer.
+
+<div class="pax-quote">"It's back. Worse, kind of. Behind my eyes now too." A pause. "I'm just going to close them for a minute."</div>
+
+The heater breathes. The card, when your eyes drop to it, is tan.
+
+<div class="choice-list">
+<<link "A. Off, everything open, and the nearest good pavement: Eveleth-Virginia, with the hospital ten minutes from its ramp. You turn for it now." "Approach_KEVM">>
+  <<set $pathArray to $pathArray.concat(["Heat off for good; turned for Eveleth"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>><<set $divert to "KEVM">>
+<</link>>
+
+<<link "B. Off for good this time, vents wide, and you fly the rest of it cold, no matter who asks for what." "Cruise_ColdFinal">>
+  <<set $pathArray to $pathArray.concat(["Heat off for good; continuing cold"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>>
+<</link>>
+
+<<link "C. You key up and give Minneapolis Center the whole picture: the headaches, the pattern with the heat, the words carbon monoxide." "Divert_ConfessLate">>
+  <<set $pathArray to $pathArray.concat(["Told Center after the recycle"])>>
+<</link>>
+
+<<link "D. Twenty-five minutes to Falls International, and she's finally warm. Waking her to freeze her again helps nobody. You hold what you have." "Cruise_NorthCreep">>
+  <<set $pathArray to $pathArray.concat(["Kept the heat, pressed for INL"])>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Vent_LateOff [scenario]
+<<set $pathArray to $pathArray.concat(["Full cold, late"])>>
+<<if $co gt 1>><<set $co to $co - 1>><</if>>
+
+Heat in, defrost in, every vent open, storm window howling its half-inch note. The cold arrives all at once this far north, less a temperature than a verdict.
+
+What you get back, you get back slowly, and you can feel the slowness now in a way that is its own instrument reading. The headache<<if $majaHeadache>> in the right seat<</if>> has seniority. Yours, the one you've been not-mentioning, loosens a thread at a time. Ten minutes of arctic air, and the improvement is real, measurable, and small.
+
+The Range is thinning out behind you. Ahead the country goes to spruce and white silence, Cook's strip somewhere in it, the border rivers beyond. Eveleth-Virginia's four thousand feet of asphalt sits back over your right shoulder, getting a mile farther away every thirty seconds.
+
+<div class="pax-quote">"I'm awake. I'm okay. Toes disagree." She says it in the flat, careful voice of someone doing inventory. "How far to whichever airport we're doing?"</div>
+
+<div class="choice-list">
+<<link "A. Behind beats ahead when ahead is forest. You turn back for Eveleth-Virginia and its neighborly hospital." "Approach_KEVM">>
+  <<set $pathArray to $pathArray.concat(["Turned back for Eveleth, cold"])>>
+  <<set $divert to "KEVM">>
+<</link>>
+
+<<link "B. The vents are working and Falls International has the long runway, the services, and Roz. You continue north, cold and level." "Cruise_ColdFinal">>
+  <<set $pathArray to $pathArray.concat(["Continued north cold, late"])>>
+<</link>>
+
+<<link "C. You tell Minneapolis Center what you suspect and let a second brain into the cockpit while yours is suspect." "Divert_ConfessLate">>
+  <<set $pathArray to $pathArray.concat(["Told Center, late"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_ColdHold [scenario]
+<<set $pathArray to $pathArray.concat(["Cold hold up the Range"])>>
+
+You hold the experiment past its planned end, because the data stays clean and the decision point you briefed was the Range. The cabin air is thin, sharp, and empty of anything but winter. Whatever haunted the runup pad has not come to altitude with you, or has not been invited: the heater valve stays shut, and so does the question.
+
+The cost accrues quietly. Grand Rapids goes by below at the twenty-nine-minute mark, then the pits open up, rust-red and enormous. Maja's water bottle has frozen to slush. She types to Roz with mitten thumbs, misspelling everything, narrating her suffering in a running comic mumble that you recognize as her being a good sport at some expense.
+
+Hibbing ahead: 6,758 feet of plowed pavement, an airline ramp, a town with everything a Saturday needs.
+
+<div class="pax-quote">"Station says high of minus fifteen up there today. So this is just training, really. Acclimatization." A shiver takes her mid-word. "Wow. Okay."</div>
+
+<div class="choice-list">
+<<link "A. The air stayed clean for forty minutes with the heater sealed. Test passed twice over. You pull the heat back on for the last leg." "Cruise_LateHeat">>
+  <<set $pathArray to $pathArray.concat(["Heat on after the long cold test"])>>
+  <<set $heatOn to true>><<set $ventsOpen to false>>
+<</link>>
+
+<<link "B. Cold got you this far and cold will finish it. You hold the misery to Falls International and let a mechanic have the heater first." "Cruise_ColdFinal">>
+  <<set $pathArray to $pathArray.concat(["Held cold all the way"])>>
+<</link>>
+
+<<link "C. You land at Hibbing, thaw out, and make some calls: maybe the shop can at least eyeball the shroud today before you decide anything." "Approach_KHIB">>
+  <<set $pathArray to $pathArray.concat(["Landed HIB to thaw and consult"])>>
+  <<set $divert to "KHIB">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_LateHeat [scenario]
+<<set $pathArray to $pathArray.concat(["Warmth returns north of the Range"])>>
+<<set $co to $co + 2>><<set $majaHeadache to true>>
+
+Warmth pours back into the cabin like a tide coming in, and for ten minutes the flight becomes what the brochure promised: smooth, sunlit, the spruce country sliding underneath, two thawing people trading the last of the thermos.
+
+Virginia falls behind. The highway below empties out.
+
+Then Maja shifts in her seat, presses two fingers to the center of her forehead, and holds them there.
+
+<div class="pax-quote">"Huh. Headache. Just showed up, right here, real dull." She glances at you, then out the window, doing her own math. "Probably the thaw? Coming in from cold like that, your sinuses do stuff. Probably that."</div>
+
+She got the right-seat outlet, the warm one, the one that has been pouring across her boots since you pulled the knob. The card in its clip is tan. The engine is a metronome. Falls International is twenty-five minutes ahead, and Eveleth-Virginia's runway is eight minutes back over your right shoulder.
+
+<div class="choice-list">
+<<link "A. Sinuses and a thaw. She said it herself, and she knows her own head. You hold course for the Falls with the heater doing its job." "Cruise_NorthCreep">>
+  <<set $pathArray to $pathArray.concat(["Called it sinuses, pressed on"])>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. A headache that arrives with the heat, in this airplane, this morning, is a pattern. Heat off, vents open, and you say so plainly." "Vent_LateOff">>
+  <<set $pathArray to $pathArray.concat(["Heat off at the first late symptom"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>>
+<</link>>
+
+<<link "C. You turn back for Eveleth-Virginia now, eight minutes, and put the airplane on the ground while the question is still small." "Approach_KEVM">>
+  <<set $pathArray to $pathArray.concat(["Turned back for Eveleth at first symptom"])>>
+  <<set $divert to "KEVM">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_ColdFinal [scenario]
+<<set $pathArray to $pathArray.concat(["The cold last stretch"])>>
+<<if $co gt 1>><<set $co to $co - 1>><</if>>
+
+The last stretch is the empty one, and you fly it like a cargo run through a walk-in freezer. Cook's strip goes by, a gray hyphen in the white. US 53 below narrows to a plowed thread with one log truck on it. Far ahead, a smudge of steam marks the mills at the border, and the Rainy River country lies flat and bright all the way into Canada.
+
+<<if $co gte 4>>The headache is loosening its grip in slow, grudging increments, and your thinking has that day-after quality, functional but bruised. You fly deliberately, cross-checking twice, trusting the trim more than yourself.<<elseif $co gte 2>>Heads have cleared by honest degrees. The headache is a shadow of itself. What's left is mostly cold.<<else>>Heads are clear. The problem, whatever it was or wasn't, never came to altitude. What's left is only the cold, and the cold is winning on points.<</if>>
+
+<<if $majaAsleep>>Maja is awake now, wrapped to the eyes, answering your check-ins with a mittened thumbs-up and watching the border country come.<<elseif $majaHeadache>>Maja rides wrapped to the eyes, quiet but present, narrating landmarks when you point.<<else>>Maja has given up on dignity and wears the wool blanket as a poncho, narrating landmarks through it.<</if>>
+
+Falls International is fifteen minutes out. The ASOS, when you tune it, reports calm winds, clear, minus twenty-two.
+
+<div class="pax-quote">"If the answer is no I get it, but: we're landing anyway. Could we have the heat for just the last ten? My toes have filed a formal grievance."</div>
+
+<div class="choice-list">
+<<link "A. Ten minutes to touchdown can't matter much, and she's earned it. You pull the heat back on for the final stretch." "End_INL_Cold">>
+  <<set $pathArray to $pathArray.concat(["Heat on for the last ten"])>>
+  <<set $lastHeat to true>><<set $heatOn to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. You hold cold to the chocks. Whatever is or isn't in that duct, it gets no more minutes of the two of you today." "End_INL_Cold">>
+  <<set $pathArray to $pathArray.concat(["Cold to the chocks"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Deep1 [scenario]
+<<set $pathArray to $pathArray.concat(["Past Grand Rapids, settling deeper"])>>
+<<set $co to $co + 2>>
+
+Grand Rapids slides under and behind, mill plume and plowed X, and the Range begins assembling itself ahead: the first pits, the long ridges of overburden combed with snow, Hibbing a smudge of town at the end of the highway's rope.
+
+The Advil has had its twenty minutes. Maja rates the headache unchanged, delivers the rating without drama, and goes back to watching Minnesota. She's quieter than the trip up usually gets her. Big week ahead. Early morning behind.
+
+The cabin, for its part, has never been better. The heater has found its perfect setting, the sun loads the left side of your face, and the airplane rides rails through air with no texture at all. Somewhere in the middle of all that comfort you glance at the DG and find it reading 035. The flight plan line wants 020. The whiskey compass, consulted overhead, sides with the DG: the airplane wandered, not the gyro, and you didn't catch it happening. Fifteen degrees for who knows how many minutes. You roll back onto the line, and the correction feels like moving a piece of furniture.
+
+Hand-flying does this. No autopilot, smooth air, a mind that trusts the trim too much. Every owner of an old Skylane knows the drift.
+
+<div class="choice-list">
+<<link "A. You sit up straighter, re-cage your scan, and fly the airplane like a checkride the rest of the way. Focus is free." "Cruise_Deep2">>
+  <<set $pathArray to $pathArray.concat(["Tightened the scan, pressed on"])>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. Her headache, and now your wandering heading, in a cabin fed by that heater. You kill the heat and open every vent the airplane owns." "Vent_HeatOff">>
+  <<set $pathArray to $pathArray.concat(["Heat off after the heading wander"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>>
+<</link>>
+
+<<link "C. Something is off in this airplane, and Grand Rapids has a shop fifteen minutes behind you. You turn back and land." "Approach_KGPZ">>
+  <<set $pathArray to $pathArray.concat(["Turned back for GPZ after the wander"])>>
+  <<set $divert to "KGPZ">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Deep2 [scenario]
+<<set $pathArray to $pathArray.concat(["North of the Range, the numbers slip"])>>
+<<set $co to $co + 2>><<set $majaAsleep to true>>
+
+Center calls with an altimeter update as you clear the Range's traffic picture.
+
+<div class="metar-block">"Skylane three eight romeo, altimeter at Hibbing, three zero four two."
+"Three zero two four, three eight romeo."
+"Three eight romeo, negative. Altimeter three zero four two."
+"Three zero four two, three eight romeo."</div>
+
+You set it, and set your headset straighter, and put a little more of yourself into the seat.
+
+Housekeeping, then, since Virginia is falling behind the right wing and the empty stretch is next: the fuel log. Sixty-one at engine start. An hour and ten gone at twelve and a half a side. You call the burn nine gallons and write 52 in the block, and the pencil takes two tries to find its pocket, and you notice neither thing.
+
+The cabin is deeply, perfectly warm. When you next look right, Maja is asleep against the window, hood bunched into a pillow, the water bottle capped in her lap. Ten in the morning. She was mid-sentence about the survey grid a while ago, you're fairly sure.
+
+The spruce country ahead is white and wide, and the airplane hums through it, steady as a kitchen clock.
+
+<div class="choice-list">
+<<link "A. Let her sleep, hold the line, and be on the ground at the Falls in half an hour. The flight is almost over anyway." "Cruise_Deep3">>
+  <<set $pathArray to $pathArray.concat(["Let her sleep, held the line north"])>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. A blown readback, a fuel line you can't make add, a passenger asleep at 10 a.m. You key up and tell Minneapolis Center all of it." "Divert_Confess">>
+  <<set $pathArray to $pathArray.concat(["Confessed to Center after the readback"])>>
+<</link>>
+
+<<link "C. Heat off, every vent open, storm window too, right now, and fly the airplane cold while you think." "Vent_LateOff">>
+  <<set $pathArray to $pathArray.concat(["Heat off after the numbers slipped"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>>
+<</link>>
+
+<<link "D. Eveleth-Virginia sits minutes behind the right wing with a hospital up the road. You wake her, turn back, and land." "Approach_KEVM">>
+  <<set $pathArray to $pathArray.concat(["Turned back for Eveleth after the numbers"])>>
+  <<set $divert to "KEVM">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Cruise_Deep3 [scenario]
+<<set $pathArray to $pathArray.concat(["The empty stretch, going gray at the edges"])>>
+<<set $co to $co + 2>>
+
+The Range is gone behind. Cook's strip goes by somewhere below, or it already did. The world has narrowed pleasantly to the sound of the engine and the warmth on your shins and a windshield full of white and blue that asks nothing of you at all. You are level. Mostly. The altimeter reads 5,100, then 5,000 when you look again, and the correction back to 5,500 happens in slow, agreeable increments, like turning over in bed.
+
+Maja sleeps. The heater breathes.
+
+<div class="metar-block">"Skylane three eight romeo, Minneapolis Center. I show you six hundred below your last reported altitude and drifting right of course. Verify you're receiving Center."</div>
+
+The voice is level, professional, and directed entirely at you, which takes a moment to assemble.
+
+<div class="choice-list">
+<<link "A. \"Three eight romeo, correcting.\" You square the altitude, re-center the line, and hold north. Twenty minutes to the Falls, then coffee." "End_Fatal">>
+  <<set $pathArray to $pathArray.concat(["Brushed off Center, held north"])>>
+  <<set $dismissals to $dismissals + 1>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. You answer with the whole truth: suspected carbon monoxide, passenger asleep, pilot degraded, and you need help getting this airplane down." "Divert_ConfessLate">>
+  <<set $pathArray to $pathArray.concat(["Told Center everything, late"])>>
+<</link>>
+
+<<link "C. Heat off, storm window open, and a turn back toward Eveleth-Virginia while you still trust yourself to fly a turn." "Approach_KEVM">>
+  <<set $pathArray to $pathArray.concat(["Turned back for Eveleth, very late"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>><<set $divert to "KEVM">>
+<</link>>
+
+<<link "D. Falls International is the nearest long pavement ahead. You push the nose over for it now, heat off, vents open, and get down." "Approach_INL_Impaired">>
+  <<set $pathArray to $pathArray.concat(["Pushed for the Falls, impaired"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>><<set $divert to "KINL">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Divert_Confess [scenario]
+<<set $pathArray to $pathArray.concat(["The confession call"])>>
+<<set $declared to true>><<set $vectors to true>><<set $heatOn to false>><<set $ventsOpen to true>>
+
+You kill the heat, open everything that opens, and key the mic before pride can get a word in.
+
+<div class="metar-block">"Minneapolis Center, Skylane five two three eight romeo, request."
+"Skylane five two three eight romeo, go ahead."
+"Three eight romeo, we're two on board, VFR Brainerd to International Falls. Both of us have headaches, my passenger's worse than me, and I just, uh, four thousand five hundred, correction, five thousand five hundred. I suspect carbon monoxide from the cabin heat. Request lower and direct Hibbing, and I'd like you to watch my readbacks."
+"Three eight romeo, roger. Descend at your discretion, direct Range Regional, twelve o'clock and two zero miles. Are you declaring an emergency?"</div>
+
+You look at the tan card, and at the sleeping-or-not right seat, and say the word.
+
+<div class="metar-block">"Three eight romeo, affirmative, declaring."
+"Three eight romeo, roger. Altimeter three zero four two. Say souls and fuel remaining."
+"Two souls, about three and a half hours fuel, three eight romeo."
+"Three eight romeo, EMS will meet you at Hibbing. No observed traffic between you and the field. Keep your vents open if you can stand it, and report the field in sight."</div>
+
+The frequency, which held four aircraft a moment ago, has quietly become yours. The descent begins, cold air roaring at the storm window, and the controller reads you the miles like a man walking you down a ladder.
+
+<<link "Down the ladder, toward the Range's big runway." "Approach_KHIB">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Divert_ConfessLate [scenario]
+<<set $pathArray to $pathArray.concat(["The late call to Center"])>>
+<<set $declared to true>><<set $vectors to true>>
+
+<<if $heatOn>>The heat goes off mid-transmission and every vent opens.<<else>>The vents are already open, and you key up through the cold air roar.<</if>>
+
+<div class="metar-block">"Center, Skylane three eight romeo. I need to tell you something and I need help with it."
+"Three eight romeo, go ahead."
+"Suspect carbon monoxide in the cabin. My passenger's asleep and I'm, my numbers aren't adding right. Request lower and, and a straight line to pavement. Two souls."
+"Skylane three eight romeo, roger, understand possible carbon monoxide, declaring an emergency for you. Falls International twelve o'clock, three five miles, seven thousand four hundred feet of runway. Eveleth is behind you at greater distance. Descend at your discretion, no traffic, altimeter three zero four three. Airport fire equipment will be standing by. Say fuel remaining."
+"Three hours something, three eight romeo."
+"Roger. Get all the fresh air you can. I'll call your miles every ten."</div>
+
+The voice on the frequency has the unhurried cadence of a man who intends to stay with you all the way down, and the arithmetic you couldn't do is now being done in Minneapolis.
+
+<div class="choice-list">
+<<link "A. You make it an emergency descent in fact: power back, nose over, storm window wide, best forward speed downhill with the cold scouring the cabin." "Approach_INL_Scare">>
+  <<set $pathArray to $pathArray.concat(["Emergency descent for the Falls"])>>
+<</link>>
+
+<<link "B. You keep it gentle: five hundred feet a minute, easy turns, nothing abrupt, and motor down the miles to the Falls like a normal arrival." "Approach_INL_Impaired">>
+  <<set $pathArray to $pathArray.concat(["Gentle descent for the Falls"])>>
+  <<set $divert to "KINL">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Divert_TurnBack [scenario]
+<<set $pathArray to $pathArray.concat(["The one-eighty for Brainerd"])>>
+
+The turn puts the sun on the windshield and the morning's work in front of you again: thirty-some minutes back down the highway to your own tiedown, your own fuel account, and Denny Aho's Monday doorbell. Center takes the amendment without comment and re-points the flight following south.
+
+Maja doesn't argue. She watches the Range swing away off the tail, then pulls out her phone and starts drafting the message to Roz, thumbs slow in the cold-stiff way of someone composing bad news kindly.
+
+One decision rides home with you: the heater.
+
+<div class="choice-list">
+<<link "A. It stays off, and the vents stay cracked, the whole way back. Cold consistent beats warm sorry, and you've already voted once today." "Approach_KBRD">>
+  <<set $pathArray to $pathArray.concat(["Rode home cold"])>>
+  <<set $heatOn to false>><<set $ventsOpen to true>>
+<</link>>
+
+<<link "B. Thirty minutes, a tan card, and a kid with a headache. You leave the heat on, watch each other, and make it a comfortable ride home." "Approach_KBRD">>
+  <<set $pathArray to $pathArray.concat(["Rode home warm"])>>
+  <<set $lastHeat to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_KBRD [scenario]
+<<set $pathArray to $pathArray.concat(["Descending back into Brainerd"])>>
+<<if $lastHeat>><<set $co to $co + 2>><<elseif $co gt 1>><<set $co to $co - 1>><</if>>
+
+<<if $lastHeat>>The ride back is warm and quiet. Maja's headache keeps its seat, and somewhere over Aitkin County you notice your own, a dull tenant behind the eyes you'd been attributing to squinting at the snowpack.<<else>>The ride back is loud, cold, and honest. By the time the lakes country opens up ahead, Maja rates the headache half of what it was, and the morning has sharpened back into focus a click at a time.<</if>>
+
+Brainerd's ASOS reports what it reported at breakfast. You join the forty-five for 34 behind a lone ski-equipped Cub, land on the centerline stripe between two snow ridges, and taxi to the tiedown you left two hours ago. The engine ticks as it cools. The field is exactly as quiet as you left it.
+
+<<link "Now the day becomes phone calls." "Ground_KBRD">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_KBRD [scenario]
+<<set $pathArray to $pathArray.concat(["On the Brainerd ramp, solving Sunday"])>>
+
+In the FBO's warmth, over vending-machine cocoa because the coffee ran out at ten, the two of you hold the family council. The airplane is grounded until Aho's shop opens Monday and pulls the muffler out of its shroud. Maja checks the bus schedule as a formality and reports, deadpan, that the bus does not believe in the Iron Range.
+
+<div class="pax-quote">"Options. You drive me up and drive back tomorrow, which is seven hours of your weekend. I drive myself and you get the car back whenever. Or I call Roz, throw myself on the mercy of the schedule, and fly up with you whenever the shop says the airplane's honest. I vote any of them that doesn't involve you doing all the driving."</div>
+
+<div class="choice-list">
+<<link "A. You rent the crossover and drive her up yourself today: three and a half hours of two-lane, supper at the border, and back tomorrow." "End_KBRD_TurnBack">>
+  <<set $pathArray to $pathArray.concat(["Drove her north himself"])>>
+  <<set $scrubRide to "drive">>
+<</link>>
+
+<<link "B. She's twenty-four and drives Minnesota winters better than you do. She takes the rental north alone and you mind the airplane." "End_KBRD_TurnBack">>
+  <<set $pathArray to $pathArray.concat(["She drove herself north"])>>
+  <<set $scrubRide to "solo">>
+<</link>>
+
+<<link "C. You call Roz together and ask for the day of grace: if Monday's teardown is clean or Monday's fix is quick, you fly her up after." "End_KBRD_TurnBack">>
+  <<set $pathArray to $pathArray.concat(["Asked the station for a day"])>>
+  <<set $scrubRide to "wait">>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_KGPZ [scenario]
+<<set $pathArray to $pathArray.concat(["Down into Grand Rapids"])>>
+<<set $heatOn to false>><<set $ventsOpen to true>>
+
+Heat off. Storm window open. The cold comes in like a fire hose and the difference it makes is its own diagnosis: within two minutes the cabin stops feeling like a nap and starts feeling like an airplane again. Grand Rapids sits twelve o'clock and close, its runway a plowed dark stripe between white lakes.
+
+You fly the descent deliberately, speaking your checks out loud because out loud is easier to audit. Maja is awake, forward, coat zipped to her chin, reading the trend of her own headache and reporting it like crew: "Same. Maybe a notch better. Cold helps."
+
+Gordon Newstrom Field takes the airplane on its long runway without comment. You taxi in, shut down, and sit for one breath in the ticking silence before either of you touches a door.
+
+<<link "Inside, warm air and a phone." "End_GPZ_Caught">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_KHIB [scenario]
+<<set $pathArray to $pathArray.concat(["Down into Hibbing"])>>
+
+<<if $declared>>The controller hands you the miles in a calm ladder, and you climb down it: vents roaring, cold scouring the cabin, the Range's open pits swinging past under the wing like the inside of something enormous. Range Regional's long runway arrives ahead, and beside the taxiway as you roll out, the lights you were promised: an ambulance and a crash truck, idling without drama, exhaust plumes standing straight up in the cold.
+
+You park where the marshaller points. A paramedic opens Maja's door before the prop finishes turning.<<else>>You let down over the pits and fly a wide, ordinary pattern to Range Regional's long runway, cold air keeping the cabin honest the whole way. It is a Saturday-quiet field: a fuel truck, a heated lobby, a shop across the ramp with one hangar door cracked and a radio playing inside.
+
+Maja is out of the airplane before you, stamping life back into her feet, breath clouding, headache already going ordinary in the clean outdoor cold.<</if>>
+
+<<if $declared>>\
+<<link "The paramedics take it from here." "End_HIB_Oxygen">><</link>>
+<<else>>\
+<<link "You cross the ramp to the shop with the cracked door." "End_HIB_Consult">><</link>>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_KEVM [scenario]
+<<set $pathArray to $pathArray.concat(["Turning down for Eveleth"])>>
+<<set $heatOn to false>><<set $ventsOpen to true>>
+
+Heat off, window open, and the turn back toward Eveleth-Virginia flown <<if $co gte 7>>the way you preflight in gloves: slowly, deliberately, one item at a time. Bank, hold, roll out. Say the heading out loud. Check it twice. The cold pouring through the cabin is the only thing in the airplane you fully trust, and you keep your speed ten knots conservative because your own hands have opinions you didn't authorize.<<else>>with the crispness of a decision that arrived early enough to be easy. The field is eight minutes back, four thousand feet of pavement between the lakes and the ore country.<</if>>
+
+Maja rides forward-facing, coat sealed, doing her job: "Runway's at your ten. I'll call the headache every minute. It's a five. Now it's a five."
+
+<<if $co gte 7>>The runway takes two tries to stabilize onto and you accept the go-around the picture demands rather than force the first one down. The second approach is slower, longer, flatter, and lands.<<else>>The approach is ordinary, which is the whole reward. Four thousand feet is plenty when the airplane is flown on numbers.<</if>> You taxi off between snowbanks cut square as furniture and shut down in front of the little terminal.
+
+<<if $co gte 7>>\
+<<link "Engine off. The world holds still, mostly." "End_EVM_Barely">><</link>>
+<<else>>\
+<<link "Engine off, and the question lands with you, still small." "End_EVM_Late">><</link>>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_INL_Scare [scenario]
+<<set $pathArray to $pathArray.concat(["Emergency descent to the Falls"])>>
+
+Power back, nose over, and the Skylane goes downhill like it means it, vents and storm window flooding the cabin with air so cold it has edges. Center keeps talking, low and even, reading you altitudes and miles the way you'd talk a friend down a dark staircase.
+
+<div class="metar-block">"Three eight romeo, four thousand two hundred, one five miles. Equipment is rolling at International Falls. Wind calm, any runway is yours. Say pilot condition."
+"Clearing. Cold air is working. Three eight romeo."
+"Understood. You're doing fine. One two miles."</div>
+
+Maja is awake now, dragged up out of the doze by the cold and the deck angle, scared in the alert, useful way: reading you the airspeed every ten seconds because you asked her to.
+
+The long runway at Falls International comes up out of the border country, and you fly the last thousand feet like an exam you intend to pass: gear welded, flaps twenty and no more changes, speed pinned, no flare experiments. The touchdown is firm and honest and then it is over, crash trucks pacing you up the taxiway, their light bars turning the snowbanks red and blue.
+
+<<link "Mixture, mags, master. Doors open. Cold, blessed air." "End_INL_Scare">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Approach_INL_Impaired [scenario]
+<<set $pathArray to $pathArray.concat(["Pushing for the Falls, head clearing slowly"])>>
+
+The nose goes over and the cold comes in and the twenty miles to Falls International start counting down. Clarity comes back the way feeling comes back to a numb hand: pins and needles first, then function, trailing a headache that has stopped hiding. You are flying an airplane you own with a head you rent.
+
+The field shows up long and dark against the white. Seven thousand four hundred feet of runway, wind calm, nobody else in the pattern on a frozen Saturday noon. The choice left is about the kind of arrival you owe yourself.
+
+<div class="choice-list">
+<<link "A. You brief the simplest version out loud: long straight-in, flaps twenty, one speed, no changes inside three miles, and Maja calling airspeed." "End_INL_Shaky">>
+  <<set $pathArray to $pathArray.concat(["Flew the simplified stabilized arrival"])>>
+  <<set $simpleApproach to true>>
+<</link>>
+
+<<link "B. Down is the medicine and sooner is better: you keep it tight, slip off the height, full flaps in close, and put it on early." "End_INL_Prang">>
+  <<set $pathArray to $pathArray.concat(["Hurried it down close-in"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_GPZ_Caught [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: caught at Grand Rapids"])>>
+
+The FBO lobby smells like coffee and carpet heat. Maja calls the station; you call the volunteer fire department, who send a pickup and a handheld four-gas meter because a Saturday in January is short on excitement. The firefighter leans into the cabin, runs the heater ducting question past his own experience, holds the probe at the outlet, and whistles at the number. "Yeah," he says, showing you the display. "You two get seen. That's not a maybe."
+
+Urgent care confirms it in blood: elevated carboxyhemoglobin, both of you, Maja higher. Oxygen, observation, released by supper. Monday the shop pulls the shroud and finds a hairline crack along an inner weld seam of the muffler, invisible from outside, breathing into the heat duct every minute the valve was open.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Two headaches on one airplane got treated as data instead of coincidence. You shut off the source, opened the cabin to clean air at twenty below, and put the airplane on the nearest good runway while your own cognition was still yours to certify. A meter and a blood test then said, in numbers, what the tan card never would.</p>
+<h3>ADM analysis</h3>
+<p>The trap in CO is attribution: every early symptom has an innocent twin. Early start, big breakfast, dry winter air, a warm cabin's honest drowsiness. The break in this path came from treating correlation as signal: symptoms that arrived with the heat and eased with the vents. Note what the expired card contributed: a tan dot that read like an acquittal and was actually a shrug. Expired detection is not weak evidence. It is no evidence wearing the uniform.</p>
+<h3>What good judgment looks like here</h3>
+<p>Exactly this sequence: source off, air in, land, verify. The counterintuitive part was buying diagnosis with discomfort: cold at altitude in January is a cost every instinct resists paying, and it is also the only free medicine on board. On ambient air, carboxyhemoglobin's half-life runs four to six hours; the headache outlasting the flight was expected, not a sign the call was wrong. And the fire department's meter is worth remembering: any engine-driven heat system deserves an electronic CO detector with a number and an alarm. Forty dollars buys the instrument this scenario was missing.</p>
+<h3>Key takeaway</h3>
+<p>When symptoms and the heater keep the same schedule, believe the schedule. Cold is reversible. The other thing eventually isn't.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_HIB_Oxygen [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: oxygen on the Hibbing ramp"])>>
+
+The paramedics work with the unhurried competence of people who have met every kind of Saturday. Non-rebreather masks, a pulse CO-oximeter clipped to two fingers, numbers read aloud and written down: elevated for you, more elevated for Maja. An hour on high-flow oxygen in the back of the rig takes the numbers most of the way down and the headaches with them. The clinic in town signs you both out by dark, with instructions and a printout.
+
+The airplane stays. Tuesday, the shop's pressure test of the exhaust finds the crack in the muffler's inner weld, and the mechanic mails you the failed piece in a box, because you asked, because some receipts belong on a shelf.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The suspicion arrived later than it might have, and the response, once it arrived, was complete: source off, air in, the whole truth to Center, a declaration without hedging, and medical hands waiting at the bottom of the ladder. The system worked exactly the way it is built to work when someone lets it.</p>
+<h3>ADM analysis</h3>
+<p>The load-bearing decision was the confession. Announcing "pilot degraded, watch my readbacks" feels like an admission against interest; it is actually the highest-skill radio call in this scenario, because it converts a controller from an audience into a monitor at the moment your own monitoring is suspect. The declaration cost nothing afterward: no paperwork storm, no certificate action, one phone number and a kind word. The mythology about declaring is more durable than the facts.</p>
+<h3>What good judgment looks like here</h3>
+<p>Earlier is the only critique: the same call, one symptom sooner, lands at the same field with smaller numbers on the CO-oximeter. On 100 percent oxygen the carboxyhemoglobin half-life drops from hours to about an hour, which is why the masks matter and why "we'll just air out on the drive home" is the wrong plan. And the equipment lesson stands for every cold-season pilot: an electronic detector with an alarm turns this whole scenario into a beep and a mildly annoying diversion.</p>
+<h3>Key takeaway</h3>
+<p>Declare like you mean it and let the professionals meet you at the bottom. The system's entire job is catching what you can no longer be sure of catching.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_HIB_Consult [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the shop with the cracked door"])>>
+
+The mechanic inside the cracked hangar door listens to the whole story while wiping his hands on a rag that has seen decades. He doesn't roll his eyes at "expired spot card" and he doesn't reassure you either. "Can't pressure-test it till Monday," he says. "But two headaches on one heater, in this cold, with the valve open the whole climb? I wouldn't fly it home. I'd want to be wrong about that, but I'd want to be wrong on the ground."
+
+So the Skylane stays on the Range. Maja finishes the trip in a rental with heated seats she narrates to you by text, mile by mile, as revenge. Monday afternoon the shop calls: pressure test failed, crack in the inner weld, and the sentence every owner half-dreads and half-collects: "Good thing you didn't fly it."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A suspicion without proof got treated as sufficient grounds to stop, which is what suspicion is for. You landed at a field with a shop, put the question to a professional, and accepted a Monday answer instead of manufacturing a Saturday one. The pressure test then converted suspicion into a work order.</p>
+<h3>ADM analysis</h3>
+<p>This path's quiet strength is that it never required certainty. The evidence available in flight was two correlated headaches and an instrument that could no longer testify. That is thin proof and ample reason: the asymmetry between "wrong and inconvenienced" and "right and airborne" does all the deciding, if you let it. The cold-air experiment bought time honestly, but notice its limit: it managed the exposure without ever answering the question. Only the ground answers this question.</p>
+<h3>What good judgment looks like here</h3>
+<p>Landing precautionary on correlation alone, consulting rather than self-certifying, and paying the logistics bill without renegotiating it at dusk. The rental car north is the ending's real price tag: a hundred-some dollars and a quiet Saturday evening, against a Monday phone call that said the duct was lying to you the whole time. Cheap. It will not always be a crack; sometimes Monday's test comes back clean and the whole exercise buys nothing but certainty. Certainty is not nothing.</p>
+<h3>Key takeaway</h3>
+<p>You don't need to prove the airplane guilty. It needs to prove itself innocent, and it can only do that on the ground.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_EVM_Late [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: Eveleth, while it was still small"])>>
+
+Eveleth-Virginia's little terminal is unlocked and empty, warm in the municipal way. The volunteer fire department, summoned by a phone call and boredom, meets you with a handheld meter inside the hour; held at the heater outlet with the engine running on the ramp, it climbs to a number that ends the debate. The firefighter takes a picture of the display for you, unprompted. He has met pilots before.
+
+Headaches fade to ordinary by evening. A friend of the field's manager runs Maja the last hour north in his truck. The Skylane waits for a mechanic from Virginia who finds the cracked weld Tuesday morning and pronounces the two of you "smarter than average," which from him is apparently a eulogy.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The first credible symptom turned the airplane around. Eight minutes later it was parked, and the question that had been riding along in the duct got handed to people with meters and benches. The exposure ended while it was still a headache and not yet a judgment problem.</p>
+<h3>ADM analysis</h3>
+<p>This is the cheap version of the CO scenario, and cheap is the highest compliment available. The pattern recognition that turned the airplane (symptom arrives with the heat, in this airplane, this morning) is exactly the standard of proof this hazard deserves. Waiting for the symptom picture to become convincing is how the expensive versions begin, because CO's defining property is that it degrades the instrument doing the deciding.</p>
+<h3>What good judgment looks like here</h3>
+<p>Turn early, land small, verify on the ground. A four-thousand-foot municipal runway is a perfectly good hospital for an airplane. The meter photograph is the detail worth copying in real life: objective confirmation converts "I had a feeling" into a maintenance finding, and it also settles the family retelling in your favor forever.</p>
+<h3>Key takeaway</h3>
+<p>With carbon monoxide, the first good reason is the best one you will ever get. The reasons that come later arrive with fewer of your faculties attached.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_EVM_Barely [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: Eveleth, by the narrow way"])>>
+
+The ambulance from Virginia arrives while you are still leaning on the strut, and nobody argues about whether it's necessary. Masks, the clipped-on meter, numbers that make the paramedic's eyebrows do the talking. Maja's reading is high enough that they take her in for observation overnight; yours is close behind. The word the clinic doctor uses, twice, is "fortunate," and he does not use it the way people use it in small talk.
+
+The go-around you flew gets a paragraph in your logbook that you will reread more than any other entry in it. Tuesday the mechanic finds the crack, photographs it next to a ruler, and texts the picture with no caption at all. None needed.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Recognition came at the far edge of the window: altitude wandering, arithmetic failing, a passenger asleep for reasons that were not boredom. The turn to Eveleth was flown with deliberate, degraded-pilot discipline, including the go-around a bad first picture demanded, and the ground arrived in time. Barely is a real category. This was it.</p>
+<h3>ADM analysis</h3>
+<p>Count what it took to get here: a headache attributed, a card trusted, a doze called napping. Each dismissal was individually reasonable and collectively they nearly spent the margin. The honest lesson is about the shape of the impairment curve: the symptoms that would convince you arrive after the capacity to act on them has started leaving. That is why the standard of evidence has to be set low, on the ground, in advance, while the brain setting it is fully oxygenated.</p>
+<h3>What good judgment looks like here</h3>
+<p>Inside the last window, exactly what was flown: cold air in, slow deliberate control movements, spoken checklists, a passenger given a monitoring job, conservative speeds, and a go-around accepted rather than a salvage attempted. Impaired flying that knows it is impaired can still be safe flying. Impaired flying that argues about it cannot.</p>
+<h3>Key takeaway</h3>
+<p>You caught it in the last mile of a race you didn't know you'd entered. Set the tripwire earlier: any unexplained headache with the heat on is a landing, not a discussion.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_INL_Scare [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the Falls, with help all the way down"])>>
+
+The paramedics reach the airplane before you finish the shutdown flow, which is good, because the shutdown flow has become something you are reading off the placard like a student. Oxygen. The meter. Numbers said out loud in the tone professionals use when they want each other, not you, to hear the meaning. The clinic keeps you both into the evening and releases you with matching headaches, matching printouts, and one shared understanding you will never have to say out loud again.
+
+Center's supervisor calls the FBO an hour later, just to ask how you both are. The controller who walked you down had asked him to.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The truth reached the radio very late, and everything after it worked: an emergency descent flown with a controller's voice as scaffolding, cold air doing its slow chemistry, a wide calm runway, equipment waiting. The margin at the end was real but thin, and it was made entirely of the machinery that starts moving the moment a pilot says the honest words.</p>
+<h3>ADM analysis</h3>
+<p>Two things were true at the moment of the confession: you were substantially impaired, and you were still the best-positioned person to begin the recovery. Both remain true in every version of this emergency. The failure mode that kills in CO events is not the toxin's speed (it is slow); it is the pilot spending the remaining clear minutes protecting a self-image instead of spending them on the radio and the vents. The dismissal count on this path bought the toxin its head start. The confession bought it back, at interest.</p>
+<h3>What good judgment looks like here</h3>
+<p>Earlier confession, same choreography. Note the technique that mattered inside the emergency: giving Maja the airspeed callout job. Delegating a monitoring task to a passenger is free redundancy, and asking Center to audit your readbacks converts the whole frequency into a safety net. None of it requires anything but the willingness to be seen having the problem you are having.</p>
+<h3>Key takeaway</h3>
+<p>The system cannot help with what it hasn't been told. Say the words while saying them is still easy.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_INL_Shaky [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the Falls, flown like an exam"])>>
+
+The simplified approach does what simplified approaches do: it lands. One configuration, one speed, one long stabilized picture, Maja's voice marking the airspeed like a metronome, and seven thousand four hundred feet of runway accepting the result without needing more than a third of it. <<if $declared>>The equipment pacing you up the taxiway makes it official.<<else>>The ramp is Saturday-empty; it is Maja who insists, correctly and immovably, that the two of you get seen tonight, and the clinic's meter makes her case for her.<</if>>
+
+Elevated numbers, oxygen, observation, release. The mechanic's Tuesday verdict on the muffler weld closes the file: the airplane was doing it. It had been doing it all morning.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Recognition came late, the descent bought partial recovery, and the arrival was flown with the one discipline that reliably protects an impaired pilot: radical simplification. Fewer configuration changes, fewer decisions inside the final miles, a monitoring job delegated, a long runway chosen over a clever arrival.</p>
+<h3>ADM analysis</h3>
+<p>Partial recovery is the trap inside the recovery: ten minutes of cold air returns enough function to feel normal without returning the judgment to certify that feeling. Flying the exam-simple approach is the correct answer to a question most pilots never rehearse: how do I operate when I know my own gauge is miscalibrated? You treat yourself like weather: plan for the pilot you have, not the one you usually are.</p>
+<h3>What good judgment looks like here</h3>
+<p>The path to this ending contains its own critique: the cues that were dismissed upstream each offered a smaller, earlier version of this same landing. Grade the save honestly (it was a good save) and then price the sequence that required saving. <<if not $declared>>One addition next time: the radio. Even without a declaration, a quiet "request you keep an eye on my altitude" gives away nothing and adds a second brain.<</if>></p>
+<h3>Key takeaway</h3>
+<p>When the pilot is degraded, subtract everything subtractable from the arrival. Simple is the last skill to leave you; build the approach out of it.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_INL_Prang [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: down early, and hard"])>>
+
+The slip comes out late, the flare happens twice, and the second touchdown arrives nosewheel-first with the particular crunch that every pilot recognizes from somewhere deep in the spine. The prop tags the runway once, twice, and the airplane skates to a stop on a collapsed nose strut, straight ahead, upright, done.
+
+You are both fine, which the paramedics confirm with meters and gentle professional doubt about the word "fine": elevated carboxyhemoglobin, two headaches, one overnight observation. The Skylane leaves the runway on a flatbed. Engine teardown inspection, prop, nose gear, firewall check: the insurance adjuster's list reads like a syllabus. The muffler crack, found Tuesday, gets one line at the bottom, cause hiding under consequence.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The impairment that went unrecognized in cruise was still aboard for the landing, and the arrival got rushed at exactly the moment it needed simplifying. Down-sooner beat down-well by ninety seconds, and the margin the airplane had carried all morning was spent in the flare.</p>
+<h3>ADM analysis</h3>
+<p>Two decisions merged here: the late recognition upstream, and the arrival flown as if recovery were complete. Partial recovery lies. Ten minutes of cold air took the gray off the edges and left the timing, judgment of height, and resistance to hurry-up impulses degraded, which is precisely the skillset a slipping, reconfiguring, short-field-style arrival consumes. The hurry served no one: the runway was seven thousand four hundred feet long, the wind was calm, and the extra ninety seconds of straight-in were free.</p>
+<h3>What good judgment looks like here</h3>
+<p>The other choice at the final branch: brief the simplest possible approach out loud, change nothing inside three miles, and let the long runway absorb the imprecision. When the pilot is the degraded component, the arrival should be built like a wheelchair ramp: long, shallow, and boring. Everyone walks away in this ending, and the debrief should hold both truths at once: getting down was right, and how mattered.</p>
+<h3>Key takeaway</h3>
+<p>Land soon, but land simple. An impaired pilot's best approach is the one requiring the fewest good judgments per mile.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_INL_Cold [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: cold to the Falls"])>>
+
+<<if $lastHeat>>The last ten minutes are warm, and the warmth is lovely, and at the terminal counter twenty minutes later a familiar dull band settles in behind your forehead while Maja rubs her temples with the heel of one mitten. Neither of you says anything about it until the fire department's meter, run over the cabin at your request before you'll so much as taxi it to parking, reads high enough at the heater outlet to make the firefighter step back out of the airplane and say "yep" with his whole chest.<<else>>You hold cold to the chocks, as promised. The fire department's meter, run over the cabin at your request, pegs its number at the heater outlet with the engine running: the duct was armed the entire time. The cold was never a superstition. It was the seal on a container you chose not to open.<</if>>
+
+Maja gets to the station on time in the manager's borrowed truck. The Falls shop finds the cracked weld Monday and the phone call has that particular mechanic warmth reserved for customers who almost learned something the other way.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>You treated the morning's evidence as real enough to act on and flew the entire route with the suspect system sealed, paying in comfort what you declined to pay in risk. <<if $lastHeat>>Except for ten minutes. The ten minutes ran the experiment you had spent two hours refusing to run, with both subjects aboard, and the headache at the terminal counter graded it.<<else>>The meter at the destination then showed exactly what had been waiting in the duct all day.<</if>></p>
+<h3>ADM analysis</h3>
+<p>This path's core move (isolate the hazard, continue the mission) is legitimate and widely used: heat-off is the POH-adjacent response to suspected CO. Its weakness is that it manages the hazard without ever resolving the question, and it leaves the seal's integrity up to willpower in a cold cabin for two more hours. <<if $lastHeat>>Willpower lost, on schedule, to the most persuasive argument aboard: a freezing kid who'd earned some comfort. That is how sealed hazards get unsealed, not by recklessness but by kindness on short final.<<else>>Willpower held, this time. The debrief question is whether a plan that requires two hours of continuous willpower at minus twenty is a plan or a bet with extra steps.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Landing early converts the same suspicion into an answer and a warm lobby. Grand Rapids and Hibbing both sat under this route with runways, shops, and coffee. The version of this day where the airplane gets parked at the first credible symptom costs one Saturday and answers the question with a meter instead of a maybe.</p>
+<h3>Key takeaway</h3>
+<p>Sealing off a suspected hazard is a holding action, not a resolution. Holding actions belong on the shortest path to the ground that solves them.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KBRD_TurnBack [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: back at Brainerd, question grounded"])>>
+
+<<if $scrubRide is "drive">>The rental crossover smells like industrial pine and the drive north is four hours of podcasts, gas-station coffee, and Maja's running commentary on every water tower in the state. You deliver her to the station door by mid-afternoon and drive back in the dark, tired in the clean, ordinary way that costs nothing but a Sunday morning.<<elseif $scrubRide is "solo">>Maja takes the rental north alone, texting from each town like a flight-following service of her own invention: "GPZ abeam." "HIB. fries acquired." "INL. Roz says hi. Go fix your airplane."<<else>>Roz, it turns out, is human: Monday works fine. Maja spends the extra night beating you at cribbage, and Tuesday morning, with the teardown verdict in hand and the part on order, you put her on the airline connection instead, which she narrates with anthropological interest.<</if>>
+
+The Monday teardown finds the crack in the muffler's inner weld seam. The shop owner shows you the failed piece under the bench light, turning it so the hairline catches. "Runs fine, heats fine, kills you anyway," he says. "You want it?" You do.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The airplane went back to where the mechanics live, on the strength of early, thin, correlated evidence, and the evidence turned out to be load-bearing. The trip finished on wheels and patience. The airplane finished on a bench, guilty as suspected.</p>
+<h3>ADM analysis</h3>
+<p>Turning back this early will read to some pilots as an overreaction, and that reading is exactly the pressure this scenario is about. Run the two futures honestly: in one, you lose hours to caution that a teardown may or may not vindicate. In the other, you spend a January morning in a sealed cabin with a heater you already suspected, betting two nervous systems on an expired card's tan shrug. The expected values are not close, and they get less close with every minute of exposure.</p>
+<h3>What good judgment looks like here</h3>
+<p>Precisely this, plus the follow-through it included: the question actually got answered (teardown, not vibes), the passenger's mission still completed (the ground exists), and the airplane returned to service with a new part instead of a habit of suspicion. The only upgrade available is the forty-dollar one that would have turned the whole morning into a beeping annoyance at the runup pad.</p>
+<h3>Key takeaway</h3>
+<p>An early turn-back you never get to prove necessary is the cheapest insurance in aviation. This one came with a receipt.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Fatal [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: north of the Falls"])>>
+
+"Three eight romeo, correcting," you say, and you do correct, and the corrections feel adequate, and the warmth is everywhere now, patient and total.
+
+Center calls again at 12:19 and gets no answer. At 12:26 another Skylane relays the call, twice. The target holds one hundred eighty knots over the ground, wings level, twelve degrees right of the last assigned course, descending two hundred feet at a time in slow, agreeable increments. It crosses the border lakes at 12:40. The F-15s out of Duluth arrive alongside at 12:58 and report a pilot and passenger reclined, motionless, the cabin windows fogged at their edges. The airplane flies on north over the empty lake country for another ninety minutes, gradually lower, and settles at last onto the frozen surface of a lake with no road to it, sliding long and coming to rest almost gently in the drifted snow, upright.
+
+The impact is survivable. That is the coldest line in the report, because it does not matter: the cabin air went with them.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Carbon monoxide from a cracked muffler weld accumulated over two hours of heated cruise. Every symptom was individually explained away: a headache attributed to the early start, drowsiness to warmth, a wandering altitude to nothing at all, a controller's concern answered with the word "correcting." Consciousness left quietly, in cruise, in trim. The toxicology section of the report is one line long.</p>
+<h3>ADM analysis</h3>
+<p>Count the exits this path declined: the ramp smell investigated and dismissed, the first headache, the vents, the card's non-answer accepted as an answer, Eveleth abeam, a controller who noticed and asked. Six doors. CO's signature is that each door looks less urgent than the last, because the judgment evaluating urgency is the thing being poisoned. This is the only hazard in this library that dulls the instrument you would use to detect it, and that property, not its toxicity, is what kills.</p>
+<h3>What good judgment looks like here</h3>
+<p>Everything upstream, and one physical object: an electronic CO detector with a loud alarm, which converts this entire accident chain into an annoying beep at the moment of the first ramp smell. Absent the instrument, the rule that survives contact with impaired judgment has to be pre-committed and dumb: unexplained headache plus heat on equals land now. Not diagnose. Land.</p>
+<h3>Key takeaway</h3>
+<p>The last person to know you're impaired is you. Buy the detector, believe the headache, and let the rule you wrote at your kitchen table outrank the pilot in the seat. This ending is the reason the others exist.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_NoGo [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the airplane never left"])>>
+
+<<if $pathArray.includes("Chose to be there when the shroud opens")>>Monday at eight you are leaning on Denny Aho's doorframe with two coffees, and by nine-thirty the muffler is out of its shroud on his bench, and by nine-forty he stops narrating. He tips the part toward the window light and runs a pick along a hairline in the inner weld until you can see it move. "There's your smell," he says. "And your headache, if you'd gone looking for one." He doesn't say the third thing. He looks at you until it's been said anyway.<<else>>Monday afternoon Denny Aho calls your cell. He has the note in one hand, you can hear it, and the language of a man choosing words: pressure test failed, hairline crack, inner weld, breathing straight into the duct. "Whoever wrote this note," he says, "flew nothing this weekend and did it right. Tell them that."<</if>>
+
+The weekend, meanwhile, went where weekends go: <<if $scrubRide is "drive">>four hundred road miles and a hundred water towers<<elseif $scrubRide is "airline">>a cousin's guest room and a regional jet<<else>>a day of grace and a cribbage deficit you will not live down<</if>>. Maja made the station. The airplane made the bench. Everything got where it was going.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The whole scenario happened on the ground: a smell that came and went, a card too old to testify, a shroud that hides exactly what you'd want to see, and a no-go built out of that thin, honest stack. The pressure test then paid the decision in full.</p>
+<h3>ADM analysis</h3>
+<p>Understand how little evidence this decision legally required: none of it was proof. An intermittent smell at runup power is a maybe. The expired card was a nothing. The peek under the cowl found what peeks find, which is the outside of the problem. The decision worked because it weighted the asymmetry instead of the evidence: being wrong on the ground costs a rental car, and being wrong at 5,500 over the bog country costs what the fatal branch of this scenario costs. You never saw that branch. That is what prevention looks like: nothing.</p>
+<h3>What good judgment looks like here</h3>
+<p>This, and one habit worth stealing from the note itself: "I'll pay for the looking either way." Buying inspections on suspicion, cheerfully, is the ownership culture that keeps mufflers from becoming toxicology sections. Some Mondays Aho finds nothing. The money spends the same, and so does the sleep.</p>
+<h3>Key takeaway</h3>
+<p>A no-go doesn't need a smoking gun. It needs a cost asymmetry and the nerve to respect it before the evidence matures.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_INL_Unaware [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: landed fine, learned later"])>>
+
+The landing at Falls International is longer than your landings usually are, a float you blame on the glassy cold air, a level-off that takes a correction it shouldn't need. You taxi in, shut down, and deliver a groggy, rumpled Maja into Roz's idling truck with hugs and a joke about grad-student sleep schedules. The headache you carry into the terminal coffee pot is the day's, surely. Long morning. Bright snow.
+
+At 9:40 that night the motel phone rings. It is Maja, from the Falls clinic, sounding scared and very awake: her headache got worse at the station, then the nausea started, and a coworker who used to run ambulance calls in Duluth took one look and drove her in. Carboxyhemoglobin, elevated, hours after exposure ended. "They said," she says, and stops, and starts again. "They said to tell you to come in tonight. Dad. They said hours."
+
+Your number is lower than hers and high enough. The clinic keeps you both past midnight under oxygen. The Skylane stays chained at the Falls until a mechanic opens the shroud Thursday and finds the crack, and you stand in his hangar doing the arithmetic you didn't do at altitude: twenty more minutes of that duct, at that rate, with her asleep and you flattering yourself about coffee.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The flight completed. That sentence, which usually ends the story, is where this one starts: two people flew a two-hour CO exposure to an uneventful landing, attributed every symptom to an ordinary morning, and found out from a blood test what the airplane had been doing to them. The margin between this ending and the fatal one was not judgment. It was duration.</p>
+<h3>ADM analysis</h3>
+<p>This is outcome bias in its purest available form. Nothing bad happened, and every input was wrong: the headache dismissed, the mid-sentence sleep read as fatigue, the float and the sloppy level-off blamed on the air. If the leg had been forty minutes longer, the same decisions produce the quiet ending. Grade this flight by its inputs and it fails; the landing doesn't change the grade, it just hides the report card until a clinic finds it.</p>
+<h3>What good judgment looks like here</h3>
+<p>Any of the exits this path declined, plus the one discipline that catches what dismissal hides: treating unexplained symptoms in ANY occupant as an aircraft-systems observation, not a wellness anecdote. Passengers are CO detectors with feelings. When one of them reads high, believe the instrument. And the hardware point stands for the last time in this scenario: a forty-dollar electronic detector converts this entire branch into a beep over the Range and a mildly annoying Saturday.</p>
+<h3>Key takeaway</h3>
+<p>Landing safely is not evidence the flight was safe. Some report cards arrive by phone, at 9:40, in your daughter's voice.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readField to false>><<set $co to 0>><<set $heatOn to false>><<set $ventsOpen to false>><<set $cardChecked to false>><<set $card to "tan">><<set $peeked to false>><<set $trialCold to false>><<set $cycled to false>><<set $majaHeadache to false>><<set $majaFeet to false>><<set $majaAsleep to false>><<set $declared to false>><<set $divert to "">><<set $dismissals to 0>><<set $lowAlt to false>><<set $lastHeat to false>><<set $descHeat to false>><<set $simpleApproach to false>><<set $scrubRide to "">><<set $vectors to false>><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>

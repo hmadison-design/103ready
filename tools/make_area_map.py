@@ -64,6 +64,19 @@ ROUTES = {
         ],
         "airway_labels": [],
     },
+    "cabin-heat": {
+        "title": "KBRD north to KINL, 158 nm via the Range",
+        "path": [
+            ("KBRD", 46.4042, -94.1338, "airport"),
+            ("KGPZ", 47.2093, -93.5099, "airport", -58, 6),
+            ("KHIB", 47.3866, -92.8390, "airport", 10, -14),
+            ("KINL", 48.5656, -93.4022, "airport"),
+        ],
+        "extras": [
+            ("KEVM", 47.4242, -92.4966, "alternate", 8, 8),
+        ],
+        "airway_labels": [],
+    },
     "within-limits": {
         "title": "E38 to KHYI, 273 nm, the high empty country first",
         "path": [

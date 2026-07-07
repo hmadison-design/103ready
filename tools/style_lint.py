@@ -140,7 +140,13 @@ PASSAGE_RE = re.compile(r"^:: ")
 
 WORD_RES = {w: re.compile(r"\b" + re.escape(w) + r"\b", re.I) for w in HARD_BANNED_WORDS}
 WARN_RES = {w: re.compile(r"\b" + re.escape(w) + r"\b", re.I) for w in WARN_WORDS}
-PHRASE_RES = {p: re.compile(re.escape(p), re.I) for p in BANNED_PHRASES}
+PHRASE_RES = {
+    p: re.compile(
+        (r"\b" if p[0].isalnum() else "") + re.escape(p)
+        + (r"\b" if p[-1].isalnum() else ""),
+        re.I)
+    for p in BANNED_PHRASES
+}
 
 
 def lint_file(path):
