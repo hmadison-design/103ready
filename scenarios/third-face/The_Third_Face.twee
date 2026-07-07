@@ -439,7 +439,7 @@ You have a decision to make about the climb. <<if $filedAlt is "7,000">>Center h
 
 <<link "C. Request descent back to 7,000. The lower PIREP from earlier showed no icing below 080." "Dec4C">><<set $pathArray to $pathArray.concat(["Dec4: C (descend 7K)"])>><</link>>
 
-<<link "D. Level at 10,000 and cycle TKS to MAX preemptively to get ahead of any possible ice." "Dec4D">><<set $pathArray to $pathArray.concat(["Dec4: D (level, preempt TKS MAX)"])>><</link>>
+<<link "D. Level at 10,000 and cycle TKS to MAX now, ahead of any possible ice." "Dec4D">><<set $pathArray to $pathArray.concat(["Dec4: D (level, preempt TKS MAX)"])>><</link>>
 
 :: Dec4A
 <<set $pirepsIgnored to true>>

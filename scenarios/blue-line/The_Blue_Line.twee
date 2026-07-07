@@ -247,7 +247,7 @@ You file VFR and close the tablet.
 
 :: Dec1D
 <<set $cruiseAlt to "12,000">>
-You finalize the plan as IFR on the southern routing, the one Denver Center hands the unpressurized set without being asked: airways through the lower terrain, 12,000 westbound. It is a longer clearance than the direct line and the climb out of the metro will be its usual cheerful symphony, but you'll be in radar contact, talking to somebody, legal on oxygen at the assigned altitude, and the terrain question is settled by people whose whole job is settling it.
+You finalize the plan as IFR on the southern routing, the one Denver Center hands the unpressurized set without being asked: airways through the lower terrain, 12,000 westbound. It is a longer clearance than the direct line and the climb out of the metro will be its usual cheerful racket, but you'll be in radar contact, talking to somebody, legal on oxygen at the assigned altitude, and the terrain question is settled by people whose whole job is settling it.
 
 You file and close the tablet.
 
@@ -462,7 +462,7 @@ You release the brakes. Power up smoothly.
 <<set $pathArray to $pathArray.concat(["Dec6: Climb management"])>>
 <div class="decision-heading">Climb: Decision 6 of 10: Power and Mixture Management</div>
 
-Rotation at 90 KIAS. Positive rate, gear up. You pitch for Vy initially, then let the speed build as the metro slides behind you. <<if $cruiseAlt is "12,000">>Denver Departure works you through their morning symphony, pointed southwest with altitudes to make, cleared on course in stages.<<else>>You pick up advisories with Denver Departure, who has eleven other airplanes and is happy to let you own your own climb.<</if>> You settle in for the long grind up to <<print $cruiseAlt>>.
+Rotation at 90 KIAS. Positive rate, gear up. You pitch for Vy initially, then let the speed build as the metro slides behind you. <<if $cruiseAlt is "12,000">>Denver Departure works you through their morning clamor, pointed southwest with altitudes to make, cleared on course in stages.<<else>>You pick up advisories with Denver Departure, who has eleven other airplanes and is happy to let you own your own climb.<</if>> You settle in for the long grind up to <<print $cruiseAlt>>.
 
 Density altitude at APA is 6,300 right now. By 10,000 indicated you'll be closing on a 12,500 density altitude. Cylinder head temps are climbing normally. Manifold pressure is decaying with altitude.
 

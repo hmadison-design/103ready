@@ -419,7 +419,7 @@ You hold in a lazy right-hand oval west of RIPON, 3,500 MSL, just outside the ar
 
 :: Dec2_HoldJoin
 <<set $overTheTracks to true>>
-You descend, slow to 90, and slot into the ribbon between a Cherokee and somebody's immaculate Stinson. The frequency is exactly as relentless as it was twenty-five minutes ago. The holding bought you nothing and cost you a few gallons, and now you fly the arrival anyway.
+You descend, slow to 90, and slot into the ribbon between a Cherokee and somebody's immaculate Stinson. The frequency is exactly as merciless as it was twenty-five minutes ago. The holding bought you nothing and cost you a few gallons, and now you fly the arrival anyway.
 
 <<goto "FiskApproach_Busy">>
 
@@ -821,7 +821,7 @@ Marc climbs down. "Best day of my life."
 <h3>What happened</h3>
 <p>You arrived at Oshkosh. You read the NOTAM, flew the profile, rocked your wings on cue, landed on your dot, and taxied in. Your passenger survived intact and is already planning next year.</p>
 <h3>ADM analysis</h3>
-<p>The AirVenture arrival is a stress test for the standard ADM habits: preparation (the NOTAM), discipline (no transmissions on FISK), spatial awareness (tracks, altitude, spacing), and decision-speed (dot assignment → runway → spacing → flare). The day you read the NOTAM is not the day of the flight. The day you read the NOTAM is three weeks before the flight, because you need the patterns to feel familiar, not novel, when the controller is calling you every three seconds.</p>
+<p>The AirVenture arrival is a stress test for the standard ADM habits: preparation (the NOTAM), discipline (no transmissions on FISK), spatial awareness (tracks, altitude, spacing), and decision-speed (dot, then runway, then spacing, then flare). The day you read the NOTAM is not the day of the flight. The day you read the NOTAM is three weeks before the flight, because you need the patterns to feel familiar, not novel, when the controller is calling you every three seconds.</p>
 <p>The arrival rewards four specific behaviors, however a given pilot gets there: matching a published profile instead of splitting the difference; treating the wing rock as a binary handshake, full deflection or nothing; configuring before the pattern instead of inside it; and trusting the dot system to do the spacing math it was built to do. Every one of those is a transferable habit, not an Oshkosh trick.</p>
 <<if $fuelTight>><p>And the bet you made at Springfield deserves its own line in the logbook margin: skipping Dubuque worked because nobody made you hold. The NOTAM names Fond du Lac as the relief valve precisely because holds happen here. Forty minutes of fuel against a possible twenty-five-minute hold is arithmetic with no good answer. Legal reserves are a floor, not a plan.</p><</if>>
 <h3>What good judgment looks like here</h3>
