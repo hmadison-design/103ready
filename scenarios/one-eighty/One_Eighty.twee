@@ -1,0 +1,964 @@
+:: StoryTitle
+One Eighty
+
+:: StoryData
+{
+  "ifid": "5B8F3D0E-9C41-4E2A-B7D6-1A452F98C310",
+  "format": "SugarCube",
+  "format-version": "2.37.3",
+  "start": "FlightPrep"
+}
+
+:: StoryInit
+/* Scenario metadata
+   SCENARIO TITLE:      One Eighty
+   AUDIENCE:            Pilot (GA, 500-1,000 hr; protagonist 620 TT, private
+                        ASEL, NO instrument rating, 3.2 hrs simulated
+                        instrument, all of it years ago)
+   TONE:                Professional
+   PRIMARY TOPIC:       VFR into deteriorating weather and inadvertent IMC:
+                        the 180 as a system, the confession call, and
+                        surviving the white room you swore you'd never enter
+   SECONDARY TOPIC:     Ridge-and-valley weather traps; get-there-itis with
+                        a happy occasion attached; the get-under instinct
+   AIRCRAFT/EQUIPMENT:  1981 Piper Warrior II (PA-28-161), N3389K. O-320,
+                        160 hp. Six-pack, GNS 430W, KX 155, NO autopilot.
+                        Club airplane, well kept, honest.
+   SETTING:             KUNV State College PA to KLBE Latrobe (Arnold Palmer
+                        Rgnl), about 80 nm southwest across the ridge-and-
+                        valley Alleghenies. Saturday afternoon, mid-October.
+                        A college reunion dinner at Coop's place near Latrobe.
+   WEATHER:             Marginal VFR going worse where it matters: valleys
+                        3,500-4,000 broken in haze, the Allegheny Front and
+                        Laurel Highlands wearing the cloud bases, Johnstown
+                        (on the plateau) already IFR, an old occlusion
+                        draped on the high ground and a genuine improvement
+                        coming from the west that is slower than forecast.
+   ADM THEMES:          The early 180 vs. the late one; confession to ATC as
+                        the counterintuitive save; the get-under trap;
+                        conflicting forecast vs. observation; spatial
+                        disorientation as physiology, not character
+   HAZARDOUS ATTITUDES: Get-there-itis dressed as loyalty (Coop's dinner),
+                        invulnerability (620 hours of good weather),
+                        impulsivity (duck under, it's right there),
+                        macho (needing no help from Approach)
+   TOTAL DECISIONS:     Branching; every path passes 4+ decision points
+   TOTAL ENDINGS:       8 (friction-win scrub 1, success/turnback 2,
+                        qualified 2, scare 2, fatal 1)
+   MIN DECISION DEPTH:  4
+   TIMED DECISIONS:     No
+   ESTIMATED DURATION:  20-30 minutes
+   VERSION:             1.0
+   LAST REVIEWED:       2026-07-07
+   REVIEWER:            Claude (initial draft) / Harvey Madison (pending)
+
+   Facts verified July 2026 (aviation MCP get_airport_info): KUNV twr,
+   D-ATIS 127.65, LCL 128.475, rwy 06/24 6701x150, elev 1,230. KAOO no twr,
+   rwys 03/21 5465x100 and 12/30 3668x75, elev 1,503. KJST twr, ATIS
+   118.325, LCL 125.75, rwys 15/33 7004x150 and 05/23 4387x100, elev 2,284
+   (plateau). KLBE twr, ATIS 118.375, LCL 125.0, rwy 06/24 8222x150, elev
+   1,199. Route ~80 nm, TC ~245. Terrain: Bald Eagle ridge SE of KUNV, the
+   Allegheny Front stepping up to the 2,300-2,900 plateau west of Altoona,
+   Laurel Hill and Chestnut Ridge before the Latrobe valley.
+*/
+<<set $pathArray to []>>
+<<set $badchoices to 0>>
+<<set $readWeather to false>>
+<<set $readRoute to false>>
+<<set $readAircraft to false>>
+<<set $readEscape to false>>
+<<set $gates to false>>       /* briefed hard personal gates out loud */
+<<set $delayed to false>>     /* took the 90-minute delay for improvement */
+<<set $onTop to false>>       /* climbed above a broken layer */
+<<set $inIMC to false>>       /* the white room */
+<<set $confessed to false>>   /* told ATC the whole truth */
+<<set $panic to 0>>           /* disorientation load, 0-3 */
+<<set $probes to 0>>          /* one-more-valley probes flown */
+<<set $divert to "">>         /* "", "KAOO", "KUNV", "grass" */
+
+:: StoryStylesheet [stylesheet]
+body {
+  background: #0f1720;
+  color: #d6dee6;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+#story { max-width: 780px; margin: 0 auto; padding: 2rem 1.5rem; }
+#passages { border-left: none; padding: 0; }
+.passage { padding: 0; }
+a.link-internal, a.macro-link {
+  color: #e6b84a;
+  text-decoration: none;
+  border-bottom: 1px dotted #8a6f2a;
+}
+a.link-internal:hover, a.macro-link:hover {
+  color: #fff4d0; background: #3a2d0a; border-bottom: 1px solid #e6b84a;
+}
+.choice-list { margin: 1.2em 0 0.5em 0; }
+.choice-list p { margin: 0.6em 0; }
+hr { border: none; border-top: 1px solid #2c3a4a; margin: 1.8em 0; }
+.debrief {
+  background: #141d28; padding: 1rem 1.3rem;
+  border-left: 3px solid #e6b84a; margin-top: 1rem; font-size: 0.98rem;
+}
+.debrief h3 {
+  color: #e6b84a; font-size: 1.05rem; margin-top: 0.8em; margin-bottom: 0.3em;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0.04em;
+}
+.restart { margin-top: 2em; font-size: 0.95rem; color: #8aa0b5; }
+.metar-block, .flight-plan, .aircraft-card {
+  font-family: "Courier New", monospace; font-size: 0.95rem; color: #b8cce4;
+  background: #0a121b; padding: 0.6em 0.9em;
+  border-left: 2px solid #5a6e88; margin: 0.6em 0; white-space: pre-wrap;
+}
+.airport-table { width: 100%; border-collapse: collapse; margin: 0.5em 0; font-size: 0.9em; }
+.airport-table th, .airport-table td { padding: 6px 10px; border-bottom: 1px solid #2a3a56; text-align: left; }
+.airport-table th { color: #9ab0c8; }
+.scenario-title { font-size: 2em; color: #ffffff; text-align: center; margin-bottom: 0.2em; }
+.scenario-subtitle { font-size: 1.05em; color: #8aa0c0; text-align: center; margin-bottom: 1.5em; font-style: italic; }
+.preflight-btn {
+  display: inline-block; background: #16213e; border: 1px solid #0f3460;
+  border-radius: 6px; padding: 10px 20px; margin: 6px 4px; min-width: 230px;
+  text-align: center; color: #e0e0e0; text-decoration: none;
+}
+.preflight-btn:hover { background: #0f3460; color: #ffffff; }
+.chart-disclaimer {
+  font-size: 0.8em; color: #8090a8; border-left: 3px solid #3a4a6c;
+  padding: 6px 12px; margin: 1em 0;
+}
+.sectional-container { margin: 1em 0; }
+.sectional-container img { max-width: 100%; border: 1px solid #2a3a56; border-radius: 4px; }
+.sectional-label { font-size: 0.85em; color: #8090a8; margin-top: 0.3em; }
+.main-menu-wrap { margin-top: 2em; text-align: center; }
+.main-menu-btn {
+  display: inline-block; padding: 0.55em 1.3em; background: #1A3C57;
+  color: #fff !important; border: 1px solid #2E5C82; border-radius: 4px;
+  text-decoration: none; font-size: 0.95em; letter-spacing: 0.03em;
+}
+.main-menu-btn:hover, .main-menu-btn:focus { background: #2E5C82; outline: none; }
+.text-msg {
+  background: rgba(46, 66, 52, 0.35); border-left: 3px solid #6a9a78;
+  padding: 0.5em 0.9em; margin: 0.8em 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  font-size: 0.95em; color: #c8dcc8;
+}
+.text-msg::before { content: "Coop: "; color: #7aa88a; font-weight: bold; }
+
+:: FlightPrep [preflight]
+<<set $pathArray to $pathArray.concat(["Preflight: the reunion and the ridges"])>>
+
+<div class="scenario-title">One Eighty</div>
+<div class="scenario-subtitle">Eighty miles, three ridgelines, and the turn with your name on it</div>
+
+Saturday, mid-October, 3:40 in the afternoon at State College Regional. You are a 620-hour private pilot, VFR, no instrument rating, and honest about both numbers most days. The club Warrior, N3389K, is fueled and willing. The mission is the good kind: Coop, your college roommate, is hosting the reunion dinner tonight at his place outside Latrobe, and four people you love and never see are already there, sending pictures of a smoker with brisket in it.
+
+Eighty miles southwest. Forty-five minutes in the air, versus two hours and forty minutes around the mountains by car. You have flown this line a dozen times in good weather, and today is not good weather: it is the other kind, the kind with a briefing that reads like a hedge.
+
+The Alleghenies do their standard autumn trick between here and there: valleys passable, ridgetops wearing the cloud. The question of the day is whether the improvement coming from the west arrives at the ridges before you do.
+
+<div class="chart-disclaimer">Charts, weather data, and performance figures in this scenario are from the period in which it was written and may no longer be current. Use the materials provided here, not current publications, as the scenario is designed around them.</div>
+
+<<link "<span class=\"preflight-btn\">Weather &amp; the Squeeze</span>" "Preflight-Weather">><<set $readWeather to true>><</link>>
+<<link "<span class=\"preflight-btn\">Route &amp; Terrain</span>" "Preflight-Route">><<set $readRoute to true>><</link>>
+<<link "<span class=\"preflight-btn\">Aircraft &amp; Pilot</span>" "Preflight-Aircraft">><<set $readAircraft to true>><</link>>
+<<link "<span class=\"preflight-btn\">The Escape Chapter</span>" "Preflight-Escape">><<set $readEscape to true>><</link>>
+
+<<if $readWeather and $readRoute and $readAircraft and $readEscape>>
+<hr>
+The whole picture, such as it is. The airplane is on the line and Coop's brisket has four hours left.
+
+<<link "<span class=\"preflight-btn\">☑ Decide at the Airplane</span>" "Ramp_Decide">><</link>>
+<<elseif $readWeather or $readRoute or $readAircraft or $readEscape>>
+<hr>
+<em>There's more on the table if you want it.</em>
+
+<<link "<span class=\"preflight-btn\">Decide at the Airplane Anyway</span>" "Ramp_Decide">><</link>>
+<</if>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Weather [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed the weather squeeze"])>>
+<strong>The picture: valleys yes, ridges no, improvement promised</strong>
+
+<div class="metar-block">KUNV 141953Z 24007KT 7SM HZ SCT035 BKN050 17/11 A2998
+KAOO 141953Z 25006KT 6SM HZ BKN037 16/12 A2996
+KJST 141954Z 26009KT 4SM BR OVC012 13/11 A2994
+KLBE 141953Z 27008KT 6SM HZ BKN040 17/12 A2995</div>
+
+<div class="metar-block">TAF KLBE 141740Z 1418/1518 27008KT P6SM BKN040
+  FM142200 29010KT P6SM SCT050
+TAF KJST 141740Z 1418/1518 26010KT 4SM BR OVC012
+  FM142300 29010KT P6SM BKN035</div>
+
+<div class="metar-block">AIRMET SIERRA valid until 150200
+  Mountain obscuration, PA Alleghenies: ridges and passes
+  obscured in clouds and mist through 00Z, improving west
+  to east 00Z-02Z.</div>
+
+<div class="metar-block">UA /OV AOO270015 /TM 1935 /FL045 /TP C182 /SK RIDGES OBSCD W OF AOO,
+VALLEYS OK, TOPS UNKN /RM WESTBOUND, TURNED BACK AT THE FRONT</div>
+
+<p>Read the two stories in one briefing. The forecast says improvement from the west, and it is real: Pittsburgh is clearing. The observations say the plateau is still in it: Johnstown, sitting on top at 2,284 feet, is IFR at 1,200 overcast, and a Skylane forty minutes ago looked at the Allegheny Front, said the word "obscured" into the record, and went home. The improvement and the terrain are racing, and the briefer's honest summary was a shrug you could hear.</p>
+
+<<link "&larr; Back to the kitchen table" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Route [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed route and terrain"])>>
+<strong>KUNV to KLBE: 80 nm, true course about 245, three steps up and one down</strong>
+
+<div class="sectional-container">
+<img src="/scenarios/one-eighty/images/area_map.jpg" alt="Route overview map, State College to Latrobe, showing Altoona in the valley, Johnstown on the plateau, and the ridge steps between">
+<div class="sectional-label">Route overview: KUNV southwest to KLBE. Altoona sits in the last friendly valley; Johnstown sits ON the plateau at 2,284; the Laurel Highlands are the final step before the Latrobe valley.</div>
+</div>
+
+<table class="airport-table">
+<tr><th>Leg</th><th>Terrain</th><th>The out</th></tr>
+<tr><td>KUNV to the Altoona valley</td><td>Bald Eagle ridge, about 2,300</td><td>Wide valleys, KAOO ahead: 5,465 ft runway, no tower, fuel</td></tr>
+<tr><td>The Allegheny Front</td><td>The big step: plateau rim 2,300-2,900</td><td>Behind you only; KJST on top is IFR today</td></tr>
+<tr><td>The plateau to Laurel Hill</td><td>Rolling 2,200-2,700, few lights, fewer fields</td><td>Not much; Johnstown in the murk</td></tr>
+<tr><td>Chestnut Ridge down to KLBE</td><td>Last ridge about 2,300, then the valley</td><td>KLBE: towered, 8,222 ft, ATIS 118.375</td></tr>
+</table>
+
+<p>The shape of the trap, stated plainly at the kitchen-table stage where it can do some good: the terrain rises westbound while the ceilings fall westbound, and the two lines cross somewhere around the Allegheny Front. East of the crossing, you fly in a comfortable sandwich. West of it, there is no sandwich: the filling is granite. The last easy out is Altoona, and it comes only twenty-five miles into an eighty-mile trip.</p>
+
+<<link "&larr; Back to the sectional" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Aircraft [preflight]
+<<set $pathArray to $pathArray.concat(["Reviewed aircraft and pilot, honestly"])>>
+<strong>N3389K, and you</strong>
+
+<div class="aircraft-card">Airplane:    1981 Warrior II, O-320, 160 hp
+Panel:       Six-pack, vacuum AI and DG, GNS 430W, KX 155,
+             transponder. NO autopilot. Pitot heat.
+Fuel:        48 usable, full. Four hours plus.
+Speeds:      Cruise 105 KTAS. Va 111. Best glide 73.
+Performance: Ceiling on paper 14,000. Climb at 6,000: leisurely.</div>
+
+<strong>The pilot page, which matters more today</strong>
+
+<div class="aircraft-card">Certificates: Private ASEL. No instrument rating.
+Total time:   620. Actual instrument: 0.0.
+Simulated:    3.2, under the hood, most of it four years ago,
+              logged during primary and a flight review.
+Recent:       Plenty of good-weather cross-country. None of it
+              looked like today.</div>
+
+<p>The FAA's training syllabus gives every private pilot a taste of instrument flying for exactly one purpose: to execute a 180-degree turn out of inadvertent cloud and live. Not to proceed. Not to climb through "a thin layer." To turn around, on the gauges, once, under stress, and exit the way you came in. Three point two hours, four years cold, is the entire bank balance available for that maneuver, and every study of VFR pilots in actual cloud says the account drains in minutes.</p>
+
+<<link "&larr; Back to the rest of it" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Preflight-Escape [preflight]
+<<set $pathArray to $pathArray.concat(["Read the escape chapter"])>>
+<strong>The escape chapter, read on the ground where it works</strong>
+
+<p>Three tools exist for the pilot who finds the weather closing, and they work in this order.</p>
+
+<p><strong>The 180, early.</strong> The turn back is a precision instrument only when it's flown before the weather arrives. Its price goes up every mile: at first it costs pride, then it costs a plan, then it costs a view of the ground, and eventually it costs a standard-rate turn flown on instruments you haven't trusted your life to since a hood four years ago. The turn's entire value is in its earliness. Everyone knows this. The trap is that "early" only ever looks early in the debrief.</p>
+
+<p><strong>The confession.</strong> Approach and Center exist for you too. "November three three eight nine kilo is a VFR pilot in deteriorating conditions, request assistance" is a sentence that summons radar vectors, terrain awareness, and a calm voice with one job. It is the single highest-value radio call in general aviation, it costs nothing but the sound of it, and the pilots who needed it and didn't make it are a long, quiet list. Say it before the white room. Say it in the white room. It works everywhere except the last thirty seconds.</p>
+
+<p><strong>The precautionary landing.</strong> Below you, in these valleys: pastures, cut hayfields, a grass strip or two the sectional knows about. An airplane parked in a farmer's field with a bruised ego is a story; the alternative genre is shorter. The insurance company would rather buy a fence than a funeral, and so would the farmer.</p>
+
+<p>One physiological fact to carry: in cloud, without instrument training, your inner ear begins lying within seconds and lies harder with every correction. The leans are not a character flaw. They are plumbing. The instruments are the only crew member telling the truth in there, and believing them over your own body is a trained skill you mostly do not have. Plan accordingly, which is to say: plan to never need it.</p>
+
+<<link "&larr; Back to the decision" "FlightPrep">><</link>>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ramp_Decide [scenario]
+<<set $pathArray to $pathArray.concat(["The go/no-go at the wing"])>>
+
+The Warrior sits in the pale, even light of an overcast afternoon, preflighted, honest, ready. Coop's latest lands as you finish the walkaround:
+
+<div class="text-msg">brisket at 190 and holding. deke and the boys just got here. u wheels up?? send eta so I can time the cornbread</div>
+
+The sky overhead is fine. Genuinely fine: high broken, seven miles of hazy visibility, a Cub in the pattern making it all look easy. The problem is eighty miles southwest, on the high ground, where the observations and the forecast are still arguing. The improvement from Pittsburgh is real and moving. The plateau is still IFR. Somewhere over the Allegheny Front those two facts meet, and the only question that matters is whether they've met before you get there.
+
+<div class="choice-list">
+<<link "A. You go now, with the gates said out loud at the wing: valleys only, 3,000 minimum, any ridge that isn't clearly crossable in visual conditions is a 180, and Altoona is the decision fence." "Climb_East">>
+  <<set $pathArray to $pathArray.concat(["D1: launched with hard gates briefed"])>>
+  <<set $gates to true>>
+<</link>>
+
+<<link "B. You go now and read the weather when you get there. Eighty miles, forty-five minutes, and forecasts out here are wrong in your favor half the time." "Climb_East">>
+  <<set $pathArray to $pathArray.concat(["D1: launched to take a look"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. You give the improvement ninety minutes to do its job: coffee in the FBO, the radar loop, the 5:30 observations, and a go/no-go at 5:45 with newer facts." "Delay_Watch">>
+  <<set $pathArray to $pathArray.concat(["D1: delayed for newer facts"])>>
+  <<set $delayed to true>>
+<</link>>
+
+<<link "D. You call it now, put the key in the drop box, and drive: two hours forty of certainty against forty-five minutes of maybe." "Ground_Scrub">>
+  <<set $pathArray to $pathArray.concat(["D1: scrubbed and drove"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_Scrub [scenario]
+<<set $pathArray to $pathArray.concat(["The drive instead"])>>
+
+The club key goes in the drop box with the particular clunk of a decision outsourced to gravity. You text Coop the truth and get back a thumbs-up, a brisket photo, and the word "DRIVE SAFE" in capitals that read like affection.
+
+Route 22 west does its two-lane thing through the ridge gaps. The question the drive gets to answer, that the flight would have answered differently, is what the weather actually did.
+
+<div class="choice-list">
+<<link "A. You take the Altoona bypass and keep your eyes mostly on the road, radio on, making time." "Scrub_Drive2">>
+  <<set $pathArray to $pathArray.concat(["Drove it heads-down"])>>
+<</link>>
+
+<<link "B. You pull off at the overlook east of the Front, the one with the historical marker, and spend two minutes looking at what you would have flown into." "Scrub_Overlook">>
+  <<set $pathArray to $pathArray.concat(["Stopped at the overlook to grade the call"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Scrub_Overlook [scenario]
+<<set $pathArray to $pathArray.concat(["The overlook verdict"])>>
+
+The overlook faces the Allegheny Front, and the Front, at 5:50 in the afternoon, is not there. Where the plateau rim should stand, a gray wall sits on the ridge like a lid on a pot, its base dragging through the notches, wisps running downslope into the valley you'd have been in. A hawk works the updraft below the cloud and even the hawk looks like it's keeping a healthy margin.
+
+You take one photo, not for anyone else.
+
+<div class="choice-list">
+<<link "The rest of the drive is just a drive." "Scrub_Drive2">>
+  <<set $pathArray to $pathArray.concat(["Then drove on"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Scrub_Drive2 [scenario]
+<<set $pathArray to $pathArray.concat(["Almost there; the question of the retell"])>>
+
+Ligonier, then the last ridge by road, then the Latrobe valley opening up in the dusk with its lights coming on. Coop's driveway has five cars in it and a smell coming off the back deck that justifies every mile.
+
+One decision left, smaller than the day's but not nothing: how this story gets told at the table.
+
+<div class="choice-list">
+<<link "A. You tell it straight, overlook photo and all: you scrubbed, the mountain agreed, pass the brisket." "End_Scrub_Drive">>
+  <<set $pathArray to $pathArray.concat(["Told it straight at the table"])>>
+<</link>>
+
+<<link "B. You keep it breezy: weather didn't cooperate, no big deal, what'd I miss. The photo stays in the phone." "End_Scrub_Drive">>
+  <<set $pathArray to $pathArray.concat(["Kept it breezy"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Delay_Watch [scenario]
+<<set $pathArray to $pathArray.concat(["Ninety minutes of radar loop"])>>
+
+The FBO coffee is FBO coffee. The radar loop shows what the briefer said it would: clearing over Pittsburgh, genuine and westerly, crawling east at the speed of weather that has nowhere it needs to be. The 5:30 observations land one at a time. Latrobe: improving, scattered forty. Altoona: about the same. Johnstown: overcast fifteen now, up from twelve, which is improvement the way a C-minus improves on a D.
+
+The improvement is real. It is also late for dinner. Sunset is 6:25; the plateau clears, by the trend, somewhere around eight. The window this delay bought is a night flight over the same terrain behind the same trend, or nothing.
+
+<div class="text-msg">no rush man. brisket rests an hour anyway. IF ur flying fly. if not the couch is yours tmrw too</div>
+
+Coop, it should be noted, is applying no pressure at all. The pressure is entirely in-house.
+
+<div class="choice-list">
+<<link "A. Night, over the plateau, chasing an improvement that keeps arriving late: no. You drive, and the airplane flies home tomorrow in the clear." "Ground_Scrub">>
+  <<set $pathArray to $pathArray.concat(["D2: drove after the delay told its story"])>>
+<</link>>
+
+<<link "B. The trend is your friend and the valleys are still fine. You launch now and read the Front with your own eyes, gates said out loud." "Climb_East">>
+  <<set $pathArray to $pathArray.concat(["D2: launched into the improving evening"])>>
+  <<set $gates to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Climb_East [scenario]
+<<set $pathArray to $pathArray.concat(["Airborne, southwest bound"])>>
+
+The tower clears you on course and the Warrior climbs into the haze layer's upper story, smooth as a held breath. <<if $delayed>>The light is long and orange under the overcast, the valleys filling with early dusk.<<else>>The afternoon light is flat and even, shadowless under the high deck.<</if>> Happy Valley falls behind. Bald Eagle ridge comes up first, a long forested wall running with your course off the right wing, its top brushing in and out of ragged cloud like a whale surfacing.
+
+At 4,500 you are in the clear between layers' worth of haze, ground contact good, the world the color of weak tea. The 430 counts down to Altoona. Ahead and right, the first real message of the flight: the notch where I-99 crosses toward the Front has a gray smear parked in it.
+
+<<link "The Altoona valley opens below: the decision fence, arriving on schedule." "Valley_AOO">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Valley_AOO [scenario]
+<<set $pathArray to $pathArray.concat(["The decision fence at Altoona"])>>
+
+Altoona's runways sit plain and welcoming in the wide valley, five thousand feet of asphalt with fuel and a courtesy phone. Beyond them, westward, the Allegheny Front stands its two thousand nine hundred feet, and today it has no top: the plateau rim disappears into a cloud deck that has come down to meet it, gray shading to blue-gray shading to nothing. The notches (the Gallitzin saddle, the gaps the railroads found two centuries ago) show as darker slots in the wall, one of them arguably, arguably, showing light on the far side.
+
+<<if $gates>>You said it out loud at the wing: Altoona is the fence.<</if>> The AWOS behind you calls the valley fine. Johnstown ATIS, crackling over the ridge, calls the plateau overcast at fifteen hundred, which puts the cloud about seven hundred feet below the terrain you'd cross it over.
+
+<div class="text-msg">deke says he can see blue sky WEST of us. relayed for whatever thats worth. cornbread going in</div>
+
+<div class="choice-list">
+<<link "A. The fence is the fence. You land at Altoona, call Coop, and let the improvement come to you." "Ground_AOO">>
+  <<set $pathArray to $pathArray.concat(["D3: landed at the fence"])>>
+  <<set $divert to "KAOO">>
+<</link>>
+
+<<link "B. One look. You fly toward the lit notch at 4,000, ready to reverse, and see whether the far side is real." "Front_Probe">>
+  <<set $pathArray to $pathArray.concat(["D3: probed the notch"])>>
+  <<set $probes to $probes + 1>>
+<</link>>
+
+<<link "C. Deke can see blue sky and the trend is west-to-east: you climb. Get above this broken mess into the clear, cross the plateau on top, and descend the far side into Latrobe's improvement." "OnTop_Trap">>
+  <<set $pathArray to $pathArray.concat(["D3: climbed on top"])>>
+  <<set $onTop to true>><<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "D. Turn around now, land back at State College, and renegotiate the evening from the ground." "Home_Hold">>
+  <<set $pathArray to $pathArray.concat(["D3: turned back early"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Front_Probe [scenario]
+<<set $pathArray to $pathArray.concat(["The notch, up close"])>>
+
+Up close the lit notch does what lit notches do: it moves. The brightness you steered for resolves into a thinner patch of the same cloud, backlit and shifting, and beyond it the plateau shows in glimpses: dark evergreen, a wind farm's turbines with their heads in the gray, a road. The gap between cloud base and ridge crest, measured by eye and nerve, is a few hundred feet of murky legality that a Warrior would cross in ninety seconds. If nothing changed. In cloud that is visibly moving.
+
+The wisps start reaching for the airplane sooner than the ridge does: one whips past the wingtip, then a gray breath across the windshield, gone in a second, ground still there below.
+
+<div class="choice-list">
+<<link "A. That was the answer. Standard-rate left, 180 degrees, back into the wide valley while it's a maneuver and not an emergency." "Turn_Clean">>
+  <<set $pathArray to $pathArray.concat(["D4: turned at the wisps"])>>
+<</link>>
+
+<<link "B. Lower. The gap under the cloud is bigger near the saddle floor: you descend to 3,200 and take the notch under the base, terrain close, road in sight." "Scud_Run">>
+  <<set $pathArray to $pathArray.concat(["D4: went under, through the notch"])>>
+  <<set $badchoices to $badchoices + 1>><<set $probes to $probes + 1>>
+<</link>>
+
+<<link "C. Ninety seconds. The glimpses of plateau keep coming. You hold altitude and press through the thin patch on the numbers you have." "IMC_Entry">>
+  <<set $pathArray to $pathArray.concat(["D4: pressed through the thin patch"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: OnTop_Trap [scenario]
+<<set $pathArray to $pathArray.concat(["On top, and the floor closes"])>>
+
+The climb through the broken layer takes four minutes and one hole, and the world above is beautiful the way a lie can be: golden light, a cloud floor like rolled cotton, the plateau's weather nothing but texture from up here at 7,500. You point the nose southwest across the top and for ten minutes the plan works perfectly.
+
+Then the holes stop.
+
+It happens the way it always happens: gradually, then entirely. The broken floor knits itself into overcast behind you and ahead, the gaps going from fields to windows to pinpricks to memory. Latrobe's ATIS, when the 430 hands you the frequency, says scattered four thousand, improving, lovely. Between you and that loveliness is an undercast with no edges, a plateau under it, and a sun getting low enough to make everything gold and urgent at once.
+
+<div class="choice-list">
+<<link "A. You say the whole truth to Johnstown Approach: VFR pilot on top, no instrument rating, request help finding a hole or a vector to visual conditions." "IMC_Confess">>
+  <<set $pathArray to $pathArray.concat(["D4: confessed from on top"])>>
+  <<set $confessed to true>>
+<</link>>
+
+<<link "B. The layer was thin on the way up: barely a thousand feet. You pick a thin-looking spot, set up a stable descent, and go down through it on the gauges you have." "IMC_Entry">>
+  <<set $pathArray to $pathArray.concat(["D4: descended into the deck"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "C. Behind you is where the holes were: you reverse course along your own track and spend your remaining light hunting the way you came in." "Top_Retreat">>
+  <<set $pathArray to $pathArray.concat(["D4: reversed along the top"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Top_Retreat [scenario]
+<<set $pathArray to $pathArray.concat(["Hunting backward for a hole"])>>
+
+The reversal is easy up here in the clear, and the hunt is honest for a while: eastbound along your own breadcrumbs, the undercast scrolling beneath, every darker patch inspected and found solid. The Altoona valley, when its position passes below, is a rumor under cotton. Minutes spend themselves. The gold light goes amber.
+
+Then, ahead, off the left wing: a genuine hole, ragged and workable, with green at the bottom of it. Happy Valley's eastern end, or near it. It is also closing, the way all of today's holes close, at the unhurried pace of a door with your name on it.
+
+<div class="choice-list">
+<<link "A. You take it now: power back, circling descent inside the hole, ground in sight the whole way, and sort out where you are once you're under." "Hole_Descent">>
+  <<set $pathArray to $pathArray.concat(["D5: took the closing hole"])>>
+<</link>>
+
+<<link "B. Holes have been lying all day. You call Approach first, confess, and take the descent with radar watching, hole or no hole." "IMC_Confess">>
+  <<set $pathArray to $pathArray.concat(["D5: confessed before descending"])>>
+  <<set $confessed to true>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Hole_Descent [scenario]
+<<set $pathArray to $pathArray.concat(["Down through the closing hole"])>>
+
+Power back, flaps one notch, a steep spiraling descent flown against the hole's shrinking edges, the green floor rising to meet you in slow rotation. The last hundred feet of the hole close around the airplane as gray gauze, five seconds of it, ground still visible straight down like looking up a well from the bottom, and then you are under: 3,100 feet, a valley you half-recognize, visibility a hazy but workable five miles, cloud a flat lid just overhead.
+
+Your heart is doing a number it hasn't done since your checkride. The 430 says State College is eighteen miles northeast. The lid says stay low. The terrain map says the valley floor will let you.
+
+<<link "Eighteen miles of low, careful, chastened flying." "End_Home_Low">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Turn_Clean [scenario]
+<<set $pathArray to $pathArray.concat(["The early 180, flown like a checklist item"])>>
+
+Standard rate, left, eyes outside then inside then outside, and the world rotates politely around the Warrior until the wide Altoona valley fills the windshield again. The whole maneuver costs sixty seconds and a plan. The wisps that touched the airplane thirty seconds ago recede in the mirror-that-isn't, back into the wall they came from.
+
+The valley is exactly as friendly as you left it: Altoona's runways below, the haze golden now, everything easy. The only turbulence is in your chest, where relief and a strange grief are working out custody of the evening.
+
+<div class="choice-list">
+<<link "A. Altoona. Land, fuel, call Coop, and let the weather race come to you on the ground." "Ground_AOO">>
+  <<set $pathArray to $pathArray.concat(["D5: landed Altoona after the turn"])>>
+  <<set $divert to "KAOO">>
+<</link>>
+
+<<link "B. Home. Back up the valley to State College and renegotiate from your own kitchen." "Home_Hold">>
+  <<set $pathArray to $pathArray.concat(["D5: flew home after the turn"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Scud_Run [scenario]
+<<set $pathArray to $pathArray.concat(["Under the base, in the notch"])>>
+<<set $panic to $panic + 1>>
+
+Three thousand two hundred feet, the railroad and the highway threading the saddle below, ridge flanks rising into gray on both sides, cloud base a ceiling in the architectural sense now: flat, close, pressing. The Warrior slides into the notch at a hundred and five knots with visual on the road and nothing else that could be called a plan.
+
+Halfway through, the base sags. Not dramatically. Fifty feet, maybe, a gray curtain dropping across the saddle ahead where the terrain does its last rise, and the road disappears into it, and there is suddenly no through anymore: only up into cloud, down into the narrowing dark, or back.
+
+<div class="choice-list">
+<<link "A. Back. A level 180 in the notch, terrain both sides, flown at the bank angle the valley allows and not one degree more." "Turn_Tight">>
+  <<set $pathArray to $pathArray.concat(["D5: the tight 180 in the notch"])>>
+<</link>>
+
+<<link "B. Down. The base is sagging but the saddle floor drops beyond the crest: you descend with the terrain, under the curtain, low over the road." "Under_Wires">>
+  <<set $pathArray to $pathArray.concat(["D5: ducked under the curtain"])>>
+  <<set $badchoices to $badchoices + 1>><<set $panic to $panic + 1>>
+<</link>>
+
+<<link "C. Up. Full power, wings level, straight ahead into the gray: through is shorter than around." "IMC_Entry">>
+  <<set $pathArray to $pathArray.concat(["D5: pulled up into it"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Turn_Tight [scenario]
+<<set $pathArray to $pathArray.concat(["The 180 with walls"])>>
+<<set $panic to $panic + 1>>
+
+You put the airplane in a thirty-degree bank with the valley's geometry drawn on the inside of your skull: railroad below, flank there, flank there, gray everywhere above. Halfway around, a wisp takes the windshield for two full seconds and the world goes white-gray-white while your hands hold what they were holding. Then the valley again, pointed the right way, the wide country east opening up like forgiveness.
+
+You fly out of the notch shallow and fast, and nobody on the radio knows anything happened, which is one definition of getting away with it and also the exact mechanism by which pilots learn the wrong lesson.
+
+<div class="choice-list">
+<<link "A. Altoona, straight in, full stop. The airplane needs fuel and you need a floor that doesn't move." "Ground_AOO">>
+  <<set $pathArray to $pathArray.concat(["D6: full stop Altoona, shaken"])>>
+  <<set $divert to "KAOO">>
+<</link>>
+
+<<link "B. Home to State College, up the friendly valley, at an altitude with nothing gray in it." "Home_Hold">>
+  <<set $pathArray to $pathArray.concat(["D6: home, shaken"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: IMC_Entry [scenario]
+<<set $pathArray to $pathArray.concat(["The white room"])>>
+<<set $inIMC to true>><<set $panic to $panic + 1>>
+
+It does not fade in. It arrives: one second the world, the next second a white-gray nothing pressed against every window, the wingtips dissolving, the propeller a rumor. The sound stays the same, which is somehow the worst part. Every reference you have flown by for six hundred and twenty hours is gone, and in its place are six instruments you last trusted under a hood four years ago, and a body that is already, quietly, beginning to lie.
+
+The attitude indicator says wings level, nose a hair high. Your inner ear says the airplane has started a gentle right turn. One of them is wrong, and knowing which, and acting on the knowing, sixty times a minute, is the entire job now.
+
+<div class="choice-list">
+<<link "A. The maneuver you were taught for exactly this: eyes on the AI, wings level, then a standard-rate 180 by the numbers, out the way you came in." "Turn_Gauges">>
+  <<set $pathArray to $pathArray.concat(["In IMC: flew the trained 180"])>>
+<</link>>
+
+<<link "B. Full power, wings level on the AI, climb straight ahead away from the granite, and key the mic: the whole truth to Approach, now." "IMC_Confess">>
+  <<set $pathArray to $pathArray.concat(["In IMC: climbed and confessed"])>>
+  <<set $confessed to true>>
+<</link>>
+
+<<link "C. The ground was just there. Power back, nose down, get back under it while under still exists." "IMC_Descend">>
+  <<set $pathArray to $pathArray.concat(["In IMC: pushed down for the ground"])>>
+  <<set $badchoices to $badchoices + 1>><<set $panic to $panic + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Turn_Gauges [scenario]
+<<set $pathArray to $pathArray.concat(["The gauge 180"])>>
+
+Eyes on the attitude indicator like it owes you money. Left bank, fifteen degrees, no more: the turn coordinator's wing kisses the index and you hold it there while the DG grinds through the numbers with geologic patience. Your inner ear files a formal objection: it reports the bank steepening, the nose falling, a spiral beginning. The instruments report a standard-rate turn, altitude pinned. You believe the instruments the way the escape chapter told you to: as an act of discipline, not of feeling.
+
+<<if $panic gte 2>>Halfway through, the leans win a round: your hand, obeying a body-lie, shallows the bank without asking, and the DG's grind slows, and the airspeed starts a soft creep upward that means the nose has dropped somewhere you can't feel. The scan catches it: airspeed, AI, a nose-low right drift beginning, fifteen seconds from being a real spiral.
+
+<div class="choice-list">
+<<link "A. Instruments. You level the wings ON THE AI, ease the nose to the horizon bar, let the speed settle, and resume the turn. The body screams. The needles don't." "IMC_Exit">>
+  <<set $pathArray to $pathArray.concat(["Trusted the needles through the leans"])>>
+<</link>>
+
+<<link "B. The airplane FEELS wrong in a way no instrument shows: you correct by feel, rolling the way your body swears is level." "End_Spiral">>
+  <<set $pathArray to $pathArray.concat(["Trusted the body"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+<<else>>The DG walks around: 240, 200, 160, 110. Ninety seconds that spend like a mortgage. At the reciprocal you roll wings level on the AI, hold, breathe, and the white outside begins to thin: gray, pearl, a ghost of ridge, and then the world again, the friendly valley, the haze golden and beautiful and beneath you like it never left.
+
+<<link "Out. The same air you left ninety seconds and one lifetime ago." "IMC_Exit">><</link>>
+<</if>>\
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: IMC_Exit [scenario]
+<<set $pathArray to $pathArray.concat(["Out of the cloud, changed"])>>
+
+The valley takes you back without comment. Altoona's runways sit below, patient as furniture. Your shirt is stuck to your back and your hands on the yoke look like someone else's hands, and the airplane, which never knew anything was wrong, hums along at cruise power waiting for instructions.
+
+<div class="choice-list">
+<<link "A. Altoona, full stop, now. The day is over and it knows it." "Ground_AOO">>
+  <<set $pathArray to $pathArray.concat(["Landed Altoona after the white room"])>>
+  <<set $divert to "KAOO">>
+<</link>>
+
+<<link "B. Home to State College, straight, level, and high above anything gray." "Home_Hold">>
+  <<set $pathArray to $pathArray.concat(["Home after the white room"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: IMC_Descend [scenario]
+<<set $pathArray to $pathArray.concat(["Feeling for the floor"])>>
+
+Power back, nose down, the altimeter unwinding through numbers that mean less than they should because the terrain under this particular cloud is not the terrain you left: the notch floor rose behind you, the plateau rim is somewhere at twenty-nine hundred, and you are descending through thirty-four hundred in milk.
+
+Three thousand two. Three thousand. The white goes gray below like something solid coming, and at what the altimeter calls two thousand nine hundred the world reappears all at once: a plateau pasture tilted under mist, fence lines, a pond, a treeline, everything closer than scale models, a wind farm's red lights blinking off the right side in the murk. Two hundred, maybe three hundred feet of clear air exists between the cloud and the grass, and you are in it, doing a hundred and five knots.
+
+<div class="choice-list">
+<<link "A. That pasture is long, uphill at the far end, and into the wind. You put the airplane in it now, under control, while control is the one thing you still have." "End_Grass">>
+  <<set $pathArray to $pathArray.concat(["Put it in the pasture under control"])>>
+<</link>>
+
+<<link "B. Full power, back up into the cloud on the AI, and the whole truth to Approach while the climb buys terrain clearance." "IMC_Confess">>
+  <<set $pathArray to $pathArray.concat(["Climbed back in and confessed"])>>
+  <<set $confessed to true>><<set $panic to $panic + 1>>
+<</link>>
+
+<<link "C. Three hundred feet is flyable. You follow the pasture's valley low and slow, hunting for the terrain to fall away toward Latrobe." "End_Spiral">>
+  <<set $pathArray to $pathArray.concat(["Hunted onward at two hundred feet"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Under_Wires [scenario]
+<<set $pathArray to $pathArray.concat(["Under the curtain, over the wires"])>>
+<<set $panic to $panic + 1>>
+
+You duck under the sagging base with the road as your handrail, and for four seconds it works: fifty feet of clear air between gray above and gravel below, the saddle crest coming, the far side promising.
+
+The powerline crosses the notch exactly where powerlines cross notches: at the top, strung tower to tower across the gap like the finish line of a race nobody should enter. You see the towers before the wires, which is how it always goes, and the pull is pure reflex: up, into the base, through the curtain, wires somewhere under the belly by a margin you will never know, and the airplane bursts out the other side of the saddle into the plateau's under-story: four hundred feet of misty clearance over rolling dark evergreen, the highway unspooling west, turbine towers standing in the murk like patient giants with their heads in the cloud.
+
+Latrobe is thirty miles west. The improvement is real out there. Between here and it: this.
+
+<div class="choice-list">
+<<link "A. You crawl it: four hundred feet, ninety knots, the highway as a handrail, turbines counted off the wingtip, all the way down the tilt of the plateau into the Latrobe valley." "End_LBE_Squeaked">>
+  <<set $pathArray to $pathArray.concat(["Crawled the plateau at four hundred feet"])>>
+  <<set $badchoices to $badchoices + 1>>
+<</link>>
+
+<<link "B. No. Full power, wings level, up into the cloud on purpose, and the whole truth to Johnstown Approach: this ends with help." "IMC_Confess">>
+  <<set $pathArray to $pathArray.concat(["Abandoned the crawl, climbed, confessed"])>>
+  <<set $confessed to true>><<set $panic to $panic + 1>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: IMC_Confess [scenario]
+<<set $pathArray to $pathArray.concat(["The confession"])>>
+<<set $confessed to true>>
+
+"Johnstown Approach, November three three eight niner kilo." Your voice comes out two notes high and you let it. "VFR pilot, no instrument rating. I'm <<if $inIMC>>in cloud<<elseif $onTop>>above a solid layer<<else>>in deteriorating conditions<</if>> over the plateau and I need help."
+
+The frequency does the thing the escape chapter promised. The voice that answers has all the time in the world: "November eight niner kilo, Johnstown Approach, radar contact. Understood, you're getting some help. Say altitude, souls on board, and fuel."
+
+What follows is twenty minutes of another person's calm arriving through your headset at regular intervals: a climb to four thousand five hundred, "maintain wings level on your attitude indicator, small corrections"; a heading, then another, each one read back with your scan improving because someone is watching the picture you can't see; the leans arriving twice and being talked through twice ("trust the instruments, eight niner kilo, you're doing fine, wings level"); and then, ahead, the gray thinning, pearling, breaking, until the Altoona valley opens below in the last usable light and the voice says, with what might be a smile in it, "eight niner kilo, visual conditions ahead, Altoona twelve o'clock and eight miles, plenty of runway. Nicely done."
+
+<<link "The landing at Altoona is the softest you have made in a year, out of pure gratitude." "End_Confess_Vectors">><</link>>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_AOO [scenario]
+<<set $pathArray to $pathArray.concat(["On the ground at the fence"])>>
+
+Altoona's ramp is Saturday-evening empty. You fuel at the self-serve because hands want a job, chock the Warrior, and stand for a minute in the cooling air looking west at the wall you didn't cross<<if $inIMC or $panic gte 2>>, or crossed and un-crossed, depending on how the logbook chooses to remember it<</if>>.
+
+Coop answers on the first ring and takes the news the way the good ones do: "So you're an hour out by car or two beers out by weather. Either way you're eating tonight."
+
+<div class="choice-list">
+<<link "A. You settle into the pilot lounge with the radar loop and the vending machine, and let the improvement audition for the last fifty-five miles." "Ground_AOO2">>
+  <<set $pathArray to $pathArray.concat(["Waited with the radar loop"])>>
+<</link>>
+
+<<link "B. You ask the FBO's after-hours number about the courtesy car before deciding anything, because knowing your outs is apparently today's whole theme." "Ground_AOO2">>
+  <<set $pathArray to $pathArray.concat(["Secured the ground option first"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Ground_AOO2 [scenario]
+<<set $pathArray to $pathArray.concat(["Eight o'clock, and the weather race ends"])>>
+
+At 7:50 the METARs flip like dominoes, west to east: Latrobe scattered five thousand, Johnstown broken thirty-five hundred and climbing, the AIRMET expiring on schedule for once. By 8:10 the Altoona AWOS is calling ten miles and a high broken deck, and the western sky, where the wall lived, has stars in its lower third. The improvement kept every promise. It was only ever late.
+
+Fifty-five miles remain: night now, over the plateau, behind a genuine clearing trend, in a fueled airplane, with a pilot who has already had today's entire education.
+
+<div class="choice-list">
+<<link "A. You fly it: high, direct, talking to Approach the whole way, over terrain that finally has stars above it. Wheels down Latrobe by nine." "End_Evening_Made">>
+  <<set $pathArray to $pathArray.concat(["Flew the last leg in the real improvement"])>>
+<</link>>
+
+<<link "B. The courtesy car exists and the day has spent your margin: you drive the last hour and fly the Warrior home tomorrow in sunshine." "End_KAOO_Wait">>
+  <<set $pathArray to $pathArray.concat(["Drove the last hour"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Home_Hold [scenario]
+<<set $pathArray to $pathArray.concat(["Back on home plate"])>>
+
+State College takes you back with the tower's incurious "welcome back" and the tie-down accepts its airplane. The flight that ends where it began has a particular flavor: nothing bent, nothing scared<<if $inIMC or $panic gte 1>>, at least nothing visibly<</if>>, and a whole evening standing there asking what now.
+
+The radar loop on your phone shows the improvement still grinding east. Latrobe's TAF still promises scattered by 22Z. Coop's texts have moved from logistics to menu photography.
+
+<div class="choice-list">
+<<link "A. You watch the 8 p.m. observations, and if the plateau genuinely opens, you fly the evening version: night, clear, high, and talking to Approach." "Evening_Relaunch">>
+  <<set $pathArray to $pathArray.concat(["Held for the evening window"])>>
+<</link>>
+
+<<link "B. You take the car now and let the airplane have its weekend. Two hours forty, one drive-through coffee, zero gray." "Scrub_Drive2">>
+  <<set $pathArray to $pathArray.concat(["Drove from home plate"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: Evening_Relaunch [scenario]
+<<set $pathArray to $pathArray.concat(["The eight o'clock verdict"])>>
+
+The 7:53 observations arrive like a jury coming back: Latrobe scattered five thousand, ten miles. Johnstown, the honest witness all day, broken thirty-five hundred and lifting. The AIRMET dies at eight sharp. Outside the FBO window the west has gone from wall to suggestion to a horizon with Venus sitting on it.
+
+Night cross-country over the plateau, in a genuine clearing trend, fueled, rested-ish, and educated: this is a different flight than the one the afternoon offered, and pretending otherwise in either direction would be its own error.
+
+<div class="choice-list">
+<<link "A. Go. High, direct Latrobe, flight following the whole way, stars above the ridge line." "End_Evening_Made">>
+  <<set $pathArray to $pathArray.concat(["Launched into the cleared evening"])>>
+<</link>>
+
+<<link "B. It's 8 p.m. and today already taught its class. You drive, and the sky can prove itself to somebody else tonight." "Scrub_Drive2">>
+  <<set $pathArray to $pathArray.concat(["Let the evening window pass, drove"])>>
+<</link>>
+</div>
+
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Scrub_Drive [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the long way, on purpose"])>>
+
+Dinner is loud and long and exactly what the year needed. Nobody at the table thinks less of a pilot for driving; most of them are surprised to learn driving was ever in question. <<if $pathArray.includes("Stopped at the overlook to grade the call")>>The overlook photo makes one quiet circuit of the table, and Deke, who builds bridges for a living, looks at the cloud sitting on the Front and says the truest sentence available: "That's not weather, that's terrain with extra steps."<</if>> Sunday morning dawns severe clear, the whole state rinsed and blue, and the drive home (or the flight home, if the Warrior waited at State College) takes place in the kind of sky that makes yesterday's decision look, briefly and falsely, unnecessary.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The trip completed by road. The dinner was eaten, the friends were seen, and an airplane stayed out of a race between a real improvement and real terrain, decided by hours either way. What was lost: a story. What was kept: everything.</p>
+<h3>ADM analysis</h3>
+<p>The go/no-go on a marginal ridge day is a bet on timing, and the house edge lives in a specific asymmetry: if the improvement wins the race, flying saves roughly two hours; if the terrain wins, the downside is unbounded. Decisions with capped upside and uncapped downside are exactly the ones personal minimums exist to take out of the moment's hands. Note also what Sunday's blue sky tries to do to the memory: hindsight will call the scrub excessive, because hindsight only ever gets to see one branch. The other branches of this scenario are available in the menu, and they are the argument.</p>
+<h3>What good judgment looks like here</h3>
+<p>Treating the car as a first-class aviation decision rather than a defeat. The mission was dinner with people you love, and the mission completed. Separating the mission from the airplane is the whole skill; pilots who can't are betting brisket against granite.</p>
+<h3>Key takeaway</h3>
+<p>You can always be two hours late. The overlook is full of people who couldn't.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readEscape to false>><<set $gates to false>><<set $delayed to false>><<set $onTop to false>><<set $inIMC to false>><<set $confessed to false>><<set $panic to 0>><<set $probes to 0>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Evening_Made [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the same trip, three hours later"])>>
+
+The night flight is the afternoon's opposite in every particular: smooth, high, star-roofed, the plateau's few lights sliding under the wings and Johnstown's beacon sweeping a sky that finally deserves it. Approach follows you the whole way out of what feels like professional courtesy. Latrobe's runway arrives huge and lit, and Coop is at the fence line twenty minutes later with a plate wrapped in foil, because some friendships understand airports.
+
+"You're three hours late," he says, handing it through the car window, "and I have literally never been happier to see anybody land."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The same eighty miles that were unflyable at four-thirty were routine at eight-fifteen, because the flight moved instead of the weather being argued with. The improvement kept its promise on its own schedule; the pilot's only job was to still be available, fueled, and un-crashed when it did.</p>
+<h3>ADM analysis</h3>
+<p>Patience gets described as a passive virtue and is nothing of the kind: it is an active bet that the future will offer a better version of the same flight, and today the bet paid at full odds. <<if $divert is "KAOO">>Landing at the fence converted the wait from cockpit stress into vending-machine boredom, which is the correct trade at any exchange rate.<<elseif $inIMC or $panic gte 1>>It must be said plainly: this good ending sits downstream of a genuinely bad moment, and the evening's smoothness should not be allowed to launder the afternoon's lesson.<<else>>Turning back early is what made the evening version available at all: airplanes that press into the wall rarely get offered the 8 p.m. sky.<</if>> The night-flight decision itself deserves its own line: night over the plateau is not free, and it was made acceptable by specific facts (a confirmed trend, flight following, altitude, fuel), not by wanting it to work.</p>
+<h3>What good judgment looks like here</h3>
+<p>Exactly this sequencing: refuse the bad version, preserve the option, verify the improvement with observations rather than hope, and then fly the good version without flinching. The forecast was never wrong today. It was early, and everyone who respected the difference ate brisket.</p>
+<h3>Key takeaway</h3>
+<p>The weather doesn't negotiate, but it does reschedule. Be around for the reschedule.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readEscape to false>><<set $gates to false>><<set $delayed to false>><<set $onTop to false>><<set $inIMC to false>><<set $confessed to false>><<set $panic to 0>><<set $probes to 0>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_KAOO_Wait [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the courtesy car"])>>
+
+The courtesy car is a Crown Victoria of indeterminate vintage that smells like every FBO in America, and it eats the last fifty-five miles in an hour and five minutes of two-lane. You walk into Coop's at 9:20 to a cheer entirely disproportionate to the achievement, and the Warrior spends a quiet night chocked at Altoona, flying home tomorrow in Sunday's promised blue.
+
+<<if $inIMC or $panic gte 2>>Late that night, on Coop's porch with the party warm behind you, you tell him the whole afternoon, including the part your logbook will summarize as "diverted for weather." He listens the way old friends listen and says, finally: "So the airplane's fine, you're fine, and you're here. Sounds like you passed."<</if>>
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The flight ended at the fence and the trip continued by Crown Victoria, which is what fences and courtesy cars are for. The airplane sleeps at a real airport, the pilot sleeps at the destination, and tomorrow's flying happens in tomorrow's weather.</p>
+<h3>ADM analysis</h3>
+<p>The half-flight is an underrated instrument. Altoona banked twenty-five of the eighty miles, converted the remaining fifty-five into ground transportation, and did it all while every option was still open. <<if $inIMC or $panic gte 2>>On this particular path, the fence arrived after the wall had already taught its lesson up close; the honest debrief is that the ground option should have been exercised one decision sooner, and the porch version told to Coop is the version to remember.<<else>>Taken at the fence, on the gates as briefed, this is the system working exactly as designed: the decision was made at the kitchen table and merely executed in the air.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Building the trip out of exchangeable parts: fly what's flyable, drive what isn't, and refuse to let the airplane's location dictate the humans' evening. Also, tip whoever keeps the courtesy car's tank full. That car is safety equipment.</p>
+<h3>Key takeaway</h3>
+<p>A divert isn't the end of the trip; it's a change of vehicle. The mission is the dinner, never the logbook entry.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readEscape to false>><<set $gates to false>><<set $delayed to false>><<set $onTop to false>><<set $inIMC to false>><<set $confessed to false>><<set $panic to 0>><<set $probes to 0>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Home_Low [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: eighteen careful miles"])>>
+
+The eighteen miles home are flown at three thousand feet with the lid just overhead and your attention distributed like a security detail: terrain, towers, the hole's ghost behind you, the ATIS ahead. State College tower clears you to land in a voice that has no idea, and the tie-down chains go on with your hands still carrying a fine vibration that isn't the airplane's.
+
+You sit in the parked Warrior for a while. Then you text Coop the only version that's true: "Not tonight. Long story. Telling it tomorrow with pancakes."
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The on-top gamble ended with a closing hole, a spiraling descent through it, and eighteen chastened miles home under a low lid. Nothing was bent. Everything was spent: the margin, the daylight, and whatever remained of the theory that a VFR pilot can out-plan an undercast.</p>
+<h3>ADM analysis</h3>
+<p>VFR-on-top of a broken layer is a loan against the layer's future behavior, and broken layers over ridge country in a stalled occlusion default on that loan routinely. The decision that made this ending survivable was taking the hole immediately upon finding it, while it was still a hole: five more minutes of hunting a better one and this becomes a different ending. The descent itself (steep, spiraling, inside shrinking walls) is a maneuver with no margin for the leans, flown by a pilot with no instrument proficiency, and it worked because the ground stayed visible. That is one card off the top of the deck.</p>
+<h3>What good judgment looks like here</h3>
+<p>The confession, from on top, while cruising in smooth clear air with full tanks: that phone-a-friend converts the entire problem into a radar service. It was available the whole time. The hole was luck; the radio was a plan, and the difference between those two words is this scenario's entire syllabus.</p>
+<h3>Key takeaway</h3>
+<p>On top of a closing layer, the best hole is a frequency. Spend luck only after the plan runs out.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readEscape to false>><<set $gates to false>><<set $delayed to false>><<set $onTop to false>><<set $inIMC to false>><<set $confessed to false>><<set $panic to 0>><<set $probes to 0>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Grass [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: the pasture"])>>
+
+You fly it like a soft-field landing because it is one: full flaps, minimum speed, the fence at the near end cleared by a comfortable margin, the upslope doing half your braking. The Warrior rolls out in wet grass and stops in four hundred feet, intact, ticking, surrounded by mist and the profound indifference of eleven Angus cattle.
+
+The farmer arrives by side-by-side inside ten minutes, and his opening line enters family legend immediately: "Y'all picked the good field. The other one's got the bull." The sheriff's deputy who follows is mostly curious. The FAA, when you self-report Monday, is businesslike and, on the facts (deteriorating weather, precautionary landing, no damage, no injuries), closes it with a phone call. The Warrior flies out of the pasture two mornings later, light and alone, off two thousand feet of dew-slick grass into a blue sky.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Caught between a cloud deck and a plateau with two hundred feet of clear air, you spent your remaining control on the best available surface instead of hunting for a better future. The airplane is unbent. The story has cattle in it. This is what winning looks like once the earlier doors have closed.</p>
+<h3>ADM analysis</h3>
+<p>The precautionary landing is the most under-taught save in general aviation, and the reason is cultural, not technical: it feels like failure, reads like a headline, and requires admitting aloud that the plan is dead. Measure it instead against its actual alternatives at that moment: a blind climb into cloud on four-year-old instrument skills, or a two-hundred-foot crawl into terrain doing a hundred knots. Against those, a controlled arrival in a chosen field is not the consolation prize. It is the podium.</p>
+<h3>What good judgment looks like here</h3>
+<p>Earlier doors, obviously, and this scenario is full of them. But inside the last room: exactly this. Fly the machine to a full stop on the best surface in reach, favor control over distance, and let the paperwork be tomorrow's problem, because the paperwork for a precautionary landing is a conversation, and the paperwork for the alternatives is a docket. The insurance company would rather buy the farmer a fence. Ask them.</p>
+<h3>Key takeaway</h3>
+<p>A field you chose beats any sky you didn't. Land the airplane while it's still yours to land.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readEscape to false>><<set $gates to false>><<set $delayed to false>><<set $onTop to false>><<set $inIMC to false>><<set $confessed to false>><<set $panic to 0>><<set $probes to 0>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Confess_Vectors [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: talked down, walked away"])>>
+
+The FBO at Altoona produces coffee and a landline feel even though everything is cellular now. Approach's supervisor calls to check on you, which is a thing they do and nobody believes until it happens. There is no violation, no certificate action, no dragging before anyone: there is a suggestion, gently made, that an instrument instructor would enjoy meeting you, and a request to file the ASRS report, which you do that night in Coop's guest room with the party's last laughter coming through the floor and every detail still burned in.
+
+The courtesy car made the dinner, barely. You made the dinner. That sentence took help.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>A VFR pilot <<if $onTop>>trapped on top<<else>>in cloud over rising terrain<</if>> said the true sentence into the radio, and the system built for exactly that sentence did exactly its job: radar, terrain awareness, a calm voice metering out one instruction at a time, and a vector to the side of the weather with a runway under it. Twenty minutes of borrowed competence, repaid in full at the tie-downs.</p>
+<h3>ADM analysis</h3>
+<p>Run the accounting on the confession honestly, because pilot culture keeps the books wrong. Cost: saying "I need help" on a recorded frequency, and a bruise to the ego that healed by dinner. Return: an extra crew member with a God's-eye view, terrain separation you could not provide yourself, and structure (headings, altitudes, readbacks) that is itself an anti-panic instrument: the leans lose their vote when someone keeps handing your scan a next task. The pilots who die in this scenario's fatal branch almost all had this frequency available and unkeyed. <<if $panic gte 2>>The confession came late on this path, after the situation had already taxed the account. Late beats never by exactly one lifetime.<</if>></p>
+<h3>What good judgment looks like here</h3>
+<p>Making the call one branch earlier, from clear air, when it would have been a request instead of a rescue. And afterward: the ASRS report, the instructor's phone number actually dialed, and the story told straight at the table, because hangar honesty is how one pilot's Tuesday becomes another pilot's checklist.</p>
+<h3>Key takeaway</h3>
+<p>"I need help" is a complete sentence and the best one in the AIM. The frequency can't hear pride. It can only hear words.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readEscape to false>><<set $gates to false>><<set $delayed to false>><<set $onTop to false>><<set $inIMC to false>><<set $confessed to false>><<set $panic to 0>><<set $probes to 0>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_LBE_Squeaked [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: through the keyhole"])>>
+
+The plateau finally tilts down, the mist lifts a grudging hundred feet at a time, and the Latrobe valley opens ahead exactly as promised: scattered clouds, ten miles, a tower voice, an enormous lit runway. You land at 6:40, tie down with hands that need two tries per knot, and walk into Coop's at 7:15 to a hero's welcome for a flight that was twenty feet and one powerline from being none of this.
+
+The dinner is wonderful. You are quieter than usual, and only you know the exchange rate.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>The duck-under worked. That sentence, complete and true, is the most dangerous artifact this flight produced, because it will file itself in memory as evidence. The wires were cleared blind. The plateau crawl at four hundred feet threaded turbines in mist. Every card came off the top of the deck, and the deck owed you nothing.</p>
+<h3>ADM analysis</h3>
+<p>Outcome bias has a specific mechanism worth naming: the memory of fear fades faster than the memory of success, so surviving a terrible bet quietly raises the odds you'll accept the next one. Tonight's data point, honestly labeled, reads: pressed into a closing notch, escaped a powerline by an unknowable margin, and continued at an altitude and visibility that removed every remaining option except perfection. The FAA's accident files hold hundreds of flights identical to this one through the final decision, differing only in the last variable, which was never under anyone's control.</p>
+<h3>What good judgment looks like here</h3>
+<p>Nothing after the notch, because after the notch there were no good options, only degrees of exposure: that is what "behind the airplane" means at the scale of a whole flight. The good judgment lived earlier, at Altoona, at the wisps, at the sagging curtain, and it is all still available on the other branches. The honest move now is the one this ending's silence at dinner is circling: tell the story straight, to Coop, to the logbook, to an instructor, and let the fear finish its work before the fading starts.</p>
+<h3>Key takeaway</h3>
+<p>Getting away with it and getting it right are different events that feel identical from the inside. Only one of them repeats safely. Label tonight correctly before your memory does it for you.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readEscape to false>><<set $gates to false>><<set $delayed to false>><<set $onTop to false>><<set $inIMC to false>><<set $confessed to false>><<set $panic to 0>><<set $probes to 0>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
+
+:: End_Spiral [scenario ending]
+<<set $pathArray to $pathArray.concat(["Ending: 174 seconds"])>>
+
+<<if $pathArray.includes("Hunted onward at two hundred feet")>>The pasture's valley narrows, the mist thickens, and the clear air under the cloud goes from two hundred feet to one hundred to a suggestion. The climb, when it finally can't be refused, happens into full cloud with the airspeed already unsettled.<<else>>The correction your body demanded feels, for four full seconds, like the airplane coming right.<</if>> The attitude indicator shows a bank you don't feel, steepening. The airspeed builds. The altimeter begins to unwind, slowly, then not slowly, and the sound of the airframe changes to a note you have never heard an airplane make.
+
+Radar records the rest with its usual patience: a right turn tightening through three revolutions, altitude trading for airspeed at an accelerating exchange, the last return at 2,700 feet in terrain that reaches 2,600. The wreckage path through the treetops is short. The recorded weather at the nearest station, for the report's purposes: ceiling overcast, visibility four, mist.
+
+The NTSB's probable cause will run twenty-eight words. The docket's most-read document, as always, will be the last radar plot, studied late at night by pilots trying to find the moment it was still recoverable. It is earlier than any of them think. It always is.
+
+<hr>
+<div class="debrief">
+<h3>What happened</h3>
+<p>Continued VFR flight into instrument conditions, followed by spatial disorientation and an uncontrolled descent: the general aviation accident report so common its template needs only names and dates. From cloud entry to the last radar return: just under three minutes, a figure so consistent across these accidents that a famous training film simply used it as a title.</p>
+<h3>ADM analysis</h3>
+<p>The vestibular system cannot fly an airplane, and in cloud it actively prevents an untrained pilot from doing so: every sensation it reports after the first minute is generated by fluid physics, not by the airplane. Overcoming it requires an instrument scan practiced to reflex, which is precisely the skill a VFR pilot lacks by definition. This ending was therefore never going to be decided in the cloud. It was decided in the chain that led there: <<print $badchoices>> choices, each with a reasonable voice attached, each individually survivable, none individually fatal. The cloud only collected.</p>
+<h3>What good judgment looks like here</h3>
+<p>Every other ending in this scenario, and one habit above all: pre-committing, on the ground, in specific words, to what ends the flight, because the pilot at the kitchen table is the only version of you guaranteed to be flying on instruments that work. The confession frequency was available until roughly the final ninety seconds. The 180 was available for hours. The car was available all day.</p>
+<h3>Key takeaway</h3>
+<p>The turn this scenario is named for has one requirement: it must be flown while you still believe you don't need it. After that, it stops being a turn and becomes a wish.</p>
+</div>
+<div class="restart">
+<<link "Return to Start" "FlightPrep">><<set $pathArray to []>><<set $badchoices to 0>><<set $readWeather to false>><<set $readRoute to false>><<set $readAircraft to false>><<set $readEscape to false>><<set $gates to false>><<set $delayed to false>><<set $onTop to false>><<set $inIMC to false>><<set $confessed to false>><<set $panic to 0>><<set $probes to 0>><<set $divert to "">><</link>>
+</div>
+<p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>

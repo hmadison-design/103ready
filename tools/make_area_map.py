@@ -64,6 +64,18 @@ ROUTES = {
         ],
         "airway_labels": [],
     },
+    "one-eighty": {
+        "title": "KUNV to KLBE, 80 nm across the ridge steps",
+        "path": [
+            ("KUNV", 40.8500, -77.8476, "airport"),
+            ("KLBE", 40.2731, -79.4103, "airport", -20, -18),
+        ],
+        "extras": [
+            ("KAOO", 40.2964, -78.3200, "alternate", 8, -14),
+            ("KJST", 40.3156, -78.8347, "alternate", -18, -18),
+        ],
+        "airway_labels": [],
+    },
     "the-forty-five": {
         "title": "KCOU to KEVV, 225 nm, the ladder of outs along the line",
         "path": [
