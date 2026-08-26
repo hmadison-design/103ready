@@ -77,6 +77,7 @@ compile_scenario "one-eighty"
 echo "== Staging landing page =="
 cp public/index.html output/index.html
 cp public/103ready_logo.svg output/103ready_logo.svg
+cp public/admin.html output/admin.html
 
 # Copy per-scenario audio/images if present (referenced at runtime).
 for slug in game-day the-wall cylinder-three breakfast-at-coulter blue-line third-face red-x pink-dot the-gauntlet ice-in-the-cowl crossfeed the-good-engine within-limits cabin-heat the-forty-five one-eighty; do

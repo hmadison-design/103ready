@@ -5,9 +5,11 @@
  * sessions, plus a per-ending breakdown. Aggregates only; no individual
  * events are exposed.
  *
- * Optional protection: set a STATS_TOKEN environment variable on the Pages
- * project and the endpoint will require ?token=<value>. Leave it unset and
- * the endpoint is public (the data is anonymous counts either way).
+ * Protection: set a STATS_TOKEN environment variable on the Pages project
+ * and the endpoint requires the token, supplied either as an
+ * "Authorization: Bearer <token>" header (preferred; used by /admin.html)
+ * or as ?token=<value> (handy for quick manual checks). Leave STATS_TOKEN
+ * unset and the endpoint is public (the data is anonymous counts either way).
  */
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -18,7 +20,10 @@ export async function onRequestGet(context) {
 
   if (env.STATS_TOKEN) {
     const url = new URL(request.url);
-    if (url.searchParams.get("token") !== env.STATS_TOKEN) {
+    const auth = request.headers.get("Authorization") || "";
+    const bearer = auth.startsWith("Bearer ") ? auth.slice(7).trim() : null;
+    const supplied = bearer || url.searchParams.get("token");
+    if (supplied !== env.STATS_TOKEN) {
       return new Response("unauthorized", { status: 401 });
     }
   }
