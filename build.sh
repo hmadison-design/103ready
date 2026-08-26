@@ -52,7 +52,9 @@ compile_scenario() {
     find "${src_dir}" -maxdepth 1 -type f -name '*.twee'
     exit 1
   fi
-  (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}")
+  # shared/tracking.js is compiled into every scenario's Story JavaScript
+  # (anonymous start/completion pings to /api/track; see docs/completion_tracking.md).
+  (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}" "../shared/tracking.js")
 }
 
 compile_scenario "game-day"
