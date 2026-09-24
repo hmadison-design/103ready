@@ -378,7 +378,7 @@ Even a random wine-country Bonanza pilot now knows more about your situation tha
 
 Amber makes a noise between a laugh and a sob. "A random stranger in a Bonanza just gave you the information you needed. How is this your life?"
 
-You haven't established radio contact with anyone who matters. A relay through a random pilot is not communication with the authorities. But you now know what you should have known twelve minutes ago: 121.5. Guard.
+You haven't established radio contact with anyone who matters. A relay through a random pilot is not communication with the authorities. But you now have the one piece of information that was available twelve minutes ago: 121.5. Guard.
 
 <<link "Rock your wings first — you know what to do next" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Finally heading to Guard"])>><</link>>
 

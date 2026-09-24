@@ -19,3 +19,6 @@ node_modules/
 *.tmp
 *.bak
 *~
+
+# Cloud-session sync scratch (patches in transit)
+.claude-sync/

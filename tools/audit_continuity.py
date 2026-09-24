@@ -31,10 +31,20 @@ SPECIAL = {"StoryTitle", "StoryData", "StoryInit", "StoryScript",
            "StoryStylesheet", "StoryCaption", "StoryMenu", "StoryBanner"}
 
 PASSAGE_RE = re.compile(r"^:: *([^\[\{]+?) *(\[[^\]]*\])? *(\{.*\})? *$")
-LINK2_RE = re.compile(r'<<link\s+"((?:[^"\\]|\\.)*)"\s+"((?:[^"\\]|\\.)*)"\s*>>')
+# A quoted macro argument in either quote style. Group 1 is the double-quoted
+# body, group 2 the single-quoted body; exactly one is populated per match.
+# Older scenarios (cylinder-three, the-wall) use <<link '...' "Target">>.
+_Q = r'(?:"((?:[^"\\]|\\.)*)"|\'((?:[^\'\\]|\\.)*)\')'
+LINK2_RE = re.compile(r'<<link\s+' + _Q + r'\s+' + _Q + r'\s*>>')
 LINK1_RE = re.compile(
-    r'<<link\s+"((?:[^"\\]|\\.)*)"\s*>>(.*?)<</link>>', re.DOTALL)
-GOTO_RE = re.compile(r'<<goto\s+"((?:[^"\\]|\\.)*)"\s*>>')
+    r'<<link\s+' + _Q + r'\s*>>(.*?)<</link>>', re.DOTALL)
+GOTO_RE = re.compile(r'<<goto\s+' + _Q + r'\s*>>')
+
+
+def _q(m, n):
+    """Return the n-th quoted argument of a match built from _Q (1-based)."""
+    a, b = m.group(2 * n - 1), m.group(2 * n)
+    return a if a is not None else b
 WIKI_RE = re.compile(r"\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]")
 RESET_HINT = re.compile(r"return to start|try again|play again|start over",
                         re.IGNORECASE)
@@ -63,18 +73,18 @@ def links_of(text):
     out = []
     # <<link "text" "Target">>
     for m in LINK2_RE.finditer(text):
-        out.append((m.group(1), m.group(2)))
+        out.append((_q(m, 1), _q(m, 2)))
     # <<link "text">> ... <<goto "Target">> ... <</link>>
     for m in LINK1_RE.finditer(text):
-        body = m.group(2)
+        body = m.group(3)
         g = GOTO_RE.search(body)
         if g:
-            out.append((m.group(1), g.group(1)))
+            out.append((_q(m, 1), _q(g, 1)))
     # plain <<goto>> outside <<link>> (e.g., timed advance) — count target only
     stripped = LINK1_RE.sub("", text)
     stripped = LINK2_RE.sub("", stripped)
     for m in GOTO_RE.finditer(stripped):
-        out.append(("(auto-advance)", m.group(1)))
+        out.append(("(auto-advance)", _q(m, 1)))
     # wiki links
     for m in WIKI_RE.finditer(text):
         label = m.group(1)
@@ -177,6 +187,10 @@ def audit(path, verbose=False):
     for nm, ls in graph.items():
         for c, t in ls:
             if c == "(auto-advance)" or is_reset(c, t):
+                continue
+            # Navigation links (leading arrow glyph or entity) are not
+            # decisions; identical nav text across passages is expected.
+            if re.match(r"^\s*(?:<[^>]+>\s*)*(?:\u2190|&larr;)", c):
                 continue
             by_choice[norm_choice(c)].add(nm)
     for c, where in sorted(by_choice.items()):
