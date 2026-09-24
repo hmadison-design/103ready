@@ -3,67 +3,113 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>103 Ready — Know It All</title>
-<meta name="description" content="Choose Your Own Adventure training scenarios for general aviation pilots.">
+<title>103 Ready: Know It All</title>
+<meta name="description" content="Sixteen branching decision-making scenarios for general aviation pilots. Real airplanes, real weather, real consequences, no quiz.">
 <style>
   :root {
     --accent: #1A3C57;
     --accent-hover: #2E5C82;
+    --text: #ddd;
+    --muted: #8a9bb0;
+    --rule: #1c2a38;
   }
   html, body {
-    height: 100%;
     margin: 0;
     padding: 0;
   }
   body {
     background: #000;
-    color: #ddd;
+    color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-    display: flex;
-    align-items: safe center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 2vh 4vw;
+    line-height: 1.5;
+    padding: 2vh 4vw 6vh;
     box-sizing: border-box;
   }
   .wrap {
-    text-align: center;
     width: 100%;
     max-width: 900px;
+    margin: 0 auto;
+  }
+  .hero {
+    text-align: center;
   }
   .logo {
-    height: 50vh;
-    max-height: 520px;
+    height: 38vh;
+    max-height: 420px;
     max-width: 90vw;
     width: auto;
     display: block;
-    margin: 0 auto 3vh;
+    margin: 0 auto 2vh;
   }
-  nav ul {
+  .lede {
+    max-width: 640px;
+    margin: 0 auto 1.2em;
+    font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+    color: var(--text);
+  }
+  .lede-sub {
+    max-width: 640px;
+    margin: 0 auto 4vh;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .catalog {
     list-style: none;
     margin: 0;
     padding: 0;
+    border-top: 1px solid var(--rule);
   }
-  nav li {
-    margin: 0.9em 0;
+  .catalog li {
+    border-bottom: 1px solid var(--rule);
   }
-  nav a {
-    color: var(--accent);
+  .catalog a {
+    display: block;
+    color: inherit;
     text-decoration: none;
-    font-size: clamp(1.25rem, 2.6vw, 1.9rem);
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    padding: 0.35em 0.6em;
+    padding: 1.1em 0.8em;
     border-radius: 4px;
-    transition: color 0.2s ease, background 0.2s ease;
+    transition: background 0.2s ease;
   }
-  nav a:hover, nav a:focus {
-    color: #fff;
-    background: var(--accent);
+  .catalog a:hover, .catalog a:focus {
+    background: #0d1823;
     outline: none;
   }
+  .catalog a:hover .title, .catalog a:focus .title {
+    color: #fff;
+  }
+  .title {
+    color: var(--accent-hover);
+    font-size: clamp(1.15rem, 2.2vw, 1.45rem);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    margin: 0 0 0.25em;
+    transition: color 0.2s ease;
+  }
+  .premise {
+    margin: 0 0 0.45em;
+    color: var(--text);
+  }
+  .meta {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+    letter-spacing: 0.02em;
+  }
+  .meta span + span::before {
+    content: "\00b7";
+    margin: 0 0.5em;
+    color: #445;
+  }
+  .about {
+    max-width: 640px;
+    margin: 6vh auto 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .about p { margin: 0 0 1em; }
   footer {
     margin-top: 4vh;
+    text-align: center;
     color: #555;
     font-size: 0.8rem;
     letter-spacing: 0.05em;
@@ -72,28 +118,103 @@
 </head>
 <body>
 <main class="wrap">
-  <img class="logo" src="103ready_logo.svg" alt="103 Ready — Know It All">
-  <nav>
-    <ul>
-      <li><a href="game-day.html">Game Day</a></li>
-      <li><a href="the-wall.html">The Wall</a></li>
-      <li><a href="cylinder-three.html">Cylinder Three</a></li>
-      <li><a href="breakfast-at-coulter.html">Breakfast at Coulter</a></li>
-      <li><a href="blue-line.html">The Blue Line</a></li>
-      <li><a href="third-face.html">The Third Face</a></li>
-      <li><a href="red-x.html">The Red X</a></li>
-      <li><a href="pink-dot.html">The Pink Dot</a></li>
-      <li><a href="the-gauntlet.html">The Gauntlet</a></li>
-      <li><a href="ice-in-the-cowl.html">Ice in the Cowl</a></li>
-      <li><a href="crossfeed.html">Crossfeed</a></li>
-      <li><a href="the-good-engine.html">The Good Engine</a></li>
-      <li><a href="within-limits.html">Within Limits</a></li>
-      <li><a href="cabin-heat.html">Cabin Heat</a></li>
-      <li><a href="the-forty-five.html">The Forty-Five</a></li>
-      <li><a href="one-eighty.html">One Eighty</a></li>
+  <header class="hero">
+    <img class="logo" src="103ready_logo.svg" alt="103 Ready: Know It All">
+    <p class="lede">Sixteen branching scenarios where you are the pilot in command, the information is incomplete, and the airplane does exactly what airplanes do when you get it wrong.</p>
+    <p class="lede-sub">Each one takes fifteen to forty minutes. There are no right-answer buzzers. You make the call, you live with it, and the debrief at the end tells you what it cost.</p>
+  </header>
+
+  <nav aria-label="Scenario catalog">
+    <ul class="catalog">
+      <li><a href="one-eighty.html">
+        <p class="title">One Eighty</p>
+        <p class="premise">Marginal VFR across the Allegheny ridges to a reunion dinner, in a Warrior, with 620 hours and no instrument rating. The early 180 is cheap. The late one is not.</p>
+        <p class="meta"><span>Piper Warrior II</span><span>KUNV to KLBE</span><span>VFR into IMC, the confession call</span><span>20 to 30 min</span></p>
+      </a></li>
+      <li><a href="the-forty-five.html">
+        <p class="title">The Forty-Five</p>
+        <p class="premise">A night cross-country in a rented Archer where the fuel math was done once, at the kitchen table, from a number nobody verified. Legal reserve and actual reserve turn out to be different things.</p>
+        <p class="meta"><span>Piper Archer II</span><span>KCOU to KEVV</span><span>Fuel planning, destination fixation</span><span>20 to 30 min</span></p>
+      </a></li>
+      <li><a href="cabin-heat.html">
+        <p class="title">Cabin Heat</p>
+        <p class="premise">Severe clear, minus eighteen on the ramp, and a muff heater on a fifty-year-old exhaust. The weather is perfect. That is the whole problem.</p>
+        <p class="meta"><span>Cessna 182P</span><span>KBRD to KINL, Minnesota</span><span>Carbon monoxide, subtle incapacitation</span><span>20 to 30 min</span></p>
+      </a></li>
+      <li><a href="within-limits.html">
+        <p class="title">Within Limits</p>
+        <p class="premise">A magneto drop that is technically inside the book number, a passenger who is smarter than you and has a deadline, and a high-elevation departure from Alpine, Texas. Everything is within limits until it isn't.</p>
+        <p class="meta"><span>Piper Saratoga II HP</span><span>Alpine, TX (E38)</span><span>Passenger pressure, ambiguous mechanical evidence</span><span>20 to 30 min</span></p>
+      </a></li>
+      <li><a href="the-good-engine.html">
+        <p class="title">The Good Engine</p>
+        <p class="premise">One engine quits over the ridges east of Lexington. The other one is fine, and that is where the trouble starts, because a good engine buys you options and then quietly takes them away one at a time.</p>
+        <p class="meta"><span>Piper Twin Comanche</span><span>KLEX to KLWB</span><span>Single-engine arrival, commit gates</span><span>20 to 30 min</span></p>
+      </a></li>
+      <li><a href="crossfeed.html">
+        <p class="title">Crossfeed</p>
+        <p class="premise">Four hundred thirty miles of West Texas at night in a Seneca, and an engine failure you caused yourself with a fuel selector. Diagnose before you secure, or feather the wrong thing.</p>
+        <p class="meta"><span>Piper Seneca II</span><span>KSAT to KELP</span><span>Twin fuel management, diagnosis under uncertainty</span><span>25 to 35 min</span></p>
+      </a></li>
+      <li><a href="ice-in-the-cowl.html">
+        <p class="title">Ice in the Cowl</p>
+        <p class="premise">Winter IFR in an Arrow that is not certified for ice, with mixed PIREPs, unknown tops, and a ten-year-old nephew in the right seat who is very sure he can see the wing.</p>
+        <p class="meta"><span>Piper Arrow IV</span><span>KJEF to KMLE</span><span>Structural icing, information-source validation</span><span>20 to 30 min</span></p>
+      </a></li>
+      <li><a href="the-gauntlet.html">
+        <p class="title">The Gauntlet</p>
+        <p class="premise">Washington to Teterboro in a Vision Jet on a Monday morning, single pilot, with New York Approach amending your clearance faster than you can read it. Nothing here is hard. All of it is at once.</p>
+        <p class="meta"><span>Cirrus SF50 Vision Jet</span><span>KDCA to KTEB</span><span>Task saturation, IFR amendments, go-around discipline</span><span>20 to 25 min</span></p>
+      </a></li>
+      <li><a href="pink-dot.html">
+        <p class="title">The Pink Dot</p>
+        <p class="premise">Wednesday of AirVenture week, the FISK arrival, a 32-page NOTAM, and your oldest friend in the right seat wearing four cameras. Rock your wings. Land on the dot. Do not ask questions on frequency.</p>
+        <p class="meta"><span>Piper Arrow II</span><span>KSGF to KOSH via RIPON</span><span>Special-event VFR arrival, non-pilot CRM</span><span>20 to 30 min</span></p>
+      </a></li>
+      <li><a href="red-x.html">
+        <p class="title">The Red X</p>
+        <p class="premise">The G1000 puts a red X over the attitude indicator north of a warm front, with ceilings at minimums ahead and your sister asking what the red thing means. Partial panel is a skill. Choosing where to use it is the decision.</p>
+        <p class="meta"><span>Cessna 182T, G1000 NXi</span><span>KSTL to KBUU</span><span>AHRS failure, alternates, no-gyro vectors</span><span>25 to 35 min</span></p>
+      </a></li>
+      <li><a href="third-face.html">
+        <p class="title">The Third Face</p>
+        <p class="premise">Concord to Medford in a FIKI SR22T, through weather that looks fine on the surface analysis, fine on the prog chart, and different in the airplane. Three faces of the same system, and only one of them is honest.</p>
+        <p class="meta"><span>Cirrus SR22T</span><span>KCCR to KMFR</span><span>Weather interpretation, icing, CAPS awareness</span><span>30 to 40 min</span></p>
+      </a></li>
+      <li><a href="blue-line.html">
+        <p class="title">The Blue Line</p>
+        <p class="premise">A Baron over the Continental Divide with a keynote waiting in Grand Junction and an engine monitor telling you something you would rather not hear. Two engines are a redundancy. They are also two chances to be wrong.</p>
+        <p class="meta"><span>Beechcraft B58 Baron</span><span>KAPA to KGJT</span><span>Multi-engine decision-making, terrain, schedule pressure</span><span>30 to 40 min</span></p>
+      </a></li>
+      <li><a href="the-wall.html">
+        <p class="title">The Wall</p>
+        <p class="premise">Broomfield to Aspen in a 182 for a wedding, with cumulus building along the Sawatch at five hundred feet a minute and a gap ahead that might be two miles wide or might be closing. Mountain weather, in real time.</p>
+        <p class="meta"><span>Cessna 182T, G1000</span><span>KBJC to KASE</span><span>Mountain weather, holding versus diverting</span><span>30 to 45 min</span></p>
+      </a></li>
+      <li><a href="cylinder-three.html">
+        <p class="title">Cylinder Three</p>
+        <p class="premise">A rough engine over western Oklahoma, a wedding tomorrow, and a lean setting that makes the roughness go away. The engine monitor knows what is happening. The question is whether you want to.</p>
+        <p class="meta"><span>Cessna 182T, G1000</span><span>KSWO to KCSM</span><span>Engine diagnosis, plan continuation</span><span>20 to 30 min</span></p>
+      </a></li>
+      <li><a href="breakfast-at-coulter.html">
+        <p class="title">Breakfast at Coulter</p>
+        <p class="premise">Sixty-five miles to a pancake fly-in at a non-towered field on a June Sunday. Nothing dramatic happens. Ten small pieces of aeronautical knowledge decide whether you get pancakes.</p>
+        <p class="meta"><span>Cessna 172R</span><span>KGTU to KCFD</span><span>Knowledge application, non-towered operations</span><span>25 to 35 min</span></p>
+      </a></li>
+      <li><a href="game-day.html">
+        <p class="title">Game Day</p>
+        <p class="premise">Super Bowl Sunday, an amphibious Icon A5, a date to impress, and a TFR you did not read. Two F-16s would like a word. Nobody dies. Your weekend does.</p>
+        <p class="meta"><span>Icon A5</span><span>KMRY to KNUQ, escorted</span><span>TFR compliance, intercept procedures</span><span>15 to 20 min</span></p>
+      </a></li>
     </ul>
   </nav>
-  <footer>For general aviation pilots. Training fiction — not a substitute for PIC judgement.</footer>
+
+  <section class="about">
+    <p>These scenarios are written for pilots with a few hundred hours who already know the regulations and want practice at the part the regulations cannot cover: judgment with incomplete information. The narrator never grades you mid-flight. Every ending has a debrief that explains what happened and why, and the ones that go badly are the ones worth replaying.</p>
+    <p>Nothing here records who you are. The site counts starts and endings anonymously so we know which scenarios get finished and which ones lose people, and that is all.</p>
+  </section>
+
+  <footer>For general aviation pilots. Training fiction, not a substitute for PIC judgment.</footer>
 </main>
 </body>
 </html>
