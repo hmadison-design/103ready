@@ -982,11 +982,11 @@ Below you, looking down the Roaring Fork Valley toward Aspen from here: mixed co
 Two realistic options from here.
 
 <<link "A2b-Land. Land at Rifle in the gusty crosswind. You're an experienced pilot. The runway is seven thousand feet long and one hundred feet wide. You've handled gusty crosswinds before—not quite this gusty, but you know how to crab and slip. It's challenging but manageable." "A2b-LandRifle">>
-	<<set $pathArray to $pathArray.concat(["Landed at Rifle Municipal in 36-knot gust crosswind")])>>
+	<<set $pathArray to $pathArray.concat(["Landed at Rifle Municipal in 36-knot gust crosswind"])>>
 <</link>>
 
 <<link "A2b-Return. The crosswind is too much for comfort. You're not in a racing situation. Burn the fuel and fly back to Eagle where the runway is better aligned for today's wind. Safe and professional." "A2b-GoAroundEagle">>
-	<<set $pathArray to $pathArray.concat(["Returned to Eagle County, gave up Rifle approach")])>>
+	<<set $pathArray to $pathArray.concat(["Returned to Eagle County, gave up Rifle approach"])>>
 <</link>>
 
 :: A2b-LandRifle [scenario branch-a ending]
