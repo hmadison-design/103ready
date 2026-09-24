@@ -98,6 +98,15 @@
     </table>
   </div>
 
+  <div class="panel" id="wingsPanel">
+    <h2 style="font-size:15px;margin:0 0 6px;">WINGS submissions</h2>
+    <p class="sub" id="wingsNote" style="margin:0 0 10px">Learners who passed a knowledge check and submitted a code. Validate each on FAASafety.gov, then mark it here.</p>
+    <table id="wingsTable">
+      <thead><tr><th>Submitted</th><th>Scenario</th><th>Email</th><th>Code</th><th class="num">Score</th><th>Status</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
   <div id="migrationNote" class="panel" hidden>
     <h2 style="font-size:15px;margin:0 0 6px;">Visitor, attribution, and path data not enabled yet</h2>
     <p class="sub" style="margin:0">The database has not had db/migrations/001_visitor_attribution_path.sql applied. Until it is, the site records only starts and endings. Paste that file into the D1 console for r103-tracking and refresh.</p>
@@ -230,6 +239,7 @@
     document.querySelector("#endTable tbody").innerHTML =
       er || "<tr><td colspan=3 style='color:var(--dim)'>No endings yet.</td></tr>";
 
+    loadWings();
     document.getElementById("migrationNote").hidden = !!data.migrated;
     document.getElementById("migrated").hidden = !data.migrated;
     if (!data.migrated) { return; }
@@ -259,6 +269,34 @@
       return "<tr><td>" + esc(v.scenario) + "</td><td class=ending-name>" + esc(v.version) +
         "</td><td class=num>" + v.starts + "</td><td class=num>" + v.unique_completers + "</td></tr>";
     }).join("");
+  }
+
+  function loadWings() {
+    var token = null;
+    try { token = localStorage.getItem(KEY); } catch (e) {}
+    fetch("/api/wings", { headers: { "Authorization": "Bearer " + token } })
+      .then(function (r) { return r.ok ? r.json() : { submissions: [] }; })
+      .then(function (d) {
+        var rows = (d.submissions || []).map(function (s) {
+          var status = s.validated_at
+            ? "<span style='color:var(--good)'>validated " + esc(s.validated_at.slice(0, 10)) + "</span>"
+            : "<button class=ghost data-code=\"" + esc(s.code) + "\">Mark validated</button>";
+          return "<tr><td>" + esc((s.submitted_at || "").slice(0, 16)) + "</td><td>" + esc(s.scenario || "?") +
+            "</td><td>" + esc(s.email) + "</td><td class=ending-name>" + esc(s.code) + "</td><td class=num>" +
+            (s.score == null ? "" : esc(s.score)) + "</td><td>" + status + "</td></tr>";
+        }).join("");
+        document.querySelector("#wingsTable tbody").innerHTML =
+          rows || "<tr><td colspan=6 style='color:var(--dim)'>" +
+          (d.migrated === false ? "Migration 002 not applied yet." : "No submissions yet.") + "</td></tr>";
+        document.querySelectorAll("#wingsTable button[data-code]").forEach(function (b) {
+          b.addEventListener("click", function () {
+            b.disabled = true;
+            fetch("/api/wings", { method: "POST", headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+              body: JSON.stringify({ code: b.getAttribute("data-code"), validated: true }) })
+              .then(function () { loadWings(); });
+          });
+        });
+      }).catch(function () {});
   }
 
   function kpi(n, label) {

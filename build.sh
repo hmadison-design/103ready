@@ -62,7 +62,9 @@ compile_scenario() {
   # shared/tracking.js is compiled into every scenario's Story JavaScript
   # (anonymous visit/start/passage/ending pings to /api/track; see
   # docs/completion_tracking.md). The version file must come first.
-  (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}" "version-${slug}.js" "../shared/tracking.js")
+  # shared/knowledge_check.js adds the end-of-scenario check and completion
+  # code on scenarios that have a question pool (functions/api/_questions).
+  (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}" "version-${slug}.js" "../shared/tracking.js" "../shared/knowledge_check.js")
 }
 
 compile_scenario "game-day"
@@ -87,6 +89,7 @@ cp public/index.html output/index.html
 cp public/103ready_logo.svg output/103ready_logo.svg
 cp public/admin.html output/admin.html
 cp public/privacy.html output/privacy.html
+cp public/wings.html output/wings.html
 # The landing page loads tracking.js as a plain script for first-touch
 # attribution; scenarios get it compiled in by tweego above.
 cp shared/tracking.js output/tracking.js
