@@ -91,6 +91,12 @@ cp public/privacy.html output/privacy.html
 # attribution; scenarios get it compiled in by tweego above.
 cp shared/tracking.js output/tracking.js
 
+# Shared sound library. Scenarios reference it as a relative "audio/..."
+# path, which resolves to /audio/ at the site root, so it lives here once
+# rather than in every scenario folder.
+mkdir -p output/audio
+cp -r shared/audio/. output/audio/
+
 # Copy per-scenario audio/images if present (referenced at runtime).
 for slug in game-day the-wall cylinder-three breakfast-at-coulter blue-line third-face red-x pink-dot the-gauntlet ice-in-the-cowl crossfeed the-good-engine within-limits cabin-heat the-forty-five one-eighty; do
   for sub in audio images; do

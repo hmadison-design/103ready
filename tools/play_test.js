@@ -6,7 +6,7 @@
 const { chromium } = require('playwright');
 const http = require('http'); const fs = require('fs'); const path = require('path');
 const root = process.argv[2]; const slugs = process.argv.slice(3);
-const mime = { '.html': 'text/html', '.js': 'text/javascript', '.mp3': 'audio/mpeg', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
+const mime = { '.mp3': 'audio/mpeg', '.html': 'text/html', '.js': 'text/javascript', '.mp3': 'audio/mpeg', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml' };
 const tracked = [];
 const srv = http.createServer((req, res) => {
   if (req.url.startsWith('/api/track')) { let b=''; req.on('data', d=>b+=d); req.on('end', ()=>{ try{tracked.push(JSON.parse(b));}catch(e){} res.writeHead(204); res.end(); }); return; }
