@@ -330,7 +330,7 @@ Each scenario addresses **one primary topic** and optionally a **secondary topic
 - **Intermediate passages:** 100–250 words
 - **Decision prompts:** 20–60 words per choice
 - **Debrief:** 200–400 words
-- **Scenario total (all passages combined):** 3,000–6,000 words
+- **Scenario total (all passages combined):** 7,000 to 18,000 words as built. The original 3,000 to 6,000 target predates the library; as of September 2026 the sixteen scenarios run from about 6,600 words (Breakfast at Coulter) to about 26,500 (The Wall, an outlier), with a median near 9,000. Treat 7,000 as the floor for a scenario with real decision depth and 18,000 as the point where a reader's session gets long.
 
 ---
 
@@ -347,8 +347,8 @@ Use **SugarCube 2** as the Twine story format. It offers:
 
 ### Structural Conventions in Twine
 - **Each passage = one narrative beat.** Opening node, each decision result, and each ending are separate passages.
-- **Name passages clearly:** Use descriptive names like `Weather-Depart`, `Weather-Delay`, `Fuel-EmergDeclared`, `Ending-OffAirport`, `Ending-Fatal`, etc. Avoid generic names like `Passage 7`.
-- **Use tags** to organize passages by scenario, audience, topic, and ending type (e.g., tags: `pilot`, `weather`, `ending-diversion`).
+- **Name passages clearly:** Use descriptive, phase-prefixed names like `Cruise_D3_Descend`, `Approach_HoldWest`, `End_Diverted_KSTJ`. Endings start with `End_`. Avoid generic names like `Passage 7`. Never rename an ending passage in a published scenario: the ending name is the key in the completion-tracking database, and a rename splits that ending's history in two.
+- **Tag every story passage** `[scenario]`, every ending `[scenario ending]`, and preflight material `[preflight]`. The `ending` tag is what the completion tracker keys on (see Section 15); a terminal passage without it is invisible to analytics. As of September 2026 all sixteen scenarios carry these tags.
 - **Variables for tracking:** Use SugarCube's `$variable` system to track how many "poor decisions" a learner has made. This is used to conditionally alter debrief language or unlock a path-summary page.
 
 ### Example Variable Logic
@@ -552,4 +552,37 @@ Before making any edit to a .twee file:
 
 ---
 
-*These instructions should be reviewed and updated as the scenario library grows and as feedback from users informs what works. Version 3.1 — April 2026.*
+## 15. Instrumentation Requirements
+
+Every scenario is instrumented at build time, not by hand. `build.sh` compiles `shared/tracking.js` into each scenario's Story JavaScript, and that script sends anonymous `start` and `ending` events to `/api/track` (Cloudflare Pages Function, D1 database). The design rule that makes this reliable is simple: a scenario must never require its own tracking edits. Anything that turns instrumentation into a per-scenario manual step will eventually be skipped, and the data will quietly go bad.
+
+What a scenario must do so the shared instrumentation works:
+
+1. Tag every ending passage `[scenario ending]`. The tracker detects endings by the `ending` tag first and by an `End`/`Ending-` name prefix second. Tagging is the contract; the name-prefix fallback exists for the legacy scenarios.
+2. Keep ending passage names stable once published. The ending name is stored verbatim in the tracking database.
+3. Append to `$pathArray` in every passage (`<<set $pathArray to $pathArray.concat(["<short description>"])>>`). The path through a scenario, not the ending, is the instructional asset; the tracker will log it.
+4. Do not add `sessionStorage`, `localStorage`, cookies, or network calls inside a scenario. All of that lives in `shared/tracking.js`, and only there.
+
+Planned additions to the shared tracker, in this order, each requiring no scenario edits: a durable per-visitor identifier alongside the per-tab session id; first-touch attribution (referrer, UTM parameters, landing page) stored once per visitor; a scenario version string stamped at build time; and per-passage path logging. The reasoning is in the project note "103Ready Instrumentation Triage" (September 2026).
+
+Decision-level data stays in its own logical domain. Only deliberately chosen aggregates cross into business analytics, and the site says so plainly. Learners who suspect their choices feed a marketing system start performing instead of deciding, and the instructional signal degrades without warning.
+
+---
+
+## 16. Library Conventions and the Legacy Four
+
+Twelve of the sixteen scenarios were built against these instructions in their current form. Four predate them: Game Day, Breakfast at Coulter, Cylinder Three, and The Wall. Anyone editing those four should expect the following differences and should not "fix" them casually, because some of the differences are load-bearing.
+
+Ending names. The legacy four use their own naming schemes (`Ending-Cooperate`, `EndPancakesEarned`, `A3-DeclareEmergency`, `B1a-CommitLanding`). These names are recorded in the tracking database and are left as they are. Tags were added in September 2026 so the tracker no longer depends on the name prefix.
+
+Prose rules. The legacy four were written before the Writing Guardrails and Text DNA rules were applied to scenarios, and `tools/style_lint.py` reports several hundred errors across them, almost all em dashes. Bringing them into compliance is prose editing, not mechanical replacement, and is scheduled as its own QA pass.
+
+Decision depth. Cylinder Three has thirteen endings reachable in three decisions, below the Section 4d minimum of four. That is a structural finding, not a lint finding, and it is on the record rather than patched.
+
+Link syntax. Cylinder Three and The Wall use single-quoted first arguments in `<<link '...' "Target">>`. The audit tool accepts both quote styles as of September 2026; earlier versions reported these as broken links.
+
+Current build gate for every merge, legacy or not: `bash tools/check_all.sh` (lint plus continuity audit), then `bash build.sh`, then `node tools/play_test.js output <slug>` to play each touched scenario to an ending headlessly and confirm the tracking events fire.
+
+---
+
+*These instructions should be reviewed and updated as the scenario library grows and as feedback from users informs what works. Version 3.2, September 2026: length targets reset to as-built figures, tagging made mandatory, Sections 15 and 16 added.*

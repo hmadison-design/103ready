@@ -133,8 +133,33 @@ TAF, PIREP UA/UUA, AIRMET text). Flight plans and performance data use
 ## 4. Structure targets
 
 Deep branching, not a ladder (Blue Line and Third Face already own the
-ladder pattern). Aim for 45-85 passages, 10-14 endings, minimum decision
-depth 4 on every path (the audit enforces this), typical path depth 5-9.
+ladder pattern). Aim for 45-85 passages, 8-14 endings, 7,000-18,000
+words of prose, minimum decision depth 4 on every path (the audit enforces
+this), typical path depth 5-9.
+
+Library as built, September 2026 (words are prose only, macros and markup
+stripped; other columns from tools/audit_continuity.py):
+
+    slug                 words  passages  decisions  endings  depth
+    blue-line             7917        62         11       10  11
+    breakfast-at-coulter  6643        66         11       12  11   (legacy)
+    cabin-heat           11977        50         28       13  4-7
+    crossfeed            17927        73         31       14  6-9
+    cylinder-three       13530        32         10       18  3-4  (legacy)
+    game-day              7621        41         19        9  5-6  (legacy)
+    ice-in-the-cowl      12271        59         33       12  4-5
+    one-eighty            6936        37         21        8  4-6
+    pink-dot              7616        57         17        8  4-6
+    red-x                 9797        84         24        7  4-9
+    the-forty-five        7436        29         11        9  6-8
+    the-gauntlet          7229        53         12        9  5-9
+    the-good-engine      15079        55         27       13  6-8
+    the-wall             26497        53         21       20  4-5  (legacy)
+    third-face            8736        67         16       12  4-11
+    within-limits        11852        54         28       12  4-9
+
+Blue Line and Third Face hit depth 11 because they are ladders; that is
+not the target for new work.
 Mix ending types per Design Instructions Section 4f: most bad paths end in
 friction, delay, diversion, regulatory trouble, or a survivable off-airport
 landing. Aircraft damage is rarer. Fatal endings: at most one or two, and
@@ -220,11 +245,16 @@ From repo root:
 
     python3 tools/audit_continuity.py scenarios/<slug>/<File>.twee
     python3 tools/style_lint.py scenarios/<slug>/<File>.twee
-    python3 tools/convert_twee.py <slug>
+    bash build.sh
+    NODE_PATH=$(npm root -g) node tools/play_test.js output <slug>
 
 Audit must end "No problems found." Lint must show zero ERRORs (WARNs are
-allowed only with a stated reason per instance). convert_twee must complete
-without complaint. Then walk Section 12 of the Design Instructions as a
+allowed only with a stated reason per instance). build.sh must compile the
+scenario, and play_test.js must report PASS on all three runs (it plays
+the scenario to an ending in headless Chromium and confirms the start and
+ending tracking events fire; it needs Playwright installed globally).
+`bash tools/check_all.sh --quiet` runs lint and audit across the whole
+library and is the merge gate for main. Then walk Section 12 of the Design Instructions as a
 self-checklist, and hand-trace every convergence point per Section 14: read
 every incoming link against the convergence text.
 
