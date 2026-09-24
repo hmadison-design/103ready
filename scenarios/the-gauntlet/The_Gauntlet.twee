@@ -123,7 +123,7 @@ hr {
     margin: 2em 0 1em;
 }
 
-:: Start
+:: Start [scenario]
 You are N227ER, a Cirrus SF50 Vision Jet G2+, sitting third in line for taxi at Runway 1 at Ronald Reagan Washington National Airport (KDCA). It is 0828 local on a bright Monday morning in June. You are a 1,100-hour commercial-rated, instrument-current, SF50-type-rated pilot, single-pilot as always. The only other soul aboard is your armed security officer, required furniture on every DASSP leg out of National, who is already in seat three with coffee and a paperback. Your fuel load is 135 gallons of Jet-A: trip fuel, alternate, the IFR reserve, and a pad on top, your standard shuttle uplift. At DCA fuel prices, the pad stays modest.
 
 You are cleared to KTEB via the JCOBY4 departure, DQO V308 MXE PHLBO V16 BIGGY, direct. Cruise: FL230. You have the full route briefed and loaded. Your filed time en route is 0:42. Your alternate is KMMU, Morristown. You have 45 minutes of reserve. The day, on paper, is clean.
@@ -148,7 +148,7 @@ Your hand is already moving toward the flight plan page.
 <<link "D. \"Two-seven Echo Romeo, request original clearance as filed.\" Push back on the amendment." "Dec1_Pushback">><</link>>
 </div>
 
-:: Dec1_Copy
+:: Dec1_Copy [scenario]
 "Two-seven Echo Romeo, amended clearance. Cleared to KTEB via the JCOBY4 departure, climb runway heading to 3,000, expect radar vectors to PALEO intersection, V308 as filed, direct BIGGY, direct. Altitude: FL230. Readback."
 
 You copy it clean. PALEO instead of DQO V308 MXE for the first segment. It's a shorter overwater leg for you; lets Washington Approach push traffic around the BWI push without running you over Andrews. Reasonable.
@@ -160,7 +160,7 @@ You read back: "November two-seven Echo Romeo, JCOBY4, runway heading to 3,000, 
 <<set $amendmentsAccepted to $amendmentsAccepted + 1>>
 <<goto "Taxi">>
 
-:: Dec1_Standby
+:: Dec1_Standby [scenario]
 "Two-seven Echo Romeo, standby approved, call when ready."
 
 You hold short of the taxi flow for ninety seconds. You bring up your flight plan page. You have an iPad with ForeFlight on the yoke and the Garmin G3000 flight plan displayed on the MFD. You breathe once. You are ready.
@@ -174,7 +174,7 @@ You read back clean. The extra ninety seconds was cheap.
 <<set $amendmentsAccepted to $amendmentsAccepted + 1>>
 <<goto "Taxi">>
 
-:: Dec1_Summary
+:: Dec1_Summary [scenario]
 "Two-seven Echo Romeo, the change is vectors to PALEO instead of direct DQO, short overwater segment. Everything else as filed."
 
 "Copy, ready for full amendment."
@@ -188,7 +188,7 @@ You read back.
 <<set $amendmentsAccepted to $amendmentsAccepted + 1>>
 <<goto "Taxi">>
 
-:: Dec1_Pushback
+:: Dec1_Pushback [scenario]
 "Two-seven Echo Romeo, unable original, traffic flow, BWI push has you boxed out of DQO direct. Can give you either the PALEO amendment or a fifteen-minute release delay."
 
 You weigh it. The amendment shortens the route slightly. A fifteen-minute delay is a fifteen-minute delay. The board meeting at Teterboro starts at 1000 and your car is meeting you on the ramp.
@@ -206,7 +206,7 @@ You copy. PALEO instead of DQO V308 MXE for the first segment. You read it back.
 <<set $amendmentsAccepted to $amendmentsAccepted + 1>>
 <<goto "Taxi">>
 
-:: Taxi
+:: Taxi [scenario]
 You taxi Charlie to Runway 1, run your before-takeoff flow, check the flight plan against what's loaded in the FMS, and hold short. Tower clears you for takeoff at 0836.
 
 Takeoff. Positive rate, gear up. Climb runway heading. Washington Departure hands you off twenty seconds in.
@@ -229,7 +229,7 @@ At 5,000 feet the controller comes back. "Two-seven Echo Romeo, I need you to sl
 <<link "D. \"Two-seven Echo Romeo, traffic not yet in sight, maintaining 240, request turn.\" Ask for a turn to solve it." "Dec2_TurnRequest">><</link>>
 </div>
 
-:: Dec2_Slow
+:: Dec2_Slow [scenario]
 You bring the throttle back. The Vision Jet's airspeed washes off: 250, 240, 220, 210. You hold the climb at 210 indicated, and your vertical speed drops from 2,800 fpm to about 1,400.
 
 "Two-seven Echo Romeo, traffic resolved, resume normal speed, climb and maintain flight level two-three-zero, direct PALEO."
@@ -238,7 +238,7 @@ You push the throttle forward. Acceleration. Climb. Direct PALEO on the FMS.
 
 <<goto "Enroute1">>
 
-:: Dec2_OfferAlt
+:: Dec2_OfferAlt [scenario]
 "Two-seven Echo Romeo, negative, climb and maintain 8,000, slow 210, 210 now please."
 
 You bring the throttle back, slow, and climb at 210. His sector, his ladder: an unsolicited climb just trades the conflict he can see for one you can't.
@@ -248,7 +248,7 @@ You bring the throttle back, slow, and climb at 210. His sector, his ladder: an 
 <<set $badchoices to $badchoices + 1>>
 <<goto "Enroute1">>
 
-:: Dec2_VisSep
+:: Dec2_VisSep [scenario]
 "Two-seven Echo Romeo, traffic in sight, maintain visual separation, turn right heading 090, climb and maintain flight level two-three-zero, direct PALEO."
 
 The controller gets more options once you accept visual; he doesn't have to slow you. You see the regional jet (a CRJ-550, Delta colors) crossing your twelve, descending. You turn right, pass behind him by two miles, and climb through his altitude in trail.
@@ -259,7 +259,7 @@ You are now direct PALEO, climbing to FL230.
 
 <<goto "Enroute1">>
 
-:: Dec2_TurnRequest
+:: Dec2_TurnRequest [scenario]
 "Two-seven Echo Romeo, negative, slow to 210, I need the speed reduction, the turn doesn't help me here, I've got a LaGuardia push behind you."
 
 You slow. You comply. Behind you, somewhere in the LaGuardia push you can't see, the sequence the controller was protecting re-knits itself one call at a time.
@@ -267,7 +267,7 @@ You slow. You comply. Behind you, somewhere in the LaGuardia push you can't see,
 <<set $badchoices to $badchoices + 1>>
 <<goto "Enroute1">>
 
-:: Enroute1
+:: Enroute1 [scenario]
 You cross PALEO at FL230. Washington Center has you. You are cruising at 305 KTAS, ground speed 320 with a slight tailwind. The flight plan: PALEO, V308, to MXE (Modena VOR), then to PHLBO intersection, then V16 to BIGGY intersection, then direct KTEB for vectors to the approach.
 
 Estimated time to BIGGY: thirty-one minutes. You are configured, briefed, relaxed. For the next ten minutes.
@@ -284,7 +284,7 @@ At PALEO plus six, New York Center (who has not yet worked you) calls Washington
 <<link "C. \"Two-seven Echo Romeo, negative, unable further amendments, I've got weather ahead to watch.\" Decline." "Dec3_Decline">><</link>>
 </div>
 
-:: Dec3_CopyEnroute
+:: Dec3_CopyEnroute [scenario]
 "Two-seven Echo Romeo, New York Center requests you proceed direct to SPUDS, then flight plan route BIGGY, expect the ILS Runway 19 at Teterboro. Squawk remains. Climb via pilot's discretion to FL250 if able, otherwise maintain FL230."
 
 SPUDS. That cuts out MXE and most of V308. You spin up SPUDS in the FMS; it pops up at 45 nm, northeast-ish of PHL. You accept the direct.
@@ -298,7 +298,7 @@ You elect to stay at FL230. The climb to FL250 costs fuel and saves negligible t
 <<set $amendmentsAccepted to $amendmentsAccepted + 1>>
 <<goto "Enroute2">>
 
-:: Dec3_StandbyEnroute
+:: Dec3_StandbyEnroute [scenario]
 "Two-seven Echo Romeo, standby approved."
 
 You finish your cross-check: waypoint transitions, fuel, groundspeed. You tune the ATIS for KTEB on your number two comm and listen to it once through. The ATIS info Bravo matches what you copied on the ground. You spend thirty seconds in a state of pure situational awareness.
@@ -312,7 +312,7 @@ You read back clean.
 <<set $amendmentsAccepted to $amendmentsAccepted + 1>>
 <<goto "Enroute2">>
 
-:: Dec3_Decline
+:: Dec3_Decline [scenario]
 "Two-seven Echo Romeo, unable is noted, but I don't have another option for you. New York is asking for direct SPUDS. Can you proceed direct SPUDS and we'll work the rest farther north?"
 
 The weather you mentioned is the scattered-to-broken layer at 4,000, currently three and a half miles below your wings.
@@ -327,7 +327,7 @@ You copy it on the second pass, thirty seconds and one small dent in the rapport
 <<set $amendmentsAccepted to $amendmentsAccepted + 1>>
 <<goto "Enroute2">>
 
-:: Enroute2
+:: Enroute2 [scenario]
 Direct SPUDS. You are now cruising at FL230, ground speed 325, the single Williams out back sipping just under 70 gallons an hour. You have about 1:25 of fuel remaining for a flight with 35 minutes left in it. Trip, approach, alternate, reserve: the columns still close, with a little slack at the bottom of the page.
 
 The sky ahead is still clear, but the broken layer that was forecast for the NY terminal area is now visible as a hazy smear ahead and below you, topping out somewhere around 9,000.
@@ -354,7 +354,7 @@ EFC 14:15 zulu is 14 minutes from now. You have your fuel. Your situation is goo
 <<link "D. \"Two-seven Echo Romeo, can we go higher and orbit at altitude for better fuel economy?\" Creative." "Dec4_OrbitHigh">><</link>>
 </div>
 
-:: Dec4_AcceptHold
+:: Dec4_AcceptHold [scenario]
 "Two-seven Echo Romeo, holding fuel plus forty-five minutes, entering BIGGY standard right turns, EFC one-four-one-five zulu."
 
 You enter at BIGGY in a teardrop and settle into the racetrack: standard right turns, 210 indicated, one-minute legs adjusted for wind. Eleven thousand keeps you comfortably under the 230-knot holding limit for the altitude. You build the hold in the FMS and let the autopilot fly the geometry.
@@ -375,14 +375,14 @@ That's a fifteen-minute extension. Your total hold time is now looking like 26 t
 <<link "D. Continue the hold. You're still above zero-fuel reserve; the 45 minutes is a conservative floor not a cliff." "Dec4b_Continue">><</link>>
 </div>
 
-:: Dec4b_MinFuel
+:: Dec4b_MinFuel [scenario]
 "Two-seven Echo Romeo, minimum fuel acknowledged, cleared out of hold, proceed direct BIGGY, descend and maintain 3,000, expect vectors for the approach at Teterboro. Be advised the runway in use is now 6."
 
 Minimum fuel is not an emergency. It is the AIM's plain-language flag to the system: no priority requested, but this airplane cannot absorb additional delay. The controller now knows which airplane in his stack has the thinnest margin, which is exactly what the phrase is for.
 
 <<goto "Dec5_RunwayChange">>
 
-:: Dec4b_Divert
+:: Dec4b_Divert [scenario]
 "Two-seven Echo Romeo, approved, cleared direct Morristown, descend and maintain 3,000, contact Morristown Approach 118.825."
 
 You turn for Morristown. The divert was a legal, responsible call. You were ten minutes from opening the reserve, and KMMU was your filed alternate.
@@ -391,7 +391,7 @@ You fly the approach at KMMU uneventfully and land with 45 minutes of fuel. You 
 
 <<goto "End_Diverted_MMU">>
 
-:: Dec4b_Emergency
+:: Dec4b_Emergency [scenario]
 "Two-seven Echo Romeo, roger, understand declaring emergency for fuel. Cleared out of hold, proceed direct BIGGY, descend and maintain 3,000, vectors ILS Zulu Runway 6 Teterboro, you're number one, equipment will be standing by."
 
 The frequency goes noticeably quieter. Other aircraft get vectors you don't hear the reasons for. The system does what it is built to do: it clears a lane.
@@ -401,7 +401,7 @@ You fly the vectors, capture the localizer, ride the glideslope down past the fi
 <<set $badchoices to $badchoices + 1>>
 <<goto "End_EmergencyFuel">>
 
-:: Dec4b_Continue
+:: Dec4b_Continue [scenario]
 You continue the hold. You choose to spend reserve, telling yourself the approach is short, the EFC is close, and the numbers will probably work out.
 
 Eight minutes later, Center calls:
@@ -414,7 +414,7 @@ You break out of the hold with 42 minutes of fuel aboard and about 15 minutes of
 <<set $fuelStress to true>>
 <<goto "Dec5_RunwayChange">>
 
-:: Dec4_DivertMMU
+:: Dec4_DivertMMU [scenario]
 "Two-seven Echo Romeo, unable Morristown direct from here, you're inside the flow for the Newark shelf and Morristown is taking the same LaGuardia spillover. The hold at BIGGY is what I have. Advise holding fuel."
 
 "Two-seven Echo Romeo, holding fuel plus forty-five, BIGGY, standard right turns."
@@ -424,7 +424,7 @@ You asked for an exit the airspace wasn't selling this morning. The hold was alw
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec4_AcceptHold_Reroute">>
 
-:: Dec4_PushSequence
+:: Dec4_PushSequence [scenario]
 "Two-seven Echo Romeo, I don't have sequencing to offer yet. HPN is at the same delay. You'll be in the hold at BIGGY with everybody else. EFC one-four-one-five zulu."
 
 You accept the hold. Somewhere below you, a dozen other flight decks with their own board meetings are flying the same racetrack and not asking.
@@ -432,14 +432,14 @@ You accept the hold. Somewhere below you, a dozen other flight decks with their 
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec4_AcceptHold_Reroute">>
 
-:: Dec4_OrbitHigh
+:: Dec4_OrbitHigh [scenario]
 "Two-seven Echo Romeo, I can't approve a block altitude, and the hold is the airspace I have for you. Maintain 11,000, holding BIGGY, standard right turns."
 
 You accept. Fuel economy in a high-altitude orbit vs. a holding pattern is a nuance. ATC has a specific chunk of airspace carved out; you fly that, not a clever alternative.
 
 <<goto "Dec4_AcceptHold_Reroute">>
 
-:: Dec4_AcceptHold_Reroute
+:: Dec4_AcceptHold_Reroute [scenario]
 You hold at BIGGY. Nine minutes in, Center clears you out.
 
 "Two-seven Echo Romeo, cleared out of hold, proceed direct BIGGY, descend and maintain 3,000, expect vectors ILS Zulu Runway 6 at Teterboro."
@@ -448,7 +448,7 @@ The Zulu 6. Not the 19. The wind at Teterboro has swung around to the northeast 
 
 <<goto "Dec5_RunwayChange">>
 
-:: Dec5_RunwayChange
+:: Dec5_RunwayChange [scenario]
 You were briefed for the ILS 19 at Teterboro. You knew the plate cold an hour ago:
 
 <div class="plate-ref"><strong>KTEB ILS or LOC RWY 19</strong>
@@ -482,7 +482,7 @@ Different localizer, different ident, different DA, and a missed approach that t
 <<link "D. \"Two-seven Echo Romeo, request the RNAV Y Runway 6 instead.\" Same runway, GPS guidance, LPV minimums, no localizer re-tune." "Dec5_RNAV">><</link>>
 </div>
 
-:: Dec5_LoadNow
+:: Dec5_LoadNow [scenario]
 You load the Zulu 6 in the FMS: select approach, ILS Z RWY 6, vectors-to-final, activate. The G3000 swaps 111.75 into the nav active and the I-TEB ident morse starts ticking in your headset. Tower 119.5 goes into COM2 standby. You brief out loud to an empty flight deck, the way the type rating taught you: course 060, glideslope intercept 1,300 at TORBY, decision altitude 255, missed is climb to 1,000, climbing left to 2,000 direct TEBLE, then 272 to UBUCK.
 
 Sixty seconds. The autopilot holds heading and altitude while your head is down. You look up, confirm position against the MFD, breathe. Set.
@@ -494,7 +494,7 @@ You read back, start the turn, start the descent.
 <<set $approach to "ILS6">>
 <<goto "Dec6_Final">>
 
-:: Dec5_AskVectors
+:: Dec5_AskVectors [scenario]
 "Two-seven Echo Romeo, no problem, turn right heading 120, delay vector, advise when ready."
 
 The vector costs you three minutes of flying away from the airport, and buys you a brief done right: Zulu 6, 111.75, course 060, glideslope at 1,300, DA 255, missed is 1,000 then climbing left to 2,000 direct TEBLE, 272 to UBUCK.
@@ -506,7 +506,7 @@ The vector costs you three minutes of flying away from the airport, and buys you
 <<set $approach to "ILS6">>
 <<goto "Dec6_Final">>
 
-:: Dec5_Memory
+:: Dec5_Memory [scenario]
 You run it from memory. You're SF50 type-rated; you've landed on 6 at Teterboro more times than you can count. The box auto-tunes the localizer when you load the procedure, and you do load the procedure. What you don't do is pull the plate and read it.
 
 Frequency, course, DA. The numbers you're carrying are last year's recollection of a plate that was amended in January.
@@ -517,7 +517,7 @@ The autopilot captures the localizer. You intercept the glideslope. All good. So
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec6_Final">>
 
-:: Dec5_RNAV
+:: Dec5_RNAV [scenario]
 "Two-seven Echo Romeo, RNAV Yankee Runway 6 approved at pilot's request, descend and maintain 2,000, turn left heading 030, vectors to final, maintain 2,000 until established."
 
 You load the RNAV Y 6. The G3000 sequences the transition, LPV annunciates, and the minimums sit within a few feet of where the ILS would have put you. Same runway, same piece of sky, guidance from orbit instead of a shack off the approach end. You brief the missed off the plate on the MFD.
@@ -525,7 +525,7 @@ You load the RNAV Y 6. The G3000 sequences the transition, LPV annunciates, and 
 <<set $approach to "RNAV6">>
 <<goto "Dec6_Final">>
 
-:: Dec6_Final
+:: Dec6_Final [scenario]
 You are established inbound on the approach, gear down, flaps 50%, speed 110 KIAS, descending on the glidepath. The runway environment is ahead, slightly left of course. Teterboro is one of the prettiest approaches in the country, straight down the Hackensack River valley toward the Manhattan skyline.
 
 At 800 AGL the tower calls.
@@ -552,7 +552,7 @@ The truck stops. On the runway. Not near the threshold; he is at midfield, maybe
 <<link "D. Delay the flare and land long. Put it down beyond the truck's position. The runway is 7,000 feet; there's pavement past him." "Dec6_LandLong">><</link>>
 </div>
 
-:: Dec6_GoAround
+:: Dec6_GoAround [scenario]
 You push the throttle to the takeoff detent. The Vision Jet responds. Pitch up, positive rate, gear up. The flaps stay at 50 until you're climbing clean, then come up on schedule. 160 knots, climbing away.
 
 "Two-seven Echo Romeo going around."
@@ -563,7 +563,7 @@ You execute cleanly. You flew exactly the book missed. The tower's runway incurs
 
 <<goto "Dec7_ReApproach">>
 
-:: Dec6_Continue
+:: Dec6_Continue [scenario]
 You continue the approach. The truck is stopped at midfield. You cross the threshold, flare, and touch down at the normal touchdown zone. Rollout is normal. You exit onto taxiway Echo, clear of the runway, 800 feet ahead of the truck's position.
 
 Nothing was damaged. Nothing touched anything. But you landed past an active runway-incursion condition, a vehicle on the runway surface, while the tower was still in the middle of deciding whether your landing clearance survived it.
@@ -573,7 +573,7 @@ You taxi to Signature Aviation. You shut down. The tower supervisor calls your c
 <<set $badchoices to $badchoices + 2>>
 <<goto "End_RunwayIncursion">>
 
-:: Dec6_Sidestep
+:: Dec6_Sidestep [scenario]
 "Two-seven Echo Romeo requesting runway 1 sidestep."
 
 "Two-seven Echo Romeo, runway 1 is not active. Go around, runway heading to 1,500, left 270, contact Approach 127.6."
@@ -584,7 +584,7 @@ You go around. Clean missed, by the book.
 
 <<goto "Dec7_ReApproach">>
 
-:: Dec6_LandLong
+:: Dec6_LandLong [scenario]
 You power up slightly, extend the flare, and float down the runway. You touch down at about 2,500 feet past the threshold, 200 feet past the truck's position.
 
 You roll out. You taxi clear. Nothing was damaged.
@@ -594,7 +594,7 @@ You landed on an active runway with a vehicle on it. Not a near-miss in the tech
 <<set $badchoices to $badchoices + 3>>
 <<goto "End_RunwayIncursion">>
 
-:: Dec7_ReApproach
+:: Dec7_ReApproach [scenario]
 New York Approach has you. The controller has options.
 
 "Two-seven Echo Romeo, turn right heading 060, descend and maintain 3,000. Runway inspection complete, runway 6 back in use. Advise intentions: I can give you the ILS Zulu 6 again, the RNAV X Runway 6 is available if you'd rather have the boxes fly it, or Morristown if you prefer."
@@ -617,7 +617,7 @@ The RNAV (GPS) X Runway 6 is Teterboro's preferred RNAV to that runway: same pav
 <<link "D. \"Two-seven Echo Romeo, request holding until the flow settles.\" Stall for breathing room." "Dec7_MoreHold">><</link>>
 </div>
 
-:: Dec7_AcceptILS6
+:: Dec7_AcceptILS6 [scenario]
 "Two-seven Echo Romeo, descend and maintain 2,000, turn right heading 030, vectors ILS Zulu Runway 6, maintain 2,000 until established, contact Tower 119.5 established."
 
 You fly a clean second approach. Stable, briefed, routine. On short final, Tower calls:
@@ -630,7 +630,7 @@ You land. Touchdown is smooth. You exit at Echo, taxi toward Signature, engine s
 
 <<goto "Dec8_Taxi">>
 
-:: Dec7_TakeRNAVX
+:: Dec7_TakeRNAVX [scenario]
 "Two-seven Echo Romeo, RNAV X Runway 6 approved, descend and maintain 2,000, turn right heading 030, vectors to final, maintain 2,000 until established."
 
 You load the RNAV X, and the G3000 does what it is exceptionally good at: transition sequenced, LPV annunciated, glidepath alive. The second approach is, if anything, smoother than the first; the airplane neither knows nor cares what kind of morning you've had.
@@ -640,7 +640,7 @@ You break off the autopilot at minimums-plus-five-hundred, hand-fly the rest und
 <<set $approach to "RNAV6">>
 <<goto "Dec8_Taxi">>
 
-:: Dec7_DivertMMU
+:: Dec7_DivertMMU [scenario]
 "Two-seven Echo Romeo, approved, turn right heading 270, descend and maintain 2,000, contact Morristown Approach 118.825."
 
 You fly the approach at KMMU. Land at 0949. Uber to Teterboro. Your board meeting is in full swing when you arrive 50 minutes late.
@@ -654,7 +654,7 @@ The divert after a go-around when the approach was re-cleared is conservative, a
 <<goto "End_Diverted_LateBoard">>
 <</if>>
 
-:: Dec7_MoreHold
+:: Dec7_MoreHold [scenario]
 "Two-seven Echo Romeo, negative, I don't have a hold to offer. The sequence is fluid and you're at the front of the line for TEB. Say intentions."
 
 <<if $fuelStress>>The totalizer makes the speech shorter than the controller did.<<else>>Front of the line is not a place you ask to leave without a reason.<</if>>
@@ -665,7 +665,7 @@ The divert after a go-around when the approach was re-cleared is conservative, a
 <<link "B. \"Two-seven Echo Romeo, diverting Morristown.\" Take the exit instead." "Dec7_DivertMMU">><</link>>
 </div>
 
-:: Dec8_Taxi
+:: Dec8_Taxi [scenario]
 Tower hands you to Ground. Ground is running at their usual Monday-morning pace: hand-offs every fifteen seconds, aircraft stacked at every intersection, the FBO ramp entrances queued with vehicles.
 
 "Two-seven Echo Romeo, Teterboro Ground, taxi to Signature via Lima, Kilo, Bravo, hold short of Charlie."
@@ -690,7 +690,7 @@ Ground comes back ninety seconds later.
 <<link "D. Stop and pull up the Teterboro airport diagram on the MFD. You're not 100% sure where Kilo and Lima intersect at your current position." "Dec8_PullDiagram">><</link>>
 </div>
 
-:: Dec8_Normal
+:: Dec8_Normal [scenario]
 You taxi. Lima to Kilo to the Signature ramp. You hold at the ramp entry, wait for the lineman to wave you in, follow his signals to your spot. Shutdown.
 
 You are out of the airplane at 0948. Your car is at the FBO. Board meeting at 1000. You will be five minutes early.
@@ -705,14 +705,14 @@ You are out of the airplane at 0948. Your car is at the FBO. Board meeting at 10
 <<goto "End_CleanShuttle">>
 <</if>>
 
-:: Dec8_Progressive
+:: Dec8_Progressive [scenario]
 "Two-seven Echo Romeo, progressive taxi, turn left here at Kilo-Alpha, follow the yellow line to Lima, you'll see the Signature ramp on your right, wait for the lineman."
 
 You follow the ground controller's call-outs. It costs nothing to ask. A minute extra. Nothing touched anything.
 
 <<goto "Dec8_Normal">>
 
-:: Dec8_RollFast
+:: Dec8_RollFast [scenario]
 You release the brakes and move before you've fully absorbed the clearance. You miss the turn onto Lima and roll straight onto Kilo-Bravo, which is blocked by a Falcon 900 currently repositioning.
 
 Ground calls you, urgent. "Two-seven Echo Romeo, STOP. Stop stop stop. Hold your position."
@@ -726,7 +726,7 @@ You sit with the parking brake set, watching a tug drag fifty million dollars of
 <<set $badchoices to $badchoices + 2>>
 <<goto "End_TaxiDeviation">>
 
-:: Dec8_PullDiagram
+:: Dec8_PullDiagram [scenario]
 You stop. You pull up the airport diagram, confirm your position, and confirm the route. Eight seconds.
 
 "Two-seven Echo Romeo, Ground, stopped at Kilo-Alpha confirming routing: Lima then Kilo to Signature?"
@@ -737,7 +737,7 @@ You taxi cleanly.
 
 <<goto "Dec8_Normal">>
 
-:: End_Diverted_MMU
+:: End_Diverted_MMU [scenario ending]
 You are at Signature at Morristown. Your Uber arrives in four minutes. You call the board and let them know you're diverted; the chairman is a former King Air pilot and understands. The meeting rolls back thirty minutes.
 
 <hr>
@@ -755,7 +755,7 @@ You are at Signature at Morristown. Your Uber arrives in four minutes. You call 
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $amendmentsAccepted to 0>><<set $fuelStress to false>><<set $divertedTo to "">><<set $approach to "">><</link>>
 </div>
 
-:: End_Diverted_LateBoard
+:: End_Diverted_LateBoard [scenario ending]
 You are at Signature at Morristown. Your Uber is a thirty-five minute ride with Monday-morning tunnel traffic. You will be an hour late for the board meeting. The chairman, who planned around your normal 0930 arrival, is mildly annoyed. Not angry. Annoyed.
 
 <hr>
@@ -773,7 +773,7 @@ You are at Signature at Morristown. Your Uber is a thirty-five minute ride with 
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $amendmentsAccepted to 0>><<set $fuelStress to false>><<set $divertedTo to "">><<set $approach to "">><</link>>
 </div>
 
-:: End_FuelViolation
+:: End_FuelViolation [scenario ending]
 You are at Signature, engine off, the line cart pulling up. The fuel ticket the lineman hands you says the rest: what's left in the tanks is about 27 minutes of burn. You planned this morning around landing with 45.
 
 Nobody calls. There is no letter coming. That is the uncomfortable part: the only person who will ever review this decision is the one filling out the fuel order.
@@ -793,7 +793,7 @@ Nobody calls. There is no letter coming. That is the uncomfortable part: the onl
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $amendmentsAccepted to 0>><<set $fuelStress to false>><<set $divertedTo to "">><<set $approach to "">><</link>>
 </div>
 
-:: End_EmergencyFuel
+:: End_EmergencyFuel [scenario ending]
 You shut down at Signature with the fire trucks idling at a polite distance and a phone number to call. The conversation with the facility is professional and short: souls, fuel, sequence of events, thank you. The follow-up paperwork is a form, not an inquisition. Declaring an emergency is a pilot's prerogative, and nobody in the building second-guesses it out loud.
 
 You make the board meeting on time. You spend the first ten minutes of it composing, in your head, the version of the story you'll tell at recurrent.
@@ -813,7 +813,7 @@ You make the board meeting on time. You spend the first ten minutes of it compos
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $amendmentsAccepted to 0>><<set $fuelStress to false>><<set $divertedTo to "">><<set $approach to "">><</link>>
 </div>
 
-:: End_TaxiDeviation
+:: End_TaxiDeviation [scenario ending]
 You're at Signature. You shut down. The lineman motions you in; you see Ground's supervisor walking across the ramp with a clipboard before the APU is off.
 
 Not an incident. Not an accident. A ground deviation: a report that will join the small but real database of single-pilot jet taxi mistakes at KTEB that Ground keeps, mostly as a training resource for its own controllers but also as a data point for the FSDO.
@@ -833,7 +833,7 @@ Not an incident. Not an accident. A ground deviation: a report that will join th
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $amendmentsAccepted to 0>><<set $fuelStress to false>><<set $divertedTo to "">><<set $approach to "">><</link>>
 </div>
 
-:: End_CleanShuttle
+:: End_CleanShuttle [scenario ending]
 You taxi to Signature, shut down, and step out of the airplane into the kind of Monday morning that makes you remember why you bought this machine. The ride pulled up to the FBO at 0939. The board meeting starts in twenty-one minutes. You will be ten minutes early.
 
 You did not perform any one astonishing piece of flying today. You copied amendments cleanly, handed off information controllers asked for, flew speeds that kept you and the regional jet apart, held when asked, re-briefed when the runway changed, and executed a go-around when a truck made a bad decision on the runway surface. The single most important moment of the flight was the one where you did nothing creative: you pushed the throttle up, cleaned up on schedule, and flew the published missed.
@@ -853,7 +853,7 @@ You did not perform any one astonishing piece of flying today. You copied amendm
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $amendmentsAccepted to 0>><<set $fuelStress to false>><<set $divertedTo to "">><<set $approach to "">><</link>>
 </div>
 
-:: End_Workmanlike
+:: End_Workmanlike [scenario ending]
 You taxi to Signature, shut down, sit for thirty seconds with your hands on your knees. You picked up a couple of minor procedural bobbles along the way (a misplayed clearance negotiation, a choice that burned controller goodwill), but they stayed minor. Your go-around was clean. Your second approach was clean. Your landing was clean.
 
 You will be on time for the board meeting.
@@ -873,7 +873,7 @@ You will be on time for the board meeting.
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $amendmentsAccepted to 0>><<set $fuelStress to false>><<set $divertedTo to "">><<set $approach to "">><</link>>
 </div>
 
-:: End_Qualified
+:: End_Qualified [scenario ending]
 You taxi to Signature, shut down, and sit in the cockpit longer than usual. The flight worked. You are at the FBO. Your car is waiting. You are on time. And the honest after-action is not flattering.
 
 Multiple points along the day, you went against the grain: disputed amendments, asked for alternatives the controller didn't need, flew an approach from memory that you should have re-briefed. None of it produced a hull loss. All of it would read poorly in a post-event debrief with your type-rating instructor.
@@ -893,7 +893,7 @@ Multiple points along the day, you went against the grain: disputed amendments, 
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $amendmentsAccepted to 0>><<set $fuelStress to false>><<set $divertedTo to "">><<set $approach to "">><</link>>
 </div>
 
-:: End_RunwayIncursion
+:: End_RunwayIncursion [scenario ending]
 You sit in the cockpit with the engine winding down. Your phone starts before the gyros do: Signature's front desk relaying a number for the tower supervisor, then a text from your insurance broker that just says "call me," then a voicemail from a 201 number you don't recognize.
 
 No one is hurt. Nothing touched anything. And you are going to spend the next six months inside a conversation about a decision that did not have to go this way.

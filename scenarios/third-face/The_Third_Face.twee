@@ -172,7 +172,7 @@ a.link-internal:hover {
 .main-menu-btn:hover,
 .main-menu-btn:focus { background: #89a2c1; outline: none; }
 
-:: Opening
+:: Opening [scenario]
 <<set $pathArray to $pathArray.concat(["Opening"])>>
 <div class="scenario-title">The Third Face</div>
 <div class="scenario-subtitle">A Cirrus SR22T Into the Occluded Front</div>
@@ -191,7 +191,7 @@ You have pulled the brief on ForeFlight in the FBO lounge. Before you file, ther
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: Dec1
+:: Dec1 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec1: Reading the occluded front"])>>
 <div class="decision-heading">Preflight Planning: Decision 1 of 10: Reading the System</div>
 
@@ -225,21 +225,21 @@ Jamal looks at the chart over your shoulder. "Is an occluded front just a cold f
 
 <<link "Scrub for today. The icing AIRMET and the occlusion together make the route marginal." "Dec1D">><<set $pathArray to $pathArray.concat(["Dec1: D (scrub)"])>><</link>>
 
-:: Dec1A
+:: Dec1A [scenario]
 <<set $frontMisread to true>>
 <<set $badchoices to $badchoices + 1>>
 You file the 0830 slot as planned. The front is a problem but it is a manageable problem. FIKI handles ice for the duration of an encounter. The datalink shows a clear block to the east if you need to deviate. You tell Jamal, "The airplane's tools are the tools. We'll use them."
 
 <<link "File IFR and step to the airplane" "Dec2">><</link>>
 
-:: Dec1B
+:: Dec1B [scenario]
 You close the ForeFlight briefing, walk to the FBO counter, and push your block to 1000. You will re-brief in 45 minutes; by then the 1700Z SFC ANAL will be available, and the PIREPs will have refreshed. Jamal asks if you can still make the meeting. You tell him you think so, assuming the 1000 launch holds. "And if it doesn't?" he says. "Then we don't," you say.
 
 The 1700Z analysis, when it arrives, has moved the system less than the model promised. The occlusion will still cross your route; later than first advertised, a little thinner at its southern end, but there. You go with what the morning actually gives you.
 
 <<link "File IFR for the 1000 slot and walk out" "Dec2">><</link>>
 
-:: Dec1C
+:: Dec1C [scenario]
 <<set $frontUnderstood to true>>
 You file KCCR-KSMF-KRBL-KMFR. Distance goes from 320 to 390 NM. Flight time from 2:10 to 2:35. Fuel burn adds about eight gallons, well within your reserve. You route yourself east of the occlusion's forecast axis; the PIREPs in that corridor show no icing reports.
 
@@ -247,7 +247,7 @@ Jamal nods as you trace the new route on the map. He is watching everything.
 
 <<link "File the dogleg and step to the airplane" "Dec2">><</link>>
 
-:: Dec1D
+:: Dec1D [scenario]
 You scrub. You call Renata, the clinic coordinator, who has worked with you for four years and takes weather news the way coastal people take tide tables.
 
 Then she says, "Before you hang up. Dr. Okonkwo's locum fell through last night, so you were the only physician on tomorrow's board. I've got eleven in-person patients who already arranged rides. If your weather clears this afternoon, could you do a 1400 start instead? I can hold the room."
@@ -258,7 +258,7 @@ Jamal looks at you sideways. The 1700Z charts will be out within the hour, and t
 
 <<link "Hold the scrub. Eleven patients or not, today's picture is today's picture. Offer the Zoom." "ScrubJamal">><<set $pathArray to $pathArray.concat(["Dec1D-2: hold the scrub"])>><</link>>
 
-:: ScrubSlide
+:: ScrubSlide [scenario]
 <<set $afternoonLaunch to true>>
 <<set $frontUnderstood to true>>
 The 1700Z surface analysis comes in while Jamal buys the FBO's last two breakfast burritos. The low has filled two millibars and picked up speed; the occlusion's southern tail is thinner and farther east than the morning chart drew it. The icing AIRMET still stands, and the PIREPs are still a conversation, but the afternoon math is different math: you can route the eastern dogleg, KSMF-KRBL, and cross behind the worst of the southern tail instead of through it.
@@ -267,7 +267,7 @@ You call Renata back and take the 1400 start. You file for an 1145 wheels-up, th
 
 <<link "Step to the airplane with the new numbers" "Dec2">><</link>>
 
-:: ScrubJamal
+:: ScrubJamal [scenario]
 You hold the scrub. Renata sighs the sigh of a woman re-sorting eleven appointments, thanks you for the straight answer, and books the Zoom for 1400. The meeting will be fine. Meetings are always fine.
 
 You and Jamal spend the late morning at the hangar with the charts spread on the workbench, and that is where he tells you: his first solo cross-country is endorsed for Sunday, KCCR up to Redding and back. "Behind this system, right? Saturday it's all supposed to be gone." He says it lightly. He watches you not-lightly.
@@ -280,7 +280,7 @@ The prog charts show the low filling and lifting out by Saturday night, with a t
 
 <<link "Re-plan his route for him while you're both standing here. Faster, and it'll be right." "ScrubText">><<set $mentorPath to "doit">><<set $pathArray to $pathArray.concat(["Dec1D-3: do it for him"])>><</link>>
 
-:: ScrubText
+:: ScrubText [scenario]
 <<if $mentorPath is "socratic">>You spend an hour at the workbench making him walk you through the system: where the low goes, what the trough behind it does, what the wind does in the passes north of Red Bluff on a gusty northwest day. He finds most of it. What he doesn't find, by 2000 that evening, shows up anyway, in a text with his final plan attached.<<elseif $mentorPath is "check">>He goes home to build it. At 2000 the plan arrives by text, neat as a lab report.<<else>>You sketch the route for him in twenty minutes, hand him the kneeboard copy, and he photographs it gratefully. At 2000 he texts you his own revised version anyway, because he is the kind of student who rebuilds the answer to see how it works.<</if>>
 
 The plan is mostly good. Except for one line: "If there's any leftover cloud over the ridges I'll just climb over the top of it and stay VFR above, tops should be low behind the front."
@@ -293,7 +293,7 @@ You read it twice. A 60-hour student, solo, planning VFR-over-the-top across ris
 
 <<link "Let it ride. He has an instructor, and it isn't your endorsement to give." "End_Scrubbed">><<set $mentorIntervene to "ride">><<set $satOnIt to true>><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Dec1D-4: let it ride"])>><</link>>
 
-:: End_Scrubbed
+:: End_Scrubbed [scenario ending]
 <div class="decision-heading">Ending: The Flight That Didn't Happen</div>
 
 The Zoom meeting runs 1400 to 1630 and accomplishes what it needs to. The eleven rides get rescheduled across two weeks. Nobody dies of a canceled clinic day, which is the kind of sentence that sounds obvious until you've sat with the pressure of it at 0745 with the keys in your hand.
@@ -315,7 +315,7 @@ The flight that doesn't happen cannot go wrong. The judgment you pass along keep
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: Dec2
+:: Dec2 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec2: Altitude selection"])>>
 <div class="decision-heading">Preflight Planning: Decision 2 of 10: Cruise Altitude</div>
 
@@ -347,29 +347,29 @@ Jamal points at the freezing level chart. "There's warm air sandwiched in betwee
 
 <<link "D. Cruise 7,000 MSL. Below the freezing level, under the cloud deck, accept low-level turbulence." "Dec2D">><<set $pathArray to $pathArray.concat(["Dec2: D (7,000 below freeze)"])>><</link>>
 
-:: Dec2A
+:: Dec2A [scenario]
 <<set $altBadChoice to true>>
 <<set $badchoices to $badchoices + 1>>
 <<set $filedAlt to "10,000">>You file for 10,000. You tell Jamal, "FIKI is for exactly this." You mean it. The airplane is certified for it.
 
 <<link "Call clearance" "Dec3">><</link>>
 
-:: Dec2B
+:: Dec2B [scenario]
 <<set $filedAlt to "13,000">>You file for 13,000. The built-in O2 will go on for both of you in the climb; Jamal has flown on cannulas twice before and is not alarmed.
 
 <<link "Pick up your clearance" "Dec3">><</link>>
 
-:: Dec2C
+:: Dec2C [scenario]
 <<set $filedAlt to "16,000">>You file for 16,000. The built-in O2 goes on for you in the climb (the rule wants crew on it above 14,000, and you don't play games with the 30-minute window below that) and for Jamal right along with you; in the SR22T it's routine. You note the tops forecast for your route includes "embedded CB to FL200" and plan to watch the datalink closely.
 
 <<link "Copy your clearance and go" "Dec3">><</link>>
 
-:: Dec2D
+:: Dec2D [scenario]
 <<set $filedAlt to "7,000">>You file for 7,000. It keeps you below the freezing level, under the bases near Roseburg, in and out of the lower deck around Redding, all of it warmer than freezing, at the cost of a bumpy ride over rising terrain at comparatively low altitude. The MEAs will have something to say about it north of Redding, and you know that conversation is coming.
 
 <<link "Call for your clearance" "Dec3">><</link>>
 
-:: Dec3
+:: Dec3 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec3: TKS fluid and deice preflight"])>>
 <div class="decision-heading">Preflight Inspection: Decision 3 of 10: TKS System and Ice Margin</div>
 
@@ -389,7 +389,7 @@ The big question this morning is whether you want the fluid priming pump cycled 
 
 <<link "D. Cancel. 85% fluid isn't full, and you want full for this flight." "Dec3D">><<set $pathArray to $pathArray.concat(["Dec3: D (cancel over TKS %)"])>><</link>>
 
-:: Dec3A
+:: Dec3A [scenario]
 <<set $fikiMisused to true>>
 <<set $badchoices to $badchoices + 1>>
 You cycle the TKS priming pump to MAX for three minutes on the ground. Fluid seeps through the panels, wetting the leading edges. You now have visibly glycol-beaded wings and tail. You have also just used nearly six minutes of NORMAL-flow TKS budget.
@@ -398,7 +398,7 @@ You close up and taxi.
 
 <<link "Taxi out with wet wings" "Dec4">><</link>>
 
-:: Dec3B
+:: Dec3B [scenario]
 <<set $fikiMisused to true>>
 <<set $badchoices to $badchoices + 1>>
 You leave the system untouched. Dry panels at departure. You will cycle on at first sign of ice.
@@ -407,21 +407,21 @@ You close up and taxi.
 
 <<link "Taxi out, fluid banked" "Dec4">><</link>>
 
-:: Dec3C
+:: Dec3C [scenario]
 You cycle the TKS priming pump at NORMAL for 30 seconds. Panels are visibly wet but not dripping. TKS budget used: about one minute of NORMAL-flow capacity. Fluid is available on the surfaces for the first ice encounter without eating into reserves.
 
 You close up and taxi.
 
 <<link "Button up and taxi" "Dec4">><</link>>
 
-:: Dec3D
+:: Dec3D [scenario]
 You taxi back to the hangar and pull the fill cart. The clinic meeting is going to slip. Jamal watches you fill the reservoir to 100%, at which point you re-brief the flight, the clinic, and his lunch.
 
 You launch ninety minutes later. Fluid at full. Meeting rescheduled to 1400. The rest of the preflight proceeds as planned.
 
 <<link "Taxi out, ninety minutes late and full" "Dec4">><</link>>
 
-:: Dec4
+:: Dec4 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec4: Initial climb into the system"])>>
 <div class="decision-heading">Climb: Decision 4 of 10: Entering the First Layer</div>
 
@@ -441,24 +441,24 @@ You have a decision to make about the climb. <<if $filedAlt is "7,000">>Center h
 
 <<link "D. Level at 10,000 and cycle TKS to MAX now, ahead of any possible ice." "Dec4D">><<set $pathArray to $pathArray.concat(["Dec4: D (level, preempt TKS MAX)"])>><</link>>
 
-:: Dec4A
+:: Dec4A [scenario]
 <<set $pirepsIgnored to true>>
 <<set $badchoices to $badchoices + 1>>
 <<set $bandAlt to "10,000">>You level at 10,000 and accept the altitude. You tell Jamal, "PIREPs don't always agree. We'll see what's actually there." The OAT drops through zero at about 9,400 and reads -3°C at 10,000.
 
 <<link "Hold the altitude and watch the panels" "Dec5">><</link>>
 
-:: Dec4B
+:: Dec4B [scenario]
 <<set $bandAlt to "14,000">>You request 14,000. Center answers, "Twenty-two lima whiskey, climb and maintain one-four thousand, report level." You accept, push up, and start climbing. The airplane is heavy with fuel and the climb is measured, 400 fpm, but it gets there. OAT at 14,000: -9°C. You are above the Mirage's reported icing altitude, and still in cloud.
 
 <<link "Level at one-four and settle the scan" "Dec5">><</link>>
 
-:: Dec4C
+:: Dec4C [scenario]
 <<set $bandAlt to "7,000">><<if $filedAlt is "7,000">>You ask to stay low and take the airway dogleg that holds a 9,000 MEA as far north as the structure allows. Center approves it with the tone of a man re-drawing your strip. The dogleg buys you time under the warm side of the deck. It does not buy you Medford; the last segments still climb.<<else>>You request 7,000. Center answers, "Twenty-two lima whiskey, descend and maintain seven thousand, expect vectors for weather." You descend through the mid-level layers. At 8,000 you pick up a fast skim of light rime; TKS at MAX sheds it by 7,000, where the OAT reads +3°C.<</if>> You are below the freezing level, under the overcast, with the terrain rising ahead of you mile by mile.
 
 <<link "Stay low while the lowlands last" "Dec5">><</link>>
 
-:: Dec4D
+:: Dec4D [scenario]
 <<set $fikiMisused to true>>
 <<set $badchoices to $badchoices + 1>>
 <<set $bandAlt to "10,000">>You level at 10,000 as cleared and, before any ice appears, cycle TKS to MAX. Fluid streams across the leading edges. OAT reads -3°C; the air is moist; the airplane is clean.
@@ -467,7 +467,7 @@ You are spending fluid against a threat that hasn't arrived.
 
 <<link "Watch the fluid gauge fall" "Dec5">><</link>>
 
-:: Dec5
+:: Dec5 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec5: First ice"])>>
 <div class="decision-heading">Cruise: Decision 5 of 10: First Ice Encounter</div>
 
@@ -485,14 +485,14 @@ Then, as you cross into the southern edge of the occlusion, the windshield start
 
 <<link "D. Declare emergency. Request immediate descent to warm air and vectors to the nearest airport." "Dec5D">><<set $pathArray to $pathArray.concat(["Dec5: D (declare, descend)"])>><</link>>
 
-:: Dec5A
+:: Dec5A [scenario]
 <<set $icingLate to true>>
 <<set $badchoices to $badchoices + 1>>
 You cycle TKS to NORMAL. The fluid begins to weep. The accretion on the leading edge starts to shed in patches, but new ice forms between the sheds. Net effect: the ice is not clearing, it is simmering in place. Airspeed has dropped four knots. The windshield is re-accumulating where the flow doesn't reach.
 
 <<link "Press on with the fluid running" "Dec6">><</link>>
 
-:: Dec5B
+:: Dec5B [scenario]
 You cycle TKS to MAX and press the PTT: "Oakland Center, twenty-two lima whiskey, picking up moderate mixed ice, request <<if $bandAlt is "14,000">>descent to one-three thousand<<else>>climb to one-three thousand<</if>> for the warm layer."
 
 Center: "Twenty-two lima whiskey, Oakland, <<if $bandAlt is "14,000">>descend and maintain<<else>>climb and maintain<</if>> one-three thousand. Report conditions."
@@ -501,14 +501,14 @@ The MAX-flow TKS is visibly working as you <<if $bandAlt is "14,000">>start down
 
 <<link "Ride the wedge" "Dec6">><</link>>
 
-:: Dec5C
+:: Dec5C [scenario]
 You cycle TKS to MAX. Fluid streams across the panels, thicker than NORMAL. Over the next 90 seconds the accretion on the leading edges sheds in visible sheets; one long rime plate peels off the left wing's inboard panel and tumbles away.
 
 But new ice continues to form between shed cycles. The TKS is winning the current skirmish; it is not winning the war, because this icing is heavier than the system was built to outlast.
 
 <<link "Two minutes are up. Decide." "Dec6">><</link>>
 
-:: Dec5D
+:: Dec5D [scenario]
 You press the PTT: "Oakland Center, twenty-two lima whiskey, declaring an emergency, moderate ice, request immediate vectors to warm air and the nearest suitable airport."
 
 Center answers in the calm voice Oakland keeps on a shelf for these: "Twenty-two lima whiskey, Oakland, roger, turn right heading zero-nine-zero, descend and maintain seven thousand, vectors Chico. Say fuel and souls on board."
@@ -519,7 +519,7 @@ You land at Chico twenty minutes later. The trucks roll for you and then roll ho
 
 <<link "Shut down and make the phone calls" "End_PrecautionaryChico">><</link>>
 
-:: End_PrecautionaryChico
+:: End_PrecautionaryChico [scenario ending]
 <div class="decision-heading">Ending: Declared, Diverted, Done</div>
 
 The phone call with the facility takes four minutes and is mostly typing sounds on the other end. The clinic meeting becomes a Zoom from the Chico FBO's quiet room. Jamal buys pretzels from a vending machine older than he is and asks, carefully, whether you'd do it the same way again.
@@ -541,7 +541,7 @@ Declare without hesitation when you need to. Knowing the rungs below "emergency"
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: Dec6
+:: Dec6 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec6: Inside the front"])>>
 <div class="decision-heading">Cruise: Decision 6 of 10: Inside the Occlusion</div>
 
@@ -559,7 +559,7 @@ The cell 25 miles east is moving along at 30 knots on a bearing that keeps it ea
 
 <<link "D. Request 16,000 and get above the layered tops, where the buildups stand up in plain sight and can be dodged visually." "Dec6D">><<set $pathArray to $pathArray.concat(["Dec6: D (climb above)"])>><</link>>
 
-:: Dec6A
+:: Dec6A [scenario]
 <<set $cellTooClose to true>>
 <<set $badchoices to $badchoices + 1>>
 You hold course. The datalink cell is updating at a two-to-six-minute latency; you know this because you checked the uplink time on the MFD when you set up. The cell drifts slowly east of you as predicted for the next fifteen minutes. Then the datalink updates, and the cell that was yellow is now red and has grown.
@@ -568,22 +568,22 @@ You are still 22 miles from it. But the data is old and the gradient is steep.
 
 <<link "Keep watching the screen" "Dec7">><</link>>
 
-:: Dec6B
+:: Dec6B [scenario]
 You call Center: "Oakland Center, twenty-two lima whiskey, request twenty left to open separation from a cell at our three o'clock." Center responds: "Twenty-two lima whiskey, fly heading three-three-zero, advise on course." You take the vector. The cell stays at your four o'clock and gradually falls behind. The deviation costs you about six minutes to Medford.
 
 <<link "Let the cell fall behind" "Dec7">><</link>>
 
-:: Dec6C
+:: Dec6C [scenario]
 You call Center: "Oakland Center, twenty-two lima whiskey, request vectors to circumnavigate weather east of course." Center responds with a sequence of turns: first east briefly, then a long south-to-north arc that keeps you 30 miles clear of the worst of it. Your detour adds fifteen minutes and some fuel.
 
 <<link "Fly the long way around" "Dec7">><</link>>
 
-:: Dec6D
+:: Dec6D [scenario]
 You request climb to 16,000. Oakland Center: "Twenty-two lima whiskey, climb and maintain one-six thousand, expect vectors for weather as needed." The SR22T climbs efficiently; TKS is handling the modest icing above the warm wedge. You level at 16,000 and can now see the tops of the occlusion laid out around you. The cold-front cell stands like a wet meringue at your two o'clock, its top towering to FL210; you are above the layered tops, not above the cell, and now you can keep it that way by eye.
 
 <<link "Navigate by what you can finally see" "Dec7">><</link>>
 
-:: Dec7
+:: Dec7 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec7: Alternate decision"])>>
 <div class="decision-heading">Cruise: Decision 7 of 10: Alternate Selection</div>
 
@@ -607,33 +607,33 @@ Jamal says, "Does the alternate need to be an airport we can actually land at ri
 
 <<link "D. No amendment needed. Destination is above minimums; if you can make it in, the rule doesn't even demand an alternate." "Dec7D">><<set $pathArray to $pathArray.concat(["Dec7: D (no alt needed)"])>><</link>>
 
-:: Dec7A
+:: Dec7A [scenario]
 You amend your alternate to KCIC. Fuel reserve check: current fuel 46 gal, KMFR to KCIC 145 NM at worst-case tailwind reversal, about 75 minutes at typical cruise, call it 27 gallons. You have reserve. Alternate amended.
 
 <<link "Turn the page to the arrival" "Dec8">><</link>>
 
-:: Dec7B
+:: Dec7B [scenario]
 <<set $alternateThin to true>>
 <<set $badchoices to $badchoices + 1>>
 You amend your alternate to KSLE. KSLE has reasonable weather trends but is 65 NM north of KMFR, which means if you have to use it, you are flying past your destination into weather whose trend is unknown at that time. You have fuel for it. The geometry is a choice.
 
 <<link "Note the geometry and continue" "Dec8">><</link>>
 
-:: Dec7C
+:: Dec7C [scenario]
 <<set $alternateThin to true>>
 <<set $badchoices to $badchoices + 1>>
 You amend your alternate to KRBG. KRBG's ceiling is at LOC minimums right now and dropping slowly; your arrival there, should you need it, would be in another hour or so. You're betting on the trend not worsening.
 
 <<link "Place the bet and continue" "Dec8">><</link>>
 
-:: Dec7D
+:: Dec7D [scenario]
 <<set $alternateThin to true>>
 <<set $badchoices to $badchoices + 1>>
 You leave the alternate on KRDD despite its degradation. Your reasoning: destination is above minimums, so why overthink it. And strictly speaking, the 1-2-3 math at Medford now reads 3,000 and 3: an alternate is no longer even required, with the visibility sitting exactly on the line of that rule. So you proceed toward a destination forecast with zero spare visibility, carrying a filed alternate behind you that neither of you could use. Legal is doing a lot of carrying in that sentence.
 
 <<link "Press on with the paperwork as filed" "Dec8">><</link>>
 
-:: Dec8
+:: Dec8 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec8: Approach selection"])>>
 <div class="decision-heading">Arrival: Decision 8 of 10: Approach Selection at KMFR</div>
 
@@ -663,19 +663,19 @@ The precision approach and the into-wind runway are not the same runway. The ILS
 
 <<link "D. Request the ILS 14, circle to land 32. Precision guidance down through the layer, then an into-wind landing." "Dec8D">><<set $pathArray to $pathArray.concat(["Dec8: D (ILS 14 circle 32)"])>><</link>>
 
-:: Dec8A
+:: Dec8A [scenario]
 <<set $appr to "ILS14">>
 You request the ILS Rwy 14 with vectors. Approach confirms. The needle work will be the easy part; the arithmetic you're carrying is the wind. Nine knots of tailwind component between gusts, more inside them, onto wet grooved pavement 8,800 feet long. Long runways forgive a lot. You set up the Perspective+, brief Jamal on what he'll see, and keep the groundspeed math to yourself.
 
 <<link "Fly it down the slope" "Dec9">><</link>>
 
-:: Dec8B
+:: Dec8B [scenario]
 <<set $appr to "RNAV32">>
 You request the RNAV Y Rwy 32. "Twenty-two lima whiskey, expect vectors RNAV Yankee Runway three-two, descend and maintain seven thousand." You load it, brief it, and say the strange number out loud so it stays real: glidepath four-point-nine-five degrees. Power well back early, speed nailed, configuration done before the fix, no catching up allowed. The missed is 1,900 then a climbing right turn to 10,500 direct CUTTR, and you brief it like you mean it.
 
 <<link "Fly the steep one" "Dec9">><</link>>
 
-:: Dec8C
+:: Dec8C [scenario]
 <<set $appr to "LOC14">>
 <<set $approachMisjudged to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -683,7 +683,7 @@ You request the LOC Rwy 14. Familiar, simple, comfortably above its minimums. It
 
 <<link "Set up the step-downs" "Dec9">><</link>>
 
-:: Dec8D
+:: Dec8D [scenario]
 <<set $appr to "CIRCLE32">>
 You request the ILS Rwy 14, circle to land Rwy 32. Approach confirms without comment; Medford's tower has watched that exact plan work all morning. Precision guidance down through the layer to circling minimums, break out at 745 AGL under a ceiling that's twice that, carry the runway visually around the south side (circling is only barred northeast of the field, and only for the fast categories), and land into the wind.
 
@@ -691,7 +691,7 @@ It is two approaches glued together, and the glue is altitude discipline in the 
 
 <<link "Brief the circle like a procedure, because it is one" "Dec9">><</link>>
 
-:: Dec9
+:: Dec9 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec9: Descent and configuration"])>>
 <div class="decision-heading">Approach: Decision 9 of 10: Final Descent</div>
 
@@ -709,31 +709,31 @@ No gear to wait on in an SR22. The configuration question is flaps.
 
 <<link "D. Flaps full. Speed bug 75. Land as slow as possible to minimize rollout." "Dec9D">><<set $pathArray to $pathArray.concat(["Dec9: D (full flaps, 75 KIAS slow)"])>><</link>>
 
-:: Dec9A
+:: Dec9A [scenario]
 You configure flaps 100% at the FAF. Airspeed settles on 80 KIAS with the trim set. The airplane is stable and slow, the descent rate appropriate.
 
 <<link "Ride it to minimums" "Dec10">><</link>>
 
-:: Dec9B
+:: Dec9B [scenario]
 You stage the flaps: 50% at the FAF, full on sight of the runway. Approach speed 85 KIAS, configured clean enough to maneuver if you have to. The Cirrus is happy here.
 
 <<link "Carry it down with options open" "Dec10">><</link>>
 
-:: Dec9C
+:: Dec9C [scenario]
 <<set $approachMisjudged to true>>
 <<set $badchoices to $badchoices + 1>>
 You fly the approach clean. The Cirrus trims nicely for it, but the airspeed is higher than the approach was designed around; at minimums you will be high-energy, and the transition to landing will demand either a long float or an aggressive deceleration.
 
 <<link "Bring the extra knots to minimums" "Dec10">><</link>>
 
-:: Dec9D
+:: Dec9D [scenario]
 <<set $approachMisjudged to true>>
 <<set $badchoices to $badchoices + 1>>
 You configure full flaps at the FAF with the speed bug set for 75 KIAS. The airplane is working hard there: angle of attack high, every gust loading the wing toward the top of the AoA strip. It is inside the POH and outside the airplane's happy place.
 
 <<link "Nurse it down the slope" "Dec10">><</link>>
 
-:: Dec10
+:: Dec10 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec10: Go-around threshold"])>>
 <div class="decision-heading">Final: Decision 10 of 10: The Go-Around Question</div>
 
@@ -751,28 +751,28 @@ Jamal is leaning forward to see out the front.
 
 <<link "D. Go around and ask Approach for the other runway on the next try." "Dec10D">><<set $pathArray to $pathArray.concat(["Dec10: D (go-around + swap)"])>><</link>>
 
-:: Dec10A
+:: Dec10A [scenario]
 <<if $appr is "ILS14" or $appr is "LOC14">>You commit. The groundspeed over the fence is a number you'd rather not log. The flare starts where it always starts and ends forty feet deeper than it has ever ended, the gust riding under the tail, the runway remaining ahead of you shrinking at highway speed.
 
 <<goto "End_Excursion">><<else>>You commit to the landing. The airplane arrives on centerline, wind on the nose doing what headwinds do, which is help. The gust pushes the wing once in the flare; you fly through it, touch down mains-first, and roll out with runway to spare.
 
 <<link "Roll out and breathe" "Resolution">><</link>><</if>>
 
-:: Dec10B
+:: Dec10B [scenario]
 You go around. Power to max continuous. Flaps to 50%. Positive rate, clean up the rest on schedule. Approach gives you a right turn onto downwind for the re-sequence.
 
 <<if $appr is "ILS14" or $appr is "LOC14">>On downwind you key up: "Approach, twenty-two lima whiskey requests the RNAV Yankee three-two for the next one." Nobody argues. The second approach is steep and honest and puts the wind where it belongs, and the landing at the end of it is almost boring.<<else>>The second pass, flown with the first one's gust picture fresh in your hands, delivers the runway. You land into the wind and the rollout is ordinary.<</if>>
 
 <<link "Taxi in" "Resolution">><</link>>
 
-:: Dec10C
+:: Dec10C [scenario]
 <<if $appr is "ILS14" or $appr is "LOC14">>You commit to planting it. The spot arrives at a groundspeed the brakes will be discussing for weeks. You are down, hard, deep, working the pedals on wet pavement with the gust shoving from behind.
 
 <<goto "End_Excursion">><<else>>You commit to a tight landing: spot touchdown, brakes working from the first foot. The airplane lands firmly, slightly long as a gust puffs under the wing at the flare. Brakes warm, rollout honest. You turn off with margin left over.
 
 <<link "Roll out" "Resolution">><</link>><</if>>
 
-:: Dec10D
+:: Dec10D [scenario]
 <<set $goAroundBlown to true>>
 <<set $badchoices to $badchoices + 1>>
 You go around. Power to max continuous. Flaps stay at 100% because your hand never makes it to the lever; the SR22 climbs grudgingly, dragging its own laundry. At 500 AGL you remember, clean up in stages, and the climb rate doubles. Approach asks, "Twenty-two lima whiskey, state intentions." You key the PTT twice before any words are ready.
@@ -781,7 +781,7 @@ You go around. Power to max continuous. Flaps stay at 100% because your hand nev
 
 <<link "Taxi in with your pulse settling" "Resolution">><</link>>
 
-:: Resolution
+:: Resolution [scenario]
 <<set $pathArray to $pathArray.concat(["Resolution"])>>
 <<set $criticalErrors to 0>>
 <<if $frontMisread>><<set $criticalErrors to $criticalErrors + 1>><</if>>
@@ -816,7 +816,7 @@ You go around. Power to max continuous. Flaps stay at 100% because your hand nev
   <<goto "End_Routine">>
 <</if>>
 
-:: End_CleanWin
+:: End_CleanWin [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Clean win"])>>
 <div class="decision-heading">Ending: Routed Around the Front</div>
 
@@ -839,7 +839,7 @@ Every weather system has a cleaner side. Finding it is the work.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_Routine
+:: End_Routine [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Routine finish"])>>
 <div class="decision-heading">Ending: Clean Finish</div>
 
@@ -862,7 +862,7 @@ Weather flying is a series of small, correct decisions, not a single brave one.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_Qualified
+:: End_Qualified [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Qualified success"])>>
 <div class="decision-heading">Ending: Qualified Success</div>
 
@@ -883,7 +883,7 @@ Every forecast ages. The pilot who updates the brief mid-flight is the pilot who
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_RoughFlight
+:: End_RoughFlight [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Rough flight"])>>
 <div class="decision-heading">Ending: Rough Ride, Safe Outcome</div>
 
@@ -906,7 +906,7 @@ The scariest flights are the ones that go exactly as badly as they could go with
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_StruggleIn
+:: End_StruggleIn [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Diverted with ice"])>>
 <div class="decision-heading">Ending: Diversion with Residual Ice</div>
 
@@ -929,7 +929,7 @@ FIKI is a door out of icing. It is not a cruise altitude.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_TurbDamage
+:: End_TurbDamage [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Turbulence damage"])>>
 <div class="decision-heading">Ending: Encountered Severe Turbulence</div>
 
@@ -952,7 +952,7 @@ Datalink weather is where thunderstorms were. ATC radar is where they are.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_Excursion
+:: End_Excursion [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Runway excursion"])>>
 <div class="decision-heading">Ending: Runway Excursion</div>
 
@@ -975,7 +975,7 @@ The landing is won on the approach, not in the flare.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_GoAroundMess
+:: End_GoAroundMess [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Messy go-around"])>>
 <div class="decision-heading">Ending: Messy Go-Around, Safe Return</div>
 
@@ -996,7 +996,7 @@ The go-around is not a failure of the approach. It is a success of the pilot.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_FuelLow
+:: End_FuelLow [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Fuel-low alternate"])>>
 <div class="decision-heading">Ending: Alternate with Narrow Fuel Margin</div>
 
@@ -1019,7 +1019,7 @@ The alternate is the flight plan's second airplane. Treat it like one.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_CAPS
+:: End_CAPS [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: CAPS deployment"])>>
 <div class="decision-heading">Ending: CAPS Deployment</div>
 

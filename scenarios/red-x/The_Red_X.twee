@@ -120,7 +120,7 @@ hr {
   white-space: pre-wrap;
 }
 
-:: Start
+:: Start [scenario]
 You are Dr. Lilia Yu. You are a dentist in Burlington, Wisconsin, a pilot for twelve years, instrument-rated for eight. You have 1,150 hours total time and 180 hours of actual instrument. You fly a 2015 Cessna 182T Skylane, N735GH, that you bought three years ago and learned to love one trip at a time. It has a G1000 NXi panel and a little Mid-Continent SAM standby attitude indicator tucked up in the top-left corner of the panel, a hedge you have never needed.
 
 You are sitting in the FBO at St. Louis Lambert Friday afternoon, finishing the last of a lukewarm coffee. You and your sister Connie flew down to St. Louis on Wednesday evening for a long weekend, the first one the two of you have managed since her third kid was born. Connie has to be home tonight. She has kids' soccer in the morning and a client breakfast at nine. The plan has always been: wheels up around 2 pm CDT Friday, home by 5.
@@ -158,7 +158,7 @@ You look at the briefing one more time.
 <<link "E. Cancel the flight. Find another way to get Connie home tonight." "Dec1E">><</link>>
 </div>
 
-:: Dec1A
+:: Dec1A [scenario]
 You file direct KBUU, 7,000 MSL, alternate KMKE. Milwaukee is twenty minutes from Connie's driveway. You did your instrument training out of there. You know the taxiways, the controllers, the coffee at the FBO. If Burlington doesn't work, Milwaukee feels like the next best thing to home.
 
 The TAF you glanced at for KMKE looks like Burlington's: low overcast holding until the 02Z lift. The number you needed for an alternate was 600 and 2 from one hour before to one hour after your ETA. You filed it anyway, because Milwaukee is Milwaukee.
@@ -167,19 +167,19 @@ The TAF you glanced at for KMKE looks like Burlington's: low overcast holding un
 <<set $badchoices to $badchoices + 1>>
 <<goto "Launch">>
 
-:: Dec1B
+:: Dec1B [scenario]
 You file direct KBUU, 7,000 MSL, alternate KDPA. DuPage is forecast at 900 overcast, 4 miles at your ETA window. A precision-approach alternate needs 600 and 2; DuPage clears that with room to spare, and it has the ILS 10 and ILS 20. You are clean under 91.169.
 
 <<set $alt to "KDPA">>
 <<goto "Launch">>
 
-:: Dec1C
+:: Dec1C [scenario]
 You file direct KBUU, 7,000 MSL, alternate KPWK (Chicago Executive). Executive is forecast 700 overcast, 3 miles at your ETA window. That clears the 600 and 2 an alternate with a precision approach needs, and they have full-service maintenance on the field. You like having a backup plan with a shop on it.
 
 <<set $alt to "KPWK">>
 <<goto "Launch">>
 
-:: Launch
+:: Launch [scenario]
 You walk out to the ramp. Connie pulls her hood up against the breeze and follows you to the airplane. The 182 is parked on the east side of the FBO, tied down next to a Cirrus. The preflight goes clean. You fire up and pick up your clearance from ground: "Skylane seven-three-five Golf Hotel, cleared to Burlington Municipal via direct, seven thousand, squawk four-two-one-one."
 
 Taxi, runup, takeoff. You climb through a layer of broken cumulus at 3,500, pop into the smooth gold air above, and settle into a steady 130 knots at 7,000, lean of peak, 11 gallons an hour. You are in the system, on top, cruising north. Connie settles into the right seat with her book. Springfield slides by on the right, then Peoria, then Pontiac.
@@ -190,7 +190,7 @@ Ninety nautical miles south of Burlington, over northern Illinois, you hear a si
 
 <<goto "AHRSFail">>
 
-:: Dec1D
+:: Dec1D [scenario]
 "Two hours," you tell Connie. "I want the front to lift a little more. Let's grab lunch."
 
 Connie gives you a long look, then nods. "Okay. Okay. You're the pilot."
@@ -207,7 +207,7 @@ By the time you level at 7,000, the sun is a flat orange disk to your left. You 
 <<set $badchoices to $badchoices + 1>>
 <<goto "AHRSFail">>
 
-:: Dec1E
+:: Dec1E [scenario]
 "I can't," you tell Connie. "The margins are too thin. We're not flying."
 
 Connie's shoulders drop, and then she nods. "Okay. Yeah. Okay." A beat. "The sitter leaves at one. Whatever gets me home before that."
@@ -224,7 +224,7 @@ Hertz has one midsize left, $340 with the one-way drop fee. Burlington is 360 mi
 <<link "B. Book the 18:40 to O'Hare and solve the last 75 miles when you land." "Ground_ORD">><</link>>
 </div>
 
-:: Ground_Drive
+:: Ground_Drive [scenario]
 You sign for the midsize and are on the interstate by 15:20. Connie handles the family logistics by phone while you drive: sitter extended, soccer carpool confirmed, client breakfast still on.
 
 The first three hours are easy. Then, north of Bloomington a little after 18:30, the sky ahead goes the color of a bruise and the traffic begins to bloom red. The same frontal system you declined to fly through is crossing the interstate as a broken line of heavy rain. The first cell arrives like a car wash. Semis throw blinding spray. Some drivers put their flashers on and crawl; some don't slow down at all.
@@ -241,7 +241,7 @@ You have been up since six. There are still three-plus hours of road on the othe
 <<link "C. Hand Connie the keys at the next exit. She slept in; you've been flying logistics all day. Rest while she drives a leg." "Ground_Fog_Swap">><</link>>
 </div>
 
-:: Ground_ORD
+:: Ground_ORD [scenario]
 The flight is full, short, and bumpy in the descent through the same overcast you've been staring at on radar all afternoon. On the ground at 20:05. By the time you are out of the terminal it is 20:50, and the rental counters are picked over.
 
 National has nothing. Enterprise has one full-size at $389 with the one-way drop, available in twenty minutes. Next to you in line, a rideshare driver finishing a drop-off overhears Connie say "Burlington" and offers a flat $210, cash or app, leaving now. "I grew up in Lake Geneva," he says. "I know those roads in my sleep."
@@ -254,28 +254,28 @@ Connie looks at you. It is fifteen hours since you woke up.
 <<link "B. Take the rideshare. He's rested, he knows the roads, and you can both sleep." "Ground_Fog_Ride">><</link>>
 </div>
 
-:: Ground_Fog_Press
+:: Ground_Fog_Press [scenario]
 <<set $ground to "press">>
 <<set $badchoices to $badchoices + 1>>
 <<goto "Ground_Fog">>
 
-:: Ground_Fog_Wait
+:: Ground_Fog_Wait [scenario]
 <<set $ground to "wait">>
 <<goto "Ground_Fog">>
 
-:: Ground_Fog_Swap
+:: Ground_Fog_Swap [scenario]
 <<set $ground to "swap">>
 <<goto "Ground_Fog">>
 
-:: Ground_Fog_RentORD
+:: Ground_Fog_RentORD [scenario]
 <<set $ground to "rentORD">>
 <<goto "Ground_Fog">>
 
-:: Ground_Fog_Ride
+:: Ground_Fog_Ride [scenario]
 <<set $ground to "ride">>
 <<goto "Ground_Fog">>
 
-:: Ground_Fog
+:: Ground_Fog [scenario]
 <<if $ground is "press">>The line of rain hammers the windshield for twenty-five minutes, semis materializing out of the spray, and then it is behind you. Your hands stay tight on the wheel for a while after. The miles grind by: Rockford, the state line, dark county highway.<<elseif $ground is "wait">>The coffee stop costs you forty minutes and buys you a quiet highway. The line crosses, the rain drops to drizzle, and you merge back on behind it. Rockford, the state line, dark county highway.<<elseif $ground is "swap">>Connie drives the middle leg while you tip the seat back and get something that is almost sleep. The rain crosses the highway while you're stopped swapping back; you take the wheel for the home stretch. Rockford, the state line, dark county highway.<<elseif $ground is "rentORD">>The paperwork takes the full twenty minutes. By 21:30 you are northbound out of O'Hare in a full-size that smells like someone else's air freshener, Connie navigating, the suburbs thinning out into dark county highway.<<else>>The driver is friendly for ten minutes and then, mercifully, quiet. Connie is asleep before the tollway ends. You are in the back seat with your eyes closed and your brain still doing arithmetic. The suburbs thin out into dark county highway.<</if>>
 
 Twelve miles out of Burlington, the fog comes up off the fields the way it does behind a warm front at night: first wisps over the low spots, then a wall. <<if $ground is "ride">>The driver doesn't slow down. High beams on, fifty-five on a two-lane county road, visibility maybe three hundred feet and dropping.<<else>>Your headlights make a gray room that ends about three hundred feet ahead, and the centerline is appearing one dash at a time. Fifty-five feels insane. Forty still feels fast.<</if>>
@@ -290,7 +290,7 @@ Twelve miles out of Burlington, the fog comes up off the fields the way it does 
 <<link "B. A pickup passes you doing sixty and its taillights punch a hole in the fog. Tuck in behind and use them." "End_Ground_Pressed">><</link>>
 </div><</if>>
 
-:: End_Ground_Patient
+:: End_Ground_Patient [scenario ending]
 <<if $ground is "ride">>"Hey," you say, leaning forward. "This fog is worse than it looks. I need you to slow down."
 
 The driver glances at the mirror, says "you got it," and backs it down to thirty-five. The last twelve miles take twenty minutes.<<else>>You slow to thirty, put the flashers on, and creep. A pickup blows past you at one point and is swallowed whole. The last twelve miles take twenty-five minutes.<</if>> It is after midnight when you pull into Connie's driveway. The porch light is a soft yellow blur in the fog. Connie is asleep. You wake her gently. She carries her own bag in, then comes back out and hugs you hard.
@@ -312,7 +312,7 @@ The driver glances at the mirror, says "you got it," and backs it down to thirty
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><<set $alt to "">><<set $minsApt to "">><<set $ground to "">><</link>>
 </div>
 
-:: End_Ground_Pressed
+:: End_Ground_Pressed [scenario ending]
 <<if $ground is "ride">>You say nothing. He knows these roads. You watch the fog thicken through half-closed eyes and tell yourself it's fine.
 
 Eight miles out, the world ahead resolves too late into the unlit back end of a flatbed crawling along at twenty with its lights caked in mud. Your driver stands on the brakes. The car shudders, tracks straight, and stops with maybe two car-lengths to spare. Connie comes awake with a gasp. Nobody says anything for a moment. The driver does the last eight miles at thirty, both hands on the wheel.<<else>>You tuck in behind the pickup's taillights and ride them at sixty. It works, in the way that things work right up until they don't. Six miles out, the taillights ahead of you flare, swerve, and vanish. You are standing on the brakes before your conscious mind knows why. A deer, dead in your lane, materializes at the top of your headlights. You miss it by feet, half on the shoulder, gravel roaring against the floor pan. Connie's hand is locked on the grab handle.
@@ -336,7 +336,7 @@ You do the last six miles at thirty with your flashers on.<</if>> It is around m
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><<set $alt to "">><<set $minsApt to "">><<set $ground to "">><</link>>
 </div>
 
-:: AHRSFail
+:: AHRSFail [scenario]
 Your hand goes to the standby attitude indicator, the little square to the top-left of the PFD. The SAM is showing wings level, two degrees nose up, which is exactly what you had trimmed. Airspeed 130 on the PFD airspeed tape, still good. The ADC is alive. Altimeter 7,000. VSI zero.
 
 The attitude display on the PFD is a red X. The HSI is a red X. The turn rate indicator is gone. The little green "HDG" and "TRK" labels are grayed. The magenta course line on the MFD map is still there, still correct. The GPS is fine, and the MFD still has its own ADAHRS feed for map purposes, but the PFD attitude reference is gone.
@@ -359,7 +359,7 @@ Connie, who has been reading a paperback, looks up. "Is that normal?"
 <<link "D. Key the mic: 'Chicago Center, Skylane seven-three-five Golf Hotel, lost my primary attitude indicator, partial panel, request.' Radio first, then Connie." "Dec2D">><</link>>
 </div>
 
-:: Dec2A
+:: Dec2A [scenario]
 You say "Yeah, just a little glitch" without looking at her, because you're scanning the SAM, re-trimming, and trying to think. Connie goes quiet. She is not stupid. She watches you not look at her, and her hands fold around the paperback.
 
 You pilot the airplane. Your scan is working. The SAM is steady. The magenta line is still tracking to KBUU. Five minutes pass before you key the mic, and in those five minutes Chicago Center calls you twice.
@@ -373,7 +373,7 @@ You pilot the airplane. Your scan is working. The SAM is steady. The magenta lin
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec3">>
 
-:: Dec2B
+:: Dec2B [scenario]
 "The attitude indicator on the main screen just failed," you say, and you hear your own voice come out steady. "I have a backup, and it's flying fine. I'm going to talk to ATC now and figure out what we're doing."
 
 Connie puts the book down. "Okay. I'm good. Tell me if you need me to do something."
@@ -382,7 +382,7 @@ It is remarkable how much this helps. You can feel a bit of tension leave your s
 
 <<goto "Dec3">>
 
-:: Dec2C
+:: Dec2C [scenario]
 "Uh, we might need to divert. Give me a second," you say. Connie nods and goes quiet. You scan the SAM. Altitude steady. Airspeed steady. You hand-trim back into a perfect wings-level. Aviate first. The radio can wait the length of two breaths.
 
 Two minutes later, stable and ahead of the airplane, you key up. "Chicago, Skylane seven-three-five Golf Hotel, lost my AHRS, partial panel on the standby."
@@ -393,7 +393,7 @@ Two minutes later, stable and ahead of the airplane, you key up. "Chicago, Skyla
 
 <<goto "Dec3">>
 
-:: Dec2D
+:: Dec2D [scenario]
 You key the mic. "Chicago Center, Skylane seven-three-five Golf Hotel, lost my primary attitude indicator, partial panel, request."
 
 The controller's voice comes back immediately, calm and unhurried. "Five Golf Hotel, Chicago Center, roger. Say your souls on board and fuel remaining."
@@ -406,7 +406,7 @@ Connie is watching you. You have the SAM in your scan and the whiskey compass ro
 
 <<goto "Dec3">>
 
-:: Dec3
+:: Dec3 [scenario]
 The controller's next question comes back in the same unhurried voice. "Five Golf Hotel, understood. Are you declaring an emergency?"
 
 You know the rules. An emergency is a distress or urgency condition, and the pilot decides. Declaring gets you priority handling, any vector you need, any altitude, any airport. It also triggers paperwork, maybe a phone call. It does not, by itself, make anything harder. It just makes some things easier.
@@ -421,14 +421,14 @@ You know the rules. An emergency is a distress or urgency condition, and the pil
 <<link "D. 'Stand by, five Golf Hotel.' Take a breath. Think about whether you want to declare before you answer." "Dec3D">><</link>>
 </div>
 
-:: Dec3A
+:: Dec3A [scenario]
 "Negative emergency at this time," you say. "Request vectors to the nearest suitable IFR airport."
 
 "Five Golf Hotel, Chicago, roger. Nearest above-minimums weather: DuPage at zero-three-five, thirty miles, niner hundred overcast four. Chicago Executive, zero-five-zero at forty-five miles, seven hundred overcast three. Waukegan, zero-five-five at forty, six hundred overcast two and a half. Rockford, zero-one-zero at thirty-five miles, two hundred overcast three-quarters, right at ILS minimums. Burlington, three-five-five at fifty-five miles, three hundred overcast one. Advise intentions."
 
 <<goto "Dec4">>
 
-:: Dec3B
+:: Dec3B [scenario]
 "Affirmative, five Golf Hotel declares emergency. Partial panel. Request vectors and weather at nearest suitable airports."
 
 "Five Golf Hotel, Chicago, roger, copy declared emergency. Say intentions or advise when able. DuPage is your closest above-minimums airport: zero-three-five, thirty miles, niner hundred overcast four. Chicago Executive zero-five-zero at forty-five, seven hundred overcast three. Waukegan zero-five-five at forty, six hundred overcast two and a half. Rockford zero-one-zero at thirty-five, two hundred overcast three-quarters, right at ILS minimums. Burlington three-five-five at fifty-five, three hundred overcast one."
@@ -436,7 +436,7 @@ You know the rules. An emergency is a distress or urgency condition, and the pil
 <<set $declared to true>>
 <<goto "Dec4">>
 
-:: Dec3C
+:: Dec3C [scenario]
 "Chicago, five Golf Hotel, minimum fuel, request priority handling."
 
 There is a short pause. "Five Golf Hotel, Chicago, confirm minimum fuel. That means you cannot accept undue delay. Say fuel remaining in hours."
@@ -450,7 +450,7 @@ You look at the totalizer. Three hours, give or take. The word you reached for a
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec4">>
 
-:: Dec3D
+:: Dec3D [scenario]
 "Stand by, Chicago." You breathe. You pilot the airplane for ten seconds. The SAM says wings level. The magenta line is tracking. Nothing is urgent in this exact moment. But the fact is your airplane is in IMC with a degraded panel, and if the SAM fails next you will be in real trouble.
 
 You key the mic. "Chicago Center, five Golf Hotel, not declaring at this time, but request priority vectors to nearest above-minimums IFR airport."
@@ -459,7 +459,7 @@ You key the mic. "Chicago Center, five Golf Hotel, not declaring at this time, b
 
 <<goto "Dec4">>
 
-:: Dec4
+:: Dec4 [scenario]
 The menu is in front of you. Fuel is not the constraint. Three hours aboard puts every airport on that list within easy reach, twice over for most of them. The constraint is the scan. You are partial-panel in IMC, and every minute you stay in it costs a little more attention and buys a little less precision.
 
 <div class="choice-list">
@@ -474,7 +474,7 @@ The menu is in front of you. Fuel is not the constraint. Three hours aboard puts
 <<link "E. 'Chicago, five Golf Hotel, request vectors southbound back toward VMC. I can get underneath somewhere around Peoria.'" "Dec4E">><</link>>
 </div>
 
-:: Dec4A
+:: Dec4A [scenario]
 "Chicago, five Golf Hotel, continue Burlington."
 
 "Five Golf Hotel, Chicago, roger. Maintain seven thousand. Expect vectors ILS RWY 11 Burlington."
@@ -485,7 +485,7 @@ You begin the slow, deliberate work of flying fifty-five more miles in IMC on a 
 <<set $minsApt to "KBUU">>
 <<goto "Dec5_KBUU">>
 
-:: Dec4B
+:: Dec4B [scenario]
 "Chicago, five Golf Hotel, DuPage."
 
 "Five Golf Hotel, Chicago, roger. Fly heading zero-three-zero, descend and maintain five thousand. Expect vectors ILS RWY 10 DuPage. Contact Chicago Approach one-two-six point seven-five."
@@ -495,7 +495,7 @@ Thirty miles. Fifteen minutes, probably less. You ease the nose down, cross-chec
 <<set $divertedTo to "KDPA">>
 <<goto "Dec5_KDPA">>
 
-:: Dec4C
+:: Dec4C [scenario]
 "Chicago, five Golf Hotel, Chicago Executive."
 
 "Five Golf Hotel, Chicago, roger. Fly heading zero-five-zero, descend and maintain five thousand. Expect vectors ILS RWY 16 Chicago Executive. Contact Chicago Approach one-one-niner point zero-five."
@@ -506,7 +506,7 @@ Forty-five miles. Twenty minutes. You ease the nose down. Chicago Executive has 
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec5_KPWK">>
 
-:: Dec4D
+:: Dec4D [scenario]
 "Chicago, five Golf Hotel, Rockford."
 
 "Five Golf Hotel, Chicago, roger, Rockford at your heading three-six-zero for now. Rockford weather is currently two hundred overcast, visibility three-quarters, winds one-one-zero at five. That is right at ILS minimums. Confirm intentions."
@@ -521,7 +521,7 @@ Connie has gone very still in the right seat.
 <<link "B. 'Chicago, five Golf Hotel, amend that. Make it DuPage. KDPA.'" "Dec4B">><</link>>
 </div>
 
-:: Dec4D_Confirm
+:: Dec4D_Confirm [scenario]
 "Chicago, five Golf Hotel, confirm Rockford."
 
 "Five Golf Hotel, Chicago, roger, fly heading zero-one-zero, descend and maintain four thousand. Expect ILS RWY 7 Rockford. Contact Rockford Approach one-two-one point zero."
@@ -532,7 +532,7 @@ Thirty-five miles. You ease the nose down on the SAM, airspeed pinned, and start
 <<set $minsApt to "KRFD">>
 <<goto "Dec5_KRFD">>
 
-:: Dec5_KRFD
+:: Dec5_KRFD [scenario]
 Rockford Approach takes the handoff.
 
 "Skylane seven-three-five Golf Hotel, Rockford Approach, radar contact, descend and maintain three thousand, expect vectors ILS RWY 7, altimeter two-niner-niner-eight. I have your partial panel. Can you accept assigned headings, or do you need no-gyro vectors?"
@@ -545,7 +545,7 @@ The whiskey compass swims through a five-degree arc every time the air burbles. 
 <<link "B. 'Approach, five Golf Hotel, I can take assigned headings.'" "Dec5A_RFDAble">><</link>>
 </div>
 
-:: Dec5B_RFDNoGyro
+:: Dec5B_RFDNoGyro [scenario]
 "Approach, five Golf Hotel, no-gyro vectors please. Whiskey compass only over here."
 
 "Five Golf Hotel, roger, no-gyro. Turn right." You roll into a standard-rate turn on the SAM and hold it. "Stop turn." Level. The scan narrows to three instruments, and the compass goes back to being a sanity check instead of a primary.
@@ -553,7 +553,7 @@ The whiskey compass swims through a five-degree arc every time the air burbles. 
 <<set $nogyro to true>>
 <<goto "DecBrief">>
 
-:: Dec5A_RFDAble
+:: Dec5A_RFDAble [scenario]
 "Approach, five Golf Hotel, I can take assigned headings."
 
 "Five Golf Hotel, roger, fly heading zero-four-five, descend and maintain three thousand."
@@ -562,7 +562,7 @@ You walk the whiskey compass through the turn: lead it, level out early, let it 
 
 <<goto "DecBrief">>
 
-:: Dec4E
+:: Dec4E [scenario]
 "Chicago, five Golf Hotel, request vectors southbound. I'd like to break out over VMC and get underneath."
 
 "Five Golf Hotel, Chicago, roger, be advised the nearest VMC is approximately six-five miles south. Peoria reporting scattered three thousand five hundred, ten miles. Fly heading one-eight-zero, maintain seven thousand."
@@ -577,7 +577,7 @@ The logic holds as far as it goes. The clock has its own opinion: forty-five mor
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec5_KPIA">>
 
-:: Dec5_KDPA
+:: Dec5_KDPA [scenario]
 Chicago Approach takes you over.
 
 "Skylane seven-three-five Golf Hotel, Chicago Approach, radar contact, descend and maintain three thousand, expect vectors ILS RWY 10 DuPage, altimeter two-niner-niner-eight. I have your partial panel. Are you able to comply with assigned headings, or do you require no-gyro vectors?"
@@ -596,7 +596,7 @@ Connie is quiet.
 <<link "D. 'Approach, five Golf Hotel, say again?' (You are not sure what no-gyro means.)" "Dec5D_Confused">><</link>>
 </div>
 
-:: Dec5A_Able
+:: Dec5A_Able [scenario]
 "Approach, five Golf Hotel, able normal headings."
 
 "Five Golf Hotel, roger. Fly heading zero-niner-zero, descend and maintain three thousand."
@@ -607,7 +607,7 @@ You can feel that you are building workload you don't need.
 
 <<goto "DecBrief">>
 
-:: Dec5B_NoGyro
+:: Dec5B_NoGyro [scenario]
 "Approach, five Golf Hotel, unable reliable headings. Request no-gyro vectors."
 
 "Five Golf Hotel, Chicago, roger, no-gyro vectors. Turn left."
@@ -623,7 +623,7 @@ It is remarkably easier. The controller is doing your heading management for you
 <<set $nogyro to true>>
 <<goto "DecBrief">>
 
-:: Dec5C_Hybrid
+:: Dec5C_Hybrid [scenario]
 "Approach, five Golf Hotel, able normal headings, request no-gyro on final intercept."
 
 "Five Golf Hotel, Chicago, roger. Fly heading zero-niner-zero, descend and maintain three thousand."
@@ -640,7 +640,7 @@ By the time you are on what the controller wants as 090, you are working much ha
 
 <<goto "DecBrief">>
 
-:: Dec5D_Confused
+:: Dec5D_Confused [scenario]
 "Approach, five Golf Hotel, say again?"
 
 "Five Golf Hotel, Chicago, do you need no-gyro vectors? If your heading indicator is unreliable, I can give you turn instructions by rate, 'turn left' and 'stop turn,' and you just hold a standard-rate turn on your attitude reference until I say stop."
@@ -653,7 +653,7 @@ By the time you are on what the controller wants as 090, you are working much ha
 <<set $badchoices to $badchoices + 1>>
 <<goto "DecBrief">>
 
-:: Dec5_KBUU
+:: Dec5_KBUU [scenario]
 Chicago Approach takes you over.
 
 "Skylane seven-three-five Golf Hotel, Chicago Approach, radar contact, maintain seven thousand, expect vectors ILS RWY 11 Burlington, altimeter two-niner-niner-eight. I have your partial panel. Are you able to comply with assigned headings, or do you require no-gyro vectors?"
@@ -672,7 +672,7 @@ On a degraded panel, that is a tight number.
 <<link "D. 'Approach, five Golf Hotel, amend request: Waukegan, KUGN. Six hundred overcast and two and a half there.'" "Dec5D_BUUReroute">><</link>>
 </div>
 
-:: Dec5A_BUUAble
+:: Dec5A_BUUAble [scenario]
 "Approach, five Golf Hotel, able normal headings. Continue to Burlington."
 
 "Five Golf Hotel, Chicago, roger, fly heading three-five-five, descend and maintain five thousand. Expect vectors ILS 11 Burlington."
@@ -682,7 +682,7 @@ You begin the descent. Your scan is SAM, airspeed, altimeter, whiskey compass, S
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec6_KBUU">>
 
-:: Dec5B_BUUNoGyro
+:: Dec5B_BUUNoGyro [scenario]
 "Approach, five Golf Hotel, unable reliable headings, request no-gyro vectors. Continue Burlington."
 
 "Five Golf Hotel, Chicago, roger, no-gyro, descend and maintain five thousand, turn left."
@@ -698,7 +698,7 @@ You have fifty-five miles to go in IMC on a SAM to an at-minimums field. That is
 <<set $nogyro to true>>
 <<goto "Dec6_KBUU">>
 
-:: Dec5C_BUUReroute
+:: Dec5C_BUUReroute [scenario]
 "Approach, five Golf Hotel, amend request: DuPage, KDPA. Better ceilings, shorter."
 
 "Five Golf Hotel, Chicago, roger, fly heading zero-three-zero, descend and maintain three thousand. Expect vectors ILS 10 DuPage. I have your partial panel. Able normal headings, or do you require no-gyro?"
@@ -711,7 +711,7 @@ You look at the whiskey compass.
 <<link "B. 'Approach, five Golf Hotel, I'll take normal headings.'" "Dec5A_Able_Late">><</link>>
 </div>
 
-:: Dec5B_NoGyro_Late
+:: Dec5B_NoGyro_Late [scenario]
 "Approach, five Golf Hotel, no-gyro vectors, please."
 
 "Five Golf Hotel, Chicago, roger, no-gyro, turn right."
@@ -722,7 +722,7 @@ You roll right. Hold it. "Stop turn." Roll level.
 <<set $divertedTo to "KDPA">>
 <<goto "DecBrief">>
 
-:: Dec5A_Able_Late
+:: Dec5A_Able_Late [scenario]
 "Approach, five Golf Hotel, I'll take normal headings."
 
 "Five Golf Hotel, roger, fly heading zero-three-zero, descend and maintain three thousand."
@@ -732,7 +732,7 @@ You begin the turn. Whiskey compass rocking. Scan busy.
 <<set $divertedTo to "KDPA">>
 <<goto "DecBrief">>
 
-:: Dec5D_BUUReroute
+:: Dec5D_BUUReroute [scenario]
 "Approach, five Golf Hotel, amend request: Waukegan, KUGN."
 
 "Five Golf Hotel, Chicago, roger, fly heading zero-five-five, descend and maintain four thousand. Expect vectors ILS 23 Waukegan. Waukegan weather: six hundred overcast two and a half miles. Able normal headings or require no-gyro?"
@@ -747,7 +747,7 @@ Waukegan's reported ceiling sits about three hundred feet above the ILS 23 decis
 <<set $divertedTo to "KUGN">>
 <<goto "DecBrief">>
 
-:: Dec5_KPWK
+:: Dec5_KPWK [scenario]
 Chicago Approach takes you over.
 
 "Skylane seven-three-five Golf Hotel, Chicago Approach, radar contact, descend and maintain four thousand, expect vectors ILS RWY 16 Chicago Executive, altimeter two-niner-niner-eight. I have your partial panel. Are you able to comply with assigned headings, or do you require no-gyro vectors?"
@@ -758,7 +758,7 @@ Chicago Approach takes you over.
 <<link "B. 'Approach, five Golf Hotel, normal headings are fine.'" "Dec5A_PWKAble">><</link>>
 </div>
 
-:: Dec5B_PWKNoGyro
+:: Dec5B_PWKNoGyro [scenario]
 "Approach, five Golf Hotel, request no-gyro. My heading reference is a wet compass."
 
 "Five Golf Hotel, Chicago, roger, no-gyro, turn left."
@@ -768,7 +768,7 @@ You roll into the turn and hold it, and the controller's voice takes over the pa
 <<set $nogyro to true>>
 <<goto "DecBrief">>
 
-:: Dec5A_PWKAble
+:: Dec5A_PWKAble [scenario]
 "Approach, five Golf Hotel, normal headings are fine."
 
 "Five Golf Hotel, roger, fly heading zero-five-zero, descend and maintain four thousand."
@@ -777,7 +777,7 @@ You walk the compass through the turn, leading the rollout, letting it settle, n
 
 <<goto "DecBrief">>
 
-:: Dec5_KPIA
+:: Dec5_KPIA [scenario]
 Chicago Center hands you off to Peoria Approach. Peoria vectors you southbound for twenty minutes before the cloud tops begin to break up below you. You can see ground through scattered openings: bare fields, a highway. Peoria is reporting scattered 3,500, visibility 10. You are still at 7,000 but the layer is thinning below you.
 
 "Five Golf Hotel, Peoria, descend at your discretion to three thousand, can you maintain visual?"
@@ -788,7 +788,7 @@ You descend. At 3,500 you are clear below, looking at flat central Illinois in a
 
 <<goto "Dec6_KPIA">>
 
-:: DecBrief
+:: DecBrief [scenario]
 You have the approach to brief. The weather is low, the panel is degraded, the airplane is flying fine on the SAM, and the controller has handed you a quiet window. The plate you need is the <<if $divertedTo is "KBUU">>ILS RWY 11 at Burlington<<elseif $divertedTo is "KDPA">>ILS RWY 10 at DuPage<<elseif $divertedTo is "KUGN">>ILS RWY 23 at Waukegan<<elseif $divertedTo is "KPWK">>ILS RWY 16 at Chicago Executive<<else>>ILS RWY 7 at Rockford<</if>>: frequency, final approach fix, minimums, and the missed, all of it in your head before you intercept.
 
 You have options. The G1000 MFD can display the chart if you use the PROC key to load the approach and the CHART key to pull up the plate. Your iPad, in the kneeboard mount, has ForeFlight running with the plate one tap away. There is a bound booklet of Chicago-area plates in the door pocket. <<if $divertedTo is "KBUU">>And this is your home-field ILS. You have flown it more times than you could count.<<elseif $divertedTo is "KDPA">>And you shot the DuPage ILS over and over during instrument training. It lives somewhere in long-term memory.<<else>>And you have been into this field before, though not recently, and never in weather like this.<</if>>
@@ -803,19 +803,19 @@ You have options. The G1000 MFD can display the chart if you use the PROC key to
 <<link "D. Ask Connie to hold the plates booklet open for you. Read the key numbers out loud as you scan." "Dec6_Brief_Paper">><</link>>
 </div>
 
-:: Dec6_Brief_MFD
+:: Dec6_Brief_MFD [scenario]
 You press CHART. The MFD displays the approach plate, GeoRef'd to the airport's layout. You read the key numbers aloud, quietly: localizer frequency, FAF, DA, missed approach procedure. You flick back to the engine page, then back to the map, then pull the approach up again.
 
 The MFD is doing a lot of work. It is a lot of screen management on a tired scan.
 
 <<goto "AfterBrief">>
 
-:: Dec6_Brief_iPad
+:: Dec6_Brief_iPad [scenario]
 You drop your eyes to the iPad on the kneeboard. The plate is already there from earlier. You read the key numbers aloud, quietly: localizer frequency, FAF, DA, missed approach. Your eyes come back up to the SAM. You re-brief once more to be sure. The iPad is where you've always briefed; the routine is muscle memory.
 
 <<goto "AfterBrief">>
 
-:: Dec6_Brief_Memory
+:: Dec6_Brief_Memory [scenario]
 You brief from memory. Frequency, final approach fix, decision altitude, missed approach. The numbers come up readily, and they feel right.
 
 A memory brief is fast and it keeps the scan whole. It is also one-sided: if any single number in your head is wrong, nothing in the cockpit is positioned to catch it.
@@ -823,7 +823,7 @@ A memory brief is fast and it keeps the scan whole. It is also one-sided: if any
 <<set $badchoices to $badchoices + 1>>
 <<goto "AfterBrief">>
 
-:: Dec6_Brief_Paper
+:: Dec6_Brief_Paper [scenario]
 "Connie," you say, "there's a booklet of approach plates in that pocket on the door. Pull it out, find the tab that says <<if $divertedTo is "KBUU">>Burlington<<elseif $divertedTo is "KDPA">>DuPage<<elseif $divertedTo is "KUGN">>Waukegan<<elseif $divertedTo is "KPWK">>Executive<<else>>Rockford<</if>>, and hold it up where I can see it?"
 
 Connie finds the page. "This one?"
@@ -834,7 +834,7 @@ You brief it off the paper. Connie keeps it steady. You can keep your head up, i
 
 <<goto "AfterBrief">>
 
-:: AfterBrief
+:: AfterBrief [scenario]
 <<if $divertedTo eq "KBUU">>
 You pick up the final vector. Cleared ILS RWY 11 Burlington. Localizer alive, glideslope alive. You run the before-landing flow by feel, each item out loud so Connie can hear the rhythm of normal procedure: fuel selector both, mixture rich, flaps ten. The needles center, and you ride them down into the white.
 
@@ -851,7 +851,7 @@ You pick up the final vector. Cleared ILS RWY 7 Rockford. Localizer alive, glide
 <<goto "Dec6_KDPA">>
 <</if>>
 
-:: Dec6_KDPA
+:: Dec6_KDPA [scenario]
 Chicago Approach keeps you turning. Your no-gyro or whiskey-compass-driven headings take you east, then north, then northwest, setting up for the ILS 10 DuPage. The controller is professional, patient, and economical with words.
 
 The brief is behind you and the numbers are parked in your head: localizer one-one-zero point seven-five, ROMOE at two thousand three hundred, decision altitude eight-seven-six. The Garmin flight plan is still loaded, and the MFD still draws the procedure's geometry. The map is alive even though the PFD attitude is not.
@@ -874,7 +874,7 @@ Connie has her hand on the armrest, not clutching it, just resting there.
 <<link "D. Skip a formal checklist. The 182T flow is in your hands: fuel selector both, mixture rich, flaps on schedule. You know it." "Dec7_Skip">><</link>>
 </div>
 
-:: Dec6_KBUU
+:: Dec6_KBUU [scenario]
 Chicago Approach keeps you at five thousand as you track north-northwest toward Burlington. The magenta line on the MFD is solid; the SAM is steady. You pick up KBUU's AWOS on the number two: "Burlington Municipal information Bravo, wind one-zero-zero at four, visibility one statute mile, mist, ceiling three hundred overcast, temperature zero-eight, dew point zero-seven, altimeter two-niner-niner-eight. ILS RWY 11 in use."
 
 Three hundred overcast. One mile. The ILS 11 minimums are 200 HAT (DA 979 MSL) and 1 SM visibility. You are looking at break-out at 100 feet above DA with visibility exactly at minimums. That is not a lot of margin on a degraded panel.
@@ -893,7 +893,7 @@ You ease the nose down. The scan is holding. Connie is quiet. The whiskey compas
 <<link "C. 'Approach, five Golf Hotel, request hold at a nearby fix to re-evaluate.'" "Dec6_BUU_Hold">><</link>>
 </div>
 
-:: Dec6_KUGN
+:: Dec6_KUGN [scenario]
 Chicago Approach vectors you east. The Waukegan ILS 23 bottoms out at 290 feet over the field with three-quarters of a mile required. Weather is reporting 600 overcast and two and a half: comfortably above minimums on both numbers. On a degraded panel with no-gyro vectors, this is workable.
 
 "Five Golf Hotel, descend and maintain two thousand four hundred, cleared ILS 23 Waukegan, contact Waukegan Tower one-two-zero point zero-five."
@@ -912,7 +912,7 @@ You are on the SAM, tracking the localizer, glideslope alive. Connie is quiet bu
 <<link "D. Let the flow cover it. Fuel's on both, mixture's rich, and this airplane lands the same way every time." "Dec7_Skip">><</link>>
 </div>
 
-:: Dec6_KPWK
+:: Dec6_KPWK [scenario]
 Chicago Approach vectors you. The ILS RWY 16 at Executive bottoms out at 194 feet over the field with half a mile required. Weather is 700 overcast and 3. Comfortable margins on both numbers. Getting here cost you about twenty extra minutes of scan, and your shoulders are keeping the receipts.
 
 "Five Golf Hotel, cleared ILS RWY 16 Chicago Executive, contact tower one-one-niner point niner."
@@ -929,7 +929,7 @@ You intercept and ride the localizer. Glideslope alive. You are on the SAM.
 <<link "D. No card. The before-landing flow is muscle memory, and right now your eyes are needed elsewhere." "Dec7_Skip">><</link>>
 </div>
 
-:: Dec6_BUU_to_DPA
+:: Dec6_BUU_to_DPA [scenario]
 "Approach, five Golf Hotel, amend destination, DuPage, KDPA. I'd like the better ceiling."
 
 "Five Golf Hotel, roger, fly heading zero-nine-zero, descend and maintain three thousand, expect vectors ILS 10 DuPage."
@@ -943,7 +943,7 @@ She nods slowly. "Okay."
 <<set $divertedTo to "KDPA">>
 <<goto "DecBrief">>
 
-:: Dec6_BUU_Continue
+:: Dec6_BUU_Continue [scenario]
 "Continue Burlington, five Golf Hotel."
 
 Approach vectors you the remaining miles. You fly it on the SAM. The workload creeps up slowly, the way cognitive workload does. You don't feel it accumulating. You just notice, after ten minutes, that your shoulders are higher than they were.
@@ -951,7 +951,7 @@ Approach vectors you the remaining miles. You fly it on the SAM. The workload cr
 <<set $divertedTo to "KBUU">>
 <<goto "DecBrief">>
 
-:: Dec6_BUU_Hold
+:: Dec6_BUU_Hold [scenario]
 "Approach, five Golf Hotel, request hold at a nearby fix to re-evaluate."
 
 "Five Golf Hotel, Chicago, roger. Hold as published at SIKES intersection, left turns, maintain five thousand. Expect further clearance time zero-three-zero-zero Zulu."
@@ -964,12 +964,12 @@ You fly to SIKES. You enter the hold. For twelve minutes you fly racetracks in I
 <<link "B. 'Approach, five Golf Hotel, we're done holding. Request DuPage, ILS 10.'" "Dec6_BUU_to_DPA">><</link>>
 </div>
 
-:: Dec6_KPIA
+:: Dec6_KPIA [scenario]
 You land KPIA. You taxi to the FBO. The 182 sits on the ramp while you deal with a maintenance call. The AHRS failed and needs a component-level look. You are safe. Connie makes phone calls about a rental car. You are going to drive home from Peoria, five hours north through Illinois and southern Wisconsin. Connie will miss breakfast with her client. You will be home sometime after 1 am.
 
 <<goto "End_PIA_Divert">>
 
-:: Dec7_ConnieCRM
+:: Dec7_ConnieCRM [scenario]
 "Connie, I need you to help me. The checklist is clipped to the yoke, that plastic card right there. I want you to read each item out loud, slowly, and I'll call back to you. Can you do that?"
 
 Connie picks up the card. "Okay. Um. Fuel selector."
@@ -1000,20 +1000,20 @@ Connie reads them all. You call them back. Your scan stays on the SAM and the lo
 
 <<goto "Dec8">>
 
-:: Dec7_SoloMemory
+:: Dec7_SoloMemory [scenario]
 You run the checklist from memory. Fuel selector both. Mixture rich. Seat belts secure. Flaps ten. You do it all while holding the scan. It works, but your attention flickers to the memory retrieval and back, and you catch the glideslope needle one dot high for a moment before you re-center.
 
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec8">>
 
-:: Dec7_Glance
+:: Dec7_Glance [scenario]
 You pull the checklist card onto your right thigh. You glance down every few seconds, reading an item, then back up. Each glance costs you a beat of the instrument scan. Twice, you catch the localizer beginning to drift, correct, re-scan.
 
 It works, but your scan is more expensive than it needs to be.
 
 <<goto "Dec8">>
 
-:: Dec7_Skip
+:: Dec7_Skip [scenario]
 You skip the formal checklist. You know the 182T. Fuel selector BOTH (it is). Mixture RICH (it is). Seat belts (yours are; you hope Connie's is). Flaps: you bring them to ten. You have the mental model of what a before-landing configuration is for this airplane; you just don't formally verify.
 
 It is fine. It is not best practice. On a degraded panel is exactly when "I know it" becomes expensive.
@@ -1021,7 +1021,7 @@ It is fine. It is not best practice. On a degraded panel is exactly when "I know
 <<set $badchoices to $badchoices + 1>>
 <<goto "Dec8">>
 
-:: Dec7_BUUFinal
+:: Dec7_BUUFinal [scenario]
 The ILS 11 at Burlington has a DA of 979 MSL, 200 feet over the airport. At DA, you break out or you go around. You have been flying the SAM for forty minutes. Your scan is tired. The workload has been unrelenting.
 
 You hit DA. You look up. You can see the strobe of the approach lights. You think. Maybe. There is a moment of grayness, an impression of something below.
@@ -1032,7 +1032,7 @@ You hit DA. You look up. You can see the strobe of the approach lights. You thin
 <<link "B. Go around. Nearly sure isn't sure." "Dec8_GoAround_Hard">><</link>>
 </div>
 
-:: Dec7_RFDFinal
+:: Dec7_RFDFinal [scenario]
 The ILS 7 at Rockford has a DA of 941 MSL, 200 feet over the airport, and the last weather you heard put the bases exactly there. You have been flying the SAM for half an hour. Your scan is holding, but you can feel the price of it now, a low hum behind your eyes.
 
 You hit DA. You look up. Gray, then a pale smear that could be the approach lights, or could be the fog deciding what to do next.
@@ -1043,7 +1043,7 @@ You hit DA. You look up. Gray, then a pale smear that could be the approach ligh
 <<link "B. Go around. Nearly certain isn't the standard." "Dec8_GoAround_Hard">><</link>>
 </div>
 
-:: Dec8_SeeLights
+:: Dec8_SeeLights [scenario]
 You continue. At 150 feet AGL you get a clearer picture: approach lights, then the runway environment, then the runway itself. You land firm, centerline, full flaps.
 
 You taxi clear. Tower switches you to ground. You sit at the hold-short line for a long minute before you key the mic. Connie puts a hand on your arm.
@@ -1054,7 +1054,7 @@ You nod. Out the windshield, the fog sits on the field like it owns the place.
 
 <<goto "End_AtMins_Landed">>
 
-:: Dec8_GoAround_Hard
+:: Dec8_GoAround_Hard [scenario]
 You push full throttle, pitch for Vy, flaps ten, positive rate, climb. <<if $minsApt is "KBUU">>Missed approach: heading 115, climb to 3,000, direct Janesville VOR.<<else>>Missed approach: straight ahead climbing to 3,000, then the turn you briefed.<</if>> You fly it on the SAM, because you briefed it.
 
 Approach catches you. "Five Golf Hotel, missed approach observed, climb and maintain three thousand. Say intentions."
@@ -1074,7 +1074,7 @@ Connie looks at you. "You okay?"
 <<set $divertedTo to "KDPA">>
 <<goto "End_AtMins_Missed">>
 
-:: Dec8
+:: Dec8 [scenario]
 You are on the final segment of the ILS. Localizer centered. Glideslope on the dot. Airspeed a stable 85 knots. Power steady. Trim set. You are sinking at 500 fpm through the gray.
 
 At 2,000 AGL the world outside is still featureless white. The SAM holds its small steady horizon. Somewhere below you, the bases are waiting to be found, and the reported numbers say they will show up in time. Reported numbers have been wrong before.
@@ -1087,7 +1087,7 @@ At 2,000 AGL the world outside is still featureless white. The SAM holds its sma
 <<link "C. Call the missed now. The panel is degraded, the scan is tired, the prudent thing is a holding pattern and a plan." "Dec9_EarlyMiss">><</link>>
 </div>
 
-:: Dec9_DA_Strict
+:: Dec9_DA_Strict [scenario]
 You continue, flying the needles, saving the looking for when it can buy you something.
 
 <<if $divertedTo eq "KDPA">>
@@ -1102,7 +1102,7 @@ You roll out. You taxi clear. You sit, still belted, for ten seconds before you 
 
 <<goto "End_Good">>
 
-:: Dec9_AddFive
+:: Dec9_AddFive [scenario]
 You add five knots. You are now at 90 KIAS instead of 85 down the glideslope: a slightly flatter picture, slightly more control authority in the flare, and a slightly longer landing at the end of it. Defensible arithmetic on a degraded panel.
 
 You ride it down through the gray, the extra five knots steady in your hand.
@@ -1113,7 +1113,7 @@ You taxi clear, still belted tight, and let your shoulders come down one centime
 
 <<goto "End_Good">>
 
-:: Dec9_EarlyMiss
+:: Dec9_EarlyMiss [scenario]
 You key the mic. "Approach, five Golf Hotel, going missed, going around."
 
 "Five Golf Hotel, roger, fly published missed, say intentions."
@@ -1130,7 +1130,7 @@ You landed on the second attempt. It cost you ten extra minutes of IMC and some 
 
 <<goto "End_Qualified">>
 
-:: End_Good
+:: End_Good [scenario ending]
 <hr>
 <div class="debrief">
 <h3>What happened</h3>
@@ -1148,7 +1148,7 @@ You landed on the second attempt. It cost you ten extra minutes of IMC and some 
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><<set $alt to "">><<set $minsApt to "">><<set $ground to "">><</link>>
 </div>
 
-:: End_Qualified
+:: End_Qualified [scenario ending]
 <hr>
 <div class="debrief">
 <h3>What happened</h3>
@@ -1165,7 +1165,7 @@ You landed on the second attempt. It cost you ten extra minutes of IMC and some 
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><<set $alt to "">><<set $minsApt to "">><<set $ground to "">><</link>>
 </div>
 
-:: End_AtMins_Landed
+:: End_AtMins_Landed [scenario ending]
 <hr>
 <div class="debrief">
 <h3>What happened</h3>
@@ -1182,7 +1182,7 @@ You landed on the second attempt. It cost you ten extra minutes of IMC and some 
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><<set $alt to "">><<set $minsApt to "">><<set $ground to "">><</link>>
 </div>
 
-:: End_AtMins_Missed
+:: End_AtMins_Missed [scenario ending]
 <hr>
 <div class="debrief">
 <h3>What happened</h3>
@@ -1199,7 +1199,7 @@ You landed on the second attempt. It cost you ten extra minutes of IMC and some 
 <<link "Return to Start" "Start">><<set $badchoices to 0>><<set $declared to false>><<set $nogyro to false>><<set $divertedTo to "">><<set $alt to "">><<set $minsApt to "">><<set $ground to "">><</link>>
 </div>
 
-:: End_PIA_Divert
+:: End_PIA_Divert [scenario ending]
 <hr>
 <div class="debrief">
 <h3>What happened</h3>

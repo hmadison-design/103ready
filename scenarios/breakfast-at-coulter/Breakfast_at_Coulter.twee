@@ -166,7 +166,7 @@ a.link-internal:hover {
 .main-menu-btn:hover,
 .main-menu-btn:focus { background: #8a6f3a; outline: none; }
 
-:: Opening
+:: Opening [scenario]
 <<set $pathArray to $pathArray.concat(["Opening"])>>
 <div class="scenario-title">Breakfast at Coulter</div>
 <div class="scenario-subtitle">A Sunday Morning Cross-Country in a Cessna 172R</div>
@@ -185,7 +185,7 @@ Let's see what we have.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: Dec1
+:: Dec1 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec1: Weather briefing"])>>
 <div class="decision-heading">Preflight Planning — Decision 1 of 10: Weather</div>
 
@@ -215,7 +215,7 @@ You are looking at a flight that sits squarely in Central Texas. Route runs 65 N
 
 <<link "D. Call 1-800-wxbrief for a standard briefing before deciding." "Dec1D">><</link>>
 
-:: Dec1A
+:: Dec1A [scenario]
 <<set $pathArray to $pathArray.concat(["1A: Weather looks fine — go"])>>
 <<set $weatherMissed to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -224,14 +224,14 @@ The METARs are clean, the TAF is clean in the morning window, and the sun is up.
 
 <<link "Continue." "Dec2">><</link>>
 
-:: Dec1B
+:: Dec1B [scenario]
 <<set $pathArray to $pathArray.concat(["1B: Go now, plan around the turbulence and afternoon weather"])>>
 
 You plan departure at 0715, cruise at 3,500 — eastbound, correct hemispheric, and a thousand feet below the forecast turbulence band. Return planned no later than 1900Z, well ahead of the 2100Z thunderstorm window. The PIREP and the forecast discussion agree on the same story; you have a plan for both ends.
 
 <<link "Continue." "Dec2">><</link>>
 
-:: Dec1C
+:: Dec1C [scenario]
 <<set $pathArray to $pathArray.concat(["1C: Delay an hour"])>>
 <<set $weatherMissed to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -240,14 +240,14 @@ You refill your coffee and watch the clock. At 0750 you refresh the briefing. No
 
 <<link "Continue." "Dec2">><</link>>
 
-:: Dec1D
+:: Dec1D [scenario]
 <<set $pathArray to $pathArray.concat(["1D: Call FSS for standard briefing"])>>
 
 The FSS specialist reads you the same METARs and TAFs and adds a verbal PIREP from another Skyhawk at 3,000 heading northwest: smooth at three, bumpy above four. That matches what you already see. You thank the briefer, plan cruise at 3,500, and plan wheels-up by 0715 and wheels-up on the return by 1900Z.
 
 <<link "Continue." "Dec2">><</link>>
 
-:: Dec2
+:: Dec2 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec2: NOTAMs"])>>
 <div class="decision-heading">Preflight Planning — Decision 2 of 10: NOTAMs</div>
 
@@ -280,7 +280,7 @@ TFRS: None along route.</div>
 
 <<link "D. Everything matters — jot the crane, the airshow traffic increase, the closed taxiway at Georgetown, and the GPS test window." "Dec2D">><</link>>
 
-:: Dec2A
+:: Dec2A [scenario]
 <<set $pathArray to $pathArray.concat(["2A: NOTAMs not actionable"])>>
 <<set $notamMissed to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -289,7 +289,7 @@ You close the NOTAM tab and move to weight and balance.
 
 <<link "Continue." "Dec3">><</link>>
 
-:: Dec2B
+:: Dec2B [scenario]
 <<set $pathArray to $pathArray.concat(["2B: Noted the crane south of CFD"])>>
 <<set $savedCrane to true>>
 
@@ -297,7 +297,7 @@ You scribble "CRANE 1.2 SSW KCFD, 533 MSL, UNLIT, til 1200Z" on your kneeboard. 
 
 <<link "Continue." "Dec3">><</link>>
 
-:: Dec2C
+:: Dec2C [scenario]
 <<set $pathArray to $pathArray.concat(["2C: Re-route to avoid GPS test"])>>
 <<set $notamMissed to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -306,7 +306,7 @@ You spend eight minutes sketching a route that avoids the Fort Hood GPS test rin
 
 <<link "Continue." "Dec3">><</link>>
 
-:: Dec2D
+:: Dec2D [scenario]
 <<set $pathArray to $pathArray.concat(["2D: Briefed all relevant NOTAMs"])>>
 <<set $savedCrane to true>>
 
@@ -314,7 +314,7 @@ You note each one on your kneeboard: crane on final at CFD (unlit, 533 MSL, expi
 
 <<link "Continue." "Dec3">><</link>>
 
-:: Dec3
+:: Dec3 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec3: Fuel and W&B"])>>
 <div class="decision-heading">Preflight Planning — Decision 3 of 10: Fuel and Weight</div>
 
@@ -336,7 +336,7 @@ The club's sign-out sheet says the last dispatch listed 28 gallons on board, thr
 
 <<link "D. Fuel to full. Biggest margin, no questions." "Dec3D">><</link>>
 
-:: Dec3A
+:: Dec3A [scenario]
 <<set $pathArray to $pathArray.concat(["3A: Trust the form — launch on 28 gal"])>>
 <<set $fuelTight to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -345,7 +345,7 @@ You file the W&B with 28 gallons and head for the airplane.
 
 <<link "Continue." "Dec4">><</link>>
 
-:: Dec3B
+:: Dec3B [scenario]
 <<set $pathArray to $pathArray.concat(["3B: Dip the tanks; fuel to tabs if low"])>>
 <<set $verifiedFuel to true>>
 
@@ -353,21 +353,21 @@ You grab the dipstick from the club office and head out to the ramp. Left tank r
 
 <<link "Continue." "Dec4">><</link>>
 
-:: Dec3C
+:: Dec3C [scenario]
 <<set $pathArray to $pathArray.concat(["3C: Fuel to tabs without checking"])>>
 
 You skip the dip and order fuel to tabs — 40 gallons. It's a common shortcut; the risk is that you don't catch a fuel-quantity discrepancy if the tanks were low. Today they aren't, and you end up with 40 gallons on the ramp. Enough margin for the day.
 
 <<link "Continue." "Dec4">><</link>>
 
-:: Dec3D
+:: Dec3D [scenario]
 <<set $pathArray to $pathArray.concat(["3D: Fuel to full"])>>
 
 Full tanks — 53 gallons. Solo pilot, 12-lb bag, full fuel: W&B runs well under max gross and within the envelope. You burn more taxi fuel than you need to, but you will not be thinking about fuel again today.
 
 <<link "Continue." "Dec4">><</link>>
 
-:: Dec4
+:: Dec4 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec4: Cockpit interior check"])>>
 <div class="decision-heading">Preflight Inspection — Decision 4 of 10: Interior / Battery</div>
 
@@ -387,7 +387,7 @@ The question is: how long has the master been on, and how much life is left in t
 
 <<link "D. Don't touch the switches. This is a maintenance write-up. Take the next club airplane." "Dec4D">><</link>>
 
-:: Dec4A
+:: Dec4A [scenario]
 <<set $pathArray to $pathArray.concat(["4A: Read voltage then try to start anyway"])>>
 <<set $batteryUnchecked to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -396,14 +396,14 @@ You flip the master. The voltmeter sits at 11.6 volts. Lower than you'd like —
 
 <<link "Continue." "Dec5">><</link>>
 
-:: Dec4B
+:: Dec4B [scenario]
 <<set $pathArray to $pathArray.concat(["4B: Read voltage; charge/swap if low"])>>
 
 You flip the master. The voltmeter sits at 11.6 volts — well below a healthy resting value. You shut the master back off, walk to the FBO, and explain. The line tech swaps in a charged battery from the shop's rotation in about twenty minutes. When you return, the voltmeter reads 12.7. You note the battery swap in the squawk sheet for the club's maintenance officer to tie out. You are about fifteen minutes behind schedule.
 
 <<link "Continue." "Dec5">><</link>>
 
-:: Dec4C
+:: Dec4C [scenario]
 <<set $pathArray to $pathArray.concat(["4C: Assume battery is fine — skip voltage check"])>>
 <<set $batteryUnchecked to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -412,7 +412,7 @@ You leave the master switch alone for now and move on. How long it was actually 
 
 <<link "Continue." "Dec5">><</link>>
 
-:: Dec4D
+:: Dec4D [scenario]
 <<set $pathArray to $pathArray.concat(["4D: Write up, take another plane"])>>
 <<set $batteryUnchecked to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -421,7 +421,7 @@ You head back to the dispatch desk. The only other IFR-equipped 172 is booked. Y
 
 <<link "Continue." "Dec5">><</link>>
 
-:: Dec5
+:: Dec5 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec5: External walkaround"])>>
 <div class="decision-heading">Preflight Inspection — Decision 5 of 10: Walkaround / Prop</div>
 
@@ -443,7 +443,7 @@ You don't remember it from your last flight in this airplane, but you've also fl
 
 <<link "D. Swap airplanes. Any unexplained prop damage is a no-go." "Dec5D">><</link>>
 
-:: Dec5A
+:: Dec5A [scenario]
 <<set $pathArray to $pathArray.concat(["5A: Fly with the nick — 'cosmetic'"])>>
 <<set $propUnchecked to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -452,21 +452,21 @@ You file it under "normal wear" in your head and continue to the left wing.
 
 <<link "Continue." "Dec6">><</link>>
 
-:: Dec5B
+:: Dec5B [scenario]
 <<set $pathArray to $pathArray.concat(["5B: Check squawk sheet first"])>>
 
 You pull the squawk binder from the cabin. Third entry from the top: "Minor LE nick outer 1/3 blade #2, within Lycoming SB 1006A limits per Advisory Circular 20-37, dressed and signed off 5/28/26 by J. Rivas, A&P IA." You match the location and size to the write-up. It checks. You sign your name next to the review line and continue.
 
 <<link "Continue." "Dec6">><</link>>
 
-:: Dec5C
+:: Dec5C [scenario]
 <<set $pathArray to $pathArray.concat(["5C: Photo and text maintenance officer"])>>
 
 You text Rivas, the club's A&P IA, with a photo and the location. He calls back two minutes later. "That's the one from last Thursday — I filed it, dressed it, and signed it off. Should be in the squawk binder. Sorry the logbook note wasn't obvious." You find the entry. You are about four minutes behind schedule.
 
 <<link "Continue." "Dec6">><</link>>
 
-:: Dec5D
+:: Dec5D [scenario]
 <<set $pathArray to $pathArray.concat(["5D: Swap airplanes"])>>
 <<set $propUnchecked to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -475,7 +475,7 @@ You walk back to dispatch. The only other 172 available now — N987JK — has a
 
 <<link "Continue." "Dec6">><</link>>
 
-:: Dec6
+:: Dec6 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec6: Fuel sumps"])>>
 <div class="decision-heading">Preflight Inspection — Decision 6 of 10: Fuel Sumps</div>
 
@@ -491,7 +491,7 @@ At the fuselage strainer, you pull a sample. There is a small bubble of water at
 
 <<link "D. Water contamination requires grounding the airplane. Stop and call maintenance." "Dec6D">><</link>>
 
-:: Dec6A
+:: Dec6A [scenario]
 <<set $pathArray to $pathArray.concat(["6A: Dump, resample strainer only"])>>
 <<set $waterNotCleared to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -500,14 +500,14 @@ You dump the contaminated sample on the ramp and try the strainer twice more. Bo
 
 <<link "Continue." "Dec7">><</link>>
 
-:: Dec6B
+:: Dec6B [scenario]
 <<set $pathArray to $pathArray.concat(["6B: Rock wings and resample all drains"])>>
 
 You walk out to the left wingtip and push down, letting it rock back up; same on the right. You wait thirty seconds. Then you resample the strainer — clean. You re-sample all ten wing drains. The outermost drain on the left wing produces one more small bead of water on the first try, then clean on the second. All other samples are clean. You close the GATS jar and continue.
 
 <<link "Continue." "Dec7">><</link>>
 
-:: Dec6C
+:: Dec6C [scenario]
 <<set $pathArray to $pathArray.concat(["6C: Call it condensation; move on"])>>
 <<set $waterNotCleared to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -516,14 +516,14 @@ You dump the sample and close up the GATS jar. A couple of milliliters is, by we
 
 <<link "Continue." "Dec7">><</link>>
 
-:: Dec6D
+:: Dec6D [scenario]
 <<set $pathArray to $pathArray.concat(["6D: Ground the airplane over water in strainer"])>>
 
 You call Rivas. Over the phone, he asks how much. You say two milliliters. He pauses for a second that contains a small, patient sigh, then walks you through rocking the wings and resampling. You do. Everything comes up clean on the second round. "That's your answer," he says. "That was overnight condensation, and you moved it through. You're fine." You thank him and close the GATS jar.
 
 <<link "Continue." "Dec7">><</link>>
 
-:: Dec7
+:: Dec7 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec7: Run-up"])>>
 <div class="decision-heading">Preflight Inspection — Decision 7 of 10: Run-up</div>
 
@@ -546,7 +546,7 @@ Lycoming guidance for this engine: max drop 175 RPM; max differential between ma
 
 <<link "D. Run the same mag check again at the same RPM. If it reads the same, it's consistent, and that's good." "Dec7D">><</link>>
 
-:: Dec7A
+:: Dec7A [scenario]
 <<set $pathArray to $pathArray.concat(["7A: Accept 65 RPM diff, move on"])>>
 <<set $magDropIgnored to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -555,7 +555,7 @@ You roll the throttle back to idle and call tower.
 
 <<link "Continue." "Dec8">><</link>>
 
-:: Dec7B
+:: Dec7B [scenario]
 <<set $pathArray to $pathArray.concat(["7B: Lean at 2000 RPM to clear plug"])>>
 <<set $clearedMags to true>>
 
@@ -563,7 +563,7 @@ You bring the throttle to 2,000, lean the mixture until the EGTs peak and then p
 
 <<link "Continue." "Dec8">><</link>>
 
-:: Dec7C
+:: Dec7C [scenario]
 <<set $pathArray to $pathArray.concat(["7C: Taxi back for maintenance"])>>
 <<set $magDropIgnored to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -572,7 +572,7 @@ You call ground, return to the ramp, and call Rivas. He has you run the lean-out
 
 <<link "Continue." "Dec8">><</link>>
 
-:: Dec7D
+:: Dec7D [scenario]
 <<set $pathArray to $pathArray.concat(["7D: Repeat the mag check at 1,700"])>>
 <<set $magDropIgnored to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -581,7 +581,7 @@ You run the mag check a second time at the same RPM. Left 85. Right 145. Essenti
 
 <<link "Continue." "Dec8">><</link>>
 
-:: Dec8
+:: Dec8 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec8: Taxi clearance conflict"])>>
 <div class="decision-heading">Flight Operations — Decision 8 of 10: Taxi</div>
 
@@ -615,7 +615,7 @@ The clearance routes you across the closed taxiway.
 
 <<link "D. Ask ground to repeat the clearance, hoping they'll notice the error." "Dec8D">><</link>>
 
-:: Dec8A
+:: Dec8A [scenario]
 <<set $pathArray to $pathArray.concat(["8A: Read back and taxi"])>>
 <<set $taxiConfusion to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -626,7 +626,7 @@ About two hundred feet down Charlie, a set of orange construction barricades app
 
 <<link "Continue." "Dec8A2">><</link>>
 
-:: Dec8A2
+:: Dec8A2 [scenario]
 <<set $pathArray to $pathArray.concat(["8A.continued: Stopped short of barricades, called ground"])>>
 
 "Georgetown Ground, 472DG, I'm stopped on Charlie short of the barricades. Request alternate routing."
@@ -635,7 +635,7 @@ There is a quiet half-second on the radio. Then: "472DG, Ground, apologies for t
 
 <<link "Continue." "Dec9">><</link>>
 
-:: Dec8B
+:: Dec8B [scenario]
 <<set $pathArray to $pathArray.concat(["8B: Query the clearance"])>>
 
 You key the mic. "Ground, 472DG — confirm routing through Charlie? ATIS had Charlie closed between Alpha and Delta."
@@ -646,7 +646,7 @@ A second of dead air. Then: "472DG, Ground, apologies, correction — taxi to ru
 
 <<link "Continue." "Dec9">><</link>>
 
-:: Dec8C
+:: Dec8C [scenario]
 <<set $pathArray to $pathArray.concat(["8C: Deviate without clearance"])>>
 <<set $taxiConfusion to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -655,7 +655,7 @@ You read back the clearance and start taxiing, planning to cut across a ramp are
 
 <<link "Continue." "Dec9">><</link>>
 
-:: Dec8D
+:: Dec8D [scenario]
 <<set $pathArray to $pathArray.concat(["8D: Ask for repeat"])>>
 <<set $taxiConfusion to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -664,7 +664,7 @@ You read back the clearance and start taxiing, planning to cut across a ramp are
 
 <<link "Continue." "Dec9">><</link>>
 
-:: Dec9
+:: Dec9 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec9: En route traffic"])>>
 <div class="decision-heading">Flight Operations — Decision 9 of 10: En Route Traffic</div>
 
@@ -689,7 +689,7 @@ Six miles and 230 knots of closure gives you roughly 95 seconds. Austin Approach
 
 <<link "D. 'Traffic, 472DG — descending to 3,000.' Get out of his altitude block." "Dec9D">><</link>>
 
-:: Dec9A
+:: Dec9A [scenario]
 <<set $pathArray to $pathArray.concat(["9A: Wait and watch"])>>
 <<set $trafficLate to true>>
 <<set $badchoices to $badchoices + 1>>
@@ -698,35 +698,35 @@ You strain forward against the shoulder harness, scanning the horizon. You pick 
 
 <<link "Continue." "Dec9A2">><</link>>
 
-:: Dec9A2
+:: Dec9A2 [scenario]
 <<set $pathArray to $pathArray.concat(["9A.continued: Late right break"])>>
 
 He banks right too — his own evasive action. You both pass each other about half a mile apart, which is close enough to clearly see the green paint scheme and the pilot's head turning to follow you. Approach's voice is level but faster than before. "472DG, that was a near-miss; suggest you consider more immediate deviation on head-on traffic in the future." "472DG, concur, thanks."
 
 <<link "Continue." "Dec10">><</link>>
 
-:: Dec9B
+:: Dec9B [scenario]
 <<set $pathArray to $pathArray.concat(["9B: Right deviation immediately"])>>
 
 You bank right twenty degrees. Ninety seconds later, the Mooney passes down your left side at roughly a mile, visibly below and offset. You straighten out back toward the destination. Approach: "472DG, traffic no factor." "472DG, roger."
 
 <<link "Continue." "Dec10">><</link>>
 
-:: Dec9C
+:: Dec9C [scenario]
 <<set $pathArray to $pathArray.concat(["9C: Climb to 4,500"])>>
 
 You pitch for climb, 500 fpm. 4,500 is not a correct hemispheric VFR altitude for an eastbound course (3,500 or 5,500 would be), but a momentary deviation for traffic avoidance is legal. You're passing 3,900 when the Mooney slides past a thousand feet below you, his eastbound traffic now your westbound traffic. You continue to 5,500 — the next correct eastbound altitude — and stay there for the last ten miles.
 
 <<link "Continue." "Dec10">><</link>>
 
-:: Dec9D
+:: Dec9D [scenario]
 <<set $pathArray to $pathArray.concat(["9D: Descend to 3,000"])>>
 
 You pitch for descent. At 3,200 the Mooney passes overhead, offset about half a mile to your left. You level at 3,000 for traffic separation. Descending into more turbulence than you had at 3,500 costs you a bumpy last fifteen miles, and 3,000 is not a correct eastbound hemispheric altitude for a sustained leg, but for avoidance it served the purpose. You start a gentle climb back to 3,500 after traffic is clear.
 
 <<link "Continue." "Dec10">><</link>>
 
-:: Dec10
+:: Dec10 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec10: Pattern entry at CFD"])>>
 <div class="decision-heading">Flight Operations — Decision 10 of 10: Arrival</div>
 
@@ -744,32 +744,32 @@ CTAF 122.7 is alive. You listen for a full minute before keying up. In that minu
 
 <<link "D. Announce 'upwind runway 18, Coulter' and join the downwind from a crosswind turn over the numbers." "Dec10D">><</link>>
 
-:: Dec10A
+:: Dec10A [scenario]
 <<set $pathArray to $pathArray.concat(["10A: Straight-in at a fly-in"])>>
 <<set $patternNonStandard to true>>
 <<set $badchoices to $badchoices + 1>>
 
 <<link "Continue." "Resolution">><</link>>
 
-:: Dec10B
+:: Dec10B [scenario]
 <<set $pathArray to $pathArray.concat(["10B: Midfield cross at +600, 45 to downwind"])>>
 
 <<link "Continue." "Resolution">><</link>>
 
-:: Dec10C
+:: Dec10C [scenario]
 <<set $pathArray to $pathArray.concat(["10C: Direct left base"])>>
 <<set $patternNonStandard to true>>
 <<set $badchoices to $badchoices + 1>>
 
 <<link "Continue." "Resolution">><</link>>
 
-:: Dec10D
+:: Dec10D [scenario]
 <<set $pathArray to $pathArray.concat(["10D: Upwind then crosswind join"])>>
 <<set $patternNonStandard to true>>
 
 <<link "Continue." "Resolution">><</link>>
 
-:: Resolution
+:: Resolution [scenario]
 <<set $pathArray to $pathArray.concat(["Resolution routing"])>>
 
 /* Resolution routing priority:
@@ -808,7 +808,7 @@ CTAF 122.7 is alive. You listen for a full minute before keying up. In that minu
   <<goto "EndPancakesEarned">>
 <</if>>
 
-:: EndPancakesEarned
+:: EndPancakesEarned [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Pancakes Earned (full success)"])>>
 <div class="scenario-title">Pancakes Earned</div>
 
@@ -840,7 +840,7 @@ The most satisfying flights are the ones where you knew what each step was *for*
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndPancakesEarnedMinor
+:: EndPancakesEarnedMinor [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Pancakes Earned (with footnote)"])>>
 <div class="scenario-title">Pancakes Earned (With a Footnote)</div>
 
@@ -872,7 +872,7 @@ A flight with one footnote is a good flight. A pilot who treats the footnote ser
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndCompromised
+:: EndCompromised [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Compromised but Safe"])>>
 <div class="scenario-title">Safe. Compromised. Thinking About It.</div>
 
@@ -898,7 +898,7 @@ Safe is not the same as well-flown. A day where nothing happened can still be a 
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndTaxiSheep
+:: EndTaxiSheep [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Clipped on Charlie"])>>
 <div class="scenario-title">The Orange-Cone Footnote</div>
 
@@ -926,7 +926,7 @@ When a clearance doesn't match what you see or what ATIS said, ask before you ro
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndPatternConflict
+:: EndPatternConflict [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Pattern Conflict at CFD"])>>
 <div class="scenario-title">The Downwind Explanation</div>
 
@@ -954,7 +954,7 @@ At a busy non-towered airport, predictability is a safety system. Use it.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndEnrouteNearMiss
+:: EndEnrouteNearMiss [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: En Route Near-Miss"])>>
 <div class="scenario-title">Half a Mile</div>
 
@@ -980,7 +980,7 @@ When ATC or ADS-B paints head-on traffic at altitude, the clock is already runni
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndTwoNearMisses
+:: EndTwoNearMisses [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Two Near-Misses"])>>
 <div class="scenario-title">Two for the Logbook</div>
 
@@ -1006,7 +1006,7 @@ Doctrine exists because the other pilots in the sky are operating on it. When yo
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndAlternator
+:: EndAlternator [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Alternator Out"])>>
 <div class="scenario-title">The Red ALT Light</div>
 
@@ -1034,7 +1034,7 @@ The electrical system is a diagnosis problem, not a launch-and-hope problem. A l
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndSputter
+:: EndSputter [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Rough Runner — Water Contamination"])>>
 <div class="scenario-title">The Stumble</div>
 
@@ -1064,7 +1064,7 @@ Water contamination is a protocol problem, not a judgment call. When you find an
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndMagDiversion
+:: EndMagDiversion [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Rough Runner — Mag Issue"])>>
 <div class="scenario-title">One and a Half Magnetos</div>
 
@@ -1094,7 +1094,7 @@ Ignition diagnostics at run-up are exact. The numbers are not guidelines; they a
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndRoughRunner
+:: EndRoughRunner [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Forced Landing — Water + Mag"])>>
 <div class="scenario-title">Giddings Pasture</div>
 
@@ -1126,7 +1126,7 @@ This is how chains build. Not with one dramatic error — with two small ones th
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a> <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $weatherMissed to false>><<set $notamMissed to false>><<set $fuelTight to false>><<set $batteryUnchecked to false>><<set $propUnchecked to false>><<set $waterNotCleared to false>><<set $magDropIgnored to false>><<set $taxiConfusion to false>><<set $trafficLate to false>><<set $patternNonStandard to false>><<set $savedCrane to false>><<set $verifiedFuel to false>><<set $clearedMags to false>><</link>></p>
 
-:: EndAlternatorAndRough
+:: EndAlternatorAndRough [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Mag Issue + Alternator"])>>
 <div class="scenario-title">Two Systems at Once</div>
 

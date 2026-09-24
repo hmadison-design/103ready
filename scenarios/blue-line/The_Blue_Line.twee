@@ -169,7 +169,7 @@ a.link-internal:hover {
 .main-menu-btn:hover,
 .main-menu-btn:focus { background: #2d5a88; outline: none; }
 
-:: Opening
+:: Opening [scenario]
 <<set $pathArray to $pathArray.concat(["Opening"])>>
 <div class="scenario-title">The Blue Line</div>
 <div class="scenario-subtitle">A Mountain Crossing in a Beechcraft Baron</div>
@@ -188,7 +188,7 @@ Before you file, you want to settle the route.
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: Dec1
+:: Dec1 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec1: Route and altitude"])>>
 <div class="decision-heading">Preflight Planning: Decision 1 of 10: Route and Altitude</div>
 
@@ -217,7 +217,7 @@ What do you plan?
 
 <<link "D. File IFR on the southern routing Denver gives the unpressurized crowd: airways through the lower terrain, 12,000 assigned, radar the whole way." "Dec1D">><<set $pathArray to $pathArray.concat(["Dec1: D (IFR south 12,000)"])>><</link>>
 
-:: Dec1A
+:: Dec1A [scenario]
 <<set $altRouteError to true>>
 <<set $badchoices to $badchoices + 1>>
 <<set $cruiseAlt to "16,500">>
@@ -227,7 +227,7 @@ You file the VFR flight plan and close the tablet.
 
 <<link "Carry your bag out to the airplane" "Dec2">><</link>>
 
-:: Dec1B
+:: Dec1B [scenario]
 <<set $cruiseAlt to "12,500">>
 You finalize the plan at 12,500 via the pass route: southwest out of the metro, across South Park, down the long fall of the Gunnison valley, over Blue Mesa, and into Grand Junction from the southeast. It adds half an hour against Teo's keynote math, and at 12,500 you can sit all day without an oxygen molecule of regret. Terrain falls away to one side or the other for nearly the whole route.
 
@@ -235,7 +235,7 @@ You file and close the tablet.
 
 <<link "Load up and walk out" "Dec2">><</link>>
 
-:: Dec1C
+:: Dec1C [scenario]
 <<set $altRouteError to true>>
 <<set $badchoices to $badchoices + 1>>
 <<set $cruiseAlt to "14,500">>
@@ -245,7 +245,7 @@ You file VFR and close the tablet.
 
 <<link "Out to the airplane, one eye on your watch" "Dec2">><</link>>
 
-:: Dec1D
+:: Dec1D [scenario]
 <<set $cruiseAlt to "12,000">>
 You finalize the plan as IFR on the southern routing, the one Denver Center hands the unpressurized set without being asked: airways through the lower terrain, 12,000 westbound. It is a longer clearance than the direct line and the climb out of the metro will be its usual cheerful racket, but you'll be in radar contact, talking to somebody, legal on oxygen at the assigned altitude, and the terrain question is settled by people whose whole job is settling it.
 
@@ -253,7 +253,7 @@ You file and close the tablet.
 
 <<link "Fold the clearance into your kneeboard and walk out" "Dec2">><</link>>
 
-:: Dec2
+:: Dec2 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec2: Fuel stain on inboard filler"])>>
 <div class="decision-heading">Preflight Inspection: Decision 2 of 10: Left Inboard Fuel Filler</div>
 
@@ -271,7 +271,7 @@ You touch the stain. Your fingertip comes away lightly wet. Not dripping. Wet.
 
 <<link "D. Top off only the right side. Leave the left where it sits, and watch en route whether its burn rate makes sense." "Dec2D">><<set $pathArray to $pathArray.concat(["Dec2: D (one-side fuel, crossfeed)"])>><</link>>
 
-:: Dec2A
+:: Dec2A [scenario]
 <<set $fuelStainMissed to true>>
 <<set $badchoices to $badchoices + 1>>
 You wipe the stain with the rag in your flight bag, seat the cap, and keep moving. The fuel truck rolls over a few minutes later. You watch the inboard fill to the tab and cap it yourself. The stain doesn't reappear visibly while you're looking, which you note and file.
@@ -280,7 +280,7 @@ The rest of the preflight is routine. You work the right side, then the undersid
 
 <<link "Finish the walkaround and climb in" "Dec3">><</link>>
 
-:: Dec2B
+:: Dec2B [scenario]
 <<set $caughtStain to true>>
 You wipe the stain with the rag in your flight bag, seat the cap. The fuel truck rolls over and tops the inboards to the tab. You ask the line tech to give you ten minutes; you'll wave him off when you're done. You go through the rest of the preflight deliberately, checking the left inboard every minute or two as you circle the airplane.
 
@@ -288,7 +288,7 @@ At the ten-minute mark the cap area is clean and dry. Whatever it was, it has no
 
 <<link "Wave the fueler off and climb in" "Dec3">><</link>>
 
-:: Dec2C
+:: Dec2C [scenario]
 You radio the maintenance shop. Mick, who has looked after this airplane since you bought it, walks out with a flashlight and a clean rag. He pulls the cap, checks the O-ring, presses the bladder collar with his thumb, sniffs. He shakes his head.
 
 "Cap O-ring is a little tired. I've got one in the box. Twenty minutes."
@@ -299,7 +299,7 @@ Teo checks his watch and says nothing. You can hear him not saying it.
 
 <<link "Shake Mick's hand and climb in" "Dec3">><</link>>
 
-:: Dec2D
+:: Dec2D [scenario]
 <<set $fuelStainMissed to true>>
 <<set $badchoices to $badchoices + 1>>
 <<set $singleSideFuel to true>>You wipe the stain, reseat the cap, and tell the line tech you want fuel only in the right inboard. He asks if everything's OK. You tell him you're watching a number on the left side, which is true the way incomplete sentences are true. The right inboard comes up to the tab; the left stays where Sunday's top-off and one mystery stain left it. The plan: leave the left alone and see whether its burn rate makes sense en route. If that gauge falls faster than the engine can drink, you'll have your answer somewhere over the mountains.
@@ -308,7 +308,7 @@ The rest of the preflight is routine. You work the right side, then the undersid
 
 <<link "Close the left cap and climb in" "Dec3">><</link>>
 
-:: Dec3
+:: Dec3 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec3: Propeller check procedure"])>>
 <div class="decision-heading">Engine Start: Decision 3 of 10: Prop Feather Check</div>
 
@@ -328,21 +328,21 @@ You are about to do the check. How?
 
 <<link "D. Cycle each prop three times back-to-back to make sure the governor oil is fully warmed through." "Dec3D">><<set $pathArray to $pathArray.concat(["Dec3: D (triple cycle)"])>><</link>>
 
-:: Dec3A
+:: Dec3A [scenario]
 You cycle the left prop at 1900 RPM: RPM bleeds down to about 1650 and recovers smoothly, MP tracks. You repeat on the right: 1900, bleeds down to 1620, recovers. Both governors respond. Oil pressure holds steady on both.
 
 You re-set cruise-idle and wait for your taxi sequence.
 
 <<link "Taxi out for the runup" "Dec4">><</link>>
 
-:: Dec3B
+:: Dec3B [scenario]
 <<set $propTestError to true>>
 <<set $badchoices to $badchoices + 1>>
 You let the engines stabilize at cruise-idle and wait for your taxi sequence. The JPI shows green. The governors have not been asked a question today.
 
 <<link "Taxi for the runup" "Dec4">><</link>>
 
-:: Dec3C
+:: Dec3C [scenario]
 <<set $propTestError to true>>
 <<set $badchoices to $badchoices + 1>>
 You pull the left prop control all the way back to the feather detent. RPM drops quickly: 1400, 1100, 900. The prop blades visibly pause near coarse pitch but, without sufficient oil pressure through the system to complete the feather cycle on the ground, they sag into the mid-coarse range and the engine begins to roughen as the combustion airflow changes. You push the prop control forward smartly. The engine returns to idle-cruise range, oil pressure recovering. The JPI paints a brief amber dot on the left engine's hottest CHT, and it fades. You do the same test on the right engine, slightly more gently, and get a similar result.
@@ -351,14 +351,14 @@ You re-set cruise-idle, both engines back to smooth, and give your heart rate a 
 
 <<link "Steady everything and taxi out" "Dec4">><</link>>
 
-:: Dec3D
+:: Dec3D [scenario]
 You cycle the left prop at 1900 RPM: bleeds to 1650 and recovers. You immediately cycle it again, then a third time. All three cycles are smooth and comparable. You repeat on the right with similar results.
 
 The runup line has grown behind you; a King Air is holding short of the runup area, its pilot visibly patient. You re-set cruise-idle.
 
 <<link "Wave an apology toward the King Air and taxi clear" "Dec4">><</link>>
 
-:: Dec4
+:: Dec4 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec4: Runup anomaly"])>>
 <div class="decision-heading">Runup: Decision 4 of 10: Mag Drop Differential</div>
 
@@ -380,35 +380,35 @@ The POH for the IO-550-C in this airframe allows mag drops up to 150 RPM and dif
 
 <<link "D. Drop is within POH max. Differential is a little wide but the engine runs smoothly on both mags together. Continue." "Dec4D">><<set $pathArray to $pathArray.concat(["Dec4: D (continue, within limits)"])>><</link>>
 
-:: Dec4A
+:: Dec4A [scenario]
 You hold the right engine at 2000 RPM, mixture full rich briefly, then pull the mixture toward peak and past it, 30 seconds at aggressive lean, watching the JPI. Cylinder #2 EGT climbs, normalizes. You return to 1700, re-check: left mag 65 RPM drop, smooth, cylinder #2 EGT in family with the other five. Differential 5 RPM.
 
 The burn-off worked. You release the brakes.
 
 <<link "Taxi to the hold short" "Dec5">><</link>>
 
-:: Dec4B
+:: Dec4B [scenario]
 You taxi back to the runup area, set the parking brake, let both engines cool at idle for 90 seconds, shut down. You sit with Teo for about 18 minutes while the oil stabilizes. You restart, taxi back out, runup again. Right engine, 1700, left mag: 70 RPM drop, smooth, cylinder #2 back in family. Differential 10 RPM.
 
 The cool-restart worked.
 
 <<link "Taxi back out to the hold short" "Dec5">><</link>>
 
-:: Dec4C
+:: Dec4C [scenario]
 You taxi back to the ramp. Mick is not thrilled to see you again. He pulls the #2 lower plug. It's slightly oily. Nothing catastrophic, a little lead fouling. He cleans it, gaps it, torques it back, signs the line.
 
 You taxi out at 1000, ninety minutes late. Teo is reading on his tablet, not complaining, not looking up. The keynote window is tighter than you'd like.
 
 <<link "Take the runway when called" "Dec5">><</link>>
 
-:: Dec4D
+:: Dec4D [scenario]
 <<set $runupError to true>>
 <<set $badchoices to $badchoices + 1>>
 You note the differential is outside the POH limit but figure the engine is making clean, smooth power on both mags together. You release the brakes.
 
 <<link "Roll toward the hold short" "Dec5">><</link>>
 
-:: Dec5
+:: Dec5 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec5: Takeoff brief"])>>
 <div class="decision-heading">Before Takeoff: Decision 5 of 10: Engine-Failure Brief</div>
 
@@ -426,7 +426,7 @@ What does yours say today?
 
 <<link "D. The whole brief, the one you make CFI candidates recite: abort criteria on the roll, the gear logic below 500, feather criteria and Vyse above it, and where the airplane goes if 17L is behind you." "Dec5D">><<set $pathArray to $pathArray.concat(["Dec5: D (full brief)"])>><</link>>
 
-:: Dec5A
+:: Dec5A [scenario]
 <<set $briefIncomplete to true>>
 <<set $badchoices to $badchoices + 1>>
 Teo nods. Tower clears you: "Baron two-five-eight hotel tango, runway one-seven left, cleared for takeoff."
@@ -435,21 +435,21 @@ You release the brakes. Power up smoothly.
 
 <<link "Climb out" "Dec6">><</link>>
 
-:: Dec5B
+:: Dec5B [scenario]
 <<set $briefIncomplete to true>>
 <<set $badchoices to $badchoices + 1>>
 Teo nods. Tower clears you. You release the brakes. Power up smoothly.
 
 <<link "Takeoff roll" "Dec6">><</link>>
 
-:: Dec5C
+:: Dec5C [scenario]
 <<set $briefIncomplete to true>>
 <<set $badchoices to $badchoices + 1>>
 Teo nods. Tower clears you. You release the brakes. Power up smoothly.
 
 <<link "Rotate and fly" "Dec6">><</link>>
 
-:: Dec5D
+:: Dec5D [scenario]
 "Lose one before rotation, I chop both and we stop. Airborne below five hundred with gear still down, we land: straight ahead or a shallow turn to open ground, gear stays where it helps. Above five hundred with Vyse, gear up, I verify and feather the dead one, climb at blue line to eight hundred minimum, then right turn back for one-seven left, or I-25 if the field is blocked."
 
 Teo nods. He has heard some version of this on every flight he has ever flown with you, and he has watched you notice the days you skipped it. Tower clears you: "Baron two-five-eight hotel tango, runway one-seven left, cleared for takeoff."
@@ -458,7 +458,7 @@ You release the brakes. Power up smoothly.
 
 <<link "Fly the numbers you briefed" "Dec6">><</link>>
 
-:: Dec6
+:: Dec6 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec6: Climb management"])>>
 <div class="decision-heading">Climb: Decision 6 of 10: Power and Mixture Management</div>
 
@@ -476,7 +476,7 @@ How do you manage the climb?
 
 <<link "D. Climb power, 25\" MP / 2500 RPM, cowl flaps full open, mixtures full rich through 5,000 DA, then lean progressively to keep fuel flow on the target climb curve." "Dec6D">><<set $pathArray to $pathArray.concat(["Dec6: D (climb power, open cowl, lean to target FF)"])>><</link>>
 
-:: Dec6A
+:: Dec6A [scenario]
 <<set $climbMgmtError to true>>
 <<set $badchoices to $badchoices + 1>>
 You leave everything at the firewall. Mixtures full rich. 2700 RPM. Full manifold pressure at sea level, decaying as you climb. Cowl flaps remain where you set them on the ramp: trail.
@@ -487,7 +487,7 @@ You continue the climb. The airplane gets to <<print $cruiseAlt>> eventually.
 
 <<link "Push over into cruise" "Dec7">><</link>>
 
-:: Dec6B
+:: Dec6B [scenario]
 <<set $climbMgmtError to true>>
 <<set $badchoices to $badchoices + 1>>
 You pass 3,000 AGL, reduce nothing, and bring each mixture smoothly back to peak EGT, as shown on the JPI. The engines get leaner. CHTs rise; cylinders running at peak are running at the hottest combination of TIT and CHT available to them. The climb continues but you can see the temps trending in the wrong direction.
@@ -496,19 +496,19 @@ You arrive at <<print $cruiseAlt>> with CHTs higher than you want.
 
 <<link "Level off" "Dec7">><</link>>
 
-:: Dec6C
+:: Dec6C [scenario]
 You reduce to 25" / 2500 as you pass 1,000 AGL. Mixtures stay full rich. Cowl flaps are in trail, not fully open but not closed. CHTs climb steadily but not alarmingly. Fuel flow is healthy. You get to <<print $cruiseAlt>> in reasonable time.
 
 <<link "Settle into cruise" "Dec7">><</link>>
 
-:: Dec6D
+:: Dec6D [scenario]
 You reduce to 25" / 2500 as you pass 1,000 AGL. Cowl flaps full open. Mixtures full rich through 5,000 density altitude, then you start walking them back progressively, holding the fuel-flow climb curve you've memorized for the IO-550-C. CHTs climb and level, sitting in the low 380s. Fuel flow appropriate for each altitude band.
 
 You arrive at <<print $cruiseAlt>> comfortably, the engines cool and the fuel flows matched.
 
 <<link "Top of climb" "Dec7">><</link>>
 
-:: Dec7
+:: Dec7 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec7: Fuel imbalance in cruise"])>>
 <div class="decision-heading">Cruise: Decision 7 of 10: Fuel Imbalance</div>
 
@@ -533,29 +533,29 @@ Each engine feeds from its own main by default. An 8-gallon differential at 58 m
 
 <<link "D. This is real enough to want eyes on it. Eagle is ahead off the left wing; land there and get a mechanic's look before the deeper terrain." "Dec7D">><<set $pathArray to $pathArray.concat(["Dec7: D (precautionary Eagle stop)"])>><</link>>
 
-:: Dec7A
+:: Dec7A [scenario]
 <<set $crossfeedMisused to true>>
 <<set $badchoices to $badchoices + 1>>
 You leave the fuel as it is. Each engine continues to draw from its own tank. You note the differential mentally and return your attention to the panel and the view.
 
 <<link "Back to the panel and the view" "Dec8">><</link>>
 
-:: Dec7B
+:: Dec7B [scenario]
 You open the crossfeed valve and select the right engine to feed from the left main. You set a timer on the clock: 15 minutes. Fuel flow on the right is unchanged; the engine is simply drinking from a different bay now. You note the current readings on your kneeboard.
 
 <<link "Start the crossfeed clock" "Dec8">><</link>>
 
-:: Dec7C
+:: Dec7C [scenario]
 You write "right tank low, inspect at GJT" on your kneeboard. You start watching the differential closely. Over the next ten minutes it grows by about one more gallon.
 
 <<link "Keep one eye on the gauges" "Dec8">><</link>>
 
-:: Dec7D
+:: Dec7D [scenario]
 <<set $divertedEarly to true>>You tell Teo you're stopping at Eagle. He blinks twice. "Is something wrong?" You say it's a fuel number that needs a mechanic's eyes before you commit to the deeper terrain. You pass your intentions to Denver and start a shallow drift-down toward the Eagle valley. Teo is, to his credit, calm. His jaw is set. You can feel him doing the math on his talk.
 
 <<link "Begin the letdown toward Eagle" "Dec8">><</link>>
 
-:: Dec8
+:: Dec8 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec8: Right engine oil pressure dropping"])>>
 <div class="decision-heading">Cruise: Decision 8 of 10: Right Engine Trend</div>
 
@@ -583,7 +583,7 @@ Teo says, quietly, "What are you seeing?" You tell him. He says, "Do whatever yo
 
 <<link "D. Divert to KASE. Long runway, IFR infrastructure, worst-case you shoot an instrument approach." "Dec8D">><<set $pathArray to $pathArray.concat(["Dec8: D (divert ASE)"])>><</link>>
 
-:: Dec8A
+:: Dec8A [scenario]
 <<set $oilSignalLate to true>>
 <<set $badchoices to $badchoices + 1>>
 You keep the airplane pointed at KGJT. You tell Teo you're watching it. You reduce right engine power slightly just in case. Oil pressure drifts down to 42, then 38. Oil temp is now 225°F and climbing.
@@ -592,7 +592,7 @@ You keep the airplane pointed at KGJT. You tell Teo you're watching it. You redu
 
 <<link "Watch the gauges and fly" "Dec9">><</link>>
 
-:: Dec8B
+:: Dec8B [scenario]
 You reduce right engine power to 18" MP and adjust trim for the left engine's increased relative load. You call Denver Center: "Denver Center, Baron two-five-eight hotel tango, declaring precautionary divert to Rifle, right engine oil pressure and temp indication, still making power."
 
 Center responds: "Two-five-eight hotel tango, Denver Center, understand Rifle, say souls and fuel."
@@ -605,17 +605,17 @@ Center responds: "Two-five-eight hotel tango, Denver Center, understand Rifle, s
 
 <<link "Fly the divert" "Dec9">><</link>>
 
-:: Dec8C
+:: Dec8C [scenario]
 <<set $divApt to "KEGE">>You turn toward KEGE and tell Denver Center. Center acknowledges. The valley narrows as you descend. Eagle's approach is straightforward if you stay over the river, but the airport is flanked by rising terrain on both sides, and the single-engine performance margin is nothing you want to test off the centerline of that valley.
 
 <<link "Descend into the valley" "Dec9">><</link>>
 
-:: Dec8D
+:: Dec8D [scenario]
 <<set $divApt to "KASE">>You turn toward KASE. Center acknowledges the divert. You begin the descent; Aspen sits at 7,820 and is walled by ridges on three sides. You have clear weather, which helps. What you don't have is a valley-floor approach. You'll be threading into a bowl, in an airplane whose single-engine service ceiling at this weight is around 7,000.
 
 <<link "Thread toward the bowl" "Dec9">><</link>>
 
-:: Dec9
+:: Dec9 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec9: Right engine failure / feather decision"])>>
 <div class="decision-heading">Engine Failure: Decision 9 of 10: Securing the Right Engine</div>
 
@@ -633,7 +633,7 @@ You need to secure the right engine. Which memory sequence do you execute?
 
 <<link "D. Reduce right power carefully to maintain some manifold pressure. Don't feather yet. Try to limp it in for landing." "Dec9D">><<set $pathArray to $pathArray.concat(["Dec9: D (reduce power, limp)"])>><</link>>
 
-:: Dec9A
+:: Dec9A [scenario]
 <<set $featherError to true>>
 <<set $badchoices to $badchoices + 1>>
 Mixture to idle cutoff. Prop control to the feather detent; the RPM drops and the blades swing into the feathered position, flattening the disc drag. Mags off. Cowl flap closed. You have missed the fuel selector.
@@ -642,7 +642,7 @@ The selector is still on. Nothing is burning that fuel and nothing is pumping it
 
 <<link "Turn your attention to the arrival" "Dec10">><</link>>
 
-:: Dec9B
+:: Dec9B [scenario]
 <<set $cleanSecure to true>>
 Mixture to idle cutoff. Fuel selector OFF. Prop to feather. The blades swing over and the engine spools to a stop, cleanly feathered. Magnetos OFF. Cowl flap closed. Fuel flow zeroed. The right side of the airplane is secure.
 
@@ -650,7 +650,7 @@ You trim the airplane for single-engine cruise-descent. The left engine is holdi
 
 <<link "Set up the single-engine arrival" "Dec10">><</link>>
 
-:: Dec9C
+:: Dec9C [scenario]
 <<set $featherError to true>>
 <<set $badchoices to $badchoices + 1>>
 You pull the right prop control straight to the feather detent before touching anything else. The RPM drops. The blades swing over. The drag reduces and the airplane settles into a more tractable attitude.
@@ -659,7 +659,7 @@ You then go back through the rest: mixture to idle cutoff, fuel selector OFF, ma
 
 <<link "Brief the arrival" "Dec10">><</link>>
 
-:: Dec9D
+:: Dec9D [scenario]
 <<set $featherError to true>>
 <<set $badchoices to $badchoices + 1>>
 You pull the right throttle back to half, trying to coax whatever the engine has left. RPM continues to decay. Oil pressure is now below 10. The airplane yaws as thrust falls off completely and the prop disc is windmilling flat in the relative wind. Drag is enormous. The airplane settles into a descent you don't want. The left engine is at climb power.
@@ -670,7 +670,7 @@ You push nose-over, trade altitude for Vyse. You get Vyse back. You have lost tw
 
 <<link "Recover the arrival picture" "Dec10">><</link>>
 
-:: Dec10
+:: Dec10 [scenario]
 <<set $pathArray to $pathArray.concat(["Dec10: Single-engine approach"])>>
 <div class="decision-heading">Approach: Decision 10 of 10: Single-Engine Approach Configuration</div>
 
@@ -688,32 +688,32 @@ The choice now is how you configure.
 
 <<link "D. Extend downwind to let the altitude bleed off, gear down midfield, full flaps turning base, Vyse down to Vref at the numbers." "Dec10D">><<set $pathArray to $pathArray.concat(["Dec10: D (extended downwind, full flaps)"])>><</link>>
 
-:: Dec10A
+:: Dec10A [scenario]
 <<set $approachError to true>>
 <<set $badchoices to $badchoices + 1>>
 You drop the gear at the FAF. Drag spikes. You pitch to hold altitude, then pitch to hold Vyse, then pitch to hold Vref, then pitch again. You are at full flaps on short final. The airplane is stable. You have committed to the landing. The left engine is carrying you. A go-around from this configuration, with gear down and full flaps on a single engine, is a statistics problem you have decided to not have.
 
 <<link "Touch down" "Resolution">><</link>>
 
-:: Dec10B
+:: Dec10B [scenario]
 <<set $approachError to true>>
 <<set $badchoices to $badchoices + 1>>
 You pitch up, bank right, and fly an overhead entry to a left downwind. The tight pattern is fine for a two-engine airplane. On one engine it is tight in a way you feel. You drop gear at midfield downwind. You turn base. You go to full flaps. The left engine is honest. You roll out on final low and a little fast.
 
 <<link "Fly it onto the pavement" "Resolution">><</link>>
 
-:: Dec10C
+:: Dec10C [scenario]
 <<set $stableApproach to true>>
 You hold Vyse+5 all the way down. You run the airplane in clean and flat. Gear is still up. On short final, once you have the runway made and a positive energy margin, gear down, flaps to approach: 15°, not full. The airplane settles onto the numbers with drag still in reserve. If anything goes sideways on short final you have a go-around left.
 
 <<link "Over the fence" "Resolution">><</link>>
 
-:: Dec10D
+:: Dec10D [scenario]
 You extend the downwind to let the altitude bleed; you're high and hot and you know it. Gear midfield downwind. Turning base, flaps to full. You decelerate to Vref at the numbers. The approach is stable but committed. Full flaps on one engine means a go-around would be very, very marginal. You have decided it won't be one.
 
 <<link "Land it" "Resolution">><</link>>
 
-:: Resolution
+:: Resolution [scenario]
 <<set $pathArray to $pathArray.concat(["Resolution"])>>
 <<set $criticalErrors to 0>>
 <<if $altRouteError>><<set $criticalErrors to $criticalErrors + 1>><</if>>
@@ -746,7 +746,7 @@ You extend the downwind to let the altitude bleed; you're high and hot and you k
   <<goto "End_SoundDivert">>
 <</if>>
 
-:: End_CleanSuccess
+:: End_CleanSuccess [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Clean success"])>>
 <div class="decision-heading">Ending: Clean Single-Engine Recovery</div>
 
@@ -773,7 +773,7 @@ In a twin, single-engine performance is not the backup plan. It is the plan you 
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_SoundDivert
+:: End_SoundDivert [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Sound divert"])>>
 <div class="decision-heading">Ending: Sound Decisions, Good Outcome</div>
 
@@ -796,7 +796,7 @@ Not every flight is a clean sheet. Most flights have a small error somewhere. Th
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_Qualified
+:: End_Qualified [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Qualified success"])>>
 <div class="decision-heading">Ending: Qualified Success</div>
 
@@ -821,7 +821,7 @@ Twins reward good habits. Every small habit (the routine mag check, the full bri
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_Delay
+:: End_Delay [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Delay and friction"])>>
 <div class="decision-heading">Ending: Delay, Diversion, and Friction</div>
 
@@ -850,7 +850,7 @@ The trip that gets rescheduled is not the worst possible outcome. Sometimes it i
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_LongRollout
+:: End_LongRollout [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Long rollout, aircraft OK"])>>
 <div class="decision-heading">Ending: Long Rollout, Aircraft Intact</div>
 
@@ -875,7 +875,7 @@ In a single-engine Baron approach, the configuration that feels safest is the on
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_HardLanding
+:: End_HardLanding [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Hard landing"])>>
 <div class="decision-heading">Ending: Hard Landing, No Injuries</div>
 
@@ -898,7 +898,7 @@ Rehearse the sequence, in order, out loud, on the ground, every time. The one ti
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_OffAirport
+:: End_OffAirport [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Off-airport"])>>
 <div class="decision-heading">Ending: Off-Airport Landing in a Valley Meadow</div>
 
@@ -923,7 +923,7 @@ The off-airport landing, flown well, is a good day. The off-airport landing you 
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_Excursion
+:: End_Excursion [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Runway excursion"])>>
 <div class="decision-heading">Ending: Runway Excursion, No Injuries</div>
 
@@ -948,7 +948,7 @@ In emergency procedures, completeness is not a nice-to-have. It is the differenc
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_GearCollapse
+:: End_GearCollapse [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Gear collapse"])>>
 <div class="decision-heading">Ending: Gear Collapse on Rollout</div>
 
@@ -971,7 +971,7 @@ The chain is the lesson. Every emergency flown well is an emergency where you br
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
-:: End_Crash
+:: End_Crash [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Vmc loss of control"])>>
 <div class="decision-heading">Ending: Loss of Control</div>
 

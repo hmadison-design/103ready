@@ -181,7 +181,7 @@ a.link-internal:hover {
 .main-menu-btn:hover,
 .main-menu-btn:focus { background: #2E5C82; outline: none; }
 
-:: Opening
+:: Opening [scenario]
 <<set $pathArray to $pathArray.concat(["Opening"])>>
 <div class="scenario-title">Game Day</div>
 <div class="scenario-subtitle">A Super Bowl Sunday Sightseeing Flight Gone Wrong</div>
@@ -215,7 +215,7 @@ The sun is warm. Amber is laughing at something on her phone. The radio is tuned
 <<link "I'm invincible!" "Realization">><<set $pathArray to $pathArray.concat(["Hobson: I'm invincible!"])>><</link>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
-:: Realization
+:: Realization [scenario]
 <<set $pathArray to $pathArray.concat(["Realization"])>>
 
 Amber glances down at the iPad strapped to your kneeboard. Something catches her eye — a red shape, a circle, and a little blue arrow sitting squarely inside it.
@@ -254,7 +254,7 @@ Your epic third date has officially gone sideways.
 
 <<link "You tune to 123.45, the universal air-to-air frequency, and acknowledge" "TuneTo12345">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Tuned to 123.45"])>><</link>>
 
-:: RockWings
+:: RockWings [scenario]
 <<set $pathArray to $pathArray.concat(["Rocked wings correctly"])>>
 
 You grip the stick, take a breath, and rock your wings. Left, right, left. The intercept acknowledgment signal. "I see you. I understand. I will comply."
@@ -283,7 +283,7 @@ You need to do something about the radio. Now.
 
 <<link "Just follow the fighter — you'll sort out the radio later" "FollowSilent">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Follow silently, no radio"])>><</link>>
 
-:: WaveAtFighter
+:: WaveAtFighter [scenario]
 <<set $pathArray to $pathArray.concat(["Waved at fighter"])>>
 
 You take your right hand off the stick and give the F-16 a big, friendly wave. A genuine, enthusiastic, "hey there, we're all just flying around on this beautiful day" wave.
@@ -304,7 +304,7 @@ She's not wrong.
 
 <<link "Flash your landing light at them — that's a signal, right?" "FlashAtFighter">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Flashed landing light"])>><</link>>
 
-:: WaveHarder
+:: WaveHarder [scenario]
 <<set $pathArray to $pathArray.concat(["Waved with both hands"])>>
 
 You commit. Both hands off the stick. A full, Olympic-level, two-handed wave. You are FRIENDLY. You are COMPLIANT. You are also, for a brief and terrifying moment, not flying the airplane.
@@ -323,7 +323,7 @@ You have waved at a military interceptor — twice — and let go of the flight 
 
 <<link "You panic and bank hard away from the flares" "KeepRunning">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Fled from flares"])>><</link>>
 
-:: FlashAtFighter
+:: FlashAtFighter [scenario]
 <<set $pathArray to $pathArray.concat(["Flashed landing light at fighter"])>>
 
 You flick the landing light switch. Blink. Blink. Blink. A Morse code of desperation. Flashing lights mean something, right? You learned that somewhere.
@@ -340,7 +340,7 @@ She just accidentally described the correct intercept procedure better than you'
 
 <<link "Give up trying to signal and just follow them" "FollowUnacknowledged">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Followed without acknowledging"])>><</link>>
 
-:: TuneTo12345
+:: TuneTo12345 [scenario]
 <<set $pathArray to $pathArray.concat(["Tuned to 123.45"])>>
 
 You reach down and dial 123.45 on the radio. The universal air-to-air frequency. You've heard pilots use it to chat with each other on cross-countries. The F-16s are on that frequency.
@@ -363,7 +363,7 @@ Amber, reading your face: "That wasn't them, was it."
 
 <<link "Keep trying 123.45 — someone official must be monitoring" "KeepTrying12345">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Kept trying 123.45"])>><</link>>
 
-:: RelayViaBonanza
+:: RelayViaBonanza [scenario]
 <<set $pathArray to $pathArray.concat(["Relay through Bonanza pilot"])>>
 
 "Bonanza, can you relay to ATC that I'm being intercepted? November six-two-one India-Alpha, Icon A5, eight miles southwest of Santa Clara!"
@@ -382,7 +382,7 @@ You haven't established radio contact with anyone who matters. A relay through a
 
 <<link "Rock your wings first — you know what to do next" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Finally heading to Guard"])>><</link>>
 
-:: KeepTrying12345
+:: KeepTrying12345 [scenario]
 <<set $pathArray to $pathArray.concat(["Kept trying 123.45"])>>
 
 The Bonanza pilot is gone. You call again on 123.45. Nothing. Static. The F-16 rocks its wings. Then the other one.
@@ -395,7 +395,7 @@ Amber grabs your arm. "Jake, PLEASE. They want you to do something. Whatever you
 
 <<link "Rock your wings and follow — deal with the radio properly" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Finally acknowledged"])>><</link>>
 
-:: RockWingsLate
+:: RockWingsLate [scenario]
 <<set $pathArray to $pathArray.concat(["Late wing rock acknowledgment"])>>
 
 You grip the stick and rock your wings. Left, right, left. The signal the F-16 has been waiting for.
@@ -418,7 +418,7 @@ Your radio is still wrong. Your transponder is still squawking 1200. Nobody on t
 
 <<link "Just follow the fighter — deal with radio later" "FollowSilent">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Follow silently"])>><</link>>
 
-:: FollowUnacknowledged
+:: FollowUnacknowledged [scenario]
 <<set $pathArray to $pathArray.concat(["Never acknowledged intercept"])>>
 
 You never rocked your wings. The F-16 pilot waited, signaled repeatedly, and eventually gave up trying to get an acknowledgment. The fighter begins the escort anyway — leading you northwest.
@@ -433,7 +433,7 @@ Amber: "Those jets are still here. Shouldn't you DO something?"
 
 <<link "Just follow them — they'll figure it out when you land" "SilentEscort">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Silent escort, no acknowledgment"])>><</link>>
 
-:: TuneGuard
+:: TuneGuard [scenario]
 <<set $radioEstablished to true>>
 <<set $pathArray to $pathArray.concat(["On Guard 121.5"])>>
 
@@ -455,7 +455,7 @@ Your hand moves to the transponder. ATC just told you to squawk 7700. What code 
 
 <<link "Continue" "TransponderTrap">><<set $pathArray to $pathArray.concat(["Proceeding to transponder"])>><</link>>
 
-:: TuneGuardLate
+:: TuneGuardLate [scenario]
 <<set $radioEstablished to true>>
 <<set $pathArray to $pathArray.concat(["Late radio on Guard"])>>
 
@@ -469,7 +469,7 @@ There's a pause — the kind that means ATC has already informed everyone on fre
 
 <<link "Now deal with the transponder" "TransponderTrap">><<set $pathArray to $pathArray.concat(["Proceeding to transponder"])>><</link>>
 
-:: WrongFreq
+:: WrongFreq [scenario]
 <<set $pathArray to $pathArray.concat(["Tried wrong frequency"])>>
 
 You dial in 124.0 — a frequency you vaguely remember from a flight near San Jose last month.
@@ -488,7 +488,7 @@ You just burned 45 seconds on the wrong frequency. The situation hasn't improved
 
 <<link "Give up on the radio and just follow the fighter" "FollowSilent">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Gave up on radio"])>><</link>>
 
-:: FollowSilent
+:: FollowSilent [scenario]
 <<set $pathArray to $pathArray.concat(["Following silently"])>>
 
 You match the fighter's heading and maintain formation. But your radio is silent. Your transponder is on 1200. ATC has no idea who you are.
@@ -505,7 +505,7 @@ She's right. She's not a pilot, but she's tracking this situation better than yo
 
 <<link "Just keep following — they'll figure out who you are when you land" "SilentEscort">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Complete silent escort"])>><</link>>
 
-:: SilentEscort
+:: SilentEscort [scenario]
 <<set $pathArray to $pathArray.concat(["Silent escort to Moffett"])>>
 
 You're following the fighters with zero voice contact. Your transponder is still on 1200. ATC doesn't know who you are.
@@ -516,7 +516,7 @@ The F-16s lead directly toward Moffett Federal Airfield. The enormous runway app
 
 <<link "Approach Moffett" "ApproachMoffett">><<set $pathArray to $pathArray.concat(["Approaching Moffett silently"])>><</link>>
 
-:: TransponderTrap
+:: TransponderTrap [scenario]
 <<set $pathArray to $pathArray.concat(["TransponderTrap"])>>
 
 <<if $radioEstablished>>
@@ -547,7 +547,7 @@ You know you should change your transponder from 1200. Some emergency code. Your
 <</if>>
 <</if>>
 
-:: TrapSquawkRoast
+:: TrapSquawkRoast [scenario]
 <<set $badchoices to $badchoices + 1>>
 <<set $pathArray to $pathArray.concat(["TrapSquawkRoast"])>>
 
@@ -594,7 +594,7 @@ All of those were wrong. Try again.
 
 <<link "Fine. Let me try again." "TransponderTrap">><<set $pathArray to $pathArray.concat(["Back to transponder trap"])>><</link>>
 
-:: Squawk7700
+:: Squawk7700 [scenario]
 <<set $pathArray to $pathArray.concat(["Squawked 7700"])>>
 
 You set the transponder: 7-7-0-0.
@@ -615,7 +615,7 @@ Amber grabs your arm. "Is that a military base? We're landing at a MILITARY BASE
 
 <<link "Prepare to land at Moffett" "ApproachMoffett">><<set $pathArray to $pathArray.concat(["Approaching Moffett"])>><</link>>
 
-:: ApproachMoffett
+:: ApproachMoffett [scenario]
 <<set $pathArray to $pathArray.concat(["ApproachMoffett"])>>
 
 Moffett Federal Airfield swings into view. 9,197 feet of concrete. Enormous hangars. NASA Ames sprawling below.
@@ -644,7 +644,7 @@ Amber: "What do you mean, 'doesn't look great'?"
 <span class="disabled-choice">Declare "unable" and request the reciprocal runway</span><span class="disabled-hint">(requires radio contact with ATC)</span>
 <</if>>
 
-:: AttemptCrosswind
+:: AttemptCrosswind [scenario]
 <<set $pathArray to $pathArray.concat(["Attempted tailwind landing"])>>
 
 Jake sets up for the approach. He's committed now.
@@ -661,7 +661,7 @@ Amber unbuckles without speaking. She climbs out, sits on the grass facing away 
 
 <<link "Face the music" "Ending-Crosswind">><<set $pathArray to $pathArray.concat(["Ground looped"])>><</link>>
 
-:: CircleAndFlash
+:: CircleAndFlash [scenario]
 <<set $pathArray to $pathArray.concat(["Circled and flashed"])>>
 
 Jake rocks his wings and starts circling Moffett. He flashes the landing light on and off. He's looking for light gun signals from the tower.
@@ -686,7 +686,7 @@ The tower shoots light gun signals — cycling through them because they have no
 <<link "Continue to forced landing" "LandMoffettForced">><<set $pathArray to $pathArray.concat(["Forced landing after circling"])>><</link>>
 <</if>>
 
-:: HandGestures
+:: HandGestures [scenario]
 <<set $pathArray to $pathArray.concat(["Attempted hand gestures"])>>
 
 Jake tries to get the F-16 pilot's attention. He points at the windsock. He makes an X with his arms. He mimes wind blowing by waving his hand horizontally.
@@ -713,7 +713,7 @@ She's right. Charades does not work at altitude. Back to reality.
 
 <<link "Circle and flash lights, look for light gun signals" "CircleAndFlash">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Circling after failed gestures"])>><</link>>
 
-:: DeclareUnable
+:: DeclareUnable [scenario]
 <<set $pathArray to $pathArray.concat(["Declared unable on radio"])>>
 
 Jake keys the mic: "Moffett tower, November six-two-one India-Alpha, Runway 32 Right has a fifteen-knot tailwind, well beyond my limits. Request Runway 14 Left."
@@ -736,7 +736,7 @@ It's the last okay thing that happens today.
 
 <<link "Taxi to the ramp" "LandMoffett">><<set $pathArray to $pathArray.concat(["Landed 14L successfully"])>><</link>>
 
-:: LandMoffett
+:: LandMoffett [scenario]
 <<set $pathArray to $pathArray.concat(["Landed at Moffett"])>>
 
 The A5 rolls to a stop on the enormous ramp. Shutdown. The welcoming committee materializes: two black SUVs, a NASA security truck, a local police car, and what appears to be an unmarked federal vehicle. The kind that shows up when someone says "situation."
@@ -765,7 +765,7 @@ You shut down the engine. The welcoming committee starts walking toward the airp
 
 <<link "Get indignant — this is a free country" "Ending-Cuffs">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Got belligerent"])>><</link>>
 
-:: LandMoffett14R
+:: LandMoffett14R [scenario]
 <<set $pathArray to $pathArray.concat(["Landed 14L after circling"])>>
 
 The A5 touches down on Runway 14L. Into the wind. Smooth. Clean. The kind of landing that doesn't make it into incident reports.
@@ -780,7 +780,7 @@ Amber: "That landing was good. Why do they still look so mad?"
 
 <<link "Continue to the ramp" "LandMoffett">><<set $pathArray to $pathArray.concat(["Taxiing in"])>><</link>>
 
-:: LandMoffettForced
+:: LandMoffettForced [scenario]
 <<set $pathArray to $pathArray.concat(["Forced landing at Moffett"])>>
 
 There are a LOT of vehicles on this ramp. Multiple agencies. This is no longer a routine TFR violation. This is a situation.
@@ -793,7 +793,7 @@ You land. You taxi. You shut down.
 
 <<link "Get indignant — this is a free country" "Ending-Cuffs">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Got belligerent"])>><</link>>
 
-:: KeepRunning
+:: KeepRunning [scenario]
 <<set $pathArray to $pathArray.concat(["Running from fighters"])>>
 
 You haul back on the stick and bank hard away. The Icon A5 at full throttle: about 100 knots. Being pursued by aircraft that cruise above 500 knots.
@@ -814,7 +814,7 @@ She's right. You know she's right.
 
 <<link "Keep going — look for a beach to land on" "StillRunning">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Still running"])>><</link>>
 
-:: GiveUpRunning
+:: GiveUpRunning [scenario]
 <<set $pathArray to $pathArray.concat(["Gave up running"])>>
 
 Amber's crying. Your conscience is screaming. The fuel state is getting ugly.
@@ -827,7 +827,7 @@ The F-16 leads you directly to Moffett. No more games.
 
 <<link "Land at Moffett" "LandMoffettForced">><<set $pathArray to $pathArray.concat(["Landing at Moffett after chase"])>><</link>>
 
-:: WaterLand
+:: WaterLand [scenario]
 <<set $pathArray to $pathArray.concat(["Water landing in the bay"])>>
 
 "It's amphibious!" you announce, as if this solves everything.
@@ -854,7 +854,7 @@ Amber is wrapped in the emergency blanket from the seat pocket. Hair ruined. Mak
 
 <<link "Await the Coast Guard" "Ending-Splash">><<set $pathArray to $pathArray.concat(["Floating in the bay"])>><</link>>
 
-:: StillRunning
+:: StillRunning [scenario]
 <<set $pathArray to $pathArray.concat(["Still running"])>>
 <<set $badchoices to $badchoices + 1>>
 
@@ -868,7 +868,7 @@ You are in a 100-knot airplane being pursued by aircraft that cruise at 500+ kno
 
 <<link "You have no plan — you just keep flying" "Ending-FullChase">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["No plan, just flying"])>><</link>>
 
-:: BeachAttempt
+:: BeachAttempt [scenario]
 <<set $pathArray to $pathArray.concat(["Beach landing attempt"])>>
 <<set $badchoices to $badchoices + 1>>
 
@@ -884,7 +884,7 @@ A confused lifeguard approaches: "Uh... you can't park that here."
 
 <<link "Await the authorities" "Ending-BeachBum">><<set $pathArray to $pathArray.concat(["On the beach"])>><</link>>
 
-:: Ending-Cooperate
+:: Ending-Cooperate [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Cooperated"])>>
 
 You step out of the A5 with your hands visible. Cooperate fully. Answer every question.
@@ -937,7 +937,7 @@ The rental company bans you for life. Amber's mother arrives within the hour. "M
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
-:: Ending-Ignorance
+:: Ending-Ignorance [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Claimed ignorance"])>>
 
 You try the innocent routine.
@@ -972,7 +972,7 @@ Amber overhears this exchange. She googles "red flags in relationships" and take
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
-:: Ending-LawyeredUp
+:: Ending-LawyeredUp [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Demanded lawyer"])>>
 
 "I'm not answering any questions without an attorney present."
@@ -1005,7 +1005,7 @@ Jake exercised his Fifth Amendment rights. He also exercised his right to be sin
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
-:: Ending-Cuffs
+:: Ending-Cuffs [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Handcuffed"])>>
 
 You step out of the A5 and immediately start arguing.
@@ -1042,7 +1042,7 @@ Your pilot certificate is emergency revoked before you leave the building. The o
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
-:: Ending-Crosswind
+:: Ending-Crosswind [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Tailwind ground loop"])>>
 
 The A5 sits in the grass, listing to starboard. Right wing creased. Right tire blown. Hull gouged.
@@ -1081,7 +1081,7 @@ Amber walks to the nearest officer. "I don't know him. I'm calling an Uber."
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
-:: Ending-TheLongWalk
+:: Ending-TheLongWalk [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: The Long Walk"])>>
 
 The longest walk of your life: from the A5 to a very large group of very unhappy federal employees.
@@ -1114,7 +1114,7 @@ The rental company bans you for life via email that evening. Subject line: "Life
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
-:: Ending-Splash
+:: Ending-Splash [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Water landing"])>>
 
 Jake actually pulls off a decent water landing. The A5 settles onto the south bay with minimal drama. Engine off. Bobbing gently.
@@ -1151,7 +1151,7 @@ The news footage goes viral by evening. "Sport Pilot Ditches Icon A5 in Bay Afte
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
-:: Ending-FullChase
+:: Ending-FullChase [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Full chase"])>>
 
 You ran from F-16s for 15 minutes. In that time, every federal agency with an aviation interest was alerted. NORAD was informed. The FBI was notified. News helicopters were dispatched.
@@ -1186,7 +1186,7 @@ Your mugshot is on the news by evening.
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
-:: Ending-BeachBum
+:: Ending-BeachBum [scenario ending]
 <<set $pathArray to $pathArray.concat(["Ending: Beach landing"])>>
 
 You somehow got the A5 onto a stretch of beach near Pacifica. The nosewheel dug into the wet sand, and the plane lurched to a stop at a 15-degree angle.

@@ -1,5 +1,5 @@
 # Built HTML archives (regenerated from .twee source)
-output/*.html
+output/
 
 # Base64 data URI text files (too large for git, regenerated from source PDFs)
 *.datauri.txt
@@ -22,3 +22,6 @@ node_modules/
 
 # Cloud-session sync scratch (patches in transit)
 .claude-sync/
+
+# Python bytecode
+__pycache__/
