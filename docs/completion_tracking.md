@@ -70,3 +70,35 @@ A `claim` endpoint and a small form at the ending passages of the free
 WINGS scenarios: name + FAA Tracking Number (FTN), tied to the session's
 completion events, giving Harvey a validation queue to approve credits
 from. The schema above was designed so this bolts on without migration.
+
+## September 2026 additions (migration 001)
+
+Four things were added, all in `shared/tracking.js`, `functions/api/`, and
+`build.sh`; no scenario edits were needed and none should ever be.
+
+1. A durable visitor id in `localStorage` (`r103_visitor`) alongside the
+   per-tab session id. Lets stats tell a returning pilot from a new one.
+2. First-touch attribution: on the very first page load on a browser, one
+   `visit` event carries the referrer, `utm_source`, `utm_medium`,
+   `utm_campaign`, and landing path. Stored once per visitor with
+   `INSERT OR IGNORE`, never updated. The landing page loads
+   `/tracking.js` as a plain script so first touches on `/` are captured.
+3. A scenario version stamp: `build.sh` hashes each `.twee` (first ten hex
+   characters of the SHA-256) and injects `window.R103_VERSION` ahead of
+   `tracking.js`. Every `start` and `ending` carries it. A revised
+   scenario stops averaging into the old one's numbers.
+4. Path logging: one `passage` event per passage displayed, into a
+   separate `passages` table. Multiplies row count by roughly the path
+   length (10 to 40 per session). Abandonment point and decision latency
+   fall out of the timestamps.
+
+Apply `db/migrations/001_visitor_attribution_path.sql` in the D1 console.
+Before it is applied, the site keeps working: `track.js` falls back to the
+legacy insert for start/ending and drops visit/passage; `stats.js` returns
+`migrated: false` and `/admin.html` shows a notice instead of the new
+panels. What is recorded is described for visitors at `/privacy.html`.
+
+Honest limit that has not changed: everything is client-side and
+spoofable. The visitor id is a random value in the visitor's own browser,
+so clearing site data creates a new visitor. Fine for analytics at honest
+granularity, not sufficient alone as proof of completion.

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>103 Ready: What We Record</title>
+<meta name="description" content="What 103ready.com records when you play a scenario, and what it does not.">
+<style>
+  :root { --accent: #1A3C57; --accent-hover: #2E5C82; --text: #ddd; --muted: #8a9bb0; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: #000; color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+    line-height: 1.55; padding: 4vh 4vw 8vh; box-sizing: border-box;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: clamp(1.4rem, 3vw, 1.9rem); letter-spacing: 0.03em; margin: 0 0 1em; color: #fff; }
+  p { margin: 0 0 1.1em; }
+  .muted { color: var(--muted); font-size: 0.92rem; }
+  a { color: var(--accent-hover); text-decoration: none; }
+  a:hover, a:focus { color: #fff; }
+  .back { display: inline-block; margin-top: 2em; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>What this site records, and what it doesn't</h1>
+
+  <p>There are no accounts, no passwords, and no forms. You can't tell us who you are, so we can't know.</p>
+
+  <p>When you play a scenario, the site records four things: that a scenario was started, each passage you visited, which ending you reached, and a timestamp for each. That is the path you took through the story. It's the most useful thing we have for improving the scenarios, because it shows where pilots stall, where they bail out, and which decisions actually get made rather than the ones we assumed would be.</p>
+
+  <p>Two random identifiers ride along with those records. One lives only in the browser tab and disappears when you close it; it ties the passages of a single playthrough together. The other is stored in your browser and persists between visits. Its only job is to let us tell a returning pilot from a new one, so we can answer questions like "do people who finish one scenario come back for a second." Neither identifier is derived from anything about you. Clear your browser's site data and both are gone for good, and we have no way to reconnect the new ones to the old.</p>
+
+  <p>On your first visit, the site also notes where you came from (the referring page, and any campaign tags in the link you clicked) and which page you landed on. That's how we find out whether the FAA Safety Team, a forum post, or a friend's text message is what brought you here. It's recorded once and never updated.</p>
+
+  <p>The site does not record your IP address, your browser or device details, your location, or your name. It sets no cookies. Nothing is shared with advertisers, and nothing is sold. There is no third-party analytics script on any page.</p>
+
+  <p>One more thing, since it matters for a training site. Your decisions inside a scenario are instructional data, not marketing data. The value of these scenarios depends on you making the choice you'd actually make at 2,000 feet with the ceiling coming down, not the choice that looks good. Decision-level records stay in their own domain. Only aggregate counts (how many started, how many finished, which endings) are used for anything business-related, and none of it goes to the FAA or anyone else.</p>
+
+  <p class="muted">Last updated September 2026. Questions go to the address on <a href="https://flyingm.aero">flyingm.aero</a>.</p>
+
+  <a class="back" href="/">Back to the scenarios</a>
+</main>
+</body>
+</html>

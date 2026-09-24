@@ -52,9 +52,17 @@ compile_scenario() {
     find "${src_dir}" -maxdepth 1 -type f -name '*.twee'
     exit 1
   fi
+  # Version stamp: a short content hash of this scenario's .twee, exposed
+  # as window.R103_VERSION so tracking can tell revisions apart. Changes
+  # only when this scenario's source changes.
+  local twee_file ver
+  twee_file=$(find "${src_dir}" -maxdepth 1 -type f -name '*.twee' | head -1)
+  ver=$(sha256sum "${twee_file}" | cut -c1-10)
+  printf 'window.R103_VERSION = "%s";\n' "${ver}" > "build-tmp/version-${slug}.js"
   # shared/tracking.js is compiled into every scenario's Story JavaScript
-  # (anonymous start/completion pings to /api/track; see docs/completion_tracking.md).
-  (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}" "../shared/tracking.js")
+  # (anonymous visit/start/passage/ending pings to /api/track; see
+  # docs/completion_tracking.md). The version file must come first.
+  (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}" "version-${slug}.js" "../shared/tracking.js")
 }
 
 compile_scenario "game-day"
@@ -78,6 +86,10 @@ echo "== Staging landing page =="
 cp public/index.html output/index.html
 cp public/103ready_logo.svg output/103ready_logo.svg
 cp public/admin.html output/admin.html
+cp public/privacy.html output/privacy.html
+# The landing page loads tracking.js as a plain script for first-touch
+# attribution; scenarios get it compiled in by tweego above.
+cp shared/tracking.js output/tracking.js
 
 # Copy per-scenario audio/images if present (referenced at runtime).
 for slug in game-day the-wall cylinder-three breakfast-at-coulter blue-line third-face red-x pink-dot the-gauntlet ice-in-the-cowl crossfeed the-good-engine within-limits cabin-heat the-forty-five one-eighty; do

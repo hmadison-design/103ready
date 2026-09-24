@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>103 Ready — Admin Stats</title>
+<title>103 Ready: Admin Stats</title>
 <style>
   :root {
     --bg: #10151c; --panel: #1a2230; --text: #e8edf4; --dim: #8fa0b5;
@@ -57,7 +57,7 @@
 
 <div id="login" hidden>
   <div class="panel">
-    <h1>103 <span>Ready</span> — Admin</h1>
+    <h1>103 <span>Ready</span> Admin</h1>
     <p class="sub">Enter the stats access token.</p>
     <input id="tok" type="password" placeholder="Access token" autocomplete="current-password">
     <p><button onclick="saveToken()">Sign in</button></p>
@@ -68,7 +68,7 @@
 <div id="dash" hidden>
   <div class="toolbar">
     <div>
-      <h1>103 <span>Ready</span> — Completion Stats</h1>
+      <h1>103 <span>Ready</span> Completion Stats</h1>
       <div class="sub" id="stamp"></div>
     </div>
     <div>
@@ -96,6 +96,46 @@
       <thead><tr><th>Scenario</th><th>Ending</th><th class="num">Count</th></tr></thead>
       <tbody></tbody>
     </table>
+  </div>
+
+  <div id="migrationNote" class="panel" hidden>
+    <h2 style="font-size:15px;margin:0 0 6px;">Visitor, attribution, and path data not enabled yet</h2>
+    <p class="sub" style="margin:0">The database has not had db/migrations/001_visitor_attribution_path.sql applied. Until it is, the site records only starts and endings. Paste that file into the D1 console for r103-tracking and refresh.</p>
+  </div>
+
+  <div id="migrated" hidden>
+    <div class="panel">
+      <h2 style="font-size:15px;margin:0 0 10px;">Visitors by scenario</h2>
+      <table id="visTable">
+        <thead><tr><th>Scenario</th><th class="num">Unique visitors</th><th class="num">Visitors who finished</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2 style="font-size:15px;margin:0 0 10px;">Where first visits came from</h2>
+      <table id="attrTable">
+        <thead><tr><th>Referrer</th><th>utm_source</th><th>utm_medium</th><th>utm_campaign</th><th class="num">Visitors</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2 style="font-size:15px;margin:0 0 10px;">Where abandoned sessions stopped</h2>
+      <p class="sub">Last passage displayed in sessions that started but never reached an ending. High counts on a passage mean people leave there.</p>
+      <table id="abTable">
+        <thead><tr><th>Scenario</th><th>Passage</th><th class="num">Sessions</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <h2 style="font-size:15px;margin:0 0 10px;">Scenario versions</h2>
+      <table id="verTable">
+        <thead><tr><th>Scenario</th><th>Version</th><th class="num">Starts</th><th class="num">Unique completers</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -189,6 +229,36 @@
     }).join("");
     document.querySelector("#endTable tbody").innerHTML =
       er || "<tr><td colspan=3 style='color:var(--dim)'>No endings yet.</td></tr>";
+
+    document.getElementById("migrationNote").hidden = !!data.migrated;
+    document.getElementById("migrated").hidden = !data.migrated;
+    if (!data.migrated) { return; }
+
+    var vt = data.visitor_totals || {};
+    document.getElementById("kpis").innerHTML +=
+      kpi(vt.visitors_total || 0, "Unique visitors") +
+      kpi(vt.visitors_two_plus_scenarios || 0, "Played 2+ scenarios") +
+      kpi(vt.visitors_returned_another_day || 0, "Came back another day");
+
+    document.querySelector("#visTable tbody").innerHTML = (data.visitors || []).map(function (v) {
+      return "<tr><td>" + esc(v.scenario) + "</td><td class=num>" + v.unique_visitors +
+        "</td><td class=num>" + v.unique_visitor_completers + "</td></tr>";
+    }).join("") || "<tr><td colspan=3 style='color:var(--dim)'>No visitor data yet.</td></tr>";
+
+    document.querySelector("#attrTable tbody").innerHTML = (data.attribution || []).map(function (a) {
+      return "<tr><td>" + esc(a.referrer_host) + "</td><td>" + esc(a.utm_source) + "</td><td>" +
+        esc(a.utm_medium) + "</td><td>" + esc(a.utm_campaign) + "</td><td class=num>" + a.n + "</td></tr>";
+    }).join("") || "<tr><td colspan=5 style='color:var(--dim)'>No first visits recorded yet.</td></tr>";
+
+    document.querySelector("#abTable tbody").innerHTML = (data.abandonment || []).map(function (a) {
+      return "<tr><td>" + esc(a.scenario) + "</td><td class=ending-name>" + esc(a.passage) +
+        "</td><td class=num>" + a.n + "</td></tr>";
+    }).join("") || "<tr><td colspan=3 style='color:var(--dim)'>No abandoned sessions yet.</td></tr>";
+
+    document.querySelector("#verTable tbody").innerHTML = (data.versions || []).map(function (v) {
+      return "<tr><td>" + esc(v.scenario) + "</td><td class=ending-name>" + esc(v.version) +
+        "</td><td class=num>" + v.starts + "</td><td class=num>" + v.unique_completers + "</td></tr>";
+    }).join("");
   }
 
   function kpi(n, label) {

@@ -107,6 +107,8 @@
     font-size: 0.95rem;
   }
   .about p { margin: 0 0 1em; }
+  .about a { color: var(--accent-hover); text-decoration: none; }
+  .about a:hover, .about a:focus { color: #fff; }
   footer {
     margin-top: 4vh;
     text-align: center;
@@ -211,10 +213,11 @@
 
   <section class="about">
     <p>These scenarios are written for pilots with a few hundred hours who already know the regulations and want practice at the part the regulations cannot cover: judgment with incomplete information. The narrator never grades you mid-flight. Every ending has a debrief that explains what happened and why, and the ones that go badly are the ones worth replaying.</p>
-    <p>Nothing here records who you are. The site counts starts and endings anonymously so we know which scenarios get finished and which ones lose people, and that is all.</p>
+    <p>Nothing here records who you are. The site counts starts, paths, and endings anonymously so we know which scenarios get finished and where the ones that don't lose people. <a href="privacy.html">Here is exactly what is recorded.</a></p>
   </section>
 
   <footer>For general aviation pilots. Training fiction, not a substitute for PIC judgment.</footer>
 </main>
+<script src="tracking.js"></script>
 </body>
 </html>

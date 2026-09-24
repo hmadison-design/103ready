@@ -44,9 +44,12 @@ const srv = http.createServer((req, res) => {
       const ev = tracked.slice(before);
       const hasStart = ev.some(e => e.type === 'start' && e.scenario === slug);
       const hasEnd = ev.some(e => e.type === 'ending' && e.scenario === slug && e.ending === last);
-      const ok = ended && hasStart && hasEnd && errors.length === 0;
+      const hasVisit = ev.some(e => e.type === 'visit' && e.visitor);   // fresh context = new visitor
+      const passages = ev.filter(e => e.type === 'passage' && e.scenario === slug).length;
+      const hasVersion = ev.some(e => e.type === 'start' && /^[0-9a-f]{10}$/.test(e.version || ''));
+      const ok = ended && hasStart && hasEnd && hasVisit && passages >= steps && hasVersion && errors.length === 0;
       if (!ok) fail++;
-      console.log(`${ok ? 'PASS' : 'FAIL'} ${slug} run${run} steps=${steps} last=${last} ended=${ended} start=${hasStart} endEvt=${hasEnd} errors=${errors.length}${errors.length ? ' ' + errors[0] : ''}`);
+      console.log(`${ok ? 'PASS' : 'FAIL'} ${slug} run${run} steps=${steps} last=${last} ended=${ended} start=${hasStart} endEvt=${hasEnd} visit=${hasVisit} passages=${passages} version=${hasVersion} errors=${errors.length}${errors.length ? ' ' + errors[0] : ''}`);
       await ctx.close();
     }
   }
