@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>103 Ready: Sign In</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { --accent: #1A3C57; --accent-hover: #2E5C82; --text: #ddd; --muted: #8a9bb0; --rule: #1c2a38; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #000; color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; line-height: 1.55; padding: 4vh 4vw 8vh; box-sizing: border-box; }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  h1 { font-size: clamp(1.4rem, 3vw, 1.9rem); letter-spacing: 0.03em; margin: 0 0 0.8em; color: #fff; }
+  p { margin: 0 0 1.1em; }
+  label { display: block; margin: 1.2em 0 0.35em; color: var(--muted); font-size: 0.9rem; letter-spacing: 0.04em; text-transform: uppercase; }
+  input { width: 100%; box-sizing: border-box; padding: 0.7em 0.8em; background: #0b1017; border: 1px solid var(--rule); border-radius: 4px; color: #fff; font-size: 1.05rem; }
+  input#code { font-family: ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0.2em; font-size: 1.4rem; text-align: center; }
+  button { margin-top: 1.2em; padding: 0.7em 1.4em; background: var(--accent); color: #fff; border: 1px solid var(--accent-hover); border-radius: 4px; font-size: 1rem; cursor: pointer; }
+  button:hover, button:focus { background: var(--accent-hover); outline: none; }
+  button.ghost { background: transparent; color: var(--muted); }
+  .msg { margin-top: 1.2em; min-height: 1.5em; }
+  .ok { color: #7fd39a; } .err { color: #e0a06c; }
+  .muted { color: var(--muted); font-size: 0.92rem; }
+  a { color: var(--accent-hover); text-decoration: none; } a:hover, a:focus { color: #fff; }
+  .back { display: inline-block; margin-top: 2.5em; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Sign in</h1>
+
+  <section id="closed" hidden>
+    <p>Sign-in is not open yet. Every scenario on the site is free to play without an account for now.</p>
+  </section>
+
+  <section id="step1" hidden>
+    <p>No password. Enter your email and we send a link and a six-digit code. Use whichever is easier.</p>
+    <form id="f1">
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" autocomplete="email" required>
+      <button type="submit">Send me a sign-in email</button>
+      <div class="msg" id="m1"></div>
+    </form>
+  </section>
+
+  <section id="step2" hidden>
+    <p>Check your email. Click the link, or type the six-digit code here. Both work for fifteen minutes.</p>
+    <form id="f2">
+      <label for="code">Six-digit code</label>
+      <input id="code" name="code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" required>
+      <button type="submit">Sign in</button>
+      <button type="button" class="ghost" id="again">Use a different email</button>
+      <div class="msg" id="m2"></div>
+    </form>
+    <p class="muted" id="echo" hidden></p>
+  </section>
+
+  <p class="muted">Signing in creates an account with nothing in it but your email. <a href="privacy.html">What the site records.</a></p>
+  <a class="back" href="/">Back to the scenarios</a>
+</main>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var email = "";
+  function show(id) { ["closed", "step1", "step2"].forEach(function (s) { $(s).hidden = s !== id; }); }
+  function msg(el, text, cls) { el.className = "msg " + (cls || ""); el.textContent = text; }
+
+  fetch("/api/auth/me").then(function (r) {
+    if (r.status === 404) { show("closed"); return null; }
+    return r.json();
+  }).then(function (j) {
+    if (!j) { return; }
+    if (j.signedIn) { location.replace("/account.html"); return; }
+    var q = new URLSearchParams(location.search);
+    show("step1");
+    if (q.get("e") === "expired") { msg($("m1"), "That link has expired or was already used. Request a new one.", "err"); }
+  }).catch(function () { show("closed"); });
+
+  $("f1").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    email = $("email").value.trim();
+    msg($("m1"), "Sending...");
+    fetch("/api/auth/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email }) })
+      .then(function (r) { return r.json().then(function (j) { return { s: r.status, j: j }; }); })
+      .then(function (x) {
+        if (x.s === 200 && x.j.ok) {
+          show("step2"); $("code").focus();
+          if (x.j.echo) { $("echo").hidden = false; $("echo").textContent = "Preview mode, no email sent. Code: " + x.j.echo.code + ". Link: " + x.j.echo.link; }
+        } else { msg($("m1"), (x.j && x.j.error) || "Something went wrong.", "err"); }
+      }).catch(function () { msg($("m1"), "Could not reach the server.", "err"); });
+  });
+
+  $("f2").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    msg($("m2"), "Checking...");
+    fetch("/api/auth/code", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: email, code: $("code").value }) })
+      .then(function (r) { return r.json().then(function (j) { return { s: r.status, j: j }; }); })
+      .then(function (x) {
+        if (x.s === 200 && x.j.ok) { location.replace("/account.html"); }
+        else { msg($("m2"), (x.j && x.j.error) || "Something went wrong.", "err"); }
+      }).catch(function () { msg($("m2"), "Could not reach the server.", "err"); });
+  });
+
+  $("again").addEventListener("click", function () { show("step1"); msg($("m1"), ""); });
+}());
+</script>
+<script src="tracking.js"></script>
+</body>
+</html>

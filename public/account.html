@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>103 Ready: Account</title>
+<meta name="robots" content="noindex">
+<style>
+  :root { --accent: #1A3C57; --accent-hover: #2E5C82; --text: #ddd; --muted: #8a9bb0; --rule: #1c2a38; }
+  html, body { margin: 0; padding: 0; }
+  body { background: #000; color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; line-height: 1.55; padding: 4vh 4vw 8vh; box-sizing: border-box; }
+  .wrap { max-width: 480px; margin: 0 auto; }
+  h1 { font-size: clamp(1.4rem, 3vw, 1.9rem); letter-spacing: 0.03em; margin: 0 0 0.8em; color: #fff; }
+  p { margin: 0 0 1.1em; }
+  dt { color: var(--muted); font-size: 0.85rem; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 1.2em; }
+  dd { margin: 0.2em 0 0; font-size: 1.05rem; }
+  button { margin-top: 1.4em; margin-right: 0.6em; padding: 0.6em 1.2em; background: transparent; color: var(--text); border: 1px solid var(--rule); border-radius: 4px; font-size: 0.95rem; cursor: pointer; }
+  button:hover, button:focus { border-color: var(--accent-hover); outline: none; }
+  .muted { color: var(--muted); font-size: 0.92rem; }
+  a { color: var(--accent-hover); text-decoration: none; } a:hover, a:focus { color: #fff; }
+  .back { display: inline-block; margin-top: 2.5em; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Your account</h1>
+  <section id="closed" hidden><p>Accounts are not open yet.</p></section>
+  <section id="acct" hidden>
+    <dl>
+      <dt>Signed in as</dt><dd id="email"></dd>
+      <dt>Subscription</dt><dd id="sub">Not available yet. Every scenario is currently free.</dd>
+    </dl>
+    <button id="out" type="button">Sign out</button>
+    <p class="muted" style="margin-top:2em">There is nothing else here on purpose. <a href="privacy.html">What the site records.</a></p>
+  </section>
+  <a class="back" href="/">Back to the scenarios</a>
+</main>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  fetch("/api/auth/me").then(function (r) {
+    if (r.status === 404) { $("closed").hidden = false; return null; }
+    return r.json();
+  }).then(function (j) {
+    if (!j) { return; }
+    if (!j.signedIn) { location.replace("/signin.html"); return; }
+    $("email").textContent = j.email; $("acct").hidden = false;
+  }).catch(function () { $("closed").hidden = false; });
+  $("out").addEventListener("click", function () {
+    fetch("/api/auth/logout", { method: "POST" }).then(function () { location.replace("/"); });
+  });
+}());
+</script>
+<script src="tracking.js"></script>
+</body>
+</html>
