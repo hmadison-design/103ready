@@ -1,0 +1,18 @@
+/* Shared layout fix, compiled into every scenario after its own stylesheet.
+ *
+ * Every scenario centers #story with "margin: 0 auto", which overrides
+ * SugarCube's default 20em left margin. Between about 800 and 1420 px wide
+ * the open UI bar (17.5em plus its shadow) then sits on top of the story
+ * text. When the bar is open, keep the story to its right; when it is
+ * stowed, SugarCube's own 4.5em rule applies; on wide screens the centered
+ * layout already clears the bar, so centering comes back. */
+#ui-bar:not(.stowed) ~ #story {
+  margin-left: 20em;
+  margin-right: 1.5rem;
+}
+@media screen and (min-width: 1500px) {
+  #ui-bar:not(.stowed) ~ #story {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

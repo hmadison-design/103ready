@@ -64,7 +64,9 @@ compile_scenario() {
   # docs/completion_tracking.md). The version file must come first.
   # shared/knowledge_check.js adds the end-of-scenario check and completion
   # code on scenarios that have a question pool (functions/api/_questions).
-  (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}" "version-${slug}.js" "../shared/tracking.js" "../shared/knowledge_check.js")
+  # shared/layout.css is appended after the scenario stylesheet so its rules
+  # win ties; it keeps the story clear of the UI bar at laptop widths.
+  (cd build-tmp && ./tweego -o "../${out}" -f sugarcube-2 "../${src_dir}" "version-${slug}.js" "../shared/tracking.js" "../shared/knowledge_check.js" "../shared/layout.css")
 }
 
 compile_scenario "game-day"
