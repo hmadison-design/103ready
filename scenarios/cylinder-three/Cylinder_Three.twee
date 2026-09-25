@@ -1285,7 +1285,7 @@ The best pilots are the ones who make the boring decision. Divert, land, call a 
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 :: C2-GroundRunUp [scenario branch-c]
 <<if $audioEnabled>><<run crossfadeEngine("engine-rough", "engine-smooth", 2000)>><</if>>
-You sit in the airplane with the engine at idle, listening. It sounds... normal. Completely normal. The smooth, steady idle of a Continental IO-540 with nothing wrong.
+You sit in the airplane with the engine at idle, listening. It sounds... normal. Completely normal. The smooth, steady idle of a Lycoming IO-540 with nothing wrong.
 
 You push the throttle up slowly. Fifteen hundred RPM. Smooth. Eighteen hundred. Smooth. You do a full run-up — twenty-two hundred RPM, mag check: left drops fifty, right drops forty-five. Textbook. You cycle the prop. Everything behaves exactly as it should.
 
@@ -1771,7 +1771,7 @@ A man in his sixties comes walking from the farmhouse, unhurried, with a blue he
 
 "Rough-running. Cylinder three."
 
-"Hmm." He looks at the cowl. "I'm retired Air Force — maintenance officer. Not current on my A&P, but I can tell you this: if it's rough on one cylinder in a Continental, you're either looking at a plug, a valve, or a fuel injector nozzle. If leaning didn't fix it, it's not the plug." He pauses. "You did the right thing putting it down."
+"Hmm." He looks at the cowl. "I'm retired Air Force — maintenance officer. Not current on my A&P, but I can tell you this: if it's rough on one cylinder in a Lycoming, you're either looking at a plug, a valve, or a fuel injector nozzle. If leaning didn't fix it, it's not the plug." He pauses. "You did the right thing putting it down."
 
 He lets you use his phone, gives you and Linda sandwiches and iced tea on his porch, and drives you into Kingfisher in his truck when the rental car arrives. The mechanic from Enid confirms the sticking valve two days later. The airplane flies off the grass strip the following week with a new valve and a thank-you case of beer left in the hangar.
 
