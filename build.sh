@@ -87,6 +87,8 @@ cp public/index.html output/index.html
 cp public/103ready_logo.svg output/103ready_logo.svg
 cp public/admin.html output/admin.html
 cp public/privacy.html output/privacy.html
+cp public/signin.html output/signin.html
+cp public/account.html output/account.html
 # The landing page loads tracking.js as a plain script for first-touch
 # attribution; scenarios get it compiled in by tweego above.
 cp shared/tracking.js output/tracking.js
