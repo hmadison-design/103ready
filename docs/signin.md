@@ -39,3 +39,26 @@ checks including lockout, rate limit, expiry, reuse, and the no-mailer
 production case) and `node /home/claude/qa/signin_pages.mjs` (headless
 browser through the real Functions: dark notice, code path, link path,
 logout redirect, reused link).
+
+## Paid gate (phase 2)
+
+`functions/_middleware.js` runs before every request. With `PAID_GATE` unset
+it calls `next()` and nothing changes. With it set, a request for a paid
+scenario (`functions/_paid.js`: every scenario slug except the free WINGS
+pair, matched as `/slug`, `/slug.html`, or `/slug/`) is served only when
+the session cookie resolves to a user whose row in `subscriptions`
+(migration 004, kept current by the Stripe webhook in phase 3) has status
+`active` or `trialing` and a `current_period_end` in the future. Everyone
+else receives a short page, HTTP 200 so it renders everywhere, naming the
+two free scenarios and pointing to sign-in or the account page. Everything
+that is not a paid scenario passes through untouched, including assets,
+APIs, and the free scenarios. If the database binding is missing the gate
+fails open rather than locking every visitor out.
+
+Switch-on order at launch: apply 003 and 004, set `AUTH_ENABLED`, complete
+phase 3 (Stripe), then set `PAID_GATE`. Rollback is deleting `PAID_GATE`.
+
+Test: `node /home/claude/qa/gate_test.mjs` (34 checks: unset passes
+everything; set passes free, index, APIs, pages, assets; blocks paid with
+no cookie, expired session, no subscription, canceled, period ended;
+serves active and trialing; fails open without a database).
