@@ -1,17 +1,17 @@
 # CYOA Aviation Scenario Design Instructions
-## 103ready.com — Choose Your Own Adventure Training Platform
+## 103ready.com: Choose Your Own Adventure Training Platform
 
 ---
 
 ## 1. Purpose and Philosophy
 
-These scenarios exist for one reason: to sharpen aeronautical decision-making (ADM) in realistic, consequential situations. They are not quizzes. They are not knowledge tests. They are judgment exercises — situations where a competent, current aviator could reasonably make several different choices, and where the quality of that judgment, not the recall of a regulation, determines the outcome.
+These scenarios exist for one reason: to sharpen aeronautical decision-making (ADM) in realistic, consequential situations. They are not quizzes. They are not knowledge tests. They are judgment exercises: situations where a competent, current aviator could reasonably make several different choices, and where the quality of that judgment, not the recall of a regulation, determines the outcome.
 
-Every scenario must place the learner inside a situation where they experience the weight of a real decision under real constraints: incomplete information, time pressure, competing priorities, and uncertainty. The goal is to build the mental habits that keep pilots, controllers, and technicians safe over a career — not to confirm what they already know.
+Every scenario must place the learner inside a situation where they experience the weight of a real decision under real constraints: incomplete information, time pressure, competing priorities, and uncertainty. The goal is to build the mental habits that keep pilots, controllers, and technicians safe over a career, not to confirm what they already know.
 
 **Core principle:** If the right answer is obvious without thinking, the scenario isn't hard enough.
 
-**Design imperative:** Subtlety, ambiguity, and partial information are not stylistic preferences — they are structural requirements. The most dangerous situations in aviation rarely announce themselves. A scenario that presents a clear problem with a clear solution is not training judgment; it's training recognition. Real ADM happens in the gray zone, and that is exactly where every scenario must live.
+**Design imperative:** Subtlety, ambiguity, and partial information are not stylistic preferences. They are structural requirements. The most dangerous situations in aviation rarely announce themselves. A scenario that presents a clear problem with a clear solution is not training judgment; it's training recognition. Real ADM happens in the gray zone, and that is exactly where every scenario must live.
 
 ---
 
@@ -46,11 +46,11 @@ Each scenario is written for exactly one of three audiences. The voice, context,
 
 ADM in this context means the learner must:
 
-1. **Gather information** — The scenario provides realistic, sometimes incomplete information. The learner must recognize what they know, what they don't know, and what they need to find out.
-2. **Recognize hazards** — Embedded hazardous attitudes (anti-authority, impulsivity, invulnerability, macho, resignation) must be represented in at least some of the wrong-path choices. Learners should be able to see themselves in those choices.
-3. **Assess risk** — Choices should carry genuinely different risk profiles. The learner should feel the tradeoffs, not just spot the "safe" label.
-4. **Choose a course of action** — Multiple reasonable paths should exist. At least one path should appear attractive but lead to degraded outcomes. Not all poor choices kill — some just make the situation more difficult.
-5. **Evaluate the outcome** — Every terminal node (every ending) must include a debrief that explains what happened and why, names the ADM error or success, and connects it to real-world consequences.
+1. **Gather information.** The scenario provides realistic, sometimes incomplete information. The learner must recognize what they know, what they don't know, and what they need to find out.
+2. **Recognize hazards.** Embedded hazardous attitudes (anti-authority, impulsivity, invulnerability, macho, resignation) must be represented in at least some of the wrong-path choices. Learners should be able to see themselves in those choices.
+3. **Assess risk.** Choices should carry genuinely different risk profiles. The learner should feel the tradeoffs, not just spot the "safe" label.
+4. **Choose a course of action.** Multiple reasonable paths should exist. At least one path should appear attractive but lead to degraded outcomes. Not all poor choices kill; some just make the situation more difficult.
+5. **Evaluate the outcome.** Every terminal node (every ending) must include a debrief that explains what happened and why, names the ADM error or success, and connects it to real-world consequences.
 
 **The IMSAFE / PAVE / 5P frameworks** are useful structures to reference implicitly in pilot scenarios. Controllers may use the similar "identify–prioritize–communicate–execute" mental model. AMTs should reflect the "airworthy vs. not airworthy" decision tree.
 
@@ -64,14 +64,14 @@ Each scenario follows a **branching tree** structure with the following paramete
 
 | Element | Specification |
 |---|---|
-| Decision points per playthrough | **Minimum 4** — every path from opening to ending must pass through at least 4 decision nodes. No short-circuit paths. |
+| Decision points per playthrough | **Minimum 4.** Every path from opening to ending must pass through at least 4 decision nodes. No short-circuit paths. |
 | Choices per decision | As many as the scenario can support (see Section 4c) |
 | Total branches (paths) | 10–30 distinct narrative paths |
 | Endings | Minimum 8, maximum 30 |
 | Ending types | See Section 4d |
 | Estimated read time | 15–30 minutes for a full traversal |
 
-The tree should be **wide and deep** — no path should reach an ending in fewer than 4 decisions. If a path reaches a natural conclusion in 2–3 decisions, add realistic intermediate decision points: approach challenges, deteriorating conditions, ground transportation choices, or "didn't work, try again" moments (see Section 4e). The goal is that every playthrough feels like a complete journey with meaningful engagement at every step, even on the safest path.
+The tree should be **wide and deep**: no path should reach an ending in fewer than 4 decisions. If a path reaches a natural conclusion in 2–3 decisions, add realistic intermediate decision points: approach challenges, deteriorating conditions, ground transportation choices, or "didn't work, try again" moments (see Section 4e). The goal is that every playthrough feels like a complete journey with meaningful engagement at every step, even on the safest path.
 
 ### 4b. The Opening Node
 
@@ -79,22 +79,22 @@ The opening passage must:
 - Establish setting (location, time of day, weather overview, aircraft/equipment type)
 - Introduce a clear protagonist in a specific situation ("You are…")
 - Present the first decision within 150–300 words
-- Create plausible urgency or ambiguity — enough to feel real
+- Create plausible urgency or ambiguity, enough to feel real
 - Avoid telegraphing the correct answer in the setup
 
-The opening should feel like a perfectly ordinary flight is about to happen. The trouble, if there is trouble, should arrive the way it does in real aviation — gradually, plausibly, with nothing obviously wrong until something is. **Do not open with a pop quiz.** The reader should feel like they are in the scenario, not being tested.
+The opening should feel like a perfectly ordinary flight is about to happen. The trouble, if there is trouble, should arrive the way it does in real aviation: gradually, plausibly, with nothing obviously wrong until something is. **Do not open with a pop quiz.** The reader should feel like they are in the scenario, not being tested.
 
 ### 4c. Decision Points
 
-**Offer as many choices as the scenario can realistically and coherently support.** Do not artificially limit choices to keep the branch count manageable — if four or five genuine options exist in a realistic situation, offer all of them. If only two credible paths exist given the circumstances, that is fine too. What matters is that every offered choice is one a real, reasonable pilot (or controller, or AMT) might actually make.
+**Offer as many choices as the scenario can realistically and coherently support.** Do not artificially limit choices to keep the branch count manageable. If four or five genuine options exist in a realistic situation, offer all of them. If only two credible paths exist given the circumstances, that is fine too. What matters is that every offered choice is one a real, reasonable pilot (or controller, or AMT) might actually make.
 
 Each decision point must:
-- Include at least one option that represents a hazardous attitude or common cognitive bias — written in a way that a real person would genuinely consider it reasonable
-- Provide just enough information in the passage to support a decision — do not over-brief or under-brief
+- Include at least one option that represents a hazardous attitude or common cognitive bias, written in a way that a real person would genuinely consider it reasonable
+- Provide just enough information in the passage to support a decision, and do not over-brief or under-brief
 - Never moralize in the choice text. Present choices neutrally. Save all judgment for the debrief.
 - Never make any choice obviously absurd (e.g., "ignore the engine fire" is not a realistic option)
 
-**On recoverability:** When a learner makes a suboptimal choice, the scenario should usually — but not always — offer a path to correction at the next decision point. The situation will have worsened or narrowed, but the learner should rarely find themselves instantly doomed. Life and aviation are more forgiving than that, at least for a while. The key is that the options at the next decision point should not signal that a correction is available. The narrative simply presents the next situation as it is, and a clear-headed pilot will see the opportunity to recover.
+**On recoverability:** When a learner makes a suboptimal choice, the scenario should usually (but not always) offer a path to correction at the next decision point. The situation will have worsened or narrowed, but the learner should rarely find themselves instantly doomed. Life and aviation are more forgiving than that, at least for a while. The key is that the options at the next decision point should not signal that a correction is available. The narrative simply presents the next situation as it is, and a clear-headed pilot will see the opportunity to recover.
 
 **Choices should be written in second person, present tense:**
 > A. You decide to continue as planned and pick up the IFR clearance in the air.
@@ -106,21 +106,21 @@ Each decision point must:
 
 The following rules ensure every playthrough is substantive and engaging:
 
-**1. No short-circuit endings.** No path should reach an ending in fewer than 4 decisions. If the "obviously smart" choice at Decision 1 would realistically end the scenario quickly (e.g., divert immediately to a nearby airport), the scenario setup must realistically prevent that. Examples: the diversion airport has unacceptable crosswinds, is too far away, has a closed runway, or the weather isn't yet clearly bad enough to justify the diversion. The point is not to trap the pilot — it's to design a scenario where the initial situation is genuinely ambiguous and no single first choice resolves it.
+**1. No short-circuit endings.** No path should reach an ending in fewer than 4 decisions. If the "obviously smart" choice at Decision 1 would realistically end the scenario quickly (e.g., divert immediately to a nearby airport), the scenario setup must realistically prevent that. Examples: the diversion airport has unacceptable crosswinds, is too far away, has a closed runway, or the weather isn't yet clearly bad enough to justify the diversion. The point is not to trap the pilot. It is to design a scenario where the initial situation is genuinely ambiguous and no single first choice resolves it.
 
 **2. No obvious "best" choice at Decision 1.** The opening situation must be designed so that multiple choices have legitimate reasoning behind them. A 500–1,000 hour pilot could reasonably argue for any of the options. If one choice is obviously superior, the scenario is too easy.
 
-**3. Ambiguous and conflicting information is a structural requirement.** At least one decision point per scenario must present information that is genuinely mixed — e.g., one PIREP says conditions are flyable while another says they turned back; the ATIS says VFR but the visual picture looks marginal; the forecast says improvement but the trend is deteriorating. The information should not give the pilot a clear answer. It should force them to weigh, interpret, and decide.
+**3. Ambiguous and conflicting information is a structural requirement.** At least one decision point per scenario must present information that is genuinely mixed. For example, one PIREP says conditions are flyable while another says they turned back; the ATIS says VFR but the visual picture looks marginal; the forecast says improvement but the trend is deteriorating. The information should not give the pilot a clear answer. It should force them to weigh, interpret, and decide.
 
-**4. Include at least one counterintuitive-but-correct choice per scenario.** Somewhere in the tree, there should be a choice that looks more aggressive or unconventional but is actually the best option for non-obvious reasons — e.g., climbing higher (costs fuel, requires O2) gives better situational awareness; landing at the airport with the stronger crosswind (closer, shorter drive); requesting a hold instead of pressing on. The debrief should explain why the counterintuitive choice worked.
+**4. Include at least one counterintuitive-but-correct choice per scenario.** Somewhere in the tree, there should be a choice that looks more aggressive or unconventional but is actually the best option for non-obvious reasons. For example, climbing higher (costs fuel, requires O2) gives better situational awareness; landing at the airport with the stronger crosswind (closer, shorter drive); requesting a hold instead of pressing on. The debrief should explain why the counterintuitive choice worked.
 
-**5. Realistically remove easy paths.** The scenario setup should account for the obvious "just divert" or "just turn around" options and make them realistically challenging or unavailable at the early decision points. This doesn't mean trapping the pilot — it means designing the geography, weather, and situation so that easy outs don't exist in the first few decisions.
+**5. Realistically remove easy paths.** The scenario setup should account for the obvious "just divert" or "just turn around" options and make them realistically challenging or unavailable at the early decision points. This doesn't mean trapping the pilot. It means designing the geography, weather, and situation so that easy outs don't exist in the first few decisions.
 
-**6. Social pressure must appear at least once.** At least one decision point should include explicit social pressure — a passenger arguing to continue, a friend expecting you, a boss waiting, or a self-imposed commitment. The pressure should come through dialogue, not narrative editorializing. It should sound reasonable from the non-pilot's perspective.
+**6. Social pressure must appear at least once.** At least one decision point should include explicit social pressure: a passenger arguing to continue, a friend expecting you, a boss waiting, or a self-imposed commitment. The pressure should come through dialogue, not narrative editorializing. It should sound reasonable from the non-pilot's perspective.
 
 ### 4e. "Didn't Help, Didn't Hurt" Decision Points
 
-Occasionally — no more than once or twice per scenario, and only when realistic — a pilot may make a choice that simply doesn't work or makes things mildly worse, without catastrophic consequence. In these cases:
+Occasionally (no more than once or twice per scenario, and only when realistic) a pilot may make a choice that simply doesn't work or makes things mildly worse, without catastrophic consequence. In these cases:
 
 - The narrative describes the result factually: the action was taken, it didn't produce the hoped-for result, and the situation is essentially unchanged (or slightly degraded).
 - The pilot is presented with a new set of choices that include the option to undo what they did (or try something else).
@@ -133,23 +133,23 @@ Occasionally — no more than once or twice per scenario, and only when realisti
 - Circling once to evaluate conditions and finding they haven't improved
 
 **Rules for using this technique:**
-- It must be realistic — a real pilot might genuinely try this and have it not work
-- It must not be punitive — the pilot isn't worse off for trying, or only slightly so (burned some fuel, lost a few minutes)
-- It must not feel like a trick — the choice should have been reasonable to attempt
+- It must be realistic. A real pilot might genuinely try this and have it not work
+- It must not be punitive. The pilot isn't worse off for trying, or only slightly so (burned some fuel, lost a few minutes)
+- It must not feel like a trick. The choice should have been reasonable to attempt
 - The narrative must not editorialize ("that didn't work" is fine; "you wasted time" is not)
 
 ### 4f. Outcomes, Endings, and Consequence Calibration
 
-**The crash is the last resort, not the default consequence of a poor decision.** Aviation's real lesson is that most accidents are chains — five links, six links — and that the chain can be broken at almost any point. Scenarios must reflect this. A single poor decision, or even two, should rarely produce a fatal outcome. What it should produce is a narrowed situation, increased stress, fewer options, and higher stakes at the next decision point.
+**The crash is the last resort, not the default consequence of a poor decision.** Aviation's real lesson is that most accidents are chains (five links, six links) and that the chain can be broken at almost any point. Scenarios must reflect this. A single poor decision, or even two, should rarely produce a fatal outcome. What it should produce is a narrowed situation, increased stress, fewer options, and higher stakes at the next decision point.
 
 **The realistic spectrum of bad outcomes (in order of frequency):**
 
-1. **Passenger friction** — Irritated, anxious, or outright angry passengers who don't understand why the flight was delayed, diverted, or cancelled. A safety-conscious pilot gets little grace from non-pilot passengers. This is common, realistic, and underused as a training outcome.
-2. **Delay and diversion** — The flight doesn't go as planned. The learner lands somewhere unintended, waits out weather, or cancels. A small embarrassment, a real inconvenience, and an excellent teaching moment.
-3. **Regulatory consequence** — The decisions were not physically dangerous but violated regulations. FAA inquiry, pilot deviation, possible certificate action.
-4. **Off-airport landing** — Forced to land on a country road, in a farm field, or on another suitable surface. Aircraft may or may not be damaged. No fatalities. This is one of the most important and underrepresented outcome types — a successful off-airport landing following an engine failure is a story of good training, not failure.
-5. **Aircraft damage** — A ground loop, a gear-up landing, a runway excursion. Survivable but expensive.
-6. **Fatal/catastrophic** — Reserved for paths where the learner has made a connected series of the worst possible choices across multiple decision points, where no reasonable corrective action remained available. Use sparingly. Never as the consequence of a single isolated poor decision.
+1. **Passenger friction.** Irritated, anxious, or outright angry passengers who don't understand why the flight was delayed, diverted, or cancelled. A safety-conscious pilot gets little grace from non-pilot passengers. This is common, realistic, and underused as a training outcome.
+2. **Delay and diversion.** The flight doesn't go as planned. The learner lands somewhere unintended, waits out weather, or cancels. A small embarrassment, a real inconvenience, and an excellent teaching moment.
+3. **Regulatory consequence.** The decisions were not physically dangerous but violated regulations. FAA inquiry, pilot deviation, possible certificate action.
+4. **Off-airport landing.** Forced to land on a country road, in a farm field, or on another suitable surface. Aircraft may or may not be damaged. No fatalities. This is one of the most important and underrepresented outcome types. A successful off-airport landing following an engine failure is a story of good training, not failure.
+5. **Aircraft damage.** A ground loop, a gear-up landing, a runway excursion. Survivable but expensive.
+6. **Fatal/catastrophic.** Reserved for paths where the learner has made a connected series of the worst possible choices across multiple decision points, where no reasonable corrective action remained available. Use sparingly. Never as the consequence of a single isolated poor decision.
 
 **When writing a fatal ending:** The narrative should not be dramatic or graphic. It should be quiet and matter-of-fact, because real accidents often are. The debrief carries the weight.
 
@@ -178,33 +178,33 @@ Occasionally — no more than once or twice per scenario, and only when realisti
 
 ### 5a. Tone Types
 
-Each scenario has a designated tone. The tone affects the narrator's voice, the severity of endings, and the overall feel — but it never compromises the ADM teaching requirement.
+Each scenario has a designated tone. The tone affects the narrator's voice, the severity of endings, and the overall feel, but it never compromises the ADM teaching requirement.
 
 **Professional (default):** Sober, realistic, immersive. The narrator is authoritative and neutral. Endings range from full success to fatal. This is the standard tone for scenarios involving genuine life-safety decisions (weather, engine failure, mountain flying, IMC). The Wall and Cylinder Three are professional-tone scenarios.
 
-**Entertainer:** Comical, sarcastic, or satirical. The narrator has a distinct comedic voice — wry, sarcastic, or gently mocking. The pilot protagonist may be overconfident, socially awkward, or mildly hapless. **There are no fatal endings in entertainer scenarios.** The worst outcomes are embarrassing, expensive, or career-damaging — but everyone walks away. Entertainer scenarios still teach real ADM and real procedures, but they do it through humor. The learning sticks because the scenario is memorable and fun. Entertainer scenarios are appropriate for topics like TFR violations, runway incursions at non-towered airports, botched radio calls, or other situations where the primary consequences are regulatory, social, or financial rather than life-threatening. Mild profanity from characters is permitted sparingly in entertainer scenarios to add realism and humor — write with partial asterisks (e.g., "s***," "d**n," "a**") so the word is recognizable but not fully spelled out.
+**Entertainer:** Comical, sarcastic, or satirical. The narrator has a distinct comedic voice: wry, sarcastic, or gently mocking. The pilot protagonist may be overconfident, socially awkward, or mildly hapless. **There are no fatal endings in entertainer scenarios.** The worst outcomes are embarrassing, expensive, or career-damaging, but everyone walks away. Entertainer scenarios still teach real ADM and real procedures, but they do it through humor. The learning sticks because the scenario is memorable and fun. Entertainer scenarios are appropriate for topics like TFR violations, runway incursions at non-towered airports, botched radio calls, or other situations where the primary consequences are regulatory, social, or financial rather than life-threatening. Mild profanity from characters is permitted sparingly in entertainer scenarios to add realism and humor; write with partial asterisks (e.g., "s***," "d**n," "a**") so the word is recognizable but not fully spelled out.
 
 The tone type should be specified in the scenario metadata header.
 
 ### 5b. Characters
 
-**Each scenario must have a unique cast of characters.** Do not reuse character names across scenarios. Vary names, genders, ethnicities, and backgrounds. The protagonist is always "you" (second person), but supporting characters — passengers, ATC controllers, other pilots, FBO staff, friends, family — should be distinct and memorable.
+**Each scenario must have a unique cast of characters.** Do not reuse character names across scenarios. Vary names, genders, ethnicities, and backgrounds. The protagonist is always "you" (second person), but supporting characters (passengers, ATC controllers, other pilots, FBO staff, friends, family) should be distinct and memorable.
 
 Characters should feel like real people with real motivations. A nervous first-time flyer behaves differently from a seasoned passenger. A controller at a busy TRACON talks differently from a controller at a quiet tower. A friend waiting at the destination creates different pressure than a boss expecting a delivery.
 
-## 6. Narrative Neutrality — The Absolute Rule
+## 6. Narrative Neutrality: The Absolute Rule
 
-**The scenario narrative must never, under any circumstances, signal to the learner that they made a mistake, hint that a better option exists, or editorialize about their choices.** This rule is absolute. It applies to every intermediate passage — every passage that is not an ending.
+**The scenario narrative must never, under any circumstances, signal to the learner that they made a mistake, hint that a better option exists, or editorialize about their choices.** This rule is absolute. It applies to every intermediate passage, meaning every passage that is not an ending.
 
 The narrative continues from wherever the learner is. It describes the situation as it now stands. It has personality, color, and specificity. It does not judge.
 
-**Permitted — the narrative can:**
+**Permitted. The narrative can:**
 - Describe consequences that naturally follow from the choice (the engine still sounds rough, the clouds are thicker now, the passenger is quieter than she was)
 - Convey the physical and environmental reality of the situation honestly, including negative developments
 - Have character and voice ("Wow, the engine doesn't sound any better. That's no good.")
 - Present the next situation in full, including its complications and ambiguities
 
-**Forbidden — the narrative must never:**
+**Forbidden. The narrative must never:**
 - Ask whether the learner is sure about their choice
 - Use language that implies the situation has been made worse by a poor decision ("Unfortunately..." "Sadly..." "Worse still...")
 - Frame the next decision in a way that implies one option is more important than the others ("You realize you need to act quickly to correct course")
@@ -214,7 +214,7 @@ The narrative continues from wherever the learner is. It describes the situation
 **The test:** Read the intermediate passage aloud without knowing which choice led to it. It should be impossible to tell whether the learner arrived here via a good decision or a poor one. The situation is simply what it is.
 
 **Good example:**
-> "The engine is still running, but that intermittent roughness you noticed twenty minutes ago hasn't gone away. If anything, it's a bit more pronounced now. The EGT is reading a little high on cylinder three — not alarm-bell high, but enough to notice. You're fifty miles from your destination, twenty miles from the nearest airport with maintenance, and the terrain below is rolling farmland. The sky ahead has gone from hazy to properly overcast."
+> "The engine is still running, but that intermittent roughness you noticed twenty minutes ago hasn't gone away. If anything, it's a bit more pronounced now. The EGT is reading a little high on cylinder three, not alarm-bell high, but enough to notice. You're fifty miles from your destination, twenty miles from the nearest airport with maintenance, and the terrain below is rolling farmland. The sky ahead has gone from hazy to properly overcast."
 
 **Problematic example:**
 > "You should have checked the engine run-up more carefully. Now you're in a difficult spot. You'll need to make a smart decision here to get out of this one."
@@ -225,11 +225,11 @@ The first passage tells the pilot exactly where they are. The second tells them 
 
 ## 7. Evoking Cockpit Stress in a Text Medium
 
-The cockpit is not a reading room. It is loud, vibrating, instrument-saturated, and often physically uncomfortable. A pilot working a real problem is also managing the radio, monitoring instruments, cross-checking charts, and possibly managing a frightened passenger — all simultaneously. A text scenario cannot replicate this directly, but it can evoke it through craft.
+The cockpit is not a reading room. It is loud, vibrating, instrument-saturated, and often physically uncomfortable. A pilot working a real problem is also managing the radio, monitoring instruments, cross-checking charts, and possibly managing a frightened passenger, all simultaneously. A text scenario cannot replicate this directly, but it can evoke it through craft.
 
 ### Techniques for creating cognitive pressure in text:
 
-**Flood the learner with simultaneous information.** Real emergencies don't present one problem at a time. Write passages that include multiple concurrent inputs — the engine note, the weather change, the ATC call, the fuel totalizer — all present at once, without ranking them. The learner must sort out what matters.
+**Flood the learner with simultaneous information.** Real emergencies don't present one problem at a time. Write passages that include multiple concurrent inputs (the engine note, the weather change, the ATC call, the fuel totalizer) all present at once, without ranking them. The learner must sort out what matters.
 
 **Use incomplete and conflicting information.** The ATIS says winds are light and variable. The windsock you can barely see below you is at a hard 90 degrees to the runway. The briefer said ceilings of 2,500 feet. You're at 2,200 feet and just flew into the base of a cloud. This is how real aviation works. The information is rarely clean.
 
@@ -241,17 +241,17 @@ The cockpit is not a reading room. It is loud, vibrating, instrument-saturated, 
 
 **Let the passenger speak.** A sentence from a nervous, impatient, or frightened passenger does more to create stress than three paragraphs of narrative description. "Are we going to make it?" from someone in the right seat lands differently than any authorial statement about the difficulty of the situation.
 
-**Use radio transmissions verbatim.** ATC doesn't narrate — it transmits. Writing ATC calls in their actual format ("November four-seven-two-golf, traffic, twelve o'clock, five miles, eastbound, altitude unknown, advise in sight") is both technically accurate and creates the feeling of being in the cockpit.
+**Use radio transmissions verbatim.** ATC doesn't narrate. It transmits. Writing ATC calls in their actual format ("November four-seven-two-golf, traffic, twelve o'clock, five miles, eastbound, altitude unknown, advise in sight") is both technically accurate and creates the feeling of being in the cockpit.
 
-**Deny information strategically.** Not every instrument works perfectly. The GPS lost signal over the mountains. The ASOS at your destination stopped updating forty minutes ago. The FBO doesn't answer the phone. The void in information is itself stressful — and it forces the learner to make a decision with less than they want.
+**Deny information strategically.** Not every instrument works perfectly. The GPS lost signal over the mountains. The ASOS at your destination stopped updating forty minutes ago. The FBO doesn't answer the phone. The void in information is itself stressful, and it forces the learner to make a decision with less than they want.
 
 ### On the use of time limits (rare and deliberate):
 
-A timed decision — one where the learner has a set period to choose before the scenario auto-advances — is a powerful tool and a disruptive one. Use it sparingly and only when:
+A timed decision (one where the learner has a set period to choose before the scenario auto-advances) is a powerful tool and a disruptive one. Use it sparingly and only when:
 
 1. A real-time element genuinely cannot be avoided (e.g., a rapidly evolving emergency where a 30-second failure to respond carries real consequences)
 2. The time limit is clearly announced to the learner before the scenario begins, as a matter of fairness
-3. The auto-advance option is a specific, neutral choice — not a random one ("No action taken — you froze" is a valid passage that can be written and advanced to)
+3. The auto-advance option is a specific, neutral choice, not a random one ("No action taken. You froze." is a valid passage that can be written and advanced to)
 4. The learner is told a time limit is active in the passage header, not buried in prose
 
 Time limits should never be a surprise. They are a training tool, not a trick.
@@ -260,7 +260,7 @@ Time limits should never be a surprise. They are a training tool, not a trick.
 
 ## 8. Topic Categories
 
-Each scenario addresses **one primary topic** and optionally a **secondary topic**. ADM is always present as an underlying theme — it is not itself a topic.
+Each scenario addresses **one primary topic** and optionally a **secondary topic**. ADM is always present as an underlying theme; it is not itself a topic.
 
 ### For GA Pilots:
 - Weather evaluation and go/no-go decision-making
@@ -309,8 +309,8 @@ Each scenario addresses **one primary topic** and optionally a **secondary topic
 ### Voice and Tone
 - **Second person, present tense** throughout the narrative passages. ("You are on final approach when…")
 - **Authoritative but not condescending.** These are competent professionals. Write to them as peers.
-- **Realistic, not dramatic.** Aviation incidents are rarely cinematic. The most dangerous moments are often quiet and gradual. Write situations that feel ordinary — because most accidents begin in ordinary moments.
-- **Personality is welcome. Editorializing is not.** The narrative can have color, rhythm, and character. What it cannot do is editorialize about the learner's choices or signal right answers. "The left mag sounds a little flat. Not a lot. Just a little." — good. "You're starting to wonder if you should have paid closer attention during the run-up." — forbidden.
+- **Realistic, not dramatic.** Aviation incidents are rarely cinematic. The most dangerous moments are often quiet and gradual. Write situations that feel ordinary, because most accidents begin in ordinary moments.
+- **Personality is welcome. Editorializing is not.** The narrative can have color, rhythm, and character. What it cannot do is editorialize about the learner's choices or signal right answers. "The left mag sounds a little flat. Not a lot. Just a little." is good. "You're starting to wonder if you should have paid closer attention during the run-up." is forbidden.
 
 ### Technical Accuracy
 - Use correct terminology throughout. "Clearance limit," not "permission to go." "MEA," not "minimum height."
@@ -320,7 +320,7 @@ Each scenario addresses **one primary topic** and optionally a **secondary topic
 - Scenarios should reflect current avionics reality: many GA aircraft have glass cockpits (G1000, Garmin GTN series); not all have steam gauges. Specify which.
 
 ### Realism
-- **Do not make the wrong choices cartoonishly wrong.** The point is that plausible, reasonable-seeming decisions can be wrong. A pilot who decides to "just press on" doesn't think of themselves as making a bad choice — they have rationalized it. Write those choices the way a real pilot would think them.
+- **Do not make the wrong choices cartoonishly wrong.** The point is that plausible, reasonable-seeming decisions can be wrong. A pilot who decides to "just press on" doesn't think of themselves as making a bad choice. They have rationalized it. Write those choices the way a real pilot would think them.
 - **Pressure must feel real.** A passenger who "really needs to get there." A boss who is waiting. A maintenance customer who hasn't paid and is demanding their aircraft back. These are real forces. Include them.
 - **Weather should be nuanced.** Not VFR or not-VFR. Marginal VFR, improving forecasts, pilot reports that conflict with METARs, rapidly changing conditions.
 - **Information should sometimes be incomplete.** In real aviation, you don't always have the full picture. Scenarios may include missing PIREPs, unavailable weather services, ambiguous NOTAMs, or unclear ATC instructions.
@@ -377,10 +377,10 @@ For the rare passages where a time limit applies:
 Always notify the learner at the top of a timed passage:
 > ⏱ *You have 30 seconds to decide.*
 
-The `Passage-NoAction` destination must be a fully written, coherent continuation — not an error state.
+The `Passage-NoAction` destination must be a fully written, coherent continuation, not an error state.
 
 ### Navigation
-- Every passage must include at least one forward link — **no dead ends except endings**.
+- Every passage must include at least one forward link: **no dead ends except endings**.
 - Endings should always include a "Return to Start" link and optionally a "Try Again" link that resets variables and returns to the opening node.
 - Consider a "Show My Path" feature at the end, listing the choices the learner made in sequence. A manually-built `$pathArray` in SugarCube can support this.
 
@@ -393,7 +393,7 @@ The platform will eventually support audio, images, and video. Design passage te
 ### Accessibility
 - Use sufficient color contrast for text.
 - Do not rely on color alone to distinguish choice types.
-- Ensure Twine's default font sizing is readable on mobile — many pilots will access this on a phone or tablet.
+- Ensure Twine's default font sizing is readable on mobile, because many pilots will access this on a phone or tablet.
 
 ---
 
@@ -414,8 +414,8 @@ ADM THEMES:             [e.g., Get-there-itis, self-imposed pressure, confirmati
 HAZARDOUS ATTITUDES:    [List those intentionally embedded]
 TOTAL BRANCHES:         [number]
 TOTAL ENDINGS:          [number, with breakdown by type]
-MIN DECISION DEPTH:     [minimum decisions to reach any ending — must be >= 4]
-TIMED DECISIONS:        [Yes/No — if Yes, note which passage(s)]
+MIN DECISION DEPTH:     [minimum decisions to reach any ending; must be >= 4]
+TIMED DECISIONS:        [Yes/No; if Yes, note which passage(s)]
 ESTIMATED DURATION:     [minutes]
 VERSION:                [e.g., 1.0]
 LAST REVIEWED:          [date]
@@ -429,12 +429,12 @@ REVIEWER:
 Before any scenario is published, verify the following:
 
 **Content**
-- [ ] The opening situation feels ordinary — the difficulty is embedded, not announced
+- [ ] The opening situation feels ordinary; the difficulty is embedded, not announced
 - [ ] Every decision point offers as many choices as the situation can realistically support
 - [ ] No choice is obviously correct or obviously absurd
 - [ ] At least one choice at each decision point reflects a real hazardous attitude, written as a plausible rationalization
 - [ ] All technical information (regulations, weather, procedures) is accurate
-- [ ] ADM is genuinely required at every branching point — this is not a trivia scenario
+- [ ] ADM is genuinely required at every branching point; this is not a trivia scenario
 - [ ] Every terminal node has a full debrief (outcome narrative + ADM analysis + takeaway)
 - [ ] The scenario does not have a "right answers only" path that trivializes the learning
 - [ ] Crash/fatal endings are reserved for paths requiring multiple consecutive poor decisions (Professional tone only)
@@ -453,7 +453,7 @@ Before any scenario is published, verify the following:
 - [ ] No passage uses "Unfortunately," "Sadly," "You should have," or functional equivalents in the narrative
 - [ ] No passage implies one option is more important than others
 - [ ] Every passage reads neutrally regardless of what choice preceded it
-- [ ] The narrative has character and voice — but no editorial judgment
+- [ ] The narrative has character and voice, but no editorial judgment
 
 **Cockpit Stress and Immersion**
 - [ ] At least one passage uses multiple simultaneous information inputs
@@ -495,9 +495,9 @@ Before any scenario is published, verify the following:
 To preserve the integrity of the learning experience, avoid the following pitfalls:
 
 - **Not a knowledge quiz.** If the right answer is "remember the VFR minimums for Class C airspace," that's a flashcard, not a CYOA. Save regulation recall for other tools.
-- **Not a checklist exercise.** Scenarios should not walk the learner through a checklist step-by-step. The decision to use the checklist — and what to do when the checklist doesn't cover the situation — is fair game.
+- **Not a checklist exercise.** Scenarios should not walk the learner through a checklist step-by-step. The decision to use the checklist, and what to do when the checklist doesn't cover the situation, is fair game.
 - **Not moralistic.** Pilots who make bad decisions are not bad people. They are people under pressure with imperfect information. The debrief educates; it does not lecture.
-- **Not unrealistically punishing.** Not every imperfect choice leads to a crash. In real aviation, most poor decisions are absorbed by margin. Show that — and show where the margin runs out.
+- **Not unrealistically punishing.** Not every imperfect choice leads to a crash. In real aviation, most poor decisions are absorbed by margin. Show that, and show where the margin runs out.
 - **Not artificially safe.** Do not write scenarios where every path leads to a happy landing. Sometimes, by the time the scenario begins, one or more paths genuinely lead to a fatal outcome. That is real. Honor it authentically, handle it with care, and always pair it with a thorough debrief.
 - **Not a hint system.** The scenario is not rooting for the learner to succeed. It is simply the situation. Let the situation be what it is.
 
@@ -509,7 +509,7 @@ Branching narratives are fragile. A single broken promise between a link and its
 
 ### 14a. The Link-Destination Contract
 
-Every link's text is a **promise** to the player about what happens when they click. The destination passage **must deliver exactly what the link promised** — no more, no less.
+Every link's text is a **promise** to the player about what happens when they click. The destination passage **must deliver exactly what the link promised**, no more and no less.
 
 - If a link says "Rock your wings and get on 121.5," the destination must narrate BOTH actions.
 - If a link says "Rock your wings first," the destination can narrate the wing rock and then present radio choices separately.
@@ -536,7 +536,7 @@ Any edit to a passage requires tracing forward through every downstream passage 
 
 ### 14d. Conditional UI Consistency
 
-If a UI element appears conditionally (e.g., a grayed-out disabled button based on `$radioEstablished`), it must appear at **every** passage where that choice is relevant — not just the first occurrence. Silent omission (the choice simply not appearing) deprives the player of the teaching moment.
+If a UI element appears conditionally (e.g., a grayed-out disabled button based on `$radioEstablished`), it must appear at **every** passage where that choice is relevant, not just the first occurrence. Silent omission (the choice simply not appearing) deprives the player of the teaching moment.
 
 ### 14e. Pre-Edit Continuity Checklist
 
@@ -585,4 +585,4 @@ Current build gate for every merge, legacy or not: `bash tools/check_all.sh` (li
 
 ---
 
-*These instructions should be reviewed and updated as the scenario library grows and as feedback from users informs what works. Version 3.2, September 2026: length targets reset to as-built figures, tagging made mandatory, Sections 15 and 16 added.*
+*These instructions should be reviewed and updated as the scenario library grows and as feedback from users informs what works. Version 3.3, September 2026: prose brought under the Writing Guardrails (no em dashes), no content changes. Version 3.2 reset length targets to as-built figures, made tagging mandatory, and added Sections 15 and 16.*
