@@ -669,7 +669,7 @@ Jake rocks his wings and starts circling Moffett. He flashes the landing light o
 From the F-16 pilot's perspective: the intercepted aircraft just started circling the airport instead of landing. This looks like non-compliance. The second F-16 closes distance. On the ground, additional emergency vehicles dispatch.
 
 <<if $radioEstablished>>
-ATC crackles: "November six-two-one India-Alpha, what are you doing? You were directed to land Runway 32 Right. State your intentions."
+ATC crackles: "November six-two-one India-Alpha, what are you doing? You were directed to land at Moffett. State your intentions."
 
 Jake keys the mic: "The tailwind... it's too much for my aircraft."
 
@@ -791,7 +791,7 @@ You land. You taxi. You shut down.
 
 <<link "Cooperate fully. You know you screwed up" "Ending-TheLongWalk">><<set $pathArray to $pathArray.concat(["Cooperated after non-compliance"])>><</link>>
 
-<<link "Get indignant. This is a free country" "Ending-Cuffs">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Got belligerent"])>><</link>>
+<<link "Get indignant. You have rights, and you say so" "Ending-Cuffs">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Got belligerent"])>><</link>>
 
 :: KeepRunning [scenario]
 <<set $pathArray to $pathArray.concat(["Running from fighters"])>>
@@ -878,7 +878,7 @@ You line up. People on the sand look up. They see a small airplane descending to
 
 This is going viral. Immediately.
 
-You touch down. The nosewheel digs into soft sand and the airplane lurches to a stop at a 15-degree angle. You're on a public beach, on Super Bowl Sunday, with military hardware circling overhead, on approximately 47 cameras.
+You touch down. The nosewheel digs into wet sand and the airplane lurches to a stop at a 15-degree angle. You're on a public beach, on Super Bowl Sunday, with military hardware circling overhead, on approximately 47 cameras.
 
 A confused lifeguard approaches: "Uh... you can't park that here."
 
@@ -958,7 +958,7 @@ Amber overhears this exchange. She googles "red flags in relationships" and take
 
 **What happened:** You cooperated with intercept and landing, but admitted to the FAA inspector that you did not check NOTAMs, effectively confessing to a 91.103 violation on the record.
 
-**ADM Analysis:** Hazardous attitudes: Invulnerability and Resignation. You compounded the preflight failure by documenting it during the investigation. "I didn't know" is evidence, and the inspector writes it down.
+**ADM Analysis:** Hazardous attitudes: Invulnerability and Anti-authority. You compounded the preflight failure by documenting it during the investigation. "I didn't know" is evidence, and the inspector writes it down.
 
 **What good judgment looks like:** Check NOTAMs. If you missed them, "I made a terrible mistake not checking" is better than "I had no idea," which implies systemic negligence.
 
@@ -1028,7 +1028,7 @@ Your pilot certificate is emergency revoked before you leave the building. The o
 
 **What happened:** After landing, you became belligerent with federal authorities and were handcuffed and arrested.
 
-**ADM Analysis:** Anti-authority hazardous attitude in its purest form. You argued with armed federal personnel on a military installation after running from fighter jets.
+**ADM Analysis:** Anti-authority hazardous attitude in its purest form. You argued with armed federal personnel on a military installation after everything that just happened.
 
 **What good judgment looks like:** Cooperate. Completely. Your only job on the ground is demonstrating you're not a threat.
 
@@ -1065,7 +1065,7 @@ Amber walks to the nearest officer. "I don't know him. I'm calling an Uber."
 
 <div class="debrief">
 
-**What happened:** You attempted a landing with a 15-knot tailwind gusting to 24. Your groundspeed was far too high, the A5 floated past any usable touchdown zone, and the resulting ground loop damaged the aircraft extensively.
+**What happened:** You attempted a landing with a 15-knot tailwind gusting to 22. Your groundspeed was far too high, the A5 floated past any usable touchdown zone, and the resulting ground loop damaged the aircraft extensively.
 
 **ADM Analysis:** Overconfidence and external pressure. The F-16 escort created pressure to land immediately, which you allowed to override your judgment about the conditions. A 9,000-foot runway feels infinite, until you're floating over it at 30 knots above normal touchdown speed.
 
@@ -1100,7 +1100,7 @@ The rental company bans you for life via email that evening. Subject line: "Life
 
 **What happened:** Extended non-compliance with intercept procedures before eventually landing and cooperating. FBI involvement due to duration of non-compliance.
 
-**ADM Analysis:** Indecision and delayed compliance triggered multiple escalations. Every second of non-compliance increased federal interest. Hazardous attitudes: Invulnerability, Resignation.
+**ADM Analysis:** Indecision and delayed compliance triggered multiple escalations. Every second of non-compliance increased federal interest. Hazardous attitudes: Invulnerability, Anti-authority.
 
 **What good judgment looks like:** Immediate compliance the moment you're intercepted. Rock wings, Guard, 7700, follow, land, cooperate. Every second of hesitation escalates.
 
@@ -1209,7 +1209,7 @@ The Icon A5 has to be disassembled and trucked off the beach because it cannot f
 
 **What happened:** After evading military intercept, you landed on a public beach near Pacifica. Arrested. Aircraft immobilized. Viral video.
 
-**ADM Analysis:** Every possible wrong choice. Failed NOTAMs, ignored intercept, evaded fighters, landed on a populated beach. All five hazardous attitudes in one flight.
+**ADM Analysis:** Every possible wrong choice. Failed NOTAMs, ignored intercept, evaded fighters, landed on a populated beach. All four hazardous attitudes in one flight.
 
 **What good judgment looks like:** Check NOTAMs. Don't enter TFRs. Comply immediately with intercept. Land at the directed airport.
 
