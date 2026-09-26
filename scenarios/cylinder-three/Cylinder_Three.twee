@@ -421,7 +421,7 @@ hr {
 
 You're standing in the pilot lounge at Stillwater Regional, watching the morning sun cut through the haze outside the window. Your friend Linda is on the couch behind you, reading something on her phone, her overnight bag at her feet.
 
-The plan is straightforward: fly west to Clinton-Sherman, about an hour and twenty minutes in the 182. Linda's daughter is getting married tomorrow afternoon in Weatherford, and the two of you are making a weekend of it. You flew together to Stillwater three days ago for a reunion with college friends, and now it's time to head to the wedding.
+The plan is straightforward: fly west to Clinton-Sherman, just under an hour in the 182. Linda's daughter is getting married tomorrow afternoon in Weatherford, and the two of you are making a weekend of it. You flew together to Stillwater three days ago for a reunion with college friends, and now it's time to head to the wedding.
 
 The airplane is fueled, preflighted, and parked on the ramp. You've got about twenty minutes before you want to start the engine. Your flight bag is on the table.
 
@@ -585,7 +585,7 @@ Linda looks over. "Everything okay?"
 
 She nods and looks back out the window. She trusts you. She has for thirty years.
 
-You have fifty-five miles to go. Behind you, Kingfisher's little runway is about twenty miles back. To the north, Enid Woodring is about thirty-five miles. Below you is Kingfisher County, Oklahoma: flat, open, and full of wheat fields and section-line roads. You're at 6,500 feet on a hazy morning with a rough-running engine that might be nothing and might not be.
+You have fifty-five miles to go. Behind you, Kingfisher's little runway is about twenty miles back. To the north, Enid Woodring is about thirty-two miles. Below you is Kingfisher County, Oklahoma: flat, open, and full of wheat fields and section-line roads. You're at 6,500 feet on a hazy morning with a rough-running engine that might be nothing and might not be.
 
 <<link "You continue on course toward Clinton-Sherman and monitor the engine instruments closely. The engine is still making power and you're less than thirty minutes out." "A-Continue">><<set $pathArray to $pathArray.concat(["Continued on course"])>><<set $badchoices += 1>><</link>>
 
@@ -613,7 +613,7 @@ Linda shifts in her seat. She's been quiet, but she's noticed the vibration. "Is
 
 She nods but doesn't look away from you for a few seconds. Then she turns back to the window.
 
-You're forty-five miles from Clinton-Sherman. Kingfisher is behind you now, thirty miles or more. Enid is to the north, maybe thirty miles. Below you, the land is the same: flat, open, section-line roads, wheat stubble. The haze hasn't lifted.
+You're forty-five miles from Clinton-Sherman. Kingfisher is behind you now, thirty miles or more. Enid is to the north and a little behind you now, a bit more than thirty miles. Below you, the land is the same: flat, open, section-line roads, wheat stubble. The haze hasn't lifted.
 
 <<link "You hold course. You're closer to your destination than to anywhere else, and the engine is still running. Forty-five miles. Maybe twenty minutes. You've come this far." "A1-StillContinuing">><<set $pathArray to $pathArray.concat(["Continued despite worsening"])>><<set $badchoices += 1>><</link>>
 
@@ -641,7 +641,7 @@ The engine coughs. Not a sputter. A single, hard cough, like it missed a beat an
 
 <<link "That cough just changed the math. You key the mic: 'Kansas City Center, November four-seven-two-golf-foxtrot, I need to declare an emergency.' You divert to the nearest suitable airport." "A1b-LateEmergency">><<set $pathArray to $pathArray.concat(["Declared emergency after cough"])>><</link>>
 
-<<link "You don't call anyone yet. You pull the power back to twenty inches and start descending. You scan the terrain below for the best option you can see right now." "A1c-LateDescent">><<set $pathArray to $pathArray.concat(["Descended after cough"])>><</link>>
+<<link "You don't call anyone yet. You pull the power back to eighteen inches and start descending. You scan the terrain below for the best option you can see right now." "A1c-LateDescent">><<set $pathArray to $pathArray.concat(["Descended after cough"])>><</link>>
 
 :: A1a-FinalPress [scenario branch-a ending]
 <<if $audioEnabled>><<audio ":engine" stop>><</if>>
@@ -658,7 +658,7 @@ Linda's voice is very small. "What's happening?"
 
 "We've lost the engine. I'm going to put us down."
 
-You're at 5,800 feet. The terrain below is rolling, not flat, not like the wheat country you were over forty minutes ago. There are trees in the draws, fences along the section lines, a ranch with outbuildings, a two-lane road that curves through a shallow valley. Nothing looks like a runway.
+You're at 5,800 feet. The terrain below is rolling, not flat, not like the wheat country you were over twenty minutes ago. There are trees in the draws, fences along the section lines, a ranch with outbuildings, a two-lane road that curves through a shallow valley. Nothing looks like a runway.
 
 You pick the best option you can see: a hay field on a gentle slope, maybe a quarter mile long, bounded by a fence on the far end and a tree line to the left. You set up on a short final, gear down, full flaps, seventy knots. The hay field is coming up fast. It's shorter than it looked from altitude.
 
@@ -713,9 +713,9 @@ An engine that is getting worse will continue to get worse. The trend is the mes
 <<set $pathArray to $pathArray.concat(["Diverted under emergency, landed safely"])>>
 "Kansas City Center, November four-seven-two-golf-foxtrot, declaring an emergency. Engine running rough and deteriorating. Request vectors to nearest suitable airport. Two souls, approximately four-five gallons fuel."
 
-There's a brief pause. "November four-seven-two-golf-foxtrot, roger your emergency. Nearest suitable airport is Watonga Regional, one-four miles to your south. Runway one-seven-three-five, four thousand one feet. AWOS available on one-one-eight-point-three-two-five. Turn left heading one-eight-zero. Emergency services are being notified."
+There's a brief pause. "November four-seven-two-golf-foxtrot, roger your emergency. Nearest suitable airport is Watonga Regional, six miles to your south. Runway one-seven-three-five, four thousand one feet. AWOS available on one-one-eight-point-three-two-five. Turn left heading one-eight-zero. Emergency services are being notified."
 
-You turn south. The engine is still running: rough, vibrating, but running. Fourteen miles. About seven minutes. You descend as you go, trading altitude for options. If the engine quits, you want to be close to the ground with the airport in sight, not high and far away.
+You turn south. The engine is still running: rough, vibrating, but running. Six miles. Three or four minutes. You pull the power back and descend as you go, trading altitude for options. If the engine quits, you want to be close to the ground with the airport in sight, not high and far away.
 
 Linda is quiet. She's holding the armrest with both hands now, but she's not panicking. She's watching you work.
 
@@ -767,7 +767,7 @@ The best time to divert is when you first recognize a worsening trend. The secon
 <<set $pathArray to $pathArray.concat(["Precautionary landing, aircraft intact"])>>
 You pull the power back to eighteen inches and lower the nose. The descent begins immediately: 500 feet per minute. You're at 5,800 feet. The terrain below is more rolling than the flat country behind you, but there are still open spaces. Section-line roads. A few hay fields. A long, straight stretch of two-lane highway with no traffic visible.
 
-You key the mic while you descend. "Kansas City Center, November four-seven-two-golf-foxtrot, engine running rough. We're descending for a precautionary landing approximately twenty miles east of Clinton-Sherman. Squawking seventy-seven hundred."
+You key the mic while you descend. "Kansas City Center, November four-seven-two-golf-foxtrot, engine running rough. We're descending for a precautionary landing approximately thirty-five miles east of Clinton-Sherman. Squawking seventy-seven hundred."
 
 "Roger, November four-seven-two-golf-foxtrot. Emergency services notified. Say intentions."
 
@@ -839,7 +839,7 @@ Linda looks at you. "Is this Weatherford?"
 
 "Okay." She pauses. "Good."
 
-The AWOS is broadcasting: wind three-two-zero at twelve, visibility eight. A nice day for a drive to a wedding. You call a cab company, and then you call an A&P mechanic in Enid. The airplane will be here when you come back for it.
+The AWOS is broadcasting: wind two-two-zero at twelve, visibility eight. A nice day for a drive to a wedding. You call a cab company, and then you call an A&P mechanic in Enid. The airplane will be here when you come back for it.
 
 <<if $audioEnabled>><<audio ":engine" stop>><<audio "engine-fail" stop>><<audio "wind-quiet" stop>><<audio "field-ambience" loop volume 0.15 play>><</if>>
 <div class="debrief">
@@ -883,9 +883,9 @@ You pull the power back slowly and lower the nose. Five hundred feet per minute.
 
 "Kansas City Center, November four-seven-two-golf-foxtrot, engine running rough. We're descending for a precautionary landing. Squawking seventy-seven hundred."
 
-"November four-seven-two-golf-foxtrot, roger. Nearest airport is Watonga Regional, one-one miles to your southwest. Do you want vectors?"
+"November four-seven-two-golf-foxtrot, roger. Nearest airport is Watonga Regional, one-two miles to your southwest. Do you want vectors?"
 
-You look at the G1000. Watonga is eleven miles. You have altitude to get there, and the engine is still running. "Affirmative. Vectors to Watonga."
+You look at the G1000. Watonga is twelve miles. You have altitude to get there, and the engine is still running. "Affirmative. Vectors to Watonga."
 
 "Turn left heading two-one-zero. Watonga altimeter three-zero-zero-one."
 
@@ -905,7 +905,7 @@ Linda reaches over and puts her hand on your arm. "Thank you."
 
 <h3>What Happened</h3>
 
-After continuing past the initial symptoms, you recognized the worsening trend and chose to descend, prioritizing proximity to the ground and landing options. When ATC offered vectors to Watonga Regional (eleven miles away), you accepted, and landed safely with the engine still running.
+After continuing past the initial symptoms, you recognized the worsening trend and chose to descend, prioritizing proximity to the ground and landing options. When ATC offered vectors to Watonga Regional (twelve miles away), you accepted, and landed safely with the engine still running.
 
 Post-landing inspection revealed a sticking exhaust valve on cylinder three. The engine was producing power but on a declining path. Your decision to descend and land preserved the margin that a continued cruise to Clinton-Sherman would have consumed.
 
@@ -950,7 +950,7 @@ What you have done is spend three minutes heads-down on the engine page. When yo
 
 Linda is watching you work the knobs and switches. She doesn't ask. She can tell this isn't casual.
 
-You're fifty-five miles from Clinton-Sherman. Kingfisher is twenty miles behind you. Enid is thirty-five to the north. The engine is still making power. The roughness persists.
+You're fifty-five miles from Clinton-Sherman. Kingfisher is twenty miles behind you. Enid is thirty-two to the north. The engine is still making power. The roughness persists.
 
 <<link "The leaning helped for a moment, and that points to a fouled plug. You continue to your destination and plan to have a mechanic look at it after you land." "B1-ContinueBadDiag">><<set $pathArray to $pathArray.concat(["Diagnosed as fouled plug, continued"])>><<set $badchoices += 1>><</link>>
 
@@ -970,7 +970,7 @@ Linda watches you adjust the mixture. "Did that help?"
 
 "Not enough."
 
-You're forty-five miles from Clinton-Sherman. Enid is thirty miles to the north. Watonga is about twelve miles to the southwest. The engine is making power, but less confidently than it was twenty minutes ago.
+You're forty-five miles from Clinton-Sherman. Enid is a bit more than thirty miles to the north and slightly behind you. Watonga is about twelve miles to the southwest. The engine is making power, but less confidently than it was twenty minutes ago.
 
 <<link "You tell Kansas City Center you want to divert to the nearest suitable airport. No more troubleshooting." "B4-DivertNearest">><<set $pathArray to $pathArray.concat(["Diverted after late troubleshooting"])>><</link>>
 
@@ -988,7 +988,7 @@ At eight miles, on a shallow descent through three thousand feet AGL, the engine
 
 You push the nose down to maintain airspeed and key the mic. "Clinton-Sherman traffic, Cessna four-seven-two-golf-foxtrot, eight mile final runway one-seven, engine running rough, declaring emergency."
 
-The runway is ahead. The engine is making partial power: enough to fly, not enough to climb. You're descending whether you want to or not. The 182 crosses the threshold at sixty-five knots (five below the normal approach speed) and you flare late, still fast for the conditions. The mains hit hard. The nosewheel slams down. The airplane bounces, settles, and rolls.
+The runway is ahead. The engine is making partial power: enough to fly, not enough to climb. You're descending whether you want to or not. The 182 crosses the threshold at sixty-five knots (five below the normal approach speed), sinking, and you flare late with too little energy left to arrest the descent. The mains hit hard. The nosewheel slams down. The airplane bounces, settles, and rolls.
 
 You're on the runway. You brake to a stop and sit there, shaking slightly. The engine idles, rough and rattling.
 
@@ -1050,7 +1050,7 @@ You've made it worse.
 
 You key the mic. "Kansas City Center, November four-seven-two-golf-foxtrot, declaring an emergency. Engine failure in progress. Request vectors to nearest airport."
 
-"November four-seven-two-golf-foxtrot, Watonga Regional, one-zero miles to your south. Turn left heading one-eight-zero."
+"November four-seven-two-golf-foxtrot, Watonga Regional, one-two miles to your southwest. Turn left heading two-one-zero."
 
 You make Watonga. Barely. The engine is making maybe sixty percent power by the time you cross the threshold, and the approach is steep and fast. You land hard but on pavement, and the airplane rolls to a stop with the engine rattling like a box of loose hardware at idle.
 
@@ -1097,11 +1097,11 @@ Troubleshooting is a test, not a treatment. If the test doesn't produce a clear 
 <<set $pathArray to $pathArray.concat(["Diverted to Enid, landed safely, mechanic found valve"])>>
 "Kansas City Center, November four-seven-two-golf-foxtrot. We've got a rough-running engine. Tried troubleshooting, can't confirm the cause. We'd like to divert to Enid Woodring for maintenance."
 
-"November four-seven-two-golf-foxtrot, roger. Turn right heading zero-three-zero for Enid Woodring, three-five miles. Squawk seven-seven-zero-zero. Enid altimeter three-zero-zero-one."
+"November four-seven-two-golf-foxtrot, roger. Turn right heading zero-three-zero for Enid Woodring, three-two miles. Squawk seven-seven-zero-zero. Enid altimeter three-zero-zero-one."
 
-You turn north. The engine continues its rough rhythm. Thirty-five miles to a long runway, a mechanic, and an answer.
+You turn north. The engine continues its rough rhythm. Thirty-two miles to a long runway, a mechanic, and an answer.
 
-The flight to Enid is uneventful. The roughness continues but doesn't worsen. You contact Enid Tower, report the rough engine, and they clear you straight in for runway three-five. The crosswind is there, gusting to twenty-two, but the 8,600-foot runway gives you all the room you need. You land, taxi to the FBO, and shut down.
+The flight to Enid is uneventful. The roughness continues but doesn't worsen. You contact Enid Tower, report the rough engine, and they bring you over the field into a right downwind for runway one-seven. The quartering headwind from the southwest is there, gusting to twenty-two, with enough crosswind component to keep your feet busy, but the 8,600-foot runway gives you all the room you need. You land, taxi to the FBO, and shut down.
 
 The A&P on duty comes out within ten minutes. You describe the symptoms: the EGT, the mag check, the response to leaning. He nods. "Let me pull the cowl."
 
@@ -1154,9 +1154,9 @@ Not knowing what's wrong is itself a reason to land. You don't need a diagnosis 
 <<set $pathArray to $pathArray.concat(["ATC vectored to Watonga, landed safely"])>>
 "Kansas City Center, November four-seven-two-golf-foxtrot, engine running rough. Unable to resolve in flight. Request vectors to nearest suitable airport with maintenance capability."
 
-"November four-seven-two-golf-foxtrot, roger. Enid Woodring is three-five miles to your north with maintenance available. Watonga Regional is one-two miles to your southwest, runway four thousand one feet, but no maintenance on field. Say preference."
+"November four-seven-two-golf-foxtrot, roger. Enid Woodring is three-two miles to your north with maintenance available. Watonga Regional is one-two miles to your southwest, runway four thousand one feet, but no maintenance on field. Say preference."
 
-You think about it. Twelve miles versus thirty-five. "We'll take Watonga. We can arrange maintenance from there."
+You think about it. Twelve miles versus thirty-two. "We'll take Watonga. We can arrange maintenance from there."
 
 "Roger. Turn left heading two-one-zero for Watonga Regional. Altimeter three-zero-zero-one."
 
@@ -1174,7 +1174,7 @@ You chose the practical option: land at the nearest suitable airport and arrange
 
 <h3>ADM Analysis</h3>
 
-Sound decision-making throughout. You troubleshot the engine (appropriate), recognized the limits of your diagnosis (honest), and chose to minimize exposure by landing at the nearest airport rather than flying an additional twenty-three miles to Enid. The choice to accept Watonga over Enid (closer with adequate facilities, even without on-field maintenance) reflected good risk prioritization: get on the ground first, solve the maintenance problem second.
+Sound decision-making throughout. You troubleshot the engine (appropriate), recognized the limits of your diagnosis (honest), and chose to minimize exposure by landing at the nearest airport rather than flying an additional twenty miles to Enid. The choice to accept Watonga over Enid (closer with adequate facilities, even without on-field maintenance) reflected good risk prioritization: get on the ground first, solve the maintenance problem second.
 
 <h3>What Good Judgment Looks Like Here</h3>
 
@@ -1238,7 +1238,7 @@ You pull out your phone. The first call is to the FBO at Enid Woodring. "Hi, I j
 
 They have a mechanic. He can be there in about an hour.
 
-The second call is to Linda's daughter. "Hey, sweetheart. We're fine, but we had to land at a little airport about halfway there. The engine was acting up. We're going to be late, maybe a few hours. We'll figure out a ride." You can hear the concern in her voice, and the relief when you explain that you're on the ground and safe.
+The second call is to Linda's daughter. "Hey, sweetheart. We're fine, but we had to turn around and land at a little airport called Kingfisher, not even halfway there. The engine was acting up. We're going to be late, maybe a few hours. We'll figure out a ride." You can hear the concern in her voice, and the relief when you explain that you're on the ground and safe.
 
 Linda sits on a bench outside the small block building and calls her daughter back herself. You can hear her voice, calm and matter-of-fact: "Your mom's friend is a very careful pilot. We're fine. We'll be there."
 
@@ -1305,7 +1305,7 @@ There's a long pause. You can hear the wind against the airplane and the distant
 
 <<link "You shut down. If it ran rough in the air, it's not fixed just because it runs smooth on the ground. You secure the airplane and call for a mechanic." "C2a-ShutDown">><<set $pathArray to $pathArray.concat(["Recognized ground run-up inconclusive, shut down"])>><</link>>
 
-<<link "The run-up was clean. Maybe it was a fouled plug that burned off. You decide to depart. You'll keep a close eye on the instruments, and if it starts again, Enid is twenty miles to the north." "C2b-DepartAgain">><<set $pathArray to $pathArray.concat(["Departed Kingfisher despite earlier roughness"])>><<set $badchoices += 1>><</link>>
+<<link "The run-up was clean. Maybe it was a fouled plug that burned off. You decide to depart. You'll keep a close eye on the instruments, and if it starts again, Enid is about forty miles to the north." "C2b-DepartAgain">><<set $pathArray to $pathArray.concat(["Departed Kingfisher despite earlier roughness"])>><<set $badchoices += 1>><</link>>
 
 :: C2a-ShutDown [scenario branch-c ending]
 <<set $pathArray to $pathArray.concat(["Grounded aircraft after ground run-up, mechanic confirmed valve"])>>
@@ -1367,7 +1367,7 @@ You don't hesitate. Not this time.
 
 "Kansas City Center, November four-seven-two-golf-foxtrot, engine roughness has returned. Diverting to Enid Woodring. Squawking seventy-seven hundred."
 
-You turn north. Enid is twenty miles. The engine is doing exactly what it did before: rough, intermittent, and not getting better. But this time you know something you didn't know before: whatever this problem is, it isn't a fouled plug, and it isn't going away.
+You turn north. Enid is thirty-two miles. The engine is doing exactly what it did before: rough, intermittent, and not getting better. But this time you know something you didn't know before: whatever this problem is, it isn't a fouled plug, and it isn't going away.
 
 You land at Enid without incident. The mechanic finds the valve. The airplane is grounded.
 
@@ -1470,19 +1470,19 @@ The airplane is a tool. When the tool isn't working, put it down and pick up a d
 <<if $audioEnabled>><<audio "radio-squelch" volume 0.4 play>><</if>>
 You key the mic. "Kansas City Center, November four-seven-two-golf-foxtrot, we've got a rough-running engine. We'd like to divert to Enid Woodring for maintenance."
 
-"November four-seven-two-golf-foxtrot, roger rough engine. Turn right heading zero-three-zero for Enid Woodring Regional, three-five miles. Squawk seven-seven-zero-zero. Say souls on board and fuel remaining."
+"November four-seven-two-golf-foxtrot, roger rough engine. Turn right heading zero-three-zero for Enid Woodring Regional, three-two miles. Squawk seven-seven-zero-zero. Say souls on board and fuel remaining."
 
 "Two souls, four-eight gallons. Squawking seventy-seven hundred."
 
-"Copy. Enid altimeter three-zero-zero-one. Enid weather: ceiling four thousand five hundred broken, visibility eight in haze, wind three-two-zero at one-four gusting two-two. Enid tower on one-one-eight-point-nine. ILS runway three-five and RNAV runway one-seven available. Say approach request."
+"Copy. Enid altimeter three-zero-zero-one. Enid weather: ceiling four thousand five hundred broken, visibility eight in haze, wind two-two-zero at one-four gusting two-two. Enid tower on one-one-eight-point-nine. ILS runway three-five and RNAV runway one-seven available. Say approach request."
 
-You think about that wind. Three-two-zero at fourteen gusting twenty-two. That's almost a direct crosswind on runway one-seven, and a quartering headwind on three-five. You've landed in worse, but not with a rough engine splitting your attention.
+You think about that wind. Two-two-zero at fourteen gusting twenty-two. That's a quartering headwind on runway one-seven, with a crosswind component that will keep your feet busy, and it would be a quartering tailwind on three-five. The ILS is on three-five, but you don't need an ILS today. You need the into-wind runway. You've landed in worse, but not with a rough engine splitting your attention.
 
-"We'll plan a visual to runway three-five. November four-seven-two-golf-foxtrot."
+"We'll plan a visual to runway one-seven. November four-seven-two-golf-foxtrot."
 
 "Roger. Contact Enid Tower on one-one-eight-point-nine in about ten miles. I'll leave you on this frequency until then."
 
-The turn to the north puts the wind more on your tail, and the groundspeed climbs. Thirty-five miles. At this speed, maybe fifteen minutes. The engine roughness continues, unchanged. The EGT on three is still elevated, the mag check still shows that extra drop on the left, but nothing is getting worse. The airplane is flying. It just doesn't sound right.
+The turn to the north puts the wind more on your tail, and the groundspeed climbs. Thirty-two miles. At this speed, maybe fifteen minutes. The engine roughness continues, unchanged. The EGT on three is still elevated, the mag check still shows that extra drop on the left, but nothing is getting worse. The airplane is flying. It just doesn't sound right.
 
 Linda watches the G1000 map. She can see the airport symbol getting closer. "Is that where we're going?"
 
@@ -1494,9 +1494,9 @@ Linda watches the G1000 map. She can see the airport symbol getting closer. "Is 
 
 She doesn't argue.
 
-Fifteen minutes of rough engine over flat country. You monitor the instruments and watch the numbers tick down. Twenty miles. Fifteen. Ten. Kansas City Center hands you off to Enid Tower. You check in and report the rough engine. The tower clears you straight in for runway three-five, number one.
+Fifteen minutes of rough engine over flat country. You monitor the instruments and watch the numbers tick down. Twenty miles. Fifteen. Ten. Kansas City Center hands you off to Enid Tower. You check in and report the rough engine. The tower has you cross over the field and enter a right downwind for runway one-seven, number one.
 
-The approach is uneventful. The crosswind from the northwest pushes you around on final, and the gusts make the last two hundred feet bumpy, but the 182 handles it. You plant the mains on the big concrete runway and roll long, because you have eight thousand feet and there's no reason to brake hard. The engine runs at idle, rough but running, all the way to the FBO ramp.
+The approach is uneventful. The quartering headwind from the southwest pushes you around on final, and the gusts make the last two hundred feet bumpy, but the 182 handles it. You plant the mains on the big concrete runway and roll long, because you have eight thousand feet and there's no reason to brake hard. The engine runs at idle, rough but running, all the way to the FBO ramp.
 
 A lineman is waiting for you. He's seen the squawk code. "Rough engine?"
 
@@ -1510,13 +1510,13 @@ He nods. "We've got an A&P here today. Want him to take a look?"
 
 :: D1-MechanicLook [scenario branch-d ending]
 <<set $pathArray to $pathArray.concat(["Mechanic confirmed valve, aircraft grounded, rented car"])>>
-The A&P is a woman named Linda with silver-streaked hair and forearms that suggest she's been pulling wrenches longer than you've been flying. She listens to your description (the EGT, the mag check, the intermittent roughness, the response to leaning) and nods without expression.
+The A&P is a man named Ray with silver-streaked hair and forearms that suggest he's been pulling wrenches longer than you've been flying. He listens to your description (the EGT, the mag check, the intermittent roughness, the response to leaning) and nods without expression.
 
 "Let me pull the top cowl. Go get some coffee. This'll take about thirty minutes."
 
 You and Linda find the pilot lounge. There's coffee, a vending machine, and a couch that's seen better decades. Linda calls her daughter. You call the rental car company.
 
-Linda comes back wiping her hands. "Exhaust valve on three. Sticking intermittent. You can see the carbon scoring on the seat and guide. It's not going to get better. I need to pull the cylinder and replace the valve, reseat it, and do a compression check before this airplane goes anywhere."
+Ray comes back wiping his hands. "Exhaust valve on three. Sticking intermittent. You can see the carbon scoring on the seat and guide. It's not going to get better. I need to pull the cylinder and replace the valve, reseat it, and do a compression check before this airplane goes anywhere."
 
 "How long?"
 
@@ -1536,9 +1536,9 @@ At the first sign of engine trouble, you diverted to the nearest airport with ma
 
 <h3>ADM Analysis</h3>
 
-This is excellent decision-making. You assessed the situation (engine roughness with a worsening trend on the EGT), evaluated your options (nearest airport vs. airport with maintenance vs. destination), and chose the option that addressed both the immediate safety concern and the underlying problem.
+This is excellent decision-making. You assessed the situation (a persistent, unexplained roughness, a cylinder three EGT running high, and an extra drop on the left mag that a mag check could not clear), evaluated your options (nearest airport vs. airport with maintenance vs. destination), and chose the option that addressed both the immediate safety concern and the underlying problem.
 
-The decision to divert to Enid rather than Kingfisher showed good prioritization: you accepted a longer flight (35nm vs. 20nm) in exchange for landing at a facility that could diagnose and fix the problem. With the engine still making power and the symptoms not rapidly deteriorating, this was a well-calibrated risk decision.
+The decision to divert to Enid rather than Kingfisher showed good prioritization: you accepted a longer flight (32nm vs. 20nm) in exchange for landing at a facility that could diagnose and fix the problem. With the engine still making power and the symptoms not rapidly deteriorating, this was a well-calibrated risk decision.
 
 <h3>What Good Judgment Looks Like Here</h3>
 
@@ -1571,7 +1571,7 @@ The A&P comes out and listens to your description. He pulls the top cowl. Fiftee
 
 "No. This isn't a quick fix. I need to pull the cylinder. Two days minimum."
 
-You stand on the ramp and look at the 182, cowl panels off, one cylinder exposed, and you think about the rehearsal dinner. And then you think about what Linda (the A&P) said next: "The good news is you flew it here. The bad news is it was going to get worse. If you'd tried to make Clinton-Sherman..." She shrugs. "Maybe you make it. Maybe you don't."
+You stand on the ramp and look at the 182, cowl panels off, one cylinder exposed, and you think about the rehearsal dinner. And then you think about what Ray (the A&P) said next: "The good news is you flew it here. The bad news is it was going to get worse. If you'd tried to make Clinton-Sherman..." He shrugs. "Maybe you make it. Maybe you don't."
 
 You rent a car. You make the wedding.
 
@@ -1793,7 +1793,7 @@ The decision to land at the private strip rather than the road or the field show
 
 <h3>What Good Judgment Looks Like Here</h3>
 
-This is it. This is what decades of experience and good training look like in practice: a pilot who trusts his instincts, acts early, and keeps his eyes open for opportunities even while executing a conservative plan. The precautionary landing was the right call. The grass strip was a bonus that rewarded situational awareness.
+This is it. This is what decades of experience and good training look like in practice: you trusted your instincts, acted early, and kept your eyes open for opportunities even while executing a conservative plan. The precautionary landing was the right call. The grass strip was a bonus that rewarded situational awareness.
 
 <h3>Key Takeaway</h3>
 
