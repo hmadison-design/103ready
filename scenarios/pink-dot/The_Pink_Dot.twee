@@ -710,7 +710,7 @@ The dots are spaced so this works. You are at about <<if $assignedDot eq "pink">
 <<goto "Dec6_Final">>
 
 :: Dec6_Final [scenario]
-You are on final for runway 36L, <<print $assignedDot>> dot. Gear down, flaps thirty. Airspeed 80 KIAS, trimmed. The runway is under you, a red-and-white band of pavement and painted numerals.
+You are on final for runway 36L, <<print $assignedDot>> dot. Gear down, flaps twenty-five. Airspeed 80 KIAS, trimmed. The runway is under you, a red-and-white band of pavement and painted numerals.
 
 <<if $assignedDot eq "pink">>
 The pink dot is immediately after the threshold. You want to cross the numbers at about 50 AGL and flare onto the dot.
@@ -733,7 +733,7 @@ You are slightly <<if $assignedDot eq "pink">>high<<else>>fast<</if>>.
 </div>
 
 :: Dec6_Final_Rebriefed [scenario]
-You are re-sequenced and on final for runway 36L with the same assignment as before, the <<print $assignedDot>> dot, confirmed by the tower on the way back around. Gear down, flaps thirty, airspeed 80, trimmed. This time the spacing is better. The picture is still a hair off, energy-wise, because the picture at Oshkosh is always a hair off something.
+You are re-sequenced and on final for runway 36L with the same assignment as before, the <<print $assignedDot>> dot, confirmed by the tower on the way back around. Gear down, flaps twenty-five, airspeed 80, trimmed. This time the spacing is better. The picture is still a hair off, energy-wise, because the picture at Oshkosh is always a hair off something.
 
 <div class="choice-list">
 <<link "A. Idle the power over the fence and let her settle the rest of the way onto the dot." "Dec7_Settle">><</link>>
