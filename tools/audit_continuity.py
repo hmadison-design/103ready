@@ -131,8 +131,13 @@ def audit(path, verbose=False):
                                 f"(choice: {ch[:60]!r})")
 
     # ---- endings & orphans
+    # Passages a "Return to Start" link may point at. Several scenarios
+    # send it to their first story passage rather than the StoryData start
+    # (they call Engine.restart() alongside), so accept those names too.
+    reset_targets = {start_name, "Opening", "Start", "FlightPrep"}
+
     def is_reset(ch, tgt):
-        return tgt == start_name and RESET_HINT.search(ch)
+        return tgt in reset_targets and bool(RESET_HINT.search(ch))
 
     endings = set()
     for nm, ls in graph.items():
