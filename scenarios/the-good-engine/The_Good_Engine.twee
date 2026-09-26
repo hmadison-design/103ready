@@ -705,7 +705,7 @@ Dev exhales through his cheeks as the good engine spins down. "Okay," he says. "
 
 :: Ground_CRW_Ramp [scenario]
 <<set $pathArray to $pathArray.concat(["On the ramp at Charleston"])>>
-The line crew chocks the wheels, and the airplane becomes what it will be for a while: a project. Oil streaks the left cowl from spinner to hinge line, brown and thin. It is 5:05 pm. Lewisburg, the hotel, the rental car, and an 8:40 tee time sit a hundred and ten road miles east.
+The line crew chocks the wheels, and the airplane becomes what it will be for a while: a project. Oil streaks the left cowl from spinner to hinge line, brown and thin. It is 4:25 pm. Lewisburg, the hotel, the rental car, and an 8:40 tee time sit a hundred and ten road miles east.
 
 Dev stands under the dead engine with his hands in his jacket pockets, looking up at the painted cowl, and says nothing about golf. Out loud.
 
@@ -902,7 +902,7 @@ The dead propeller sits on the edge of your vision like a clock with no hands.
 
 And that fast, the sky gets private. The transponder goes to 1200, the number two radio goes to 123.0, and the only people who know a single-engine twin is inbound to Beckley are the two of them in it. The CTAF carries somebody's long, chatty position report from a field forty miles away, then quiet.
 
-The field guide said the ILS runway 19 brings airliner-sized commuters in here. What it did not list is who answers the unicom at ten of six on a Friday, or how fast a county crash truck rolls when nobody has told it to.
+The field guide said the ILS runway 19 brings airliner-sized commuters in here. What it did not list is who answers the unicom at a quarter past four on a Friday, or how fast a county crash truck rolls when nobody has told it to.
 
 Dev looks at the silent radio, then at you.
 
@@ -1129,7 +1129,7 @@ There is one more piece of business with Indy before the miles start going by, a
 
 :: Declare_LWB_Emerg [scenario]
 <<set $pathArray to $pathArray.concat(["The word is in the system"])>>
-"Three-one Yankee, roger, copy declared emergency, single engine, Greenbrier Valley. Coordination's already started, Lewisburg Tower will have equipment standing by. Squawk four-six-six-one, altitude your discretion, and expect Washington Center on one-three-four point four in two-zero miles. We'll pass everything along."
+"Three-one Yankee, roger, copy declared emergency, single engine, Greenbrier Valley. Coordination's already started, Lewisburg Tower will have equipment standing by. Squawk four-six-six-one, altitude your discretion, and expect Washington Center on one-three-four point four in two-five miles. We'll pass everything along."
 
 The machinery of it is oddly comforting: three facilities passing a folder east ahead of you, so that everywhere you arrive, you are already expected.
 
@@ -1145,7 +1145,7 @@ The deck slides beneath. The drift-down has you at seven thousand and change, th
 
 :: Declare_LWB_Soft [scenario]
 <<set $pathArray to $pathArray.concat(["Facts filed, label declined"])>>
-"Three-one Yankee, roger, understood, precautionary single-engine, no assistance. Washington Center in two-zero miles on one-three-four point four, they'll have your information."
+"Three-one Yankee, roger, understood, precautionary single-engine, no assistance. Washington Center in two-five miles on one-three-four point four, they'll have your information."
 
 Accurate, unadorned, and in the record. Whether "your information" arrives at a small contract tower as an alert or as a remark in a data block is now a question of other people's afternoons.
 
@@ -1403,7 +1403,7 @@ Merle takes the call mid-dinner and talks you through securing the airplane for 
 <hr>
 <div class="debrief">
 <h3>What happened</h3>
-<p>You flew a secured-engine airplane fifty miles to its planned destination and landed on a runway the system was holding open for you, because forty miles earlier you spent one word making sure it would be. The Skyhawk that could have complicated short final spent three extra minutes holding, the trucks idled unneeded, and the arrival was an anticlimax<<if $restartTried>>, even counting the airstart experiment en route<</if>>. In this business, anticlimax is the trophy.</p>
+<p>You flew a secured-engine airplane fifty miles to its planned destination and landed on a runway the system was holding open for you, because fifty miles earlier you spent one word making sure it would be. The Skyhawk that could have complicated short final spent three extra minutes holding, the trucks idled unneeded, and the arrival was an anticlimax<<if $restartTried>>, even counting the airstart experiment en route<</if>>. In this business, anticlimax is the trophy.</p>
 <h3>ADM analysis</h3>
 <p>The pivotal decision was declaring while everything felt stable. It feels theatrical, and it is exactly backward to think so: the time to buy priority is while you can still fly a trimmed airplane and speak in complete sentences. The declaration did its quietest, most important work at five-mile final, where a runway incursion never got the chance to be born.<<if $gateBriefed>> The commit gate you briefed out loud made the bottom of the approach a procedure instead of a debate.<<elseif $config is "early">> Configuring early made the last miles a settled, stable sled, a defensible cousin of the briefed gate.<<else>> Worth an honest note: you flew the bottom without ever fixing a commit point, and the day simply declined to test it.<</if>><<if $restartTried>> The airstart deserves its own paragraph: two pre-shutdown symptoms plus oil on the cowl was a closed case, and reopening it cost five hundred feet, a knock you will hear for years, and a feather cycle that nearly lost the race to the stop pins. The arrival succeeded despite that bet, not because of it.<<elseif $shopCalled>> The landline relay to your mechanic was four minutes spent confirming what the cowl already said. Cheap confirmation, honestly bought, and it kept the temptation shut.<</if>><<if $held>> The opening orbit cost four hundred feet to learn nothing new. File it under tuition.<</if>></p>
 <h3>What good judgment looks like here</h3>
@@ -1483,7 +1483,7 @@ The NTSB writes it up in the spare language reserved for the most documented acc
 <h3>What happened</h3>
 <p>An airplane that had flown fifty stable miles on one engine was destroyed in eleven seconds, not by the failure, but by the arrival. A go-around was attempted below four hundred feet with full power on the right engine, a pitch-up, and a bank into the dead engine. Airspeed fell through Vmc, directional control was lost, and no altitude existed in which to recover. This is the Vmc roll, and at pattern altitude it is unsurvivable nearly every time it occurs.</p>
 <h3>ADM analysis</h3>
-<p>No single decision did this. Four did, in a row, each one narrowing what the next could fix. First, canceling advisories fifty miles out: the tower sequenced a Skyhawk into your final because you had made yourself ordinary, so the go-around instruction got issued at all. <<if $restartTried>>Second, the airstart: reopening a closed case against the physical evidence, which spent five hundred feet and, more expensively, your composure.<</if>> <<if $config is "late">>Then the clean-to-the-bottom energy plan, which meant the final approach was a rush of configuration instead of a stabilized procedure, and left the airplane dirty, slow, and mid-transition at the worst moment.<</if>> Then the absence of any briefed commit gate, so "go around" arrived with no pre-decided answer standing in its way. And last, the reflex itself: the two-engine go-around, flown by hands that were never given a different plan to hold. The instruction from the tower was legal to refuse. "Unable" was one word away, and the survivable compliance, wings level, clean first, straight ahead, was also sitting there. Impulsivity took the controls because nothing had been briefed to stop it.</p>
+<p>No single decision did this. Every one of them did, in a row, each one narrowing what the next could fix. First, canceling advisories fifty miles out: the tower sequenced a Skyhawk into your final because you had made yourself ordinary, so the go-around instruction got issued at all. <<if $restartTried>>Second, the airstart: reopening a closed case against the physical evidence, which spent five hundred feet and, more expensively, your composure.<</if>> <<if $config is "late">>Then the clean-to-the-bottom energy plan, which meant the final approach was a rush of configuration instead of a stabilized procedure, and left the airplane dirty, slow, and mid-transition at the worst moment.<</if>> Then the absence of any briefed commit gate, so "go around" arrived with no pre-decided answer standing in its way. And last, the reflex itself: the two-engine go-around, flown by hands that were never given a different plan to hold. The instruction from the tower was legal to refuse. "Unable" was one word away, and the survivable compliance, wings level, clean first, straight ahead, was also sitting there. Impulsivity took the controls because nothing had been briefed to stop it.</p>
 <h3>What good judgment looks like here</h3>
 <p>Three defenses existed, any one of which ends this story on a ramp. Declare, and the runway is sterile. Brief the gate, and below four hundred feet "go around" is answered with "unable, landing." And if a go-around must happen anyway, the only version this airplane sells is wings level at blue line, cleaned up, straight ahead, never a bank toward the feathered side. Vmc is not a certification abstraction. It is 90 miles per hour, painted red, eighteen inches from where your eyes were pointed.</p>
 <h3>Key takeaway</h3>
@@ -1629,7 +1629,7 @@ Dev stands on the runway looking at the propeller tips. "We're okay," he says, t
 <h3>What happened</h3>
 <p>An offer of a better wind became an unstabilized, low-altitude reposition flown on one engine, and the before-landing flow, already displaced once by the runway change, lost its most important item. The airplane touched down gear-up on runway 23 and slid to a stop. Two people walked away from a bent airplane that flew perfectly the entire time.</p>
 <h3>ADM analysis</h3>
-<p>The chain is short and common. First, a late runway change accepted at eleven hundred feet, trading a briefed, stabilized final for a tight circuit in haze. Second, the decision to finish the circuit after it turned busy, when a bailout to the straight-in was still on the table and had been offered by your own instincts. The gear was not forgotten by carelessness. It was displaced by workload that was optional, purchased seconds earlier, at retail. That is impulsivity in its Sunday clothes: the offer sounded like a favor, so it was accepted like an instruction.<<if $declared is "none">> Underneath it, the same pilot who minimized the emergency on frequency accepted extra workload to fly a "normal" arrival. The airplane was never normal today. Handling it normally was the error with the paint on it.<</if>></p>
+<p>The chain is short and common. First, a late runway change accepted at a thousand feet, trading a briefed, stabilized final for a tight circuit in haze. Second, the decision to finish the circuit after it turned busy, when a bailout to the straight-in was still on the table and had been offered by your own instincts. The gear was not forgotten by carelessness. It was displaced by workload that was optional, purchased seconds earlier, at retail. That is impulsivity in its Sunday clothes: the offer sounded like a favor, so it was accepted like an instruction.<<if $declared is "none">> Underneath it, the same pilot who minimized the emergency on frequency accepted extra workload to fly a "normal" arrival. The airplane was never normal today. Handling it normally was the error with the paint on it.<</if>></p>
 <h3>What good judgment looks like here</h3>
 <p>A tower's runway offer is a question, and "unable, we'll keep 5" is a complete answer. Eight knots of tailwind on 6,215 feet of runway was a solved problem the moment you briefed it. When a change does get accepted, the flow starts over from the top, out loud, wings level, and any approach that cannot be stabilized by short final gets abandoned early, which on one engine means it gets abandoned high. The gear-up landing itself was, mechanically, well flown. That is the epitaph of most gear-up landings.</p>
 <h3>Key takeaway</h3>
