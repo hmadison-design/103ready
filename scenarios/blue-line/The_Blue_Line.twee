@@ -269,7 +269,7 @@ You touch the stain. Your fingertip comes away lightly wet. Not dripping. Wet.
 
 <<link "C. Call APA maintenance. Have them come look before you do anything else." "Dec2C">><<set $pathArray to $pathArray.concat(["Dec2: C (call maint)"])>><</link>>
 
-<<link "D. Top off only the right side. Leave the left where it sits, and watch en route whether its burn rate makes sense." "Dec2D">><<set $pathArray to $pathArray.concat(["Dec2: D (one-side fuel, crossfeed)"])>><</link>>
+<<link "D. Top off only the right side. Leave the left where it sits, and watch en route whether its burn rate makes sense." "Dec2D">><<set $pathArray to $pathArray.concat(["Dec2: D (one-side fuel, watch burn)"])>><</link>>
 
 :: Dec2A [scenario]
 <<set $fuelStainMissed to true>>
@@ -322,7 +322,7 @@ You are about to do the check. How?
 
 <<link "A. Cycle each prop once at 1800-2000 RPM per POH. Confirm 200-300 RPM drop and smooth recovery, both engines." "Dec3A">><<set $pathArray to $pathArray.concat(["Dec3: A (POH cycle both)"])>><</link>>
 
-<<link "B. Skip it. You cycled them yesterday on the Rapid City flight and everything was normal." "Dec3B">><<set $pathArray to $pathArray.concat(["Dec3: B (skip)"])>><</link>>
+<<link "B. Skip it. You cycled them Sunday on the Rapid City flight and everything was normal." "Dec3B">><<set $pathArray to $pathArray.concat(["Dec3: B (skip)"])>><</link>>
 
 <<link "C. Pull each prop briefly into the feather detent to confirm full feather travel." "Dec3C">><<set $pathArray to $pathArray.concat(["Dec3: C (full-feather static)"])>><</link>>
 
@@ -397,7 +397,7 @@ The cool-restart worked.
 :: Dec4C [scenario]
 You taxi back to the ramp. Mick is not thrilled to see you again. He pulls the #2 lower plug. It's slightly oily. Nothing catastrophic, a little lead fouling. He cleans it, gaps it, torques it back, signs the line.
 
-You taxi out at 1000, ninety minutes late. Teo is reading on his tablet, not complaining, not looking up. The keynote window is tighter than you'd like.
+You taxi out at 1000, an hour and forty-five minutes late. Teo is reading on his tablet, not complaining, not looking up. The keynote window is tighter than you'd like.
 
 <<link "Take the runway when called" "Dec5">><</link>>
 
@@ -418,7 +418,7 @@ Before you release the brakes, you say your takeoff brief out loud. You have bee
 
 What does yours say today?
 
-<<link "A. \"If anything happens below 85 knots, blue line, I abort. Above 85 we continue, regardless of altitude.\"" "Dec5A">><<set $pathArray to $pathArray.concat(["Dec5: A (below/above Vyse only)"])>><</link>>
+<<link "A. \"If anything happens below 105 knots, blue line, I abort. Above 105 we continue, regardless of altitude.\"" "Dec5A">><<set $pathArray to $pathArray.concat(["Dec5: A (below/above Vyse only)"])>><</link>>
 
 <<link "B. \"Any problem on the roll, I abort. Once we're airborne with positive rate and Vyse, we continue.\"" "Dec5B">><<set $pathArray to $pathArray.concat(["Dec5: B (abort until airborne)"])>><</link>>
 
@@ -514,16 +514,17 @@ You arrive at <<print $cruiseAlt>> comfortably, the engines cool and the fuel fl
 
 Level at <<print $cruiseAlt>>. Power set, 23" and 2300 RPM, mixtures walked back to the cruise numbers. TAS showing 185 knots, ground speed 147; the winds at altitude are where the forecast said they'd be. <<if $altRouteError>>The Sawatch Range is under your nose, white on the peaks, ochre in the meadows.<<else>>The Arkansas valley falls away on your left while the Sawatch wall fills the right windscreen, white on the peaks, ochre in the meadows.<</if>>
 
-You glance at the fuel gauges. Fifty-eight minutes into the flight.<<if $altRouteError>> The numbers take two looks to mean anything, which you put down to the early start.<</if>>
+You glance at the fuel gauges. Thirty-five minutes into the flight.<<if $altRouteError>> The numbers take two looks to mean anything, which you put down to the early start.<</if>>
 
-<<if $singleSideFuel>><div class="wx-block">Left main:  50 gallons (not topped this morning)
-Right main: 54 gallons</div>
-
-The left is about where the morning's arithmetic says it should be if nothing is leaking, although "about" is doing quiet work in that sentence. The right is lower than the left engine's twin sister ought to be, and that is the part you didn't expect.<<else>><div class="wx-block">Left main:  62 gallons
+<<if $singleSideFuel>><div class="wx-block">Left main:  62 gallons (not topped this morning)
 Right main: 54 gallons
 Differential: 8 gallons (left heavy)</div>
 
-Each engine feeds from its own main by default. An 8-gallon differential at 58 minutes is larger than normal, and it is the right side, the one with no stain story attached to it, that is low.<</if>> The crossfeed valve in the center of the pedestal is, as expected, closed.
+The left is about where the morning's arithmetic says it should be if nothing is leaking, although "about" is doing quiet work in that sentence. The right, the tank you topped to the tab this morning, is 8 gallons lower than the left, and that is the part you didn't expect.<<else>><div class="wx-block">Left main:  62 gallons
+Right main: 54 gallons
+Differential: 8 gallons (left heavy)</div>
+
+Each engine feeds from its own main by default. An 8-gallon differential at 35 minutes is larger than normal, and it is the right side, the one with no stain story attached to it, that is low.<</if>> The crossfeed valve in the center of the pedestal is, as expected, closed.
 
 <<link "A. Gauges are gauges, and morning sun on one wing does strange things to them. Within reason. Leave it." "Dec7A">><<set $pathArray to $pathArray.concat(["Dec7: A (ignore)"])>><</link>>
 
@@ -559,7 +560,7 @@ You write "right tank low, inspect at GJT" on your kneeboard. You start watching
 <<set $pathArray to $pathArray.concat(["Dec8: Right engine oil pressure dropping"])>>
 <div class="decision-heading">Cruise: Decision 8 of 10: Right Engine Trend</div>
 
-Eighty-one minutes into the flight. <<if $divertedEarly>>You are letting down through 12,000 along the valley toward Eagle, the precautionary stop already coordinated.<<else>>You are over the high terrain, level at <<print $cruiseAlt>>.<</if>> Either way, you are over country that does not forgive a sick engine.
+Fifty minutes into the flight. <<if $divertedEarly>>You are letting down through 12,000 along the valley toward Eagle, the precautionary stop already coordinated.<<else>>You are over the high terrain, level at <<print $cruiseAlt>>.<</if>> Either way, you are over country that does not forgive a sick engine.
 
 The JPI flashes an amber advisory: right engine oil pressure, 48 psi. The normal cruise range is 55-90, yellow band below 50. You look at the oil temp: 215°F and rising. It has been 195° all flight. CHTs on the right are trending up a column.<<if $altRouteError>> You notice your own breathing for the first time in an hour, quick and shallow, and file it under adrenaline.<</if>>
 
@@ -575,7 +576,7 @@ KGJT (Grand Junction): 72 NM ahead, field elevation 4,858, flat valley approach<
 
 Teo says, quietly, "What are you seeing?" You tell him. He says, "Do whatever you need to do."
 
-<<link "A. Engine is making power. Keep going to KGJT, another 22 minutes. You're more than halfway now." "Dec8A">><<set $pathArray to $pathArray.concat(["Dec8: A (press to GJT)"])>><</link>>
+<<link "A. Engine is making power. Keep going to KGJT, another 29 minutes. You're more than halfway now." "Dec8A">><<set $pathArray to $pathArray.concat(["Dec8: A (press to GJT)"])>><</link>>
 
 <<link "B. Reduce right engine power to 18\" MP, watch the trend, continue toward KRIL as the nearest low-elevation field." "Dec8B">><<set $pathArray to $pathArray.concat(["Dec8: B (reduce right pwr, continue to RIL)"])>><</link>>
 
@@ -588,7 +589,7 @@ Teo says, quietly, "What are you seeing?" You tell him. He says, "Do whatever yo
 <<set $badchoices to $badchoices + 1>>
 You keep the airplane pointed at KGJT. You tell Teo you're watching it. You reduce right engine power slightly just in case. Oil pressure drifts down to 42, then 38. Oil temp is now 225°F and climbing.
 
-<<set $divApt to "KGJT">>You have twenty-one minutes of flight between you and the airport.
+<<set $divApt to "KGJT">>You have twenty-nine minutes of flight between you and the airport.
 
 <<link "Watch the gauges and fly" "Dec9">><</link>>
 
@@ -785,7 +786,7 @@ Mesa State moves the keynote back an hour and a half. Teo gives the talk from an
 <h3>What happened</h3>
 The trip did not finish the way it was planned, but it finished with you and Teo walking off a ramp with a story and a repair invoice rather than a hospital visit. Somewhere along the chain you handled the most important decisions correctly, particularly the divert and the secure-engine sequence, and the airplane did what it was designed to do.
 <h3>ADM analysis</h3>
-You may have a small knowledge error or two upstream: a brief that was incomplete, a mixture call that was off, a mag drop you accepted on the edge of the book. None of them compounded. The chain did not connect. That is real aviation.
+You may have a small knowledge error or two upstream: a prop check skipped or overdone, a mixture call that was off, a fuel differential you shrugged at, or an approach flown with more flap than the book wants. None of them compounded. The chain did not connect. That is real aviation.
 <h3>What good judgment looks like here</h3>
 The two most consequential decisions on this flight were Decision 8 (how to respond to a mechanical trend before it became a failure) and Decision 9 (how to secure the engine once the trend became an event). Good choices in both, even if earlier decisions were imperfect, preserved the outcome.
 <h3>Key takeaway</h3>
@@ -885,7 +886,7 @@ Taxi clear. Shut down. Teo steps down onto the ramp. He is shaken but unhurt. Yo
 
 <div class="debrief">
 <h3>What happened</h3>
-The secure-engine sequence was incomplete or out of order, which left residual drag on the right side that you fought through the approach and the flare. The landing was survivable, but the airplane is damaged: the right main will need attention, the nose strut will need inspection, and the feathering mechanism on the right engine will be pulled apart and looked at.
+The secure-engine sequence was not the book's sequence: the fuel selector was left on, with a live line still running out to a dead engine, or the feather went in before the mixture and fuel were dealt with, or the feather came late after the windmilling disc had already cost you altitude. Either way you arrived at the flare with less margin and more attention spent than a clean secure would have left you. The landing was survivable, but the airplane is damaged: the right main will need attention, the nose strut will need inspection, and the A&P will have that short speech ready about the fuel selector.
 <h3>ADM analysis</h3>
 Memory items exist because in the moment you need them, you won't have time to read a checklist. The Baron's secure-engine memory sequence (mixture ICO, fuel selector OFF, prop to FEATHER, mags OFF, cowl flap CLOSED) is five steps, and every one of them matters. Skipping the fuel selector leaves live fuel at the engine. Doing the feather first before killing fuel gives you feathered blades with fuel still going somewhere it shouldn't. The order matters.
 <h3>What good judgment looks like here</h3>
@@ -958,7 +959,7 @@ Teo is unhurt. You are unhurt. You climb out onto a runway that is now closed, n
 
 <div class="debrief">
 <h3>What happened</h3>
-The chain: an engine that wasn't attended to early, an engine secure that wasn't clean, and an approach flown full-flaps because it felt safer. Each error alone would have been absorbed. The three together produced a gear collapse and a prop strike.
+The chain: an engine that wasn't attended to early, so the failure came while you were still pressing for Grand Junction with the fewest options, and an approach flown full-flaps and gear-down because it felt safer, which left you no way to bleed the energy you arrived with. The secure itself was clean. Each error alone would have been absorbed. The two together produced a gear collapse and a prop strike.
 <h3>ADM analysis</h3>
 The Baron is a forgiving airplane. It can be flown out of a lot of marginal situations by a pilot who is competent and calm. It cannot save a pilot who arrives at the runway behind the airplane, with drag they did not neutralize and energy they cannot bleed. The runway cannot love you enough to fix that.
 <h3>What good judgment looks like here</h3>
