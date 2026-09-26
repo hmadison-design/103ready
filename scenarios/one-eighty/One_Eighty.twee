@@ -395,7 +395,7 @@ At 4,500 you are in the clear between layers' worth of haze, ground contact good
 
 Altoona's runways sit plain and welcoming in the wide valley, five thousand feet of asphalt with fuel and a courtesy phone. Beyond them, westward, the Allegheny Front stands its two thousand nine hundred feet, and today it has no top: the plateau rim disappears into a cloud deck that has come down to meet it, gray shading to blue-gray shading to nothing. The notches (the Gallitzin saddle, the gaps the railroads found two centuries ago) show as darker slots in the wall, one of them arguably, arguably, showing light on the far side.
 
-<<if $gates>>You said it out loud at the wing: Altoona is the fence.<</if>> The AWOS behind you calls the valley fine. Johnstown ATIS, crackling over the ridge, calls the plateau overcast at fifteen hundred, which puts the cloud about seven hundred feet below the terrain you'd cross it over.
+<<if $gates>>You said it out loud at the wing: Altoona is the fence.<</if>> The AWOS behind you calls the valley fine. Johnstown ATIS, crackling over the ridge, calls the plateau overcast at twelve hundred, which puts the cloud base about six hundred feet above the rim you'd have to cross.
 
 <div class="text-msg">deke says he can see blue sky WEST of us. relayed for whatever thats worth. cornbread going in</div>
 
@@ -904,7 +904,7 @@ The courtesy car made the dinner, barely. You made the dinner. That sentence too
 <h3>What happened</h3>
 <p>A VFR pilot <<if $onTop>>trapped on top<<else>>in cloud over rising terrain<</if>> said the true sentence into the radio, and the system built for exactly that sentence did exactly its job: radar, terrain awareness, a calm voice metering out one instruction at a time, and a vector to the side of the weather with a runway under it. Twenty minutes of borrowed competence, repaid in full at the tie-downs.</p>
 <h3>ADM analysis</h3>
-<p>Run the accounting on the confession honestly, because pilot culture keeps the books wrong. Cost: saying "I need help" on a recorded frequency, and a bruise to the ego that healed by dinner. Return: an extra crew member with a God's-eye view, terrain separation you could not provide yourself, and structure (headings, altitudes, readbacks) that is itself an anti-panic instrument: the leans lose their vote when someone keeps handing your scan a next task. The pilots who die in this scenario's fatal branch almost all had this frequency available and unkeyed. <<if $panic gte 2>>The confession came late on this path, after the situation had already taxed the account. Late beats never by exactly one lifetime.<</if>></p>
+<p>Run the accounting on the confession honestly, because pilot culture keeps the books wrong. Cost: saying "I need help" on a recorded frequency, and a bruise to the ego that healed by dinner. Return: an extra crew member with a God's-eye view, terrain separation you could not provide yourself, and structure (headings, altitudes, readbacks) that is itself an anti-panic instrument: the leans lose their vote when someone keeps handing your scan a next task. The FAA's own safety guidance says pilots hesitate to declare an emergency because asking for help embarrasses them or they believe they can handle it alone, and here is an opinion, plainly labeled as one: the unkeyed frequency is the cheapest resource a VFR pilot in cloud ever leaves unused. <<if $panic gte 2>>The confession came late on this path, after the situation had already taxed the account. Late beats never by exactly one lifetime.<</if>></p>
 <h3>What good judgment looks like here</h3>
 <p>Making the call one branch earlier, from clear air, when it would have been a request instead of a rescue. And afterward: the ASRS report, the instructor's phone number actually dialed, and the story told straight at the table, because hangar honesty is how one pilot's Tuesday becomes another pilot's checklist.</p>
 <h3>Key takeaway</h3>
@@ -939,7 +939,7 @@ The dinner is wonderful. You are quieter than usual, and only you know the excha
 <p class="main-menu-wrap"><a href="/" class="main-menu-btn">Main Menu</a></p>
 
 :: End_Spiral [scenario ending]
-<<set $pathArray to $pathArray.concat(["Ending: 174 seconds"])>>
+<<set $pathArray to $pathArray.concat(["Ending: 178 seconds"])>>
 
 <<if $pathArray.includes("Hunted onward at two hundred feet")>>The pasture's valley narrows, the mist thickens, and the clear air under the cloud goes from two hundred feet to one hundred to a suggestion. The climb, when it finally can't be refused, happens into full cloud with the airspeed already unsettled.<<else>>The correction your body demanded feels, for four full seconds, like the airplane coming right.<</if>> The attitude indicator shows a bank you don't feel, steepening. The airspeed builds. The altimeter begins to unwind, slowly, then not slowly, and the sound of the airframe changes to a note you have never heard an airplane make.
 
@@ -950,7 +950,7 @@ The NTSB's probable cause will run twenty-eight words. The docket's most-read do
 <hr>
 <div class="debrief">
 <h3>What happened</h3>
-<p>Continued VFR flight into instrument conditions, followed by spatial disorientation and an uncontrolled descent: the general aviation accident report so common its template needs only names and dates. From cloud entry to the last radar return: just under three minutes, a figure so consistent across these accidents that a famous training film simply used it as a title.</p>
+<p>Continued VFR flight into instrument conditions, followed by spatial disorientation and an uncontrolled descent: the general aviation accident report so common its template needs only names and dates. From cloud entry to the last radar return: about three minutes. The 1954 University of Illinois study that put VFR pilots under simulated instrument conditions measured an average of 178 seconds to loss of control, and the FAA's "178 Seconds to Live" article later made that number famous.</p>
 <h3>ADM analysis</h3>
 <p>The vestibular system cannot fly an airplane, and in cloud it actively prevents an untrained pilot from doing so: every sensation it reports after the first minute is generated by fluid physics, not by the airplane. Overcoming it requires an instrument scan practiced to reflex, which is precisely the skill a VFR pilot lacks by definition. This ending was therefore never going to be decided in the cloud. It was decided in the chain that led there: <<print $badchoices>> choices, each with a reasonable voice attached, each individually survivable, none individually fatal. The cloud only collected.</p>
 <h3>What good judgment looks like here</h3>
