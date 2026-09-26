@@ -568,9 +568,9 @@ The engine is still making power. The fuel flow is where you set it. The RPM is 
 
 Airports within realistic reach of your position:
 
-<div class="wx-block">KRIL (Rifle):        38 NM ahead, field elevation 5,537, rwy 8/26 10,002 ft
-KEGE (Eagle):        <<if $divertedEarly>>20 NM ahead<<else>>22 NM off the left wing<</if>>, field elevation 6,548, terrain-flanked
-KASE (Aspen):        30 NM south, field elevation 7,820, surrounded by terrain
+<div class="wx-block">KRIL (Rifle):        38 NM ahead, field elevation 5,537, rwy 8/26 7,000 ft
+KEGE (Eagle):        <<if $divertedEarly>>20 NM ahead<<else>>22 NM off the left wing<</if>>, field elevation 6,547, terrain-flanked
+KASE (Aspen):        30 NM south, field elevation 7,838, surrounded by terrain
 KLXV (Leadville):    45 NM behind, field elevation 9,934, gets you down but not low
 KGJT (Grand Junction): 72 NM ahead, field elevation 4,858, flat valley approach</div>
 
@@ -612,7 +612,7 @@ Center responds: "Two-five-eight hotel tango, Denver Center, understand Rifle, s
 <<link "Descend into the valley" "Dec9">><</link>>
 
 :: Dec8D [scenario]
-<<set $divApt to "KASE">>You turn toward KASE. Center acknowledges the divert. You begin the descent; Aspen sits at 7,820 and is walled by ridges on three sides. You have clear weather, which helps. What you don't have is a valley-floor approach. You'll be threading into a bowl, in an airplane whose single-engine service ceiling at this weight is around 7,000.
+<<set $divApt to "KASE">>You turn toward KASE. Center acknowledges the divert. You begin the descent; Aspen sits at 7,838, above the single-engine service ceiling you briefed, and is walled by ridges on three sides. You have clear weather, which helps. What you don't have is a valley-floor approach. You'll be threading into a bowl, in an airplane whose single-engine service ceiling at this weight is around 7,000.
 
 <<link "Thread toward the bowl" "Dec9">><</link>>
 
@@ -628,9 +628,9 @@ You need to secure the right engine. Which memory sequence do you execute?
 
 <<link "A. Mixture idle cutoff. Prop control to FEATHER. Magneto switches OFF. Cowl flap CLOSED." "Dec9A">><<set $pathArray to $pathArray.concat(["Dec9: A (mix, feather, mags, cowl)"])>><</link>>
 
-<<link "B. Mixture idle cutoff. Fuel selector OFF. Prop control to FEATHER. Magnetos OFF. Cowl flap CLOSED." "Dec9B">><<set $pathArray to $pathArray.concat(["Dec9: B (mix, fuel, feather, mags, cowl)"])>><</link>>
+<<link "B. Throttle CLOSED. Prop control to FEATHER. Then secure it: mixture idle cutoff, fuel selector OFF, aux fuel pump OFF, magnetos OFF, alternator OFF, cowl flap CLOSED." "Dec9B">><<set $pathArray to $pathArray.concat(["Dec9: B (throttle, feather, then secure)"])>><</link>>
 
-<<link "C. Prop control to FEATHER first, immediately. Get the drag killed. Troubleshoot the rest after Vyse is secured." "Dec9C">><<set $pathArray to $pathArray.concat(["Dec9: C (feather first)"])>><</link>>
+<<link "C. Prop control to FEATHER first, immediately, no throttle, no verify. Get the drag killed. Troubleshoot the rest after Vyse is secured." "Dec9C">><<set $pathArray to $pathArray.concat(["Dec9: C (feather first)"])>><</link>>
 
 <<link "D. Reduce right power carefully to maintain some manifold pressure. Don't feather yet. Try to limp it in for landing." "Dec9D">><<set $pathArray to $pathArray.concat(["Dec9: D (reduce power, limp)"])>><</link>>
 
@@ -645,7 +645,7 @@ The selector is still on. Nothing is burning that fuel and nothing is pumping it
 
 :: Dec9B [scenario]
 <<set $cleanSecure to true>>
-Mixture to idle cutoff. Fuel selector OFF. Prop to feather. The blades swing over and the engine spools to a stop, cleanly feathered. Magnetos OFF. Cowl flap closed. Fuel flow zeroed. The right side of the airplane is secure.
+Right throttle closed, and the yaw does not change: that is the verify. Prop to feather. The blades swing over and the engine spools to a stop, cleanly feathered. Then the secure items: mixture to idle cutoff, fuel selector OFF, aux fuel pump OFF, magnetos OFF, alternator OFF, cowl flap closed. Fuel flow zeroed. The right side of the airplane is secure.
 
 You trim the airplane for single-engine cruise-descent. The left engine is holding climb-power-plus, carrying you and Teo and the fuel onward. Airspeed: Vyse, 105 KIAS.
 
@@ -654,9 +654,9 @@ You trim the airplane for single-engine cruise-descent. The left engine is holdi
 :: Dec9C [scenario]
 <<set $featherError to true>>
 <<set $badchoices to $badchoices + 1>>
-You pull the right prop control straight to the feather detent before touching anything else. The RPM drops. The blades swing over. The drag reduces and the airplane settles into a more tractable attitude.
+You pull the right prop control straight to the feather detent before touching anything else. No throttle closed first, no confirmation that the lever in your hand belongs to the engine that quit. The RPM drops. The blades swing over. The drag reduces and the airplane settles into a more tractable attitude. You got the right engine, this time.
 
-You then go back through the rest: mixture to idle cutoff, fuel selector OFF, mags OFF, cowl flap closed. The engine is secured, in a different order than the book prescribes. You trim the airplane at Vyse.
+You then go back through the rest: mixture to idle cutoff, fuel selector OFF, mags OFF, cowl flap closed. The engine is secured, in a different order than the book prescribes, with the verify step skipped and the aux pump and alternator never touched. You trim the airplane at Vyse.
 
 <<link "Brief the arrival" "Dec10">><</link>>
 
@@ -675,7 +675,7 @@ You push nose-over, trade altitude for Vyse. You get Vyse back. You have lost tw
 <<set $pathArray to $pathArray.concat(["Dec10: Single-engine approach"])>>
 <div class="decision-heading">Approach: Decision 10 of 10: Single-Engine Approach Configuration</div>
 
-You are set up for <<print $divApt>>. <<if $divApt is "KASE">>Aspen's bowl narrows the menu: ridges on three sides make this a straight-in valley arrival, and whatever energy plan you fly has to respect the walls. The tower has the airspace sterile for you.<<elseif $divApt is "KEGE">>Eagle's runway lies along the river with rising ground on both flanks. The tower has the pattern sterile for you, and the wind is down the pipe.<<elseif $divApt is "KGJT">>Grand Junction is the flat-valley arrival you spent those extra minutes buying: a long runway, a tower expecting you, wind down the pipe.<<else>>Rifle is a valley-floor field with ten thousand feet of runway. The CTAF is quiet; two locals have already called clear of the pattern for you.<</if>> You have declared. A county sheriff truck and a crash unit are moving toward the runway edge.
+You are set up for <<print $divApt>>. <<if $divApt is "KASE">>Aspen's bowl narrows the menu: ridges on three sides make this a straight-in valley arrival, and whatever energy plan you fly has to respect the walls. The tower has the airspace sterile for you.<<elseif $divApt is "KEGE">>Eagle's runway lies along the river with rising ground on both flanks. The tower has the pattern sterile for you, and the wind is down the pipe.<<elseif $divApt is "KGJT">>Grand Junction is the flat-valley arrival you spent those extra minutes buying: a long runway, a tower expecting you, wind down the pipe.<<else>>Rifle is a valley-floor field with seven thousand feet of runway. The CTAF is quiet; two locals have already called clear of the pattern for you.<</if>> You have declared. A county sheriff truck and a crash unit are moving toward the runway edge.
 
 You are five miles out, 3,500 feet above field elevation, airspeed Vyse plus five. The left engine is healthy and you have trimmed it around the yaw.
 
@@ -886,9 +886,9 @@ Taxi clear. Shut down. Teo steps down onto the ramp. He is shaken but unhurt. Yo
 
 <div class="debrief">
 <h3>What happened</h3>
-The secure-engine sequence was not the book's sequence: the fuel selector was left on, with a live line still running out to a dead engine, or the feather went in before the mixture and fuel were dealt with, or the feather came late after the windmilling disc had already cost you altitude. Either way you arrived at the flare with less margin and more attention spent than a clean secure would have left you. The landing was survivable, but the airplane is damaged: the right main will need attention, the nose strut will need inspection, and the A&P will have that short speech ready about the fuel selector.
+The secure-engine sequence was not the book's sequence: the fuel selector was left on, with a live line still running out to a dead engine, or the feather went in with no throttle-closed verify ahead of it, or the feather came late after the windmilling disc had already cost you altitude. Either way you arrived at the flare with less margin and more attention spent than a clean secure would have left you. The landing was survivable, but the airplane is damaged: the right main will need attention, the nose strut will need inspection, and the A&P will have that short speech ready about the fuel selector.
 <h3>ADM analysis</h3>
-Memory items exist because in the moment you need them, you won't have time to read a checklist. The Baron's secure-engine memory sequence (mixture ICO, fuel selector OFF, prop to FEATHER, mags OFF, cowl flap CLOSED) is five steps, and every one of them matters. Skipping the fuel selector leaves live fuel at the engine. Doing the feather first before killing fuel gives you feathered blades with fuel still going somewhere it shouldn't. The order matters.
+Memory items exist because in the moment you need them, you won't have time to read a checklist. The Baron 58 POH engine-failure procedure (Section III, Engine Failure After Lift-Off and In Flight) runs throttle CLOSED, prop to FEATHER, then the secure items: mixture ICO, fuel selector OFF, aux fuel pump OFF, magnetos OFF, alternator OFF, cowl flap CLOSED. Every step matters. Closing the throttle before the feather is the verify: if the yaw does not change, you have the dead engine, and feathering without it is how good engines get feathered. Skipping the fuel selector leaves live fuel at the engine. The order matters.
 <h3>What good judgment looks like here</h3>
 Memory items are rehearsed items. They are not something you assemble in the moment out of logic. The rehearsal is the whole point. If the Baron's secure-engine sequence isn't something you can say in your sleep, it isn't a memory item. It's a recipe you're reading off a wet card two miles above the ground.
 <h3>Key takeaway</h3>
