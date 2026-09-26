@@ -15,7 +15,7 @@ SCENARIO TITLE:       Game Day
 AUDIENCE:             Pilot (GA / Sport Pilot)
 TONE:                 Entertainer
 PRIMARY TOPIC:        Airspace violations and NOTAM compliance (TFR)
-SECONDARY TOPIC:      Military intercept procedures (AIM 5-6-2)
+SECONDARY TOPIC:      Military intercept procedures (AIM 5-6-13 and 5-6-14)
 AIRCRAFT/EQUIPMENT:   Icon A5 (Light Sport, amphibious, Rotax 912 iS, pusher)
 SETTING:              Monterey Regional (KMRY) to San Francisco Bay Area coast,
                       intercepted and escorted to Moffett Federal Airfield (KNUQ).
@@ -290,7 +290,7 @@ You take your right hand off the stick and give the F-16 a big, friendly wave. A
 
 The F-16 pilot does not wave back.
 
-Because waving is not in AIM 5-6-2. Waving is not in any military intercept manual. Waving is what you do at neighbors, at your mom, at the cute barista who remembers your order. Waving at a $65 million fighter jet is the aviation equivalent of trying to pay for your Uber with Monopoly money.
+Because waving is not in AIM 5-6-14. Waving is not in any military intercept manual. Waving is what you do at neighbors, at your mom, at the cute barista who remembers your order. Waving at a $65 million fighter jet is the aviation equivalent of trying to pay for your Uber with Monopoly money.
 
 The fighter rocks its wings again, more aggressively this time. A second rock. This is no longer "do you see me?" This is "DO YOU UNDERSTAND WHAT IS HAPPENING?"
 
@@ -927,7 +927,7 @@ The rental company bans you for life. Amber's mother arrives within the hour. "M
 
 **What good judgment looks like:** Check every NOTAM before flight (14 CFR 91.103). If intercepted: rock wings, call 121.5, squawk 7700, follow fighter to directed airport, land, cooperate.
 
-**Key regulations:** 14 CFR 91.103 (preflight action); 14 CFR 91.137/141 (TFR); AIM 5-6-2 (intercept procedures).
+**Key regulations:** 14 CFR 91.103 (preflight action); 14 CFR 99.7 (special security instructions, the authority for stadium and Super Bowl TFRs); AIM 5-6-13 and 5-6-14 (intercept procedures and signals).
 
 **Consequences:** <<if $badchoices lte 3>>709 ride (flight check), Letter of Investigation, certificate suspension (30-90 days), fine ($1,100+), permanent rental blacklist.<<elseif $badchoices lte 6>>FBI investigation (cleared), certificate suspension (60-120 days), fine ($2,500+), permanent rental blacklist, federal file.<<else>>FBI investigation, certificate suspension (120-180 days), fine ($5,000+), possible emergency revocation, permanent rental blacklist, federal file noting extended non-compliance.<</if>>
 
@@ -962,7 +962,7 @@ Amber overhears this exchange. She googles "red flags in relationships" and take
 
 **What good judgment looks like:** Check NOTAMs. If you missed them, "I made a terrible mistake not checking" is better than "I had no idea," which implies systemic negligence.
 
-**Key regulations:** 14 CFR 91.103 (preflight action); AIM 1-1-13 (NOTAM system); 14 CFR 91.137 (TFR).
+**Key regulations:** 14 CFR 91.103 (preflight action); AIM 1-1-13 (NOTAM system); 14 CFR 99.7 (special security instructions, the Super Bowl TFR).
 
 **Consequences:** Same as cooperative ending plus documented 91.103 admission. Certificate suspension (60-120 days), fine ($2,500+).
 
@@ -1104,7 +1104,7 @@ The rental company bans you for life via email that evening. Subject line: "Life
 
 **What good judgment looks like:** Immediate compliance the moment you're intercepted. Rock wings, Guard, 7700, follow, land, cooperate. Every second of hesitation escalates.
 
-**Key regulations:** AIM 5-6-2; 14 CFR 91.137; 49 USC 46307 (national defense airspace violation).
+**Key regulations:** AIM 5-6-13 and 5-6-14 (intercept procedures and signals); 14 CFR 99.7 (special security instructions, the Super Bowl TFR); 49 USC 46307 (national defense airspace violation).
 
 **Consequences:** FBI investigation (cleared), certificate suspension (120-180 days), fine ($4,000+), permanent rental blacklist, federal file noting extended non-compliance.
 
@@ -1164,7 +1164,7 @@ Amber is separately detained, interviewed, and released to her mother, who arriv
 
 "Mom, you were right about dating apps. You were right about all of it."
 
-Your pilot certificate is emergency revoked before you leave the ramp. The federal prosecutor's office announces charges: evasion of military intercept, violation of national defense airspace, reckless operation.
+Your pilot certificate is emergency revoked before you leave the ramp. The federal prosecutor's office announces the charge: knowing and willful violation of national defense airspace, which is the government's phrase for ignoring the TFR and then ignoring the F-16s. The FAA adds careless and reckless operation to the certificate action, for flavor.
 
 Your mugshot is on the news by evening.
 
@@ -1176,9 +1176,9 @@ Your mugshot is on the news by evening.
 
 **What good judgment looks like:** Check NOTAMs. Don't enter TFRs. If intercepted: immediate compliance. Rock wings, Guard, 7700, follow, land, cooperate.
 
-**Key regulations:** AIM 5-6-2; 49 USC 46307 (national defense airspace); 18 USC 32 (destruction of aircraft or aircraft facilities); 14 CFR 91.137.
+**Key regulations:** AIM 5-6-13 and 5-6-14 (intercept procedures and signals); 49 USC 46307 (knowing or willful violation of national defense airspace, up to one year for a first offense, up to five years for a repeat); 14 CFR 99.7 (special security instructions, the Super Bowl TFR); 14 CFR 91.13 (careless or reckless operation).
 
-**Consequences:** Federal criminal prosecution, emergency certificate revocation, felony charges, $50,000+ legal fees, possible prison (up to 1 year), permanent criminal record, national media coverage.
+**Consequences:** Federal criminal prosecution under 49 USC 46307 (a misdemeanor, but a federal one, with up to 1 year in prison and a fine for a first offense), emergency certificate revocation, $50,000+ legal fees, permanent criminal record, national media coverage. Nobody got hurt and nothing got broken, so the 20-year felony statutes stay on the shelf. You still get the mugshot.
 
 **Key takeaway:** Running from a military intercept is never an option. You cannot outrun an F-16. Every second of evasion adds federal criminal charges.
 </div>
