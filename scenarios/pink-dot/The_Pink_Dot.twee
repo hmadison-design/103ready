@@ -137,7 +137,7 @@ KOSH 220953Z 19006KT 10SM SCT060 BKN200 23/18 A2998
 TAF KOSH 220520Z 2206/2306 19007KT P6SM SCT060 BKN200
      FM221700 20010G16KT P6SM BKN060</div>
 
-Weather is fine. The front that was going to be a problem is in Ontario now and nobody cares. The plan is: launch at 0500 CDT, fuel stop at Dubuque around 0700, top off, potty break, and be at RIPON by 0900 local, right in the middle of the arrival window but not yet at peak saturation.
+Weather is fine. The front that was going to be a problem is in Ontario now and nobody cares. The plan is: launch at 0500 CDT, fuel stop at Dubuque around 0800, top off, potty break, and be at RIPON by 0930 local, right in the middle of the arrival window but not yet at peak saturation.
 
 Marc snores quietly. You do not wake him. You press the starter. The IO-360 catches, the prop spins into a blurred disc, and Marc opens one eye.
 
@@ -158,9 +158,9 @@ Marc snores quietly. You do not wake him. You press the starter. The IO-360 catc
 :: Dec1A [scenario]
 You go. Takeoff roll, rotate, positive rate, gear up, lean for climb. Springfield drops away. Marc is awake now, nose against the window, murmuring "hoooly s***" with a kid's awe as the Missouri morning rolls gold underneath you.
 
-Two hours and forty minutes later, wheels on the pavement at Dubuque. Fuel. Bathroom. Marc buys three donuts and eats all three before you get back in the airplane. You re-check the Oshkosh ATIS. Runway 36L primary. Ceilings broken 6,000, wind 190 at 8. Perfect.
+Just under three hours later, wheels on the pavement at Dubuque a few minutes before 0800. Fuel. Bathroom. Marc buys three donuts and eats all three before you get back in the airplane. You re-check the Oshkosh ATIS. Runway 36L primary. Ceilings broken 6,000, wind 190 at 8. Perfect.
 
-You launch from Dubuque at 0745 local, climb to 3,500, turn northeast, and call flight following with Chicago Center. The Arrow purrs. Marc is photographing clouds.
+Thirty minutes on the ground, start to finish. You launch from Dubuque at 0830 local, climb to 3,500, turn northeast, and call flight following with Chicago Center. The Arrow purrs. Marc is photographing clouds.
 
 <<goto "Approaching">>
 
@@ -176,7 +176,7 @@ You release the brakes. Takeoff roll, rotate, positive rate, gear up. You cost y
 <<goto "Approaching">>
 
 :: Dec1C [scenario]
-You do the fuel math on the kneeboard while the engine warms. The Arrow holds 48 gallons useable. Call it 9.5 gph leaned at altitude. KSGF direct RIPON then OSH is about 430 nm; at 140 KTAS with the light morning headwind, 3:15 to 3:30 enroute. Day VFR reserve is 30 minutes. You'll land at Oshkosh with roughly 40 minutes in the tanks.
+You do the fuel math on the kneeboard while the engine warms. The Arrow holds 48 gallons useable. Call it 9.5 gph leaned at altitude, which is five hours on paper, closer to 4:40 once taxi, runup, and the climb take their cut. KSGF direct RIPON then OSH is about 430 nm. The winds aloft at 3,500 are forecast 25 on the nose, whatever the surface winds are doing, and that turns 140 KTAS into about 112 over the ground. Call it four hours enroute. Day VFR reserve is 30 minutes. You'll land at Oshkosh with roughly 40 minutes in the tanks.
 
 Legal. Tight, for an arrival where the NOTAM names Fond du Lac as the holding point when Oshkosh saturates, but legal, and forty-five minutes is forty-five minutes.
 
@@ -189,7 +189,7 @@ You go. Direct. The Missouri morning rolls gold underneath you while Marc sleeps
 :: Dec1D [scenario]
 You go back into the FBO, buy a second coffee, and wait two hours. Marc falls asleep on the couch. You read a three-month-old copy of Flying Magazine cover to cover. At 0645 you get Marc up, pre-flight, and launch at 0705.
 
-You land at Dubuque at 0930. By the time you fuel, pee, and relaunch, it is 1015. You pick up flight following. You approach RIPON at 1155 local.
+You land at Dubuque at 1005. By the time you fuel, pee, and relaunch, it is 1035. You pick up flight following. You approach RIPON at 1140 local.
 
 This puts you square in the heart of peak arrival saturation. A glance at the FISK frequency on number two tells you the controllers are in full chant: a call every four seconds, the cadence of a rapid-fire auction. You have also let every post-sunrise arrival beat you there.
 
@@ -205,7 +205,7 @@ You walk Marc through the whole thing. The NOTAM pages. The railroad tracks. The
 
 "What if I have to pee?"
 
-"Hold it from RIPON to OSH. Thirty minutes."
+"Hold it from RIPON to OSH. Twenty minutes."
 
 "Sam, you're taking this really seriously."
 
@@ -263,7 +263,7 @@ You cross RIPON at 2,300 and 135, and you are immediately aware that you're over
 <<goto "FiskApproach">>
 
 :: Dec2C [scenario]
-You descend to 1,800 and slow to 100 KIAS. It feels right in the Arrow. She flies well at 100. It is also ten knots faster than the NOTAM profile. You start to eat up the Mooney in front of you, gaining on him by about a knot and a half per minute.
+You descend to 1,800 and slow to 100 KIAS. It feels right in the Arrow. She flies well at 100. It is also ten knots faster than the NOTAM profile. You start to eat up the Mooney in front of you, gaining on him by about a thousand feet a minute.
 
 You are not supposed to overtake on the tracks. You are supposed to match the profile.
 
@@ -276,7 +276,7 @@ You descend early to 1,800, slow to 90, and reach for the flap handle to add ten
 
 The airplane settles. 90 KIAS feels beautifully stable in this configuration.
 
-It is also not what the NOTAM says. The NOTAM wants you clean at 90 on the tracks; a dirty configuration is fine over the runway but not recommended for the thirty-mile-plus arrival, and it will cost you a lot of fuel.
+It is also not what the NOTAM says. The NOTAM wants you clean at 90 on the tracks. A dirty configuration is fine over the runway but not recommended for the twenty-five-mile arrival, and it will cost you a lot of fuel.
 
 You shrug. You're safer at 90 KIAS with flaps out, you figure, than clean and drifting toward a stall buffer.
 
@@ -305,7 +305,7 @@ It is noon on a Wednesday in July and everyone on earth has arrived at the same 
 :: Dec2_BusyPress [scenario]
 You press on. Descend to 1,800, slow to 90, join the stream. The stream is dense: aircraft half a mile apart, in a ribbon stretching back past RIPON. You weave your way into a gap between a Skyhawk and a Bonanza, maintaining 90.
 
-The FISK controller is calling every three seconds. Three seconds between aircraft, at 90 knots, is about 450 feet of separation. That is closer than you have ever flown to another airplane on purpose.
+The FISK controller is calling every three seconds. At 90 knots, half a mile is twenty seconds of air between you and the Skyhawk, so an airplane crosses the fix every twenty seconds and the controller gets six or seven words for each one. That is closer than you have ever flown to another airplane on purpose.
 
 <<goto "FiskApproach_Busy">>
 
@@ -443,7 +443,7 @@ You are over the FISK intersection right now; your shadow crosses the little loo
 </div>
 
 :: FiskApproach_Overtaking [scenario]
-You are on the tracks, 1,800 MSL, 100 KIAS, gaining on the red Mooney ahead of you by about 100 feet per minute. The gap that was half a mile is now a quarter mile, and the controller on FISK has not yet said anything about it.
+You are on the tracks, 1,800 MSL, 100 KIAS, gaining on the red Mooney ahead of you by about a thousand feet per minute. The gap that was half a mile is now a quarter mile after less than two minutes of it, and the controller on FISK has not yet said anything about it.
 
 But you can hear the gear-change in the controller's voice. The tempo has shifted. He's re-sequencing the stream.
 
@@ -587,7 +587,7 @@ Pink is the closest dot to the threshold. That means the shortest approach. You 
 <<elseif $assignedDot eq "green">>
 Green is the middle dot. You have an extended descent to aim for a specific point about 1,500 feet down the runway from the threshold. A stable approach is critical. You can't just flare over the numbers; you need to fly it in.
 <<elseif $assignedDot eq "orange">>
-Orange is the longest dot. You will fly a longer descent, aiming for a point about 3,000 feet down the runway. You will cross the threshold at a moderate altitude, around 150 AGL, and continue descending to the dot. Do NOT flare early.
+Orange is the longest dot. You will fly a longer descent, aiming for a point about 3,000 feet down the runway. You will cross the threshold at a moderate altitude, around 200 AGL, and continue descending to the dot. Do NOT flare early.
 <</if>>
 
 Marc is back to breathing. "Dude," he whispers. "They said we have a DOT."
@@ -673,7 +673,7 @@ You are closing on him.
 
 <<link "C. Go around now. Climb out, break off to the east, re-enter the pattern. Conservative." "Dec5_GoAround">><</link>>
 
-<<link "D. Land on your dot. He's on the pink; you're on <<print $assignedDot>>. The whole POINT of the dots is simultaneous ops. Fly your dot." "Dec5_FlyYourDot">><</link>>
+<<link "D. Land on your dot. He has his dot and you have the <<print $assignedDot>> one. The whole POINT of the dots is simultaneous ops. Fly your dot." "Dec5_FlyYourDot">><</link>>
 </div>
 
 :: Dec5_STurn [scenario]
@@ -694,18 +694,18 @@ Your approach is a little longer than ideal, but stable.
 <<goto "Dec6_Final">>
 
 :: Dec5_GoAround [scenario]
-You add full throttle, pitch for Vy, flaps to ten (you had them at twenty), gear check down. Climb out over the field. The FISK controller (now the OSH tower controller on a different frequency) sees you immediately.
+You add full throttle, pitch for Vy, flaps confirmed at ten, gear check down. Climb out over the field. The FISK controller (now the OSH tower controller on a different frequency) sees you immediately.
 
 "White and pink Arrow, we see your go-around, turn right 90° eastbound, climb 2,300, we'll re-sequence you. No transmissions required."
 
-You turn right, climb, orbit east of the field. Seven minutes later you're re-sequenced back onto the arrival and re-assigned a dot.
+You turn right, climb, orbit east of the field. Seven minutes later you're re-sequenced back onto the arrival, same runway, same dot, confirmed on the way back in.
 
 <<goto "Dec6_Final_Rebriefed">>
 
 :: Dec5_FlyYourDot [scenario]
 You trust the system. You hold your descent. The <<print $follow>> lands on his dot, rolls out, clears to the left. You are on final for the <<print $assignedDot>> dot.
 
-The dots are spaced so this works. You are at 150 AGL crossing the threshold as he turns off, and you still have a glide ahead of you to your own dot.
+The dots are spaced so this works. You are at about <<if $assignedDot eq "pink">>50<<elseif $assignedDot eq "green">>150<<else>>200<</if>> AGL crossing the threshold as he turns off, and you still have a glide ahead of you to your own dot.
 
 <<goto "Dec6_Final">>
 
@@ -733,7 +733,7 @@ You are slightly <<if $assignedDot eq "pink">>high<<else>>fast<</if>>.
 </div>
 
 :: Dec6_Final_Rebriefed [scenario]
-You are re-sequenced and on final for runway 36L with a fresh assignment: the <<print $assignedDot>> dot. Gear down, flaps thirty, airspeed 80, trimmed. This time the spacing is better. The picture is still a hair off, energy-wise, because the picture at Oshkosh is always a hair off something.
+You are re-sequenced and on final for runway 36L with the same assignment as before, the <<print $assignedDot>> dot, confirmed by the tower on the way back around. Gear down, flaps thirty, airspeed 80, trimmed. This time the spacing is better. The picture is still a hair off, energy-wise, because the picture at Oshkosh is always a hair off something.
 
 <div class="choice-list">
 <<link "A. Idle the power over the fence and let her settle the rest of the way onto the dot." "Dec7_Settle">><</link>>
@@ -810,7 +810,7 @@ You shut down. The silence after 3½ hours of flight is enormous. Marc unfastens
 
 "Sam. Sam. Look at that."
 
-You look at it. You look at the whole field: acres of airplanes, every shape, every era, every livery. You look at the fact that you flew your little Arrow here and landed on a pink/green/orange painted dot because ATC told you to.
+You look at it. You look at the whole field: acres of airplanes, every shape, every era, every livery. You look at the fact that you flew your little Arrow here and landed on a painted <<print $assignedDot>> dot because ATC told you to.
 
 Marc climbs down. "Best day of my life."
 
