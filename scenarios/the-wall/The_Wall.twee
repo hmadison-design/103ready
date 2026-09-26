@@ -567,7 +567,7 @@ The Beech Baron three thousand feet ahead reported moderate turbulence at Red Ta
 
 You called Aspen on Unicom and got the ATIS: "KASE reporting scattered at nine thousand AGL, winds two-one-zero at twelve, VFR. Temperature two-three, dew point two-one." Aspen is fine. The approach is fine. You're eighty-five miles away.
 
-But you also picked up Rifle on the radio while you were dialing around. "KRIL reporting winds two-seven-zero at two-two, gusting three-six." Ninety-degree crosswind gusting thirty-six knots. That's above most pilots' comfort. Even yours. Maybe especially yours, because you respect the wind enough to know what you don't want to fight.
+But you also picked up Rifle on the radio while you were dialing around. "KRIL reporting winds three-four-zero at two-two, gusting three-six." Nearly a direct crosswind on runway 26, gusting thirty-six knots. That's above most pilots' comfort. Even yours. Maybe especially yours, because you respect the wind enough to know what you don't want to fight.
 
 Temperature is three degrees warmer than forecast. You knew that meant instability. More moisture. More lift. More potential for organization.
 
@@ -674,7 +674,7 @@ You're between two weather systems. Rachel's watching this unfold with the same 
 
 Fuel: fifty gallons. Altitude: fourteen thousand five hundred. You're committed to landing east of the mountains now. The question is where.
 
-Denver Center: "Four-seven-two-golf-foxtrot, current observations: KBJC winds three-one-zero at one-eight gusting two-eight, visibility two miles in rain, lightning within five miles northwest. KAPA Centennial, winds two-seven-zero at one-two, scattered three thousand AGL, VFR. Traffic is landing both airports."
+Denver Center: "Four-seven-two-golf-foxtrot, current observations: KBJC winds zero-two-zero at one-eight gusting two-eight, visibility two miles in rain, lightning within five miles northwest. KAPA Centennial, winds two-seven-zero at one-two, scattered three thousand AGL, VFR. Traffic is landing both airports."
 
 Rachel turns toward you. "Are those thunderstorms between us and the airport?"
 
@@ -707,7 +707,7 @@ Broomfield Approach clears you down to five thousand. The scattered cells over t
 
 Three thousand. Terrain is dropping. You're below the weather now.
 
-Final approach for thirty-right. The wind is 310 at 18 gusting 28, a stiff crosswind, ninety degrees to the runway. The 182's demonstrated crosswind component is around 15 knots. This gust component is more than double that. But you've handled gusty crosswinds before. The runway is eight thousand feet long. You've got plenty of runway.
+Final approach for thirty-right. The wind is 020 at 18 gusting 28, a stiff crosswind, nearly ninety degrees to the runway. The 182's demonstrated crosswind component is around 15 knots. This gust component is more than double that. But you've handled gusty crosswinds before. The runway is nine thousand feet long. You've got plenty of runway.
 
 You set up the crab. Twenty degrees into the wind. Flaps are twenty. RPM in the green. Airspeed one thousand feet out is seventy knots, perfect.
 
@@ -973,16 +973,16 @@ You level off and continue west along the Eagle River valley. The valley is wide
 
 The terrain is dropping. The valley opens toward the Colorado River plateau. The weather that was piled up to the south is still there, still building, but you've got more room down here. Better alternates.
 
-Rifle ASOS: winds two-seven-zero at two-two, gusting three-six.
+Rifle ASOS: winds three-four-zero at two-two, gusting three-six.
 
-You do the math in your head immediately. Runway 08/26. Wind from 270 is a direct ninety-degree crosswind. Twenty-two knots sustained, thirty-six knots gust. The 182's demonstrated crosswind component is fifteen knots. You're looking at a gust component more than double that.
+You do the math in your head immediately. Runway 08/26. Wind from 340 is better than eighty degrees off the runway heading, as close to a direct crosswind as it gets. Twenty-two knots sustained, thirty-six knots gust. The 182's demonstrated crosswind component is fifteen knots. You're looking at a gust component more than double that.
 
 Below you, looking down the Roaring Fork Valley toward Aspen from here: mixed conditions. The first ten miles or so look open. The valley is visible, terrain is passable, you could probably descend under the weather and work your way that direction. Beyond ten miles, the valley narrows. The ceiling drops. Terrain rises. At about twenty miles out, the valley disappears into gray. That's where the weather is sitting.
 
 Two realistic options from here.
 
 <<link "A2b-Land. Land at Rifle in the gusty crosswind. You're an experienced pilot. The runway is seven thousand feet long and one hundred feet wide. You've handled gusty crosswinds before, not quite this gusty, but you know how to crab and slip. It's challenging but manageable." "A2b-LandRifle">>
-	<<set $pathArray to $pathArray.concat(["Landed at Rifle Municipal in 36-knot gust crosswind"])>>
+	<<set $pathArray to $pathArray.concat(["Landed at Rifle Garfield County in 36-knot gust crosswind"])>>
 <</link>>
 
 <<link "A2b-Return. The crosswind is too much for comfort. You're not in a racing situation. Burn the fuel and fly back to Eagle where the runway is better aligned for today's wind. Safe and professional." "A2b-GoAroundEagle">>
@@ -997,7 +997,7 @@ You key the radio.
 
 "Rifle, four-seven-two-golf-foxtrot, inbound from the northeast, requesting landing runway twenty-six."
 
-"Four-seven-two-golf-foxtrol, right traffic for twenty-six, winds two-seven-zero at twenty-two, gusting three-six, altimeter three-zero-one-four."
+"Four-seven-two-golf-foxtrol, right traffic for twenty-six, winds three-four-zero at twenty-two, gusting three-six, altimeter three-zero-one-four."
 
 You set up the approach. Descending, slowing. The PAPI guides you down. You're crabbing twenty degrees into the wind on final. The whole airplane is sideways to the runway but the ground track is straight. That's the crab angle needed to hold the centerline against a steady crosswind.
 
@@ -1472,7 +1472,7 @@ Windshear. Of course. The mountain winds in the afternoon are never steady. They
 
 As you descend through 11,000 feet, the wind in the valleys picks up noticeably. The 182 starts getting buffeted. Not rough air from convection now. Mechanical turbulence, pure and simple. The ridgelines around Eagle are funneling the wind, accelerating it, creating shear.
 
-You enter the pattern at 2,500 feet. The windsock is standing straight out, nearly horizontal. That's 22 knots with gusts to 32. You do the math: runway 25, wind 270. That's a roughly 20-degree crosswind component. Manageable for a 182, which has a demonstrated crosswind component of 12.3 knots. But demonstrated is a test condition on a calm day with a smooth pilot. You're neither calm nor smooth right now. You're a real pilot in real wind, and the 182 is a forgiving airplane.
+You enter the pattern at 2,500 feet. The windsock is standing straight out, nearly horizontal. That's 22 knots with gusts to 32. You do the math: runway 25, wind 270. That's a roughly 20-degree crosswind component. Manageable for a 182, which has a demonstrated crosswind component of 15 knots. But demonstrated is a test condition on a calm day with a smooth pilot. You're neither calm nor smooth right now. You're a real pilot in real wind, and the 182 is a forgiving airplane.
 
 On downwind, a gust rocks the right wing hard. You lose 200 feet before you catch it with trim and a firm back pressure. Rachel's hand shoots out to brace herself. "Still okay back there?" you ask.
 
@@ -1617,7 +1617,7 @@ The go-around itself was executed correctly. There is never anything wrong with 
 
 You key the mic. "Denver, Four-Seven-Two Golf Foxtrot. Continue westbound, we'll request descent into Rifle."
 
-"Four-Seven-Two Golf Foxtrot, roger. Approved westbound. Descend and maintain niner thousand five hundred. Rifle frequency one-two-two point five."
+"Four-Seven-Two Golf Foxtrot, roger. Approved westbound. Descend and maintain niner thousand five hundred. Rifle CTAF one-two-two point eight."
 
 You push the nose forward and the descent begins. Westbound along the Eagle River valley, the terrain below opens up as you lose altitude. The valley is wide here: three, four miles across at points. The ridgelines rise to 11,000 and beyond, but they're not threatening. The air beneath you smooths as you descend. Broken clouds at 12,000 above the valley floor. You descend to 10,500 and the ride gets better.
 
@@ -1625,19 +1625,19 @@ Rachel is looking down at the valley, at the river, at the small towns along I-7
 
 "It is," you agree. "And it's more forgiving than what we left behind."
 
-Twenty-five minutes of steady descent, and Rifle appears ahead, a small airport on the high plains, elevation 5,340 feet. A far cry from the mountains. You call the tower. "Rifle tower, Four-Seven-Two Golf Foxtrot, ten miles northeast, requesting left downwind for two-six."
+Twenty-five minutes of steady descent, and Rifle appears ahead, a small airport on the high plains, elevation 5,537 feet. A far cry from the mountains. You tune the ASOS, then key the CTAF. "Rifle traffic, Four-Seven-Two Golf Foxtrot, ten miles northeast, inbound for left downwind two-six, Rifle."
 
-"Four-Seven-Two Golf Foxtrot, Rifle. Welcome. Wind two-seven-zero at two-two, gusting three-six. Runway two-six is the active."
+Nobody answers on the CTAF. The ASOS says all you need: "Wind three-four-zero at two-two, gusting three-six." Runway two-six is the one that makes sense.
 
-You acknowledge and think about it. Two-two sustained, gusting 36. Runway 08/26. That's a 90-degree crosswind on runway 26, and the gust component is at the edge of your demonstrated crosswind. But Rifle's runway is 7,000 feet long and 100 feet wide, a runway built for larger airplanes, a runway that will forgive a firm landing.
+You acknowledge and think about it. Two-two sustained, gusting 36. Runway 08/26. That's nearly a 90-degree crosswind on runway 26, and the gust component is at the edge of your demonstrated crosswind. But Rifle's runway is 7,000 feet long and 100 feet wide, a runway built for larger airplanes, a runway that will forgive a firm landing.
 
 As you descend into the pattern, you get a clear look at the conditions. The wind is visible in the windsock: flag-straight, barely moving, the gusts strong enough to make it oscillate. It's challenging, but Rifle is designed for this. The runway is there. The airport is here.
 
 But something makes you look south. Down the Roaring Fork Valley toward Aspen, the first ten miles look inviting: broken clouds, green valley, the river visible like a ribbon. But further southeast, the valley narrows and the ceiling drops. You can't see Aspen itself. The valley just disappears into gray about twenty miles out.
 
-"Rifle tower, Four-Seven-Two Golf Foxtrot, left downwind runway two-six."
+"Rifle traffic, Four-Seven-Two Golf Foxtrot, left downwind runway two-six, Rifle."
 
-"Four-Seven-Two Golf Foxtrot, Rifle, approve left downwind two-six. Runway two-six is the active."
+Still nothing on the frequency. The pattern is yours.
 
 You have two options now, and the clock is ticking:
 
@@ -1654,11 +1654,11 @@ You have two options now, and the clock is ticking:
 <<if $audioEnabled>><<audio "engine-smooth" stop>><<audio "touchdown" play>><</if>>
 <<set $pathArray to $pathArray.concat(["Landed safely at Rifle"])>>
 
-You bring the 182 around on base, descending toward runway 26. The wind is strong from the northwest, and you know it. Rifle tower is clear: "Winds two-seven-zero at two-two, gusting three-six. Runway two-six is the active. Cleared to land."
+You bring the 182 around on base, descending toward runway 26. The wind is strong from the north-northwest, and you know it. The ASOS is clear: "Wind three-four-zero at two-two, gusting three-six." You announce base for two-six on the CTAF.
 
 You roll left toward the runway and start your crosswind correction. Crab angle 25 degrees into the wind. On final, the runway is aligned beneath you. You're high, so you add a bit of forward pressure and let gravity do the work. The airspeed is solid at 70 knots. You're not carrying extra speed this time; Rifle is big and flat, and confidence is half the battle.
 
-At 100 feet, the wind shifts momentarily and pushes you right. Immediate left correction: firm, controlled. At 50 feet, a gust from the left rocks the wing down 10 degrees. Right aileron, wings level. You transition to the crab-and-kick: nose pointed left into the wind, fuselage angled, and at 20 feet, you kick the nose straight with right rudder and flare.
+At 100 feet, the wind shifts momentarily and pushes you right. Immediate left correction: firm, controlled. At 50 feet, a gust from the right rocks the wing down 10 degrees. Left aileron, wings level. You transition to the crab-and-kick: nose pointed right into the wind, fuselage angled, and at 20 feet, you kick the nose straight with left rudder and flare.
 
 The right main tire touches first, solid contact. The left main follows. The nosewheel comes down. You've got all three wheels on the ground, and the wind is trying to push you left. Right rudder, right brake, holding the centerline, the windsock blurring past your right wing. The 182 slows. At 30 knots, you're safely in the grip of the pavement, the wind no longer a threat.
 
@@ -1707,7 +1707,7 @@ The decision NOT to attempt the Roaring Fork Valley (to see the narrowing valley
 
 <strong>Key Strength:</strong> You knew your crosswind skills and trusted them when the alternative was a mountain valley in deteriorating weather. A challenging landing at a safe airport beats a smooth approach into a narrowing box canyon. Every time.
 
-<strong>Key Takeaway:</strong> The demonstrated crosswind component in your aircraft's POH (12.3 knots for the Cessna 182) is not your personal limit. It's a certification test condition, conducted under ideal circumstances with the most careful of pilots. A 500-1000 hour pilot who practices crosswind landings regularly can handle crosswinds beyond the demonstrated value, especially on a 7,000-foot runway with flat terrain and a large safety margin. Don't let the wind chase you into a valley. Don't underestimate your own skill.
+<strong>Key Takeaway:</strong> The demonstrated crosswind component in your aircraft's POH (15 knots for the Cessna 182T) is not your personal limit. It's a certification test condition, conducted under ideal circumstances with the most careful of pilots. A 500-1000 hour pilot who practices crosswind landings regularly can handle crosswinds beyond the demonstrated value, especially on a 7,000-foot runway with flat terrain and a large safety margin. Don't let the wind chase you into a valley. Don't underestimate your own skill.
 
 </div>
 
@@ -1724,9 +1724,9 @@ The decision NOT to attempt the Roaring Fork Valley (to see the narrowing valley
 <<set $pathArray to $pathArray.concat(["Continuing into the Roaring Fork Valley"])>>
 <<if $audioEnabled>><<run crossfadeEngine("engine-smooth", "engine-rough", 3000)>><</if>>
 
-"Rifle tower, Four-Seven-Two Golf Foxtrot, we're going to continue south toward Aspen. Request descent into the Roaring Fork Valley."
+"Denver, Four-Seven-Two Golf Foxtrot, we're going to continue south toward Aspen, descending into the Roaring Fork Valley."
 
-A pause. Then: "Four-Seven-Two Golf Foxtrot, roger. Descend and maintain niner thousand. You've got traffic, a Regional going to Aspen. Keep the speed up."
+A pause. Then: "Four-Seven-Two Golf Foxtrot, roger. Altitude your discretion, radar service may be lost in the valley. You've got traffic, a Regional going to Aspen. Keep the speed up."
 
 You bank left, toward the south, away from Rifle. Rachel looks at you with a question in her eyes, but she doesn't ask it. She just nods and keeps watching the weather.
 
@@ -1769,9 +1769,9 @@ You have two options, and you need to choose now, while the valley is still wide
 <<if $audioEnabled>><<run crossfadeEngine("engine-rough", "engine-smooth", 3000)>><<audio "touchdown" play>><</if>>
 <<set $pathArray to $pathArray.concat(["180 in the Roaring Fork Valley, turned back to Rifle")))>>
 
-"Rifle tower, Four-Seven-Two Golf Foxtrot. We're going to reverse course. Request left turn, descend Rifle."
+"Denver, Four-Seven-Two Golf Foxtrot. We're going to reverse course, left turn back to Rifle."
 
-"Four-Seven-Two Golf Foxtrot, Rifle, approved left turn. Descend and maintain nine thousand. Welcome back."
+"Four-Seven-Two Golf Foxtrot, Denver, roger. Altitude your discretion. Report Rifle in sight."
 
 You bank left, firmly, into a standard-rate 180-degree turn. The valley is wide enough at Carbondale: two miles across, maybe a bit more. The 182's turning radius at this speed is about 1,200 feet in calm air. You've got plenty of room.
 
@@ -1779,9 +1779,9 @@ As the nose comes around toward the north, the ceiling seems to lift. The gray a
 
 You've flown out of the worst of it just by turning around.
 
-Twenty minutes later, Rifle appears ahead. The FBO is visible, the runway clear, the windsock still standing straight out but less threatening now. You descend for approach and call the tower. "Rifle tower, Four-Seven-Two Golf Foxtrot, inbound for landing."
+Twenty minutes later, Rifle appears ahead. The FBO is visible, the runway clear, the windsock still standing straight out but less threatening now. You cancel flight following with Denver, tune the ASOS, and key the CTAF. "Rifle traffic, Four-Seven-Two Golf Foxtrot, ten miles southeast, inbound for left downwind two-six, Rifle."
 
-"Four-Seven-Two Golf Foxtrot, Rifle. Wind two-seven-zero at one-eight, gusting two-four. Runway two-six is the active. Cleared to land."
+The ASOS: "Wind three-four-zero at one-eight, gusting two-four." Runway two-six again.
 
 The wind has eased slightly. That makes sense, the afternoon cooling a bit after the rain. One-eight sustained, gusting 24. You crab 20 degrees into the wind on final. At 50 feet, you transition to crab and kick. Right main, left main, nosewheel. The landing is firm but clean. You taxi in.
 
@@ -1829,9 +1829,9 @@ Your decision to attempt the valley was the error. The weather signs were clear 
 <<if $audioEnabled>><<audio "engine-rough" stop>><</if>>
 <<set $pathArray to $pathArray.concat(["Continued into severely deteriorating conditions"])>>
 
-"Rifle tower, Four-Seven-Two Golf Foxtrot, continuing south toward Aspen."
+"Denver, Four-Seven-Two Golf Foxtrot, continuing south toward Aspen."
 
-"Four-Seven-Two Golf Foxtrot, Rifle, roger. Contact Denver. Descend and maintain eight thousand."
+"Four-Seven-Two Golf Foxtrot, Denver, roger. Radar service will be lost below eight thousand in the valley. Squawk VFR, frequency change approved."
 
 You continue south into the narrowing valley.
 
@@ -2041,7 +2041,7 @@ You request an update on the route from your current position (about 30 miles we
 
 Flight Service gives you a mixed picture. The information is ambiguous and conflicting.
 
-"We've got an AIRMET Sierra for mountain obscuration along the Continental Divide above one-two thousand. AIRMET Tango for moderate turbulence below one-five thousand. A Convective SIGMET is possible within the hour for the area from Red Table to Glenwood Springs. Possible, not yet issued. Current Aspen: VFR, scattered at nine thousand AGL, winds two-one-zero at one-two. Eagle County is VFR, winds two-seven-zero at one-niner gusting two-eight. Rifle is reporting winds two-seven-zero at two-two gusting three-six."
+"We've got an AIRMET Sierra for mountain obscuration along the Continental Divide above one-two thousand. AIRMET Tango for moderate turbulence below one-five thousand. A Convective SIGMET is possible within the hour for the area from Red Table to Glenwood Springs. Possible, not yet issued. Current Aspen: VFR, scattered at nine thousand AGL, winds two-one-zero at one-two. Eagle County is VFR, winds two-seven-zero at one-niner gusting two-eight. Rifle is reporting winds three-four-zero at two-two gusting three-six."
 
 "Copy. Any recent PIREPs?"
 
@@ -2356,7 +2356,7 @@ Eagle's winds: 270 at 19 gusting 28. Runway 07/25, a moderate crosswind. The pat
 
 <<link "Commit to the landing at Eagle. The approach is stable, the crosswind is manageable, and Eagle is a 9,000-foot runway with full services. Land here." "C3a-LandEagle">><</link>>
 
-<<link "You're stable on approach, but Rifle ATIS shows winds shifted to 250 at 15 gusting 22. That's only a 10-degree crosswind, much easier. And it's closer to Aspen by road. Overfly Eagle and continue to Rifle." "C3b-ContinueRifle">><</link>>
+<<link "You're stable on approach, but Rifle ASOS shows winds shifted to 250 at 15 gusting 22. That's only a 10-degree crosswind, much easier. And it's closer to Aspen by road. Overfly Eagle and continue to Rifle." "C3b-ContinueRifle">><</link>>
 
 :: C3a-LandEagle [scenario branch-c ending]
 <<set $pathArray to $pathArray.concat(["Landed at Eagle County"])>>
@@ -2603,7 +2603,7 @@ That trade is the definition of good judgment in mountain flying.
 
 <strong>Principle: Overflying Safety</strong>
 
-The hardest part of being a good pilot isn't being capable. It's being comfortable with good enough. Rifle's runway is 9,000 feet. The winds are manageable. The terrain is lower. The approach is straightforward. These are not the minimums. These are better than minimums, and they're right here. Taking them is not settling. It's flying the flight you have, not the one you imagined.
+The hardest part of being a good pilot isn't being capable. It's being comfortable with good enough. Rifle's runway is 7,000 feet. The winds are manageable. The terrain is lower. The approach is straightforward. These are not the minimums. These are better than minimums, and they're right here. Taking them is not settling. It's flying the flight you have, not the one you imagined.
 </div>
 
 <strong>Your path through this scenario:</strong>
