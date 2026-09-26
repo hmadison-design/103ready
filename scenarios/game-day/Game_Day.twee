@@ -32,7 +32,7 @@ TIMED DECISIONS:      No
 ESTIMATED DURATION:   15-20 minutes
 VERSION:              3.1
 LAST REVIEWED:        2026-04-12
-REVIEWER:             Aviation accuracy review — Claude / Harvey Madison
+REVIEWER:             Aviation accuracy review: Claude / Harvey Madison
 */
 <<set $badchoices to 0>>
 <<set $pathArray to []>>
@@ -188,7 +188,7 @@ a.link-internal:hover {
 
 You are Jake Thornton, 27, Sport Pilot, 83 hours total time, and today you are absolutely crushing it.
 
-The Icon A5 is purring along at 2,500 feet, the California coast bleeding away beneath your right wing. Amber Chen — the girl you met at a rooftop bar in Pacific Heights two weeks ago — is in the right seat, and she looks radiant in her new Ray-Bans. She's been taking photos the whole flight, holding her phone out the window, composing shots of the coastline for her Instagram. Twenty-three thousand followers. Not bad.
+The Icon A5 is purring along at 2,500 feet, the California coast bleeding away beneath your right wing. Amber Chen, the girl you met at a rooftop bar in Pacific Heights two weeks ago, is in the right seat, and she looks radiant in her new Ray-Bans. She's been taking photos the whole flight, holding her phone out the window, composing shots of the coastline for her Instagram. Twenty-three thousand followers. Not bad.
 
 "So," you announce, in your best documentary-narrator voice, "we're currently transiting at twenty-five hundred feet on a heading of zero-four-five, maintaining a nice cruise speed of about eighty-five knots. The Icon A5 is really performing beautifully today. Beautiful aircraft." You glance at Amber to see if she's impressed. She's still looking out the window. "Very stable. Great handling characteristics."
 
@@ -196,13 +196,13 @@ Amber turns to you with that smile. The one that made you rent this airplane in 
 
 "Yeah? That's cool. I love flying out here." You reach down and adjust your headset, which doesn't need adjusting. "Zero-three-zero weather, light winds, perfect visibility. Textbook VFR. That's Visual Flight Rules," you add, just in case she didn't know. She knows. You've told her twice already.
 
-Here's the thing nobody tells you about being a pilot: the confidence is absolutely intoxicating. And confidence, in the hands of an 83-hour Sport Pilot, is roughly as dangerous as a loaded firearm in the hands of a toddler. It doesn't know what it doesn't know. And today, what it doesn't know could fill a courtroom.
+Nobody tells you this about being a pilot: the confidence is absolutely intoxicating. And confidence, in the hands of an 83-hour Sport Pilot, is roughly as dangerous as a loaded firearm in the hands of a toddler. It doesn't know what it doesn't know. And today, what it doesn't know could fill a courtroom.
 
-You didn't check NOTAMs this morning. Too busy. Amber was waiting downstairs, you'd spent ten minutes in the bathroom mirror getting your hair to sit just right, then another five debating sunglasses — the Aviators or the Wayfarers? (Aviators. Obviously. You're a pilot.) You filed no flight plan. You requested no flight following. You launched VFR from Monterey Regional, climbed out, and pointed the nose north along the coast. Sightseeing flight, baby. Freedom.
+You didn't check NOTAMs this morning. Too busy. Amber was waiting downstairs, you'd spent ten minutes in the bathroom mirror getting your hair to sit just right, then another five debating sunglasses. The Aviators or the Wayfarers? (Aviators. Obviously. You're a pilot.) You filed no flight plan. You requested no flight following. You launched VFR from Monterey Regional, climbed out, and pointed the nose north along the coast. Sightseeing flight, baby. Freedom.
 
 About twenty minutes ago, Amber pointed northeast and said, "Oh my God, is that a stadium?" It was. Levi's Stadium in Santa Clara, glinting in the February afternoon sun. Super Bowl LX. You banked the A5 northeast toward it without a second thought.
 
-Your iPad is clipped to the kneeboard between your legs. ForeFlight is running. The sectional chart is displayed. There is a big, obvious red circle on it — the TFR — and your little blue ownship arrow is sitting deep inside it. Not near the edge. Not approaching. Inside. Eight nautical miles from the stadium, well within the inner ring that extends 10 NM from the stadium, surface to Flight Level 180.
+Your iPad is clipped to the kneeboard between your legs. ForeFlight is running. The sectional chart is displayed. There is a big, obvious red circle on it (the TFR), and your little blue ownship arrow is sitting deep inside it. Not near the edge. Not approaching. Inside. Eight nautical miles from the stadium, well within the inner ring that extends 10 NM from the stadium, surface to Flight Level 180.
 
 You haven't looked at the iPad once since turning northeast.
 
@@ -218,7 +218,7 @@ The sun is warm. Amber is laughing at something on her phone. The radio is tuned
 :: Realization [scenario]
 <<set $pathArray to $pathArray.concat(["Realization"])>>
 
-Amber glances down at the iPad strapped to your kneeboard. Something catches her eye — a red shape, a circle, and a little blue arrow sitting squarely inside it.
+Amber glances down at the iPad strapped to your kneeboard. Something catches her eye: a red shape, a circle, and a little blue arrow sitting squarely inside it.
 
 "Um... Jake? What's that red circle thing on your map?"
 
@@ -248,7 +248,7 @@ The F-16 pilot waits. Rocks his wings again.
 
 Your epic third date has officially gone sideways.
 
-<<link "You rock your wings — the intercept acknowledgment signal" "RockWings">><<set $pathArray to $pathArray.concat(["Rock wings to acknowledge"])>><</link>>
+<<link "You rock your wings, the intercept acknowledgment signal" "RockWings">><<set $pathArray to $pathArray.concat(["Rock wings to acknowledge"])>><</link>>
 
 <<link "You wave in recognition" "WaveAtFighter">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Waved at fighter"])>><</link>>
 
@@ -259,7 +259,7 @@ Your epic third date has officially gone sideways.
 
 You grip the stick, take a breath, and rock your wings. Left, right, left. The intercept acknowledgment signal. "I see you. I understand. I will comply."
 
-The left F-16 dips its wings in response — a subtle nod from one aviator to another. For a half second, you feel almost competent.
+The left F-16 dips its wings in response, a subtle nod from one aviator to another. For a half second, you feel almost competent.
 
 The fighter initiates a slow, level turn to the northwest. Follow me. Fly this way. The universal intercept signal, except delivered by a $65 million aircraft that could turn you into confetti without breaking a sweat.
 
@@ -277,11 +277,11 @@ The F-16 ahead banks gently, maintaining altitude, waiting for you to keep up. T
 
 You need to do something about the radio. Now.
 
-<<link "Tune your radio to 121.5 MHz — Guard — and make a call" "TuneGuard">><<set $pathArray to $pathArray.concat(["Tune to Guard 121.5"])>><</link>>
+<<link "Tune your radio to 121.5 MHz (Guard) and make a call" "TuneGuard">><<set $pathArray to $pathArray.concat(["Tune to Guard 121.5"])>><</link>>
 
 <<link "Try calling NorCal Approach on a frequency you think might be right" "WrongFreq">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Try NorCal on wrong frequency"])>><</link>>
 
-<<link "Just follow the fighter — you'll sort out the radio later" "FollowSilent">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Follow silently, no radio"])>><</link>>
+<<link "Just follow the fighter. You'll sort out the radio later" "FollowSilent">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Follow silently, no radio"])>><</link>>
 
 :: WaveAtFighter [scenario]
 <<set $pathArray to $pathArray.concat(["Waved at fighter"])>>
@@ -292,34 +292,34 @@ The F-16 pilot does not wave back.
 
 Because waving is not in AIM 5-6-2. Waving is not in any military intercept manual. Waving is what you do at neighbors, at your mom, at the cute barista who remembers your order. Waving at a $65 million fighter jet is the aviation equivalent of trying to pay for your Uber with Monopoly money.
 
-The fighter rocks its wings again — more aggressively this time. A second rock. This is no longer "do you see me?" This is "DO YOU UNDERSTAND WHAT IS HAPPENING?"
+The fighter rocks its wings again, more aggressively this time. A second rock. This is no longer "do you see me?" This is "DO YOU UNDERSTAND WHAT IS HAPPENING?"
 
 Amber leans over, her voice carrying the particular frequency of someone watching her dating life disintegrate in real time: "Jake, I don't think waving works on fighter jets."
 
 She's not wrong.
 
-<<link "Rock your wings — maybe that's what they want" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Rocked wings after waving"])>><</link>>
+<<link "Rock your wings. Maybe that's what they want" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Rocked wings after waving"])>><</link>>
 
 <<link "Wave more vigorously and mouth 'WE'RE FRIENDLY'" "WaveHarder">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Waved harder"])>><</link>>
 
-<<link "Flash your landing light at them — that's a signal, right?" "FlashAtFighter">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Flashed landing light"])>><</link>>
+<<link "Flash your landing light at them. That's a signal, right?" "FlashAtFighter">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Flashed landing light"])>><</link>>
 
 :: WaveHarder [scenario]
 <<set $pathArray to $pathArray.concat(["Waved with both hands"])>>
 
 You commit. Both hands off the stick. A full, Olympic-level, two-handed wave. You are FRIENDLY. You are COMPLIANT. You are also, for a brief and terrifying moment, not flying the airplane.
 
-"JAKE!" Amber's hand snaps to the stick. She grabs it like it's the only thing keeping her alive — because, objectively, it is. The A5 wobbles, then stabilizes under her white-knuckled grip.
+"JAKE!" Amber's hand snaps to the stick. She grabs it like it's the only thing keeping her alive, because, objectively, it is. The A5 wobbles, then stabilizes under her white-knuckled grip.
 
 The F-16 pilot sees: an unidentified aircraft inside a TFR, pilot waving arms, aircraft momentarily uncontrolled. This is not the behavior of a compliant pilot. This is the behavior of someone who either doesn't understand what's happening or is a threat.
 
-The lead fighter pulls an abrupt turn across your nose — flares dispensing in bright white streaks. The WARNING signal. The "you are about to have a very, very bad day" signal.
+The lead fighter pulls an abrupt turn across your nose, flares dispensing in bright white streaks. The WARNING signal. The "you are about to have a very, very bad day" signal.
 
 Amber screams. A full, primal, visceral scream that would normally be reserved for horror movies but is perfectly justified here.
 
-You have waved at a military interceptor — twice — and let go of the flight controls to do it. Your passenger is now flying the airplane. Your dating life is over. The only thing left to salvage is your pilot certificate, and the clock is ticking.
+You have waved at a military interceptor, twice, and let go of the flight controls to do it. Your passenger is now flying the airplane. Your dating life is over. The only thing left to salvage is your pilot certificate, and the clock is ticking.
 
-<<link "Rock your wings and comply — NOW" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Complied after waving panic"])>><</link>>
+<<link "Rock your wings and comply. NOW" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Complied after waving panic"])>><</link>>
 
 <<link "You panic and bank hard away from the flares" "KeepRunning">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Fled from flares"])>><</link>>
 
@@ -328,7 +328,7 @@ You have waved at a military interceptor — twice — and let go of the flight 
 
 You flick the landing light switch. Blink. Blink. Blink. A Morse code of desperation. Flashing lights mean something, right? You learned that somewhere.
 
-The F-16 does not respond. Because flashing a landing light is not an intercept signal. It's used for traffic awareness on approach — "hey, there's a small aircraft here, please don't park a 747 in my space." The fighter pilot isn't confused by your flashing. He isn't impressed. He isn't even slightly aware that you think you're communicating something meaningful.
+The F-16 does not respond. Because flashing a landing light is not an intercept signal. It's used for traffic awareness on approach: "hey, there's a small aircraft here, please don't park a 747 in my space." The fighter pilot isn't confused by your flashing. He isn't impressed. He isn't even slightly aware that you think you're communicating something meaningful.
 
 The fighter rocks its wings. Again. More emphatically.
 
@@ -336,7 +336,7 @@ Amber, watching this whole situation unfold with growing alarm: "Jake, nothing y
 
 She just accidentally described the correct intercept procedure better than you've managed to remember it.
 
-<<link "She's right — rock your wings" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Followed Amber's advice"])>><</link>>
+<<link "She's right. Rock your wings" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Followed Amber's advice"])>><</link>>
 
 <<link "Give up trying to signal and just follow them" "FollowUnacknowledged">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Followed without acknowledging"])>><</link>>
 
@@ -345,7 +345,7 @@ She just accidentally described the correct intercept procedure better than you'
 
 You reach down and dial 123.45 on the radio. The universal air-to-air frequency. You've heard pilots use it to chat with each other on cross-countries. The F-16s are on that frequency.
 
-You key the mic: "Six-two-one India-Alpha, I am the Cessna being intercepted. I see you off my wing. What would you like me to do?" You wince. "Correction — Icon. I'm an Icon A5. Not a Cessna. Sorry."
+You key the mic: "Six-two-one India-Alpha, I am the Cessna being intercepted. I see you off my wing. What would you like me to do?" You wince. "Correction. Icon. I'm an Icon A5. Not a Cessna. Sorry."
 
 A long pause. Static. Then:
 
@@ -357,11 +357,11 @@ The fighter on your left rocks its wings. Waiting. Patient, but running low on p
 
 Amber, reading your face: "That wasn't them, was it."
 
-<<link "Rock your wings first — visual signal before radio" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Rocked wings after 123.45"])>><</link>>
+<<link "Rock your wings first, visual signal before radio" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Rocked wings after 123.45"])>><</link>>
 
 <<link "Ask the Bonanza pilot to relay to ATC" "RelayViaBonanza">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Requested relay via Bonanza"])>><</link>>
 
-<<link "Keep trying 123.45 — someone official must be monitoring" "KeepTrying12345">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Kept trying 123.45"])>><</link>>
+<<link "Keep trying 123.45. Someone official must be monitoring" "KeepTrying12345">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Kept trying 123.45"])>><</link>>
 
 :: RelayViaBonanza [scenario]
 <<set $pathArray to $pathArray.concat(["Relay through Bonanza pilot"])>>
@@ -380,7 +380,7 @@ Amber makes a noise between a laugh and a sob. "A random stranger in a Bonanza j
 
 You haven't established radio contact with anyone who matters. A relay through a random pilot is not communication with the authorities. But you now have the one piece of information that was available twelve minutes ago: 121.5. Guard.
 
-<<link "Rock your wings first — you know what to do next" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Finally heading to Guard"])>><</link>>
+<<link "Rock your wings first. You know what to do next" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Finally heading to Guard"])>><</link>>
 
 :: KeepTrying12345 [scenario]
 <<set $pathArray to $pathArray.concat(["Kept trying 123.45"])>>
@@ -393,14 +393,14 @@ The lead fighter's patience expires. The wing rock becomes aggressive. The slow 
 
 Amber grabs your arm. "Jake, PLEASE. They want you to do something. Whatever you're doing isn't it."
 
-<<link "Rock your wings and follow — deal with the radio properly" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Finally acknowledged"])>><</link>>
+<<link "Rock your wings and follow. Deal with the radio properly" "RockWingsLate">><<set $pathArray to $pathArray.concat(["Finally acknowledged"])>><</link>>
 
 :: RockWingsLate [scenario]
 <<set $pathArray to $pathArray.concat(["Late wing rock acknowledgment"])>>
 
 You grip the stick and rock your wings. Left, right, left. The signal the F-16 has been waiting for.
 
-The lead fighter sees it. Banks into a slow, deliberate turn to the northwest. Follow me. But the vibe has changed. There's weight to it. The delay cost you — the ground response is escalating because an unidentified aircraft inside the Super Bowl TFR took its sweet time acknowledging a military intercept.
+The lead fighter sees it. Banks into a slow, deliberate turn to the northwest. Follow me. But the vibe has changed. There's weight to it. The delay cost you. The ground response is escalating because an unidentified aircraft inside the Super Bowl TFR took its sweet time acknowledging a military intercept.
 
 Amber is white-knuckled. "Jake, what the HELL is going on?"
 
@@ -412,16 +412,16 @@ She's not a pilot. She's never read AIM. She's an Instagram influencer with 23,0
 
 Your radio is still wrong. Your transponder is still squawking 1200. Nobody on the ground knows who you are.
 
-<<link "Tune to 121.5 MHz — Guard — and make a call" "TuneGuard">><<set $pathArray to $pathArray.concat(["Tune to Guard 121.5"])>><</link>>
+<<link "Tune to 121.5 MHz (Guard) and make a call" "TuneGuard">><<set $pathArray to $pathArray.concat(["Tune to Guard 121.5"])>><</link>>
 
 <<link "Try NorCal Approach on a frequency you remember" "WrongFreq">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Try NorCal wrong freq"])>><</link>>
 
-<<link "Just follow the fighter — deal with radio later" "FollowSilent">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Follow silently"])>><</link>>
+<<link "Just follow the fighter. Deal with radio later" "FollowSilent">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Follow silently"])>><</link>>
 
 :: FollowUnacknowledged [scenario]
 <<set $pathArray to $pathArray.concat(["Never acknowledged intercept"])>>
 
-You never rocked your wings. The F-16 pilot waited, signaled repeatedly, and eventually gave up trying to get an acknowledgment. The fighter begins the escort anyway — leading you northwest.
+You never rocked your wings. The F-16 pilot waited, signaled repeatedly, and eventually gave up trying to get an acknowledgment. The fighter begins the escort anyway, leading you northwest.
 
 But without the acknowledgment, the intercepting aircraft doesn't know if you're complying or simply flying the same direction by coincidence. Are you aware? Incapacitated? A threat?
 
@@ -431,7 +431,7 @@ Amber: "Those jets are still here. Shouldn't you DO something?"
 
 <<link "Get on 121.5 and try to sort this out" "TuneGuardLate">><<set $pathArray to $pathArray.concat(["Late radio from unacknowledged"])>><</link>>
 
-<<link "Just follow them — they'll figure it out when you land" "SilentEscort">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Silent escort, no acknowledgment"])>><</link>>
+<<link "Just follow them. They'll figure it out when you land" "SilentEscort">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Silent escort, no acknowledgment"])>><</link>>
 
 :: TuneGuard [scenario]
 <<set $radioEstablished to true>>
@@ -465,14 +465,14 @@ The response is immediate. And cold.
 
 "November six-two-one India-Alpha, NorCal. We've been tracking you. You are inside the Super Bowl TFR. Squawk seven-seven-zero-zero and proceed as directed."
 
-There's a pause — the kind that means ATC has already informed everyone on frequency that this guy is a problem.
+There's a pause, the kind that means ATC has already informed everyone on frequency that this guy is a problem.
 
 <<link "Now deal with the transponder" "TransponderTrap">><<set $pathArray to $pathArray.concat(["Proceeding to transponder"])>><</link>>
 
 :: WrongFreq [scenario]
 <<set $pathArray to $pathArray.concat(["Tried wrong frequency"])>>
 
-You dial in 124.0 — a frequency you vaguely remember from a flight near San Jose last month.
+You dial in 124.0, a frequency you vaguely remember from a flight near San Jose last month.
 
 "NorCal Approach, November six-two-one India-Alpha, we appear to be intercepted by military aircraft, request assistance."
 
@@ -484,7 +484,7 @@ The F-16 is still there, still leading, still waiting for Jake to figure out how
 
 You just burned 45 seconds on the wrong frequency. The situation hasn't improved. It hasn't worsened. You're just... stalled.
 
-<<link "Try 121.5 instead — Guard, the emergency frequency" "TuneGuard">><<set $pathArray to $pathArray.concat(["Switched to Guard"])>><</link>>
+<<link "Try 121.5 instead: Guard, the emergency frequency" "TuneGuard">><<set $pathArray to $pathArray.concat(["Switched to Guard"])>><</link>>
 
 <<link "Give up on the radio and just follow the fighter" "FollowSilent">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Gave up on radio"])>><</link>>
 
@@ -493,7 +493,7 @@ You just burned 45 seconds on the wrong frequency. The situation hasn't improved
 
 You match the fighter's heading and maintain formation. But your radio is silent. Your transponder is on 1200. ATC has no idea who you are.
 
-The F-16 pilot keeps glancing back — helmet turning, checking you're still there.
+The F-16 pilot keeps glancing back, helmet turning, checking you're still there.
 
 "Shouldn't you call someone?" Amber cuts through the noise. "I mean... I'm not a pilot, but shouldn't we be talking to someone right now?"
 
@@ -503,14 +503,14 @@ She's right. She's not a pilot, but she's tracking this situation better than yo
 
 <<link "At least change your transponder code" "TransponderTrap">><<set $pathArray to $pathArray.concat(["Transponder without radio"])>><</link>>
 
-<<link "Just keep following — they'll figure out who you are when you land" "SilentEscort">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Complete silent escort"])>><</link>>
+<<link "Just keep following. They'll figure out who you are when you land" "SilentEscort">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Complete silent escort"])>><</link>>
 
 :: SilentEscort [scenario]
 <<set $pathArray to $pathArray.concat(["Silent escort to Moffett"])>>
 
 You're following the fighters with zero voice contact. Your transponder is still on 1200. ATC doesn't know who you are.
 
-On the ground, in the tower, in the command post — they're looking at a target and zero voice contact. Is the pilot incapacitated? Does he speak English? Medical emergency? No comms means maximum suspicion. Maximum preparation.
+On the ground, in the tower, in the command post, they're looking at a target and zero voice contact. Is the pilot incapacitated? Does he speak English? Medical emergency? No comms means maximum suspicion. Maximum preparation.
 
 The F-16s lead directly toward Moffett Federal Airfield. The enormous runway appears: 9,197 feet of government concrete.
 
@@ -529,21 +529,21 @@ When someone who commands fighter jets gives you a four-digit number and tells y
 You know you should change your transponder from 1200. Some emergency code. Your hand moves to the dial. You've got a vague memory from ground school... there are codes. For situations. This seems like a situation.
 
 <<if $trapSquawkTried.includes("7600")>>
-<<link "Squawk 7700 — emergency" "Squawk7700">><<set $pathArray to $pathArray.concat(["Set 7700 after learning 7600 wrong"])>><</link>>
+<<link "Squawk 7700, emergency" "Squawk7700">><<set $pathArray to $pathArray.concat(["Set 7700 after learning 7600 wrong"])>><</link>>
 <<else>>
-<<link "Squawk 7600 — that's the emergency code... right?" "TrapSquawkRoast">><<set $lastTrapChoice to "7600">><<set $trapSquawkTried to $trapSquawkTried.concat(["7600"])>><<set $pathArray to $pathArray.concat(["Trap: tried 7600"])>><</link>>
+<<link "Squawk 7600. That's the emergency code... right?" "TrapSquawkRoast">><<set $lastTrapChoice to "7600">><<set $trapSquawkTried to $trapSquawkTried.concat(["7600"])>><<set $pathArray to $pathArray.concat(["Trap: tried 7600"])>><</link>>
 <</if>>
 
 <<if $trapSquawkTried.includes("7500")>>
-<<link "Squawk 7700 — emergency" "Squawk7700">><<set $pathArray to $pathArray.concat(["Set 7700 after learning 7500 wrong"])>><</link>>
+<<link "Squawk 7700, emergency" "Squawk7700">><<set $pathArray to $pathArray.concat(["Set 7700 after learning 7500 wrong"])>><</link>>
 <<else>>
-<<link "Squawk 7500 — you're pretty sure that's the one" "TrapSquawkRoast">><<set $lastTrapChoice to "7500">><<set $trapSquawkTried to $trapSquawkTried.concat(["7500"])>><<set $pathArray to $pathArray.concat(["Trap: tried 7500"])>><</link>>
+<<link "Squawk 7500. You're pretty sure that's the one" "TrapSquawkRoast">><<set $lastTrapChoice to "7500">><<set $trapSquawkTried to $trapSquawkTried.concat(["7500"])>><<set $pathArray to $pathArray.concat(["Trap: tried 7500"])>><</link>>
 <</if>>
 
 <<if $trapSquawkTried.includes("1200")>>
-<<link "Squawk 7700 — emergency" "Squawk7700">><<set $pathArray to $pathArray.concat(["Set 7700 after learning 1200 wrong"])>><</link>>
+<<link "Squawk 7700, emergency" "Squawk7700">><<set $pathArray to $pathArray.concat(["Set 7700 after learning 1200 wrong"])>><</link>>
 <<else>>
-<<link "Leave it on 1200 — you're VFR, that's your code" "TrapSquawkRoast">><<set $lastTrapChoice to "1200">><<set $trapSquawkTried to $trapSquawkTried.concat(["1200"])>><<set $pathArray to $pathArray.concat(["Trap: left 1200"])>><</link>>
+<<link "Leave it on 1200. You're VFR, that's your code" "TrapSquawkRoast">><<set $lastTrapChoice to "1200">><<set $trapSquawkTried to $trapSquawkTried.concat(["1200"])>><<set $pathArray to $pathArray.concat(["Trap: left 1200"])>><</link>>
 <</if>>
 <</if>>
 
@@ -602,14 +602,14 @@ You set the transponder: 7-7-0-0.
 <<if $radioEstablished>>
 "November six-two-one India-Alpha, squawk seven-seven-zero-zero confirmed. Radar identified. You are inside the Super Bowl TFR. Follow the F-16 to Moffett Federal Airfield. Do not deviate."
 <<else>>
-On the ground, controllers watch the blip change. Squawk 7700 — General Emergency. No voice contact, but at least the code is right.
+On the ground, controllers watch the blip change. Squawk 7700, General Emergency. No voice contact, but at least the code is right.
 
 "Aircraft squawking seven-seven-zero-zero, eight miles southwest of Santa Clara, if you read, ident." They're trying to reach you. But nobody's talking.
 <</if>>
 
-The fighter begins leading toward Moffett Federal Airfield — KNUQ. The F-16 circles the field, lowers its landing gear, and overflies the runway in the direction of landing. The signal is unmistakable: land at this airport.
+The fighter begins leading toward Moffett Federal Airfield, KNUQ. The F-16 circles the field, lowers its landing gear, and overflies the runway in the direction of landing. The signal is unmistakable: land at this airport.
 
-Moffett: enormous runway stretching 9,197 feet, hangars the size of airplane hangars — because they literally are airplane hangars — home of NASA Ames, Global Hawk drones, P-3 Orions. Your Icon A5 is 23 feet long. It's like parking a bicycle at a truck stop.
+Moffett: enormous runway stretching 9,197 feet, hangars the size of airplane hangars (because they literally are airplane hangars), home of NASA Ames, Global Hawk drones, P-3 Orions. Your Icon A5 is 23 feet long. It's like parking a bicycle at a truck stop.
 
 Amber grabs your arm. "Is that a military base? We're landing at a MILITARY BASE?"
 
@@ -622,9 +622,9 @@ Moffett Federal Airfield swings into view. 9,197 feet of concrete. Enormous hang
 
 But there's a problem.
 
-The windsock is stiff — and it's pointing the same direction you'd be landing. Tailwind. Runway 32R. The wind is from the south-southeast — you can see it in the ripples on the salt ponds, in the way the flags on the hangars are stretched taut. For Runway 32R, heading 320, wind from 160 at 16 gusting 24 gives a tailwind component of roughly 15 knots steady, gusting to 22.
+The windsock is stiff, and it's pointing the same direction you'd be landing. Tailwind. Runway 32R. The wind is from the south-southeast. You can see it in the ripples on the salt ponds, in the way the flags on the hangars are stretched taut. For Runway 32R, heading 320, wind from 160 at 16 gusting 24 gives a tailwind component of roughly 15 knots steady, gusting to 22.
 
-Fifteen knots of tailwind. Your groundspeed on touchdown will be 30 knots hotter than normal. The A5 will float halfway down the runway before the wheels touch, and then you'll need dramatically more stopping distance. Every rule of thumb from ground school says maximum tailwind for landing is 10 knots — and that's for pilots who practice tailwind landings. The gusts are more than double that. For an 83-hour Sport Pilot who has never intentionally landed with a tailwind? This is a non-starter.
+Fifteen knots of tailwind. Your groundspeed on touchdown will be 30 knots hotter than normal. The A5 will float halfway down the runway before the wheels touch, and then you'll need dramatically more stopping distance. Every rule of thumb from ground school says maximum tailwind for landing is 10 knots, and that's for pilots who practice tailwind landings. The gusts are more than double that. For an 83-hour Sport Pilot who has never intentionally landed with a tailwind? This is a non-starter.
 
 Jake notices the windsock. His stomach tightens.
 
@@ -632,7 +632,7 @@ Jake notices the windsock. His stomach tightens.
 
 Amber: "What do you mean, 'doesn't look great'?"
 
-<<link "Set up for landing — it's a 9,000-foot runway, how hard can it be?" "AttemptCrosswind">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Attempting tailwind landing"])>><</link>>
+<<link "Set up for landing. It's a 9,000-foot runway, how hard can it be?" "AttemptCrosswind">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Attempting tailwind landing"])>><</link>>
 
 <<link "Rock wings and circle the airport, flash your landing light, look for light gun signals" "CircleAndFlash">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Circling and flashing"])>><</link>>
 
@@ -651,7 +651,7 @@ Jake sets up for the approach. He's committed now.
 
 The 9,000-foot runway makes it look easy from above. It is not easy.
 
-On short final, the tailwind is immediately obvious. The groundspeed is way too high — the runway numbers flash past before Jake has even started to flare. He floats. And floats. A thousand feet of runway disappears under the hull. He forces the airplane onto the pavement, touches down fast and flat, and immediately realizes he's running out of options.
+On short final, the tailwind is immediately obvious. The groundspeed is way too high. The runway numbers flash past before Jake has even started to flare. He floats. And floats. A thousand feet of runway disappears under the hull. He forces the airplane onto the pavement, touches down fast and flat, and immediately realizes he's running out of options.
 
 Jake stands on the brakes. The nosewheel skids. A gust from behind shoves the tail, the airplane weathervanes hard, and the right main gear catches the runway edge. The airplane ground loops off the pavement. The right wingtip catches the ground. The airplane slides to a stop in the grass 40 feet off the centerline. Right tire blown. Right wing creased. Hull gouged.
 
@@ -681,7 +681,7 @@ A runway into the wind. Jake could have just asked. Instead he circled a militar
 <<else>>
 Without radio contact, nobody knows WHY you're circling. They just see an intercepted aircraft refusing to land.
 
-The tower shoots light gun signals — cycling through them because they have no idea what you want. Three minutes of absolute chaos. The F-16 re-establishes the escort and forces a direct approach. By then, the wind has shifted slightly and the gusts dropped just enough.
+The tower shoots light gun signals, cycling through them because they have no idea what you want. Three minutes of absolute chaos. The F-16 re-establishes the escort and forces a direct approach. By then, the wind has shifted slightly and the gusts dropped just enough.
 
 <<link "Continue to forced landing" "LandMoffettForced">><<set $pathArray to $pathArray.concat(["Forced landing after circling"])>><</link>>
 <</if>>
@@ -697,7 +697,7 @@ Amber watches this performance with the expression of someone re-evaluating ever
 
 "Jake. He can't see you."
 
-"I'm trying to tell him the wind—"
+"I'm trying to tell him the wind..."
 
 "He. Can't. See. You. He's in a FIGHTER JET."
 
@@ -742,7 +742,7 @@ It's the last okay thing that happens today.
 The A5 rolls to a stop on the enormous ramp. Shutdown. The welcoming committee materializes: two black SUVs, a NASA security truck, a local police car, and what appears to be an unmarked federal vehicle. The kind that shows up when someone says "situation."
 
 <<if $badchoices lte 3>>
-The response is firm but measured. You cooperated. You're not considered a threat — just a pilot who made a serious mistake.
+The response is firm but measured. You cooperated. You're not considered a threat, just a pilot who made a serious mistake.
 <<elseif $badchoices lte 6>>
 The response is elevated. Your delayed compliance has been noted. There are more vehicles than a routine TFR bust would warrant. An FBI sedan pulls up last.
 <<else>>
@@ -763,7 +763,7 @@ You shut down the engine. The welcoming committee starts walking toward the airp
 
 <<link "I'm not saying anything without a lawyer" "Ending-LawyeredUp">><<set $pathArray to $pathArray.concat(["Demanded lawyer"])>><</link>>
 
-<<link "Get indignant — this is a free country" "Ending-Cuffs">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Got belligerent"])>><</link>>
+<<link "Get indignant. This is a free country" "Ending-Cuffs">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Got belligerent"])>><</link>>
 
 :: LandMoffett14R [scenario]
 <<set $pathArray to $pathArray.concat(["Landed 14L after circling"])>>
@@ -789,9 +789,9 @@ Amber hasn't spoken since you entered the pattern. Her phone is out. She is Goog
 
 You land. You taxi. You shut down.
 
-<<link "Cooperate fully — you know you screwed up" "Ending-TheLongWalk">><<set $pathArray to $pathArray.concat(["Cooperated after non-compliance"])>><</link>>
+<<link "Cooperate fully. You know you screwed up" "Ending-TheLongWalk">><<set $pathArray to $pathArray.concat(["Cooperated after non-compliance"])>><</link>>
 
-<<link "Get indignant — this is a free country" "Ending-Cuffs">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Got belligerent"])>><</link>>
+<<link "Get indignant. This is a free country" "Ending-Cuffs">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Got belligerent"])>><</link>>
 
 :: KeepRunning [scenario]
 <<set $pathArray to $pathArray.concat(["Running from fighters"])>>
@@ -800,7 +800,7 @@ You haul back on the stick and bank hard away. The Icon A5 at full throttle: abo
 
 This is the aviation equivalent of running from a traffic stop. On foot. Past the K-9 unit.
 
-More aircraft respond. A second pair of F-16s appears from the south. A helicopter — Coast Guard, probably — is vectoring toward you from the coast.
+More aircraft respond. A second pair of F-16s appears from the south. A helicopter, Coast Guard probably, is vectoring toward you from the coast.
 
 Amber is no longer filming for Instagram. She is genuinely terrified.
 
@@ -808,11 +808,11 @@ Amber is no longer filming for Instagram. She is genuinely terrified.
 
 She's right. You know she's right.
 
-<<link "She's right — rock your wings and slow down" "GiveUpRunning">><<set $pathArray to $pathArray.concat(["Gave up running"])>><</link>>
+<<link "She's right. Rock your wings and slow down" "GiveUpRunning">><<set $pathArray to $pathArray.concat(["Gave up running"])>><</link>>
 
-<<link "Head for the bay — the A5 is amphibious" "WaterLand">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Headed for bay"])>><</link>>
+<<link "Head for the bay. The A5 is amphibious" "WaterLand">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Headed for bay"])>><</link>>
 
-<<link "Keep going — look for a beach to land on" "StillRunning">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Still running"])>><</link>>
+<<link "Keep going. Look for a beach to land on" "StillRunning">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Still running"])>><</link>>
 
 :: GiveUpRunning [scenario]
 <<set $pathArray to $pathArray.concat(["Gave up running"])>>
@@ -838,7 +838,7 @@ Amber turns to you with a look that could strip paint: "YOU ARE NOT LANDING IN T
 
 The famous "land on the water and paddle to shore" escape plan. Pioneered by absolutely nobody, because it is insane.
 
-You slip the A5 down toward the south bay. The water is grey and cold — February in California. Water temperature: 54 degrees. The wind is brutal.
+You slip the A5 down toward the south bay. The water is grey and cold. February in California. Water temperature: 54 degrees. The wind is brutal.
 
 You actually manage a decent water landing. The A5 is designed for this, theoretically.
 
@@ -848,7 +848,7 @@ Amber is wrapped in the emergency blanket from the seat pocket. Hair ruined. Mak
 
 "I cannot BELIEVE you landed in the OCEAN."
 
-"Bay, tec—"
+"Bay, tec..."
 
 "SHUT. UP."
 
@@ -866,7 +866,7 @@ You are in a 100-knot airplane being pursued by aircraft that cruise at 500+ kno
 
 <<link "Head for a beach" "BeachAttempt">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["Headed for beach"])>><</link>>
 
-<<link "You have no plan — you just keep flying" "Ending-FullChase">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["No plan, just flying"])>><</link>>
+<<link "You have no plan. You just keep flying" "Ending-FullChase">><<set $badchoices to $badchoices + 1>><<set $pathArray to $pathArray.concat(["No plan, just flying"])>><</link>>
 
 :: BeachAttempt [scenario]
 <<set $pathArray to $pathArray.concat(["Beach landing attempt"])>>
@@ -890,7 +890,7 @@ A confused lifeguard approaches: "Uh... you can't park that here."
 You step out of the A5 with your hands visible. Cooperate fully. Answer every question.
 
 <<if $badchoices lte 3>>
-NASA base security is professional. The FAA inspector is less so — she's seen this before. One local police officer stands by, looking mildly disappointed that this isn't more exciting.
+NASA base security is professional. The FAA inspector is less so. She's seen this before. One local police officer stands by, looking mildly disappointed that this isn't more exciting.
 
 "Yes, I didn't check NOTAMs. Yes, no flight plan. No, I genuinely didn't realize I was in a TFR until the fighters showed up."
 
@@ -912,7 +912,7 @@ Amber calls an Uber at hour three. "I can't be here for this," she tells the inv
 <<else>>
 Full federal response. FBI. FAA. NASA security. TSA liaison. Six hours. Your statement, their statement, Amber's separate, devastating statement.
 
-The FBI agent spends an hour determining that you're not a security threat — just a Sport Pilot who doesn't understand preflight responsibilities. Cleared. Not a terrorist. Just an idiot.
+The FBI agent spends an hour determining that you're not a security threat, just a Sport Pilot who doesn't understand preflight responsibilities. Cleared. Not a terrorist. Just an idiot.
 
 Amber refused to exit the aircraft until a female officer arrived. She gave her own statement sitting in the shade of the wing, speaking with devastating clarity. The inspector wrote it down verbatim.
 
@@ -923,7 +923,7 @@ The rental company bans you for life. Amber's mother arrives within the hour. "M
 
 **What happened:** You penetrated the Super Bowl TFR and were intercepted by F-16s. Your cooperation level after interception determined the severity of the response, but the underlying violations remain the same.
 
-**ADM Analysis:** Hazardous attitude: Invulnerability ("it won't happen to me"). Catastrophic preflight failure by skipping NOTAMs. <<if $badchoices lte 3>>You demonstrated good judgment after being intercepted — rocking wings, calling Guard, squawking 7700, landing where directed, cooperating fully.<<else>>Your delayed and incomplete compliance escalated what could have been a straightforward enforcement action into a multi-agency federal response.<</if>>
+**ADM Analysis:** Hazardous attitude: Invulnerability ("it won't happen to me"). Catastrophic preflight failure by skipping NOTAMs. <<if $badchoices lte 3>>You demonstrated good judgment after being intercepted: rocking wings, calling Guard, squawking 7700, landing where directed, cooperating fully.<<else>>Your delayed and incomplete compliance escalated what could have been a straightforward enforcement action into a multi-agency federal response.<</if>>
 
 **What good judgment looks like:** Check every NOTAM before flight (14 CFR 91.103). If intercepted: rock wings, call 121.5, squawk 7700, follow fighter to directed airport, land, cooperate.
 
@@ -931,7 +931,7 @@ The rental company bans you for life. Amber's mother arrives within the hour. "M
 
 **Consequences:** <<if $badchoices lte 3>>709 ride (flight check), Letter of Investigation, certificate suspension (30-90 days), fine ($1,100+), permanent rental blacklist.<<elseif $badchoices lte 6>>FBI investigation (cleared), certificate suspension (60-120 days), fine ($2,500+), permanent rental blacklist, federal file.<<else>>FBI investigation, certificate suspension (120-180 days), fine ($5,000+), possible emergency revocation, permanent rental blacklist, federal file noting extended non-compliance.<</if>>
 
-**Key takeaway:** Checking NOTAMs isn't optional — it's the law. But when you've already screwed up, doing the right thing from that point forward is the best damage control you've got.
+**Key takeaway:** Checking NOTAMs is the law. But when you've already screwed up, doing the right thing from that point forward is the best damage control you've got.
 </div>
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
@@ -946,19 +946,19 @@ You try the innocent routine.
 
 The FAA inspector's pen stops moving. "Sir, TFRs are published NOTAMs. You are required by 14 CFR 91.103 to review all relevant NOTAMs before any flight."
 
-"But I—"
+"But I..."
 
 "Preflight action. First week of training."
 
-You just confessed. You thought admitting ignorance was a defense. It is the opposite. It is a signed admission that you violated 91.103 — the regulation requiring you to check NOTAMs. The inspector now has, on the record, that you consciously chose not to check.
+You just confessed. You thought admitting ignorance was a defense. It is the opposite. It is a signed admission that you violated 91.103, the regulation requiring you to check NOTAMs. The inspector now has, on the record, that you consciously chose not to check.
 
 Amber overhears this exchange. She googles "red flags in relationships" and takes screenshots.
 
 <div class="debrief">
 
-**What happened:** You cooperated with intercept and landing, but admitted to the FAA inspector that you did not check NOTAMs — effectively confessing to a 91.103 violation on the record.
+**What happened:** You cooperated with intercept and landing, but admitted to the FAA inspector that you did not check NOTAMs, effectively confessing to a 91.103 violation on the record.
 
-**ADM Analysis:** Hazardous attitudes: Invulnerability and Resignation. You compounded the preflight failure by documenting it during the investigation. "I didn't know" is not a defense — it's evidence.
+**ADM Analysis:** Hazardous attitudes: Invulnerability and Resignation. You compounded the preflight failure by documenting it during the investigation. "I didn't know" is evidence, and the inspector writes it down.
 
 **What good judgment looks like:** Check NOTAMs. If you missed them, "I made a terrible mistake not checking" is better than "I had no idea," which implies systemic negligence.
 
@@ -966,7 +966,7 @@ Amber overhears this exchange. She googles "red flags in relationships" and take
 
 **Consequences:** Same as cooperative ending plus documented 91.103 admission. Certificate suspension (60-120 days), fine ($2,500+).
 
-**Key takeaway:** Ignorance of a NOTAM is never a defense — it's an admission that you skipped preflight action.
+**Key takeaway:** Ignorance of a NOTAM is an admission that you skipped preflight action, and no inspector will hear it as a defense.
 </div>
 
 <<link "Try Again" "Opening">><<set $badchoices to 0>><<set $pathArray to []>><<set $radioEstablished to false>><<set $trapSquawkTried to []>><<set $lastTrapChoice to "">><</link>>
@@ -979,7 +979,7 @@ Amber overhears this exchange. She googles "red flags in relationships" and take
 
 Legally, you're right. The Fifth Amendment exists. The inspector makes a note. She does not argue. "Understood," she says, and walks away.
 
-You've successfully exercised your constitutional rights. You've also guaranteed that every interaction with the FAA from here forward will be through formal channels — Letter of Investigation, administrative hearing, expensive legal process. What could have been resolved in two hours will now take 8-12 months.
+You've successfully exercised your constitutional rights. You've also guaranteed that every interaction with the FAA from here forward will be through formal channels: Letter of Investigation, administrative hearing, expensive legal process. What could have been resolved in two hours will now take 8-12 months.
 
 Amber calls an Uber. She's gone before your first text reaches her. When she does respond, an hour later: "My ex never got us intercepted by the Air Force."
 
@@ -1010,7 +1010,7 @@ Jake exercised his Fifth Amendment rights. He also exercised his right to be sin
 
 You step out of the A5 and immediately start arguing.
 
-"This is ridiculous! I wasn't doing anything wrong! You can't just—"
+"This is ridiculous! I wasn't doing anything wrong! You can't just..."
 
 A NASA security officer calmly asks you to put your hands on the airplane.
 
@@ -1022,7 +1022,7 @@ You are placed in handcuffs. On the ramp. In front of Amber. In front of the NAS
 
 Amber walks to the nearest officer. "I am a passenger. I am not with him. Can someone please take me home?"
 
-Your pilot certificate is emergency revoked before you leave the building. The order is printed and handed to you: "REVOKED — Effective immediately."
+Your pilot certificate is emergency revoked before you leave the building. The order is printed and handed to you: "REVOKED. Effective immediately."
 
 <div class="debrief">
 
@@ -1049,11 +1049,11 @@ The A5 sits in the grass, listing to starboard. Right wing creased. Right tire b
 
 Amber sits on the grass facing away. She does not look at Jake. She does not speak to Jake. Her phone is out. She is texting her mother: "Mom you were right about everything."
 
-Five minutes later: NASA security. Within the hour: FAA. The rental company's insurance adjuster — who apparently has Google Alerts set for "Icon A5 incident" — arrives with two cups of coffee and a deposition form.
+Five minutes later: NASA security. Within the hour: FAA. The rental company's insurance adjuster, who apparently has Google Alerts set for "Icon A5 incident," arrives with two cups of coffee and a deposition form.
 
 "So," the adjuster says, "you initiated a downwind approach with a fifteen-knot tailwind?"
 
-"The runway is 9,000 feet—"
+"The runway is 9,000 feet..."
 
 "That's not what I asked. Were you aware of the tailwind?"
 
@@ -1067,7 +1067,7 @@ Amber walks to the nearest officer. "I don't know him. I'm calling an Uber."
 
 **What happened:** You attempted a landing with a 15-knot tailwind gusting to 24. Your groundspeed was far too high, the A5 floated past any usable touchdown zone, and the resulting ground loop damaged the aircraft extensively.
 
-**ADM Analysis:** Overconfidence and external pressure. The F-16 escort created pressure to land immediately, which you allowed to override your judgment about the conditions. A 9,000-foot runway feels infinite — until you're floating over it at 30 knots above normal touchdown speed.
+**ADM Analysis:** Overconfidence and external pressure. The F-16 escort created pressure to land immediately, which you allowed to override your judgment about the conditions. A 9,000-foot runway feels infinite, until you're floating over it at 30 knots above normal touchdown speed.
 
 **What good judgment looks like:** The moment you see the windsock pointing the wrong direction, you declare "unable" to ATC and request the reciprocal runway. You do not attempt to muscle through a tailwind landing. A long runway does not fix bad aerodynamics.
 
@@ -1086,11 +1086,11 @@ Amber walks to the nearest officer. "I don't know him. I'm calling an Uber."
 
 The longest walk of your life: from the A5 to a very large group of very unhappy federal employees.
 
-On the ramp: two NASA security vehicles, one local police car, one FBI sedan, the FAA inspector, and — remarkably fast — the Icon A5 rental company's insurance adjuster, who clearly has Google Alerts set for "Icon A5 incident."
+On the ramp: two NASA security vehicles, one local police car, one FBI sedan, the FAA inspector, and, faster than seems possible, the Icon A5 rental company's insurance adjuster, who clearly has Google Alerts set for "Icon A5 incident."
 
 You cooperate. You answer everything. Your voice is shaking.
 
-The FBI agent spends an hour determining that you're not a security threat — just a Sport Pilot who doesn't understand preflight responsibilities. Cleared. Not a terrorist. Just an idiot.
+The FBI agent spends an hour determining that you're not a security threat, just a Sport Pilot who doesn't understand preflight responsibilities. Cleared. Not a terrorist. Just an idiot.
 
 Amber refused to exit the aircraft until a female officer arrived. She gave her own statement, sitting in the shade of the wing, speaking with devastating clarity about your pattern of poor decision-making. The inspector wrote it down verbatim.
 
@@ -1172,9 +1172,9 @@ Your mugshot is on the news by evening.
 
 **What happened:** Extended evasion of military intercept. Every federal agency with jurisdiction was involved. Arrested on landing.
 
-**ADM Analysis:** Anti-authority hazardous attitude in extreme form. Every decision was wrong — failed NOTAMs, failed to respond, attempted evasion.
+**ADM Analysis:** Anti-authority hazardous attitude in extreme form. Every decision was wrong: failed NOTAMs, failed to respond, attempted evasion.
 
-**What good judgment looks like:** Check NOTAMs. Don't enter TFRs. If intercepted: immediate compliance — rock wings, Guard, 7700, follow, land, cooperate.
+**What good judgment looks like:** Check NOTAMs. Don't enter TFRs. If intercepted: immediate compliance. Rock wings, Guard, 7700, follow, land, cooperate.
 
 **Key regulations:** AIM 5-6-2; 49 USC 46307 (national defense airspace); 18 USC 32 (destruction of aircraft or aircraft facilities); 14 CFR 91.137.
 
