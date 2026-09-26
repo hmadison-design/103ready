@@ -32,7 +32,7 @@ ADM THEMES:           Knowledge application, sequencing, interpretation of
                       operations. ADM is the substrate; knowledge is the focus.
 HAZARDOUS ATTITUDES:  Invulnerability (mild), impulsivity, resignation
 TOTAL DECISIONS:      10 per playthrough (every path visits all 10)
-TOTAL ENDINGS:        11 (variants keyed off accumulated knowledge flags)
+TOTAL ENDINGS:        12 (variants keyed off accumulated knowledge flags)
 MIN DECISION DEPTH:   10 (exceeds 8-decision minimum per author request and
                       4-decision design floor per instructions)
 TIMED DECISIONS:      No
@@ -293,7 +293,7 @@ You close the NOTAM tab and move to weight and balance.
 <<set $pathArray to $pathArray.concat(["2B: Noted the crane south of CFD"])>>
 <<set $savedCrane to true>>
 
-You scribble "CRANE 1.2 SSW KCFD, 533 MSL, UNLIT, til 1200Z" on your kneeboard. The crane is unlit and sits 166 feet under a three-mile final for runway 18 at a pattern altitude of 1,367 MSL, plenty of clearance, but worth knowing it's there. You move on to weight and balance.
+You scribble "CRANE 1.2 SSW KCFD, 533 MSL, UNLIT, til 1200Z" on your kneeboard. The crane is unlit and sits 834 feet under a three-mile final for runway 18 at a pattern altitude of 1,367 MSL, plenty of clearance, but worth knowing it's there. You move on to weight and balance.
 
 <<link "Continue." "Dec3">><</link>>
 
@@ -375,7 +375,7 @@ N472DG is on the south ramp. You pull the cowl plugs, unlock the cabin, and star
 
 Your hand stops on the master switch. Both halves, BAT and ALT, are in the UP position. The airplane's been sitting since Friday evening.
 
-You glance at the voltmeter, which is black. Of course it is; the master is off from the avionics side of the bus too, as it should be with the airplane dead.
+You glance at the voltmeter, which is black. That is the part that bothers you. The master is on, and with a healthy battery the gauge would be showing you something. A dark voltmeter with the master on means the battery has been drawn down hard since Friday.
 
 The question is: how long has the master been on, and how much life is left in the battery?
 
@@ -503,7 +503,7 @@ You dump the contaminated sample on the ramp and try the strainer twice more. Bo
 :: Dec6B [scenario]
 <<set $pathArray to $pathArray.concat(["6B: Rock wings and resample all drains"])>>
 
-You walk out to the left wingtip and push down, letting it rock back up; same on the right. You wait thirty seconds. Then you resample the strainer. Clean. You re-sample all ten wing drains. The outermost drain on the left wing produces one more small bead of water on the first try, then clean on the second. All other samples are clean. You close the GATS jar and continue.
+You walk out to the left wingtip and push down, letting it rock back up, and do the same on the right. You wait thirty seconds. Then you resample the strainer. Clean. You resample all ten wing drains. The outermost drain on the left wing produces one more small bead of water on the first try, then clean on the second. Then you resample the two tank drains. Both clean. All thirteen points have now come up clean. You close the GATS jar and continue.
 
 <<link "Continue." "Dec7">><</link>>
 
@@ -551,7 +551,7 @@ Lycoming guidance for this engine: max drop 175 RPM; max differential between ma
 <<set $magDropIgnored to true>>
 <<set $badchoices to $badchoices + 1>>
 
-You roll the throttle back to idle and call tower.
+You roll the throttle back to idle and call ground.
 
 <<link "Continue." "Dec8">><</link>>
 
@@ -565,10 +565,9 @@ You bring the throttle to 2,000, lean the mixture until the EGTs peak and then p
 
 :: Dec7C [scenario]
 <<set $pathArray to $pathArray.concat(["7C: Taxi back for maintenance"])>>
-<<set $magDropIgnored to true>>
-<<set $badchoices to $badchoices + 1>>
+<<set $clearedMags to true>>
 
-You call ground, return to the ramp, and call Rivas. He has you run the lean-out procedure over the phone, the standard plug-clearing technique. You do. The differential drops to 20. He tells you the airplane is fine to fly. You are now thirty minutes behind schedule. You taxi back to the runup pad and redo the run-up. This time the mags are clean. You call tower.
+You call ground, return to the ramp, and call Rivas. He has you run the lean-out procedure over the phone, the standard plug-clearing technique. You do. The differential drops to 20. He tells you the airplane is fine to fly. You are now thirty minutes behind schedule. You taxi back to the runup pad and redo the run-up. This time the mags are clean. You call ground.
 
 <<link "Continue." "Dec8">><</link>>
 
@@ -622,7 +621,7 @@ The clearance routes you across the closed taxiway.
 
 You read back the clearance verbatim and release the brakes. Alpha taxiway runs east, turns south onto Charlie, and you follow it.
 
-About two hundred feet down Charlie, a set of orange construction barricades appears across the taxiway with a small excavator parked on the far side. You brake hard and stop. Your tower clearance led you into a closed area.
+About two hundred feet down Charlie, a set of orange construction barricades appears across the taxiway with a small excavator parked on the far side. You brake hard and stop. Your Ground clearance led you into a closed area.
 
 <<link "Continue." "Dec8A2">><</link>>
 
@@ -694,7 +693,7 @@ Six miles and 230 knots of closure gives you roughly 95 seconds. Austin Approach
 <<set $trafficLate to true>>
 <<set $badchoices to $badchoices + 1>>
 
-You strain forward against the shoulder harness, scanning the horizon. You pick him up at about three miles, a low-wing Mooney, slightly above your sightline. Thirty seconds to impact. You bank right.
+You strain forward against the shoulder harness, scanning the horizon. You pick him up at about three miles, a low-wing Mooney, slightly above your sightline. Forty-five seconds to impact. You bank right.
 
 <<link "Continue." "Dec9A2">><</link>>
 
@@ -827,7 +826,7 @@ The return flight is uneventful. You are on the ground at Georgetown at 1340 loc
 You flew the mission you planned, made good decisions at every decision point, and walked away with a clean flight and a full stomach. That is, in fact, what a well-executed pancake run looks like.
 
 <h3>Knowledge in play</h3>
-You read the forecast discussion and PIREP as a single story, not as separate line items. You briefed the unlit crane under the runway-18 final. You verified your fuel by dipstick rather than trusting a club form. You checked battery voltage before the first start. You referenced the squawk binder before clearing a prop nick. You rocked the wings and resampled after finding water in the strainer. You cleared the borderline mag differential with a lean-out. You queried a taxi clearance that conflicted with ATIS. You broke right on head-on traffic. You entered the pattern per AC 90-66C from the non-pattern side.
+You read the forecast discussion and PIREP as a single story, not as separate line items. You briefed the unlit crane under the runway-18 final. <<if $verifiedFuel>>You verified your fuel by dipstick rather than trusting a club form.<<else>>You put enough fuel on board that quantity was never a question.<</if>> You checked battery voltage before the first start. You referenced the squawk binder before clearing a prop nick. You rocked the wings and resampled after finding water in the strainer. You cleared the borderline mag differential with a lean-out. You queried a taxi clearance that conflicted with ATIS. You broke right on head-on traffic. You entered the pattern per AC 90-66C from the non-pattern side.
 
 <h3>Key takeaway</h3>
 The most satisfying flights are the ones where you knew what each step was *for*. Nothing flashy happened today because you didn't give anything the chance to get flashy.
@@ -906,11 +905,11 @@ Once in the air, the rest of the flight is uneventful. You land at Coulter, eat 
 
 The first is an email from the club's chief pilot asking you to stop by the office at your convenience for a "quick chat" about Sunday's taxi readback. Someone at the tower filed an informational report; it's not a pilot deviation, but it's a note. The chief pilot wants to talk about it before it becomes one.
 
-The second is a text from Marisol. "Tower got you, didn't they." You don't ask how she knows. Every pilot knows how she knows.
+The second is a text from Marisol. "Ground got you, didn't they." You don't ask how she knows. Every pilot knows how she knows.
 
 <div class="debrief">
 <h3>What happened</h3>
-The tower's clearance was wrong. Your job as PIC was to catch it and ask a question before wheels started rolling. Taxi clearances are just as binding as airborne clearances, and deviating from a clearance, even to avoid a real hazard, requires amended authorization.
+Ground's clearance was wrong. Your job as PIC was to catch it and ask a question before wheels started rolling. Taxi clearances are just as binding as airborne clearances, and deviating from a clearance, even to avoid a real hazard, requires amended authorization.
 
 <h3>Knowledge in play</h3>
 Runway-incursion-prevention doctrine is explicit about this: read back every taxi instruction verbatim, and if anything about it doesn't match your understanding of the airport, query it *before* releasing the brakes. ATC is not infallible. The phrase "we have Charlie closed per ATIS, verify routing?" costs three seconds and saves the controller as much embarrassment as it saves you.
@@ -1054,7 +1053,7 @@ A small amount of water in the fuel system, likely suspended in the tanks and un
 The proper fuel-sump protocol, when you find water, is to drain the affected sump point, rock the wings to dislodge water pooled away from the drain, wait, and re-sample *all* drains, not just the one that showed contamination. A single clean resample from one drain does not prove the tanks are clean. The protocol exists because water is denser than avgas and hides in the low spots of the tank's structure.
 
 <h3>Key takeaway</h3>
-Water contamination is a protocol problem, not a judgment call. When you find any, you run the full clearance sequence (rock, wait, sample everything) until three consecutive samples are clean. Anything else is hope.
+Water contamination is a protocol problem, not a judgment call. When you find any, you run the full clearance sequence (rock, wait, sample everything) until every drain point comes up clean. Anything else is hope.
 </div>
 
 <div class="path-list">
